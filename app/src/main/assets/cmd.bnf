@@ -1,0 +1,46 @@
+#BNF+IAT 1.0 UTF-8;
+!grammar duduCmd;
+!slot <weather>;
+!slot <site>;
+!slot <date>;
+!slot <ending>;
+!slot <de>;
+!slot <find>;
+!slot <nearby>;
+!slot <point>;
+!slot <open>;
+!slot <close>;
+!slot <app>;
+!slot <voice>;
+!slot <tai>;
+!slot <bigsmall>;
+!slot <turnup>;
+!slot <turndown>;
+
+
+!start <cmdStart>;
+<cmdStart>:接电话|接听|接听电话|拒绝接听|拒绝|结束通话|结束|挂断电话|挂断|打电话|同步电话簿|删除联系人|导航|
+(<site>[<date>]|[<date>]<site>)[<de>]<weather>[<ending>]|
+<find>[<nearby>][de]<point>|
+(<open>|<close>)<app>|<voice>[<tai>]<bigsmall>|(<turnup>|<turndown>)<voice>;
+
+<weather>:天气;
+<site>:上海|深圳|广州|北京;
+<date>:明天|今天|昨天|后天;
+<ending>:怎么样;
+<de>:的;
+
+<find>:搜索|查找|查询;
+<nearby>:附近;
+<point>:医院|银行|美食|餐馆|餐饮|加油站|酒吧|酒店|景点|景区|团购|网吧|公交|地铁|电影院|快递|KTV|ktv|商场|停车场;
+
+<open>:打开|执行|开始|播放;
+<close>:关闭|退出;
+<app>:导航|音乐|收音机|蓝牙|视频|WIFI|wifi|热点|消息显示|录像|流量充值|语音|电话;
+
+<voice>:声音;
+<tai>:太;
+<bigsmall>:大!id(0)|小!id(1);
+
+<turnup>:提高|身高|升高|调高;
+<turndown>:降低|调低;
