@@ -30,4 +30,5 @@ dependencies {
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'io.reactivex:rxandroid:0.25.0'
     compile 'io.reactivex:rxandroid-framework:0.25.0'
+    compile 'com.android.support:design:23.1.0'
 }
