@@ -3,12 +3,11 @@ package com.dudu.android.launcher.utils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.dudu.android.launcher.core.manager.VoiceManager;
+import com.dudu.voice.semantic.VoiceManager;
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
 import com.iflytek.cloud.SpeechError;

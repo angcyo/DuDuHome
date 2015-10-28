@@ -2,20 +2,20 @@ package com.dudu.android.launcher.utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.dudu.android.launcher.LauncherApplication;
-import com.dudu.android.launcher.core.manager.MapManager;
-import com.dudu.android.launcher.core.manager.VoiceManager;
-import com.dudu.android.launcher.ui.activity.NaviCustomActivity;
+import com.dudu.map.MapManager;
+import com.dudu.voice.semantic.VoiceManager;
 
 public class NaviUnderstandUtil {
+
 	private static String TAG = "NaviUnderstand";
+
 	private static Context mContext;
+
 	// 解析导航相关语义
 	public static void handleNavi(String semantic,Context context){
 		mContext = context;
@@ -130,106 +130,105 @@ public class NaviUnderstandUtil {
 	
 	// 打开路况
 	private static void openTraffic(Activity activity,Bundle bundle){
-		if(MapManager.getInstance().isNavi()){
-			if (activity != null
-					&& activity instanceof NaviCustomActivity) {
-				((NaviCustomActivity) activity)
-						.trafficInfo();
-			} else {
-				Intent intent = new Intent();
-				intent.setClass(mContext,
-						NaviCustomActivity.class);
-				bundle.putString("type",
-						Constants.NAVI_TRAFFIC);
-				intent.putExtras(bundle);
-				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				mContext.startActivity(intent);
-			}
-		}else{
-			noticeInvalid(mContext);
-		}
+//		if(MapManager.getInstance().isNavi()){
+//			if (activity != null
+//					&& activity instanceof NaviCustomActivity) {
+//				((NaviCustomActivity) activity)
+//						.trafficInfo();
+//			} else {
+//				Intent intent = new Intent();
+//				intent.setClass(mContext,
+//						NaviCustomActivity.class);
+//				bundle.putString("type",
+//						Constants.NAVI_TRAFFIC);
+//				intent.putExtras(bundle);
+//				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//				mContext.startActivity(intent);
+//			}
+//		}else{
+//			noticeInvalid(mContext);
+//		}
 	}
 	// 关闭路况
-	private static void closeTraffic(Activity activity,Bundle bundle){
-		System.out.println("---------关闭路况");
-		if(MapManager.getInstance().isNavi()){
-			if (activity != null
-					&& activity instanceof NaviCustomActivity) {
-				((NaviCustomActivity) activity)
-						.closeTraffic();
-			} else {
-				Intent intent = new Intent();
-				intent.setClass(mContext,
-						NaviCustomActivity.class);
-				bundle.putString("type",
-						Constants.CLOSE+Constants.NAVI_TRAFFIC);
-				intent.putExtras(bundle);
-				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				mContext.startActivity(intent);
-			}
-		}else{
-			noticeInvalid(mContext);
-		}
+	private static void closeTraffic(Activity activity,Bundle bundle) {
+//		if(MapManager.getInstance().isNavi()){
+//			if (activity != null
+//					&& activity instanceof NaviCustomActivity) {
+//				((NaviCustomActivity) activity)
+//						.closeTraffic();
+//			} else {
+//				Intent intent = new Intent();
+//				intent.setClass(mContext,
+//						NaviCustomActivity.class);
+//				bundle.putString("type",
+//						Constants.CLOSE+Constants.NAVI_TRAFFIC);
+//				intent.putExtras(bundle);
+//				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//				mContext.startActivity(intent);
+//			}
+//		}else{
+//			noticeInvalid(mContext);
+//		}
 	}
 	// 全程预览
-	private static void openPriview(Activity activity,Bundle bundle){
-		if(MapManager.getInstance().isNavi()){
-			if (activity != null
-					&& activity instanceof NaviCustomActivity) {
-				((NaviCustomActivity) activity)
-						.mapPriview();
-			} else {
-				Intent intent = new Intent();
-				intent.setClass(mContext,
-						NaviCustomActivity.class);
-				bundle.putString("type",
-						Constants.NAVI_PREVIEW);
-				intent.putExtras(bundle);
-				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				mContext.startActivity(intent);
-			}
-		}else{
-			noticeInvalid(mContext);
-		}
+	private static void openPriview(Activity activity,Bundle bundle) {
+//		if(MapManager.getInstance().isNavi()){
+//			if (activity != null
+//					&& activity instanceof NaviCustomActivity) {
+//				((NaviCustomActivity) activity)
+//						.mapPriview();
+//			} else {
+//				Intent intent = new Intent();
+//				intent.setClass(mContext,
+//						NaviCustomActivity.class);
+//				bundle.putString("type",
+//						Constants.NAVI_PREVIEW);
+//				intent.putExtras(bundle);
+//				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//				mContext.startActivity(intent);
+//			}
+//		}else{
+//			noticeInvalid(mContext);
+//		}
 	}
 	private static void closePriview(Activity activity,Bundle bundle){
-		if(MapManager.getInstance().isNavi()){
-			if (activity != null
-					&& activity instanceof NaviCustomActivity) {
-				((NaviCustomActivity) activity)
-						.closePriview();
-			} else {
-				Intent intent = new Intent();
-				intent.setClass(mContext,
-						NaviCustomActivity.class);
-				bundle.putString("type",
-						Constants.CLOSE+Constants.NAVI_PREVIEW);
-				intent.putExtras(bundle);
-				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				mContext.startActivity(intent);
-			}
-		}else{
-			noticeInvalid(mContext);
-		}
+//		if(MapManager.getInstance().isNavi()){
+//			if (activity != null
+//					&& activity instanceof NaviCustomActivity) {
+//				((NaviCustomActivity) activity)
+//						.closePriview();
+//			} else {
+//				Intent intent = new Intent();
+//				intent.setClass(mContext,
+//						NaviCustomActivity.class);
+//				bundle.putString("type",
+//						Constants.CLOSE+Constants.NAVI_PREVIEW);
+//				intent.putExtras(bundle);
+//				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//				mContext.startActivity(intent);
+//			}
+//		}else{
+//			noticeInvalid(mContext);
+//		}
 	}
 	private static void goBack(Activity activity,Bundle bundle){
-		if(MapManager.getInstance().isNavi()){
-			if (activity != null
-					&& activity instanceof NaviCustomActivity) {
-				((NaviCustomActivity) activity)
-						.goBack();
-			} else {
-				Intent intent = new Intent();
-				intent.setClass(mContext,
-						NaviCustomActivity.class);
-				bundle.putString("type",
-						Constants.RERURN_JOURNEY);
-				intent.putExtras(bundle);
-				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				mContext.startActivity(intent);
-			}
-		}else{
-			noticeInvalid(mContext);
-		}
+//		if(MapManager.getInstance().isNavi()){
+//			if (activity != null
+//					&& activity instanceof NaviCustomActivity) {
+//				((NaviCustomActivity) activity)
+//						.goBack();
+//			} else {
+//				Intent intent = new Intent();
+//				intent.setClass(mContext,
+//						NaviCustomActivity.class);
+//				bundle.putString("type",
+//						Constants.RERURN_JOURNEY);
+//				intent.putExtras(bundle);
+//				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//				mContext.startActivity(intent);
+//			}
+//		}else{
+//			noticeInvalid(mContext);
+//		}
 	}
 }

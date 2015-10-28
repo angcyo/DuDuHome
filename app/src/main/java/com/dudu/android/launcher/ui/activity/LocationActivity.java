@@ -1,11 +1,5 @@
 package com.dudu.android.launcher.ui.activity;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -64,7 +58,6 @@ import com.amap.api.services.poisearch.PoiSearch;
 import com.amap.api.services.poisearch.PoiSearch.OnPoiSearchListener;
 import com.amap.api.services.poisearch.PoiSearch.SearchBound;
 import com.amap.api.services.poisearch.Scenic;
-import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.bean.MapEntity;
 import com.dudu.android.launcher.bean.MapLocation;
@@ -73,8 +66,6 @@ import com.dudu.android.launcher.bean.MapSlotsLoc;
 import com.dudu.android.launcher.bean.PoiResultInfo;
 import com.dudu.android.launcher.bean.RestaurantEntity;
 import com.dudu.android.launcher.bean.RestaurantSlots;
-import com.dudu.android.launcher.core.manager.MapManager;
-import com.dudu.android.launcher.core.manager.VoiceManager;
 import com.dudu.android.launcher.db.DBManager;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.ui.dialog.RouteSearchPoiDialog;
@@ -85,14 +76,20 @@ import com.dudu.android.launcher.ui.view.CleanableCompletaTextView;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.Coordinate;
-import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.FloatWindow;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.JourneyTool;
 import com.dudu.android.launcher.utils.LcStringUtil;
-import com.dudu.android.launcher.utils.LocationFilter;
+import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
-import com.dudu.android.obd.OBDDataService;
+import com.dudu.map.MapManager;
+import com.dudu.voice.semantic.VoiceManager;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 @SuppressLint("RtlHardcoded")
 public class LocationActivity extends BaseNoTitlebarAcitivity implements
@@ -158,12 +155,14 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 	private DBManager mDBManager;
 
 	private List<PoiResultInfo> poiResultList = new ArrayList<PoiResultInfo>();
+
+    private MapManager mapManager = MapManager.getInstance();
 	private Handler mhandler;
+
 	private Runnable removeWindowRunnable = new Runnable() {
 
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
 			FloatWindowUtil.removeFloatWindow();
 		}
 	};
@@ -172,7 +171,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 	public int initContentView() {
 		return R.layout.location;
 	}
-	private MapManager mapManager = MapManager.getInstance();
+
 	@Override
 	public void initView(Bundle savedInstanceState) {
 		endLocationLL = (LinearLayout) findViewById(R.id.endLocationLL);
@@ -760,7 +759,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 	 */
 	private void showSuggestCity(List<SuggestionCity> cities) {
 		String infomation = "我没有听清楚，请再说一次";
-		VoiceManager.getInstance().startSpeaking(infomation, true);
+		VoiceManager.getInstance().startSpeaking(infomation);
 		FloatWindowUtil.showMessage(infomation, FloatWindow.MESSAGE_IN);
 		removeFloatWindow();
 	}
@@ -958,9 +957,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 
 				@Override
 				public void onGetNavigationText(int arg0, String arg1) {
-					VoiceManager.getInstance().clearMisUnderstandCount();
-					VoiceManager.getInstance().startSpeaking(arg1,
-							Constants.TTS_EIGHT);
+
 				}
 
 				@Override
@@ -969,27 +966,27 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 
 				@Override
 				public void onCalculateRouteSuccess() {
-					if (mDBManager != null)
-						mDBManager.saveSeachHistory(naviAddress);
-					
-					LocationUtils.getInstance(LocationActivity.this).setNaviStartPoint
-					(mStartPoints.get(0).getLatitude(), mStartPoints.get(0).getLongitude());
-					
-					LocationUtils.getInstance(LocationActivity.this).setNaviStartPoint
-					(mEndPoint.getLatitude(), mEndPoint.getLongitude());
-					
-					dissmissProgressDialog();
-					mapManager.setShowAddress(false);
-					FloatWindowUtil.removeFloatWindow();
-					if (strategyDialog != null && strategyDialog.isShowing())
-						strategyDialog.dismiss();
-					ActivitiesManager.getInstance().closeTargetActivity(
-							NaviCustomActivity.class);
-					Intent standIntent = new Intent(LocationActivity.this,
-							NaviCustomActivity.class);
-					startActivity(standIntent);
-					standIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-					LocationActivity.this.finish();
+//					if (mDBManager != null)
+//						mDBManager.saveSeachHistory(naviAddress);
+//
+//					LocationUtils.getInstance(LocationActivity.this).setNaviStartPoint
+//					(mStartPoints.get(0).getLatitude(), mStartPoints.get(0).getLongitude());
+//
+//					LocationUtils.getInstance(LocationActivity.this).setNaviStartPoint
+//					(mEndPoint.getLatitude(), mEndPoint.getLongitude());
+//
+//					dissmissProgressDialog();
+//					mapManager.setShowAddress(false);
+//					FloatWindowUtil.removeFloatWindow();
+//					if (strategyDialog != null && strategyDialog.isShowing())
+//						strategyDialog.dismiss();
+//					ActivitiesManager.getInstance().closeTargetActivity(
+//							NaviCustomActivity.class);
+//					Intent standIntent = new Intent(LocationActivity.this,
+//							NaviCustomActivity.class);
+//					startActivity(standIntent);
+//					standIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//					LocationActivity.this.finish();
 				}
 
 				@Override

@@ -1,9 +1,9 @@
 package com.dudu.android.launcher;
 
 import android.app.Application;
-import com.dudu.android.launcher.core.manager.VoiceManager;
 import com.dudu.android.launcher.exception.CrashHandler;
 import com.dudu.android.launcher.utils.Constants;
+import com.dudu.voice.semantic.VoiceManager;
 import com.iflytek.cloud.Setting;
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
@@ -11,6 +11,10 @@ import com.iflytek.cloud.SpeechUtility;
 public class LauncherApplication extends Application {
 
 	public static LauncherApplication mApplication;
+
+	public static boolean isLocation = false;
+
+
 
 	@Override
 	public void onCreate() {

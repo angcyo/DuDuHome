@@ -2,13 +2,10 @@ package com.dudu.android.launcher.utils;
 
 import java.util.List;
 import android.widget.AdapterView.OnItemClickListener;
-
 import com.dudu.android.launcher.bean.PoiResultInfo;
 
 public class FloatWindow {
-	
 	private static FloatWindow floatWindow;
-	
 	private MessageShowCallBack messageShowCallBack;
 	private AddressShowCallBack addressShowCallBack;
 	private StrategyChooseCallBack strategyChooseCallBack;
@@ -18,72 +15,58 @@ public class FloatWindow {
 	private CreateFloatWindowCallBack createFloatWindowCallBack;
 	public static final String MESSAGE_IN = "input";
 	public static final String MESSAGE_OUT = "output";
-
-	public static FloatWindow getInstance() {
-		if (floatWindow == null)
+	public static FloatWindow getInstance(){
+		if(floatWindow==null)
 			floatWindow = new FloatWindow();
 		return floatWindow;
 	}
-
-	public interface MessageShowCallBack {
+	
+	public interface MessageShowCallBack{
 		/**
 		 * 显示对话消息
-		 * 
 		 * @param message
 		 * @param type
 		 */
 		void showMessage(String message, String type);
 	}
-
-	public interface FloatVoiceChangeCallBack {
+	public interface FloatVoiceChangeCallBack{
 		/**
 		 * 说话声音改变时的回调
-		 * 
 		 * @param voice
 		 */
 		void onVoiceChange(int voice);
 	}
+	public interface AddressShowCallBack{
 
-	public interface AddressShowCallBack {
-		/**
-		 * 
-		 * @param poiList
-		 * @param lat
-		 * @param lon
-		 */
 		void showAddress(List<PoiResultInfo> poiList);
-
+		
 	}
-
-	public interface StrategyChooseCallBack {
+	
+	public interface StrategyChooseCallBack{
 		/**
 		 * 显示路线优先策略选择列表
-		 * 
 		 * @param str
 		 */
 		void showStrategy(String[] str);
 	}
-
-	public interface AddressListItemClickCallback {
-		/**
-		 * 地址选择列表的点击事件
-		 * 
-		 * @param listener
-		 */
-		void onAddressListItemClick(OnItemClickListener listener);
-	}
-
-	public interface RemoveFloatWindowCallBack {
-		/**
-		 * 移除悬浮窗口
-		 */
-		void removeFloatWindow();
-	}
-
-	public interface CreateFloatWindowCallBack {
-		void createFloatWindow();
-	}
-
+	
+    public interface AddressListItemClickCallback{
+    	/**
+    	 * 地址选择列表的点击事件
+    	 * @param listener
+    	 */
+    	void onAddressListItemClick(OnItemClickListener listener);
+    }
+    public interface RemoveFloatWindowCallBack{
+    	/**
+    	 * 移除悬浮窗口
+    	 */
+    	void removeFloatWindow();
+    }
+    
+    public interface CreateFloatWindowCallBack{
+    	void createFloatWindow();
+    }
 	public MessageShowCallBack getMessageShowCallBack() {
 		return messageShowCallBack;
 	}
@@ -108,7 +91,6 @@ public class FloatWindow {
 			StrategyChooseCallBack strategyChooseCallBack) {
 		this.strategyChooseCallBack = strategyChooseCallBack;
 	}
-
 	public FloatVoiceChangeCallBack getFloatVoiceChangeCallBack() {
 		return floatVoiceChangeCallBack;
 	}
@@ -144,5 +126,5 @@ public class FloatWindow {
 			CreateFloatWindowCallBack createFloatWindowCallBack) {
 		this.createFloatWindowCallBack = createFloatWindowCallBack;
 	}
-
+	
 }

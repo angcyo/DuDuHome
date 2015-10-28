@@ -6,7 +6,6 @@ import android.widget.AdapterView.OnItemClickListener;
 
 import com.dudu.android.launcher.bean.PoiResultInfo;
 
-
 public class FloatWindowUtil {
 
 	//创建弹窗
@@ -17,7 +16,6 @@ public class FloatWindowUtil {
 	}
 	// 消息显示
 	public static void showMessage(String message,String type){
-
 		if(FloatWindow.getInstance().getMessageShowCallBack()!=null){
 			FloatWindow.getInstance().getMessageShowCallBack().showMessage(message, type);
 		}
