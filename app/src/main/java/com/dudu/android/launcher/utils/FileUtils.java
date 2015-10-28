@@ -3,6 +3,8 @@ package com.dudu.android.launcher.utils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -346,6 +348,17 @@ public class FileUtils {
 		return false;
 	}
 
+	/**
+	 * read file
+	 * 
+	 * @param file
+	 * @param charsetName
+	 *            The name of a supported {@link java.nio.charset.Charset
+	 *            </code>charset<code>}
+	 * @return if file not exist, return null, else return content of file
+	 * @throws RuntimeException
+	 *             if an error occurs while operator BufferedReader
+	 */
 	public static String readFile(File file, String charsetName) {
 		StringBuilder fileContent = new StringBuilder("");
 		if (file == null || !file.isFile()) {
@@ -385,6 +398,110 @@ public class FileUtils {
 
 	public static String readFile(File file) {
 		return readFile(file, "utf-8");
+	}
+
+	/**
+	 * 文件拷贝
+	 * 
+	 * @param from
+	 * @param to
+	 * @return
+	 */
+	public static boolean fileCopy(String from, String to) {
+		boolean result = false;
+
+		int size = 1 * 1024;
+
+		FileInputStream in = null;
+		FileOutputStream out = null;
+		try {
+			in = new FileInputStream(from);
+			out = new FileOutputStream(to);
+			byte[] buffer = new byte[size];
+			int bytesRead = -1;
+			while ((bytesRead = in.read(buffer)) != -1) {
+				out.write(buffer, 0, bytesRead);
+			}
+			out.flush();
+			result = true;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException e) {
+			}
+			try {
+				if (out != null) {
+					out.close();
+				}
+			} catch (IOException e) {
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * 清除WebView缓存
+	 */
+	public static void clearWebViewCache(Context context) {
+
+		// 清理Webview缓存数据库
+		try {
+			context.deleteDatabase("webview.db");
+			context.deleteDatabase("webviewCache.db");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// WebView 缓存文件
+		File appCacheDir = new File(context.getFilesDir().getAbsolutePath()
+				+ "/webcache");
+		// Log.e(TAG, "appCacheDir path="+appCacheDir.getAbsolutePath());
+
+		File webviewCacheDir = new File(context.getCacheDir().getAbsolutePath()
+				+ "/webviewCache");
+		// Log.e(TAG,
+		// "webviewCacheDir path="+webviewCacheDir.getAbsolutePath());
+
+		// 删除webview 缓存目录
+		if (webviewCacheDir.exists()) {
+			deleteFile2(webviewCacheDir);
+		}
+		// 删除webview 缓存 缓存目录
+		if (appCacheDir.exists()) {
+			deleteFile2(appCacheDir);
+		}
+	}
+
+	/**
+	 * 递归删除 文件/文件夹
+	 * 
+	 * @param file
+	 */
+	private static void deleteFile2(File file) {
+
+		// Log.i(TAG, "delete file path=" + file.getAbsolutePath());
+
+		if (file.exists()) {
+			if (file.isFile()) {
+				file.delete();
+			} else if (file.isDirectory()) {
+				File files[] = file.listFiles();
+				for (int i = 0; i < files.length; i++) {
+					deleteFile2(files[i]);
+				}
+			}
+			file.delete();
+		} else {
+			// Log.e(TAG, "delete file no exists " + file.getAbsolutePath());
+		}
 	}
 	
 }

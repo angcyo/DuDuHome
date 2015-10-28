@@ -1,6 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+
+    <color name="nomal_color">#27292B</color>
+    <color name="press_color">#A4A4A4</color>
+    <color name="one_color">#b2b2b2</color>
+    <color name="two_color">#727271</color>
+    <color name="three_color">#404245</color>
+    <color name="bg_color">#191919</color>
+    <color name="grey">#ebebeb</color>
+    <color name="color_b2b2b2">#b2b2b2</color>
+    <color name="color_1c1c1c">#1c1c1c</color>
+    <color name="color_837f7e">#837f7e</color>
+    <color name="color_4c4a4a">#4c4a4a</color>
+    <color name="black">#000000</color>
+    <color name="red">#FF0000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="color_242424">#242424</color>
+    <color name="color_1b1919">#1b1919</color>
+    <color name="color_ed6512">#ed6512</color>
+    <color name="color_161616">#161616</color>
+    <color name="chat_list_item_background_color">#FFFFFF</color>
+    <color name="navigation_theme_color">#FFE26303</color>
+    
+    <color name="nearby_poi_activity_bg">#90000000</color>
+	<color name="transparent">#00000000</color>
 </resources>

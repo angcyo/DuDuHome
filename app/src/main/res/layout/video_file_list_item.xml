@@ -1,0 +1,55 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/dp_70"
+    android:background="@color/color_4c4a4a"
+    android:descendantFocusability="blocksDescendants"
+    android:gravity="center"
+    android:orientation="horizontal" >
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.5"
+        android:src="@drawable/video_icon" />
+
+    <TextView
+        android:id="@+id/view_file_list_item_data"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="14:16:27"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:id="@+id/view_file_list_item_year"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.5"
+        android:text="2015/04/12"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:id="@+id/view_file_list_item_size"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="10M"
+        android:textColor="@color/white" />
+
+    <RelativeLayout
+        android:layout_width="60dp"
+        android:layout_height="fill_parent"  >
+
+        <CheckBox
+            android:id="@+id/view_file_list_item_check"
+            style="@style/custom_checkbox"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_centerInParent="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:focusable="false" />
+    </RelativeLayout>
+
+</LinearLayout>

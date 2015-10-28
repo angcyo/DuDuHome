@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="10dp" >
+
+    <ImageButton
+        android:id="@+id/delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/video_container"
+        android:layout_marginRight="5dp"
+        android:background="@drawable/video_small_button_bg"
+        android:src="@drawable/video_delete_button_selector" />
+
+    <ImageButton
+        android:id="@+id/weixin_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/video_container"
+        android:layout_marginRight="5dp"
+        android:background="@drawable/video_small_button_bg"
+        android:src="@drawable/weixin_button_selector" />
+
+    <FrameLayout
+        android:id="@+id/video_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/delete_button" >
+
+        <ImageView
+            android:id="@+id/thumbnail"
+            android:layout_width="95dp"
+            android:layout_height="95dp"
+            android:scaleType="center"
+            android:src="@drawable/video_thumbnail" />
+
+        <ImageButton
+            android:id="@+id/video_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent"
+            android:src="@drawable/video_paly_button_selector" />
+        
+        <CheckBox
+            android:id="@+id/video_check_box"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:paddingBottom="5dp"
+            android:paddingRight="2dp"
+            android:paddingTop="10dp"
+            android:paddingLeft="5dp"
+            android:button="@drawable/video_lock_check_box" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/date_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/video_container"
+        android:layout_marginTop="10dp"
+        android:textColor="@android:color/white"
+        android:textSize="10sp" />
+
+</RelativeLayout>

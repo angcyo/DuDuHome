@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="nomalColor" format="color" />
+    <attr name="pressColor" format="color" />
+    <attr name="spacing" format="integer" />
+    <attr name="counts" format="integer" />
+    <attr name="circleDrawable" format="reference" />
+    <attr name="firstWifiColor" format="color" />
+    <attr name="secondWifiColor" format="color" />
+    <attr name="defaultWifiColor" format="color" />
+    <attr name="firstWifiWidth" format="integer" />
+    <attr name="secondWifiWidth" format="integer" />
+    <attr name="defaultWifiWidth" format="integer" />
+
+    <declare-styleable name="SemanticDialog">
+        <attr name="nomalColor" />
+        <attr name="pressColor" />
+        <attr name="counts" />
+        <attr name="spacing" />
+        <attr name="circleDrawable" />
+    </declare-styleable>
+    
+    <declare-styleable name="WifiProgress">
+        <attr name="firstWifiColor" />
+        <attr name="secondWifiColor" />
+        <attr name="firstWifiWidth" />
+        <attr name="secondWifiWidth" />
+        <attr name="defaultWifiWidth" />
+        <attr name="defaultWifiColor" />
+    </declare-styleable>
+
+</resources>

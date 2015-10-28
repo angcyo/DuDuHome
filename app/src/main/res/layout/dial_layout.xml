@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/dial_bg"
+    android:paddingRight="30dp" >
+
+    <RelativeLayout
+        android:id="@+id/number_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp" >
+
+        <TextView
+            android:id="@+id/dial_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@+id/clear_button"
+            android:fontFamily="sans-serif-light"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/clear_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@android:color/transparent"
+            android:padding="20dp"
+            android:src="@drawable/clear_button_selector" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/number_container" >
+
+        <Button
+            android:id="@+id/dial_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/number_table"
+            android:layout_marginRight="40dp"
+            android:layout_marginTop="10dp"
+            android:layout_toLeftOf="@+id/number_table"
+            android:background="@drawable/dial_button_selector" />
+
+        <TextView
+            android:id="@+id/conversation_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/dial_button"
+            android:fontFamily="sans-serif-light"
+            android:singleLine="true"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/contact_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/conversation_time"
+            android:fontFamily="sans-serif-light"
+            android:textColor="@android:color/white"
+            android:singleLine="true" />
+
+        <TableLayout
+            android:id="@+id/number_table"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true" >
+
+            <TableRow>
+
+                <Button
+                    android:id="@+id/number_button01"
+                    style="@style/dial_button_style"
+                    android:background="@drawable/number_button01_selector"
+                    android:tag="1" />
+
+                <Button
+                    android:id="@+id/number_button02"
+                    style="@style/dial_button_style"
+                    android:background="@drawable/number_button02_selector"
+                    android:tag="2" />
+
+                <Button
+                    android:id="@+id/number_button03"
+                    style="@style/dial_button_style"
+                    android:background="@drawable/number_button03_selector"
+                    android:tag="3" />
+
+                <Button
+                    android:id="@+id/well_button"
+                    style="@style/dial_button_style"
+                    android:background="@drawable/well_button_selector"
+                    android:tag="#" />
+            </TableRow>
+
+            <TableRow>
+
+                <Button
+                    android:id="@+id/number_button04"
+                    style="@style/dial_button_style"
+                    android:background="@drawable/number_button04_selector"
+                    android:tag="4" />
+
+                <Button
+                    android:id="@+id/number_button05"
+                    style="@style/dial_button_style"
+                    android:background="@drawable/number_button05_selector"
+                    android:tag="5" />
+
+                <Button
+                    android:id="@+id/number_button06"
+                    style="@style/dial_button_style"
+                    android:background="@drawable/number_button06_selector"
+                    android:tag="6" />
+
+                <Button
+                    android:id="@+id/number_button0"
+                    style="@style/dial_button_style"
+                    android:background="@drawable/number_button0_selector"
+                    android:tag="0" />
+            </TableRow>
+
+            <TableRow>
+
+                <Button
+                    android:id="@+id/number_button07"
+                    style="@style/dial_button_style"
+                    android:background="@drawable/number_button07_selector"
+                    android:tag="7" />
+
+                <Button
+                    android:id="@+id/number_button08"
+                    style="@style/dial_button_style"
+                    android:background="@drawable/number_button08_selector"
+                    android:tag="8" />
+
+                <Button
+                    android:id="@+id/number_button09"
+                    style="@style/dial_button_style"
+                    android:background="@drawable/number_button09_selector"
+                    android:tag="9" />
+
+                <Button
+                    android:id="@+id/asterisk_button "
+                    style="@style/dial_button_style"
+                    android:background="@drawable/asterisk_selector"
+                    android:tag="*" />
+            </TableRow>
+        </TableLayout>
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/back_button_selector"
+        />
+
+</RelativeLayout>

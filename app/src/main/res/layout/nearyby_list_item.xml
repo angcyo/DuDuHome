@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingBottom="15dp"
+    android:paddingTop="15dp"
+    android:descendantFocusability="blocksDescendants">
+
+    <TextView
+        android:id="@+id/Brand_name"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:gravity="center_vertical"
+        android:singleLine="true"
+        android:text="米其林店"
+        android:textColor="@color/white" />
+
+    <RatingBar
+        android:id="@+id/nearyby_ratingBar"
+        style="@style/roomRatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/tv_Distance"
+    	 android:isIndicator="false" 
+    	   />
+
+    <TextView
+        android:id="@+id/tv_Distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:singleLine="true"
+        android:text="距离：800米"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="10dp"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:id="@+id/btn_appointment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/shape_corner_record_bill_bg"
+        android:gravity="center"
+        android:paddingBottom="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp"
+        android:text="立即导航"
+        android:textColor="@color/white"
+        android:textSize="11sp"
+        android:singleLine="true"
+        android:layout_marginRight="3dp"
+        android:layout_marginBottom="3dp" 
+        android:visibility="gone"/>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0.5dp"
+        android:layout_alignParentBottom="true"
+        android:background="#8E8E8E" 
+        android:layout_marginTop="3dp"/>
+
+</RelativeLayout>

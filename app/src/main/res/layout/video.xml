@@ -1,0 +1,192 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context=".activity.VideoFragmentActivity" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:baselineAligned="false"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/color_1c1c1c"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/view_back_layout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_80"
+                android:gravity="center" >
+
+                <ImageView
+                    android:id="@+id/view_back_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/view_back" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/view_file_layout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_80"
+                android:gravity="center" >
+
+                <ImageView
+                    android:id="@+id/view_file_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/view_file" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/view_lock_layout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_80"
+                android:gravity="center" >
+
+                <ImageView
+                    android:id="@+id/view_lock_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/view_lock" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/video_details_view"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="6" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/video_action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:background="@color/white"
+        android:visibility="gone" >
+
+        <LinearLayout
+            android:id="@+id/select_layout"
+            android:layout_width="@dimen/dp_60"
+            android:layout_height="fill_parent"
+            android:layout_alignParentLeft="true"
+            android:gravity="center" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/video_menu_select" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/dp_120"
+            android:layout_height="fill_parent"
+            android:layout_toRightOf="@+id/select_layout"
+            android:gravity="center" >
+
+            <Spinner
+                android:id="@+id/video_select_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/action_menu_list_select" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/video_rubbish_layour"
+            android:layout_width="@dimen/dp_60"
+            android:layout_height="fill_parent"
+            android:layout_toLeftOf="@+id/video_lock_layour"
+            android:background="@drawable/common_button_shape"
+            android:gravity="center" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/video_menu_rubbish" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/video_lock_layour"
+            android:layout_width="@dimen/dp_60"
+            android:layout_height="fill_parent"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/common_button_shape"
+            android:gravity="center" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/video_menu_lock" />
+        </LinearLayout>
+    </RelativeLayout>
+    
+    <RelativeLayout
+        android:id="@+id/video_lock_action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:background="@color/white"
+        android:visibility="gone" >
+
+        <LinearLayout
+            android:id="@+id/select_lock_layout"
+            android:layout_width="@dimen/dp_60"
+            android:layout_height="fill_parent"
+            android:layout_alignParentLeft="true"
+            android:gravity="center" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/video_menu_select" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/dp_120"
+            android:layout_height="fill_parent"
+            android:layout_toRightOf="@+id/select_lock_layout"
+            android:gravity="center" >
+
+            <Spinner
+                android:id="@+id/video_lock_select_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/action_menu_list_select" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lock_video_rubbish_layour"
+            android:layout_width="@dimen/dp_60"
+            android:layout_height="fill_parent"
+            android:layout_toLeftOf="@+id/lock_video_lock_layour"
+            android:background="@drawable/common_button_shape"
+            android:gravity="center" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/video_menu_rubbish" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lock_video_lock_layour"
+            android:layout_width="@dimen/dp_60"
+            android:layout_height="fill_parent"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/common_button_shape"
+            android:gravity="center" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/video_menu_openlock" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -14,4 +14,18 @@ public class ToastUtils {
 		Toast.makeText(LauncherApplication.mApplication, message, Toast.LENGTH_SHORT).show();
 	}
 
+	public static void showTip(String msg) {
+		Toast.makeText(LauncherApplication.mApplication, msg, Toast.LENGTH_SHORT).show();
+	}
+
+	public static void showTip(Context mContext, String msg) {
+		Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+	}
+
+	public static String getRandomString(Context mContext) {
+		String[] strs = mContext.getResources().getStringArray(R.array.cannot_understand_list);
+		Random random = new Random();
+		return strs[random.nextInt(strs.length)];
+	}
+	
 }

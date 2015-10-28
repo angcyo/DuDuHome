@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/shape_corner_window_bg" >
+
+    <TextView
+        android:id="@+id/tv_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="10dp"
+        android:singleLine="true"
+        android:text="海岸城"
+        android:textColor="#e26303"
+        android:textSize="20sp" />
+    
+    <TextView
+        android:id="@+id/tv_detail_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/tv_address"
+        android:singleLine="true"
+        android:layout_toRightOf="@id/tv_address"
+        android:layout_marginLeft="10dp"
+        android:text="南山区文心五路33号海岸城购物中心"
+        android:textColor="#e26303"
+        android:textSize="15sp" />
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_address"
+        android:gravity="center_vertical"
+        android:paddingTop="20dp"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:id="@+id/ll_plan1"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:background="@drawable/navigation_plan_selector"
+            android:clickable="true"
+            android:paddingTop="15dp"
+            android:paddingBottom="10dp"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/button_plan1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:text="速度优先" />
+
+            <TextView
+                android:id="@+id/tv_distance_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0km" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="35dp"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/ll_plan2"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:background="@drawable/navigation_plan_selector"
+            android:clickable="true"
+            android:paddingTop="15dp"
+            android:paddingBottom="10dp"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/button_plan2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                 android:textSize="18sp"
+                android:text="避让拥堵" />
+
+            <TextView
+                android:id="@+id/tv_distance_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0km" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="35dp"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/ll_plan3"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:background="@drawable/navigation_plan_selector"
+            android:clickable="true"
+            android:paddingTop="15dp"
+            android:paddingBottom="10dp"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/button_plan3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                 android:textSize="18sp"
+                android:text="距离最短" />
+
+            <TextView
+                android:id="@+id/tv_distance_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="0km" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="35dp"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/ll_plan4"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:background="@drawable/navigation_plan_selector"
+            android:clickable="true"
+            android:paddingTop="15dp"
+            android:paddingBottom="10dp"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/button_plan4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                 android:textSize="18sp"
+                android:text="花费最少" />
+
+            <TextView
+                android:id="@+id/tv_distance_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="0km" />
+        </LinearLayout>
+    </LinearLayout>
+    
+    <Button
+        android:id="@+id/back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:background="@drawable/back_button_selector" >
+    </Button>
+
+</RelativeLayout>

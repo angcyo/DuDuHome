@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/main_bg"
+    android:orientation="horizontal"
+    android:paddingBottom="30dp"
+    android:paddingTop="20dp" >
+
+    <Button
+        android:id="@+id/back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/back_button_selector"
+        android:onClick="onBackPressed" />
+
+    <GridView
+        android:id="@+id/video_grid"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="right"
+        android:layout_marginLeft="80dp"
+        android:cacheColorHint="#00000000"
+        android:listSelector="#00000000"
+        android:numColumns="3"
+        android:scrollbars="none" >
+    </GridView>
+
+</RelativeLayout>

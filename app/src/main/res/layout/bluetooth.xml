@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/dp_20"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/my_bluetoothe_device"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_30"
+            android:gravity="center_vertical"
+            android:text="@string/bluetooth_device_my"
+            android:textSize="@dimen/sp_20" />
+
+        <TextView
+            android:id="@+id/my_device_name"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_60"
+            android:gravity="center_vertical"
+            android:text="@string/bluetooth_device_my"
+            android:textSize="@dimen/sp_20" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/pair_bluetoothe_device"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_30"
+            android:gravity="center_vertical"
+            android:text="@string/bluetooth_device_pair"
+            android:textSize="@dimen/sp_20" />
+
+        <TextView
+            android:id="@+id/pair_device_name"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_60"
+            android:gravity="center_vertical"
+            android:text="@string/bluetooth_device_pair"
+            android:textSize="@dimen/sp_20" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/enable_bluetoothe_device"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_30"
+            android:gravity="center_vertical"
+            android:text="@string/bluetooth_device_enable"
+            android:textSize="@dimen/sp_20" />
+
+        <ListView
+            android:id="@+id/enable_device_listview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </ListView>
+    </LinearLayout>
+
+</LinearLayout>

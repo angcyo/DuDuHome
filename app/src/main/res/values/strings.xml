@@ -1,4 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">launcher</string>
-    <string name="title_activity_main">MainActivity</string>
+
+    <string name="app_name">Launcher</string>
+    <string name="service_activation">车主服务激活</string>
+    <string name="flow_500m">500M</string>
+    <string name="flow_1.5g">1.5G</string>
+    <string name="flow_3g">3G</string>
+    <string name="recharge_10">充值10元</string>
+    <string name="recharge_30">充值30元</string>
+    <string name="recharge_50">充值50元</string>
+    <string name="pay_info">请使用微信或者支付宝扫一扫支付充值金额</string>
+    <string name="temperature_degree">度</string>
+    <string name="weather_turn">转</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="error_network">搜索失败,请检查网络连接！</string>
+    <string name="error_key">key验证无效！</string>
+    <string name="error_other">未知错误，请稍后重试!错误码为</string>
+    <string name="no_result">抱歉，没有找到您想要的结果！</string>
+    <string name="preference_default_tts_role">xiaoyan</string>
+    <string name="preference_key_tts_speed">tts_speed</string>
+    <string name="preference_title_tts_speed">语速</string>
+    <string name="preference_default_tts_speed">50</string>
+    <string name="preference_dialog_title_tts_speed">选择语速</string>
+    <string name="preference_key_tts_volume">tts_volume</string>
+    <string name="preference_title_tts_volume">音量</string>
+    <string name="preference_default_tts_volume">50</string>
+    <string name="preference_dialog_title_tts_volume">选择音量</string>
+    <string name="preference_key_tts_pitch">tts_pitch</string>
+    <string name="preference_title_tts_pitch">语调</string>
+    <string name="preference_default_tts_pitch">50</string>
+    <string name="start_navi_navi">实时导航</string>
+    <string name="theme_blue">经典蓝</string>
+    <string name="theme_pink">可爱粉</string>
+    <string name="theme_white">简约白</string>
+    <string name="navi_strategy_speed">速度最快</string>
+    <string name="navi_strategy_cost">避免收费</string>
+    <string name="navi_strategy_distance">距离最短</string>
+    <string name="navi_strategy_nohighway">不走高速快速路</string>
+    <string name="navi_strategy_timenojam">时间最短且躲避拥堵</string>
+    <string name="navi_strategy_costnojam">避免收费且躲避拥堵</string>
+    <string name="routeshow">线路展示</string>
+    <string name="routeinfo_1">全程 </string>
+    <string name="routeinfo_2">公里/</string>
+    <string name="routeinfo_3">"分钟    收费"</string>
+    <string name="routeinfo_4">元</string>
+    <string name="routeinfo_default">--</string>
+    <string name="bluetooth_device_my">我的设备</string>
+    <string name="bluetooth_device_pair">已配对的设备</string>
+    <string name="bluetooth_device_enable">可用设备</string>
+    <string name="action_lock">锁定</string>
+    <string name="action_delete">删除</string>
+    <string name="action_details">详情</string>
+    <string name="action_title">行车记录</string>
+    <string name="action_choice">选择</string>
+    <string name="action_choice_first">选择了%1%d项</string>
+    <string name="alert_notification">提示</string>
+    <string name="alert_delete_video">确定删除删除视频？</string>
+    <string name="alert_lock_video">本视频已锁定.</string>
+    <string name="alert_cache_space_full">视频存储控件已满，请手动释放空间.</string>
+    <string name="get_weather_info_failed">获取天气预报失败!</string>
+    <string name="unkown_weather_info">未知天气</string>
+    <string name="no_network_connection_toast">没有网络</string>
+
+    <string-array name="action_menu_list_select">
+        <item>选择</item>
+        <item>全选</item>
+        <item>取消选择</item>
+    </string-array>
+    
+    <string-array name="cannot_understand_list">
+        <item>我没有听清楚，请再说一次</item>
+    </string-array>
+    <string name="nearby">附近评价最高的轮胎保养品牌</string>
+    <string name="appointment">立即预约</string>
+    <string name="title_activity_location">title_activity_location</string>
 </resources>

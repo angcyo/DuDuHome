@@ -1,0 +1,78 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/input_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="100dp"
+        android:gravity="right"
+        android:padding="@dimen/dp_5"
+        android:textColor="@color/color_ed6512"
+        android:textSize="@dimen/sp_16" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dp_15"
+        android:layout_marginLeft="@dimen/dp_15"
+        android:layout_marginRight="@dimen/dp_15"
+        android:background="@drawable/shape_corner_window_bg"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/dp_5"
+            android:paddingRight="@dimen/dp_5"
+            android:text=""
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_18" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_corner_window_bg"
+            android:gravity="top"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/output_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fadeScrollbars="false"
+                android:maxHeight="@dimen/dp_150"
+                android:maxWidth="@dimen/dp_420"
+                android:paddingLeft="@dimen/dp_10"
+                android:paddingRight="@dimen/dp_5"
+                android:paddingTop="@dimen/dp_5"
+                android:scrollbars="vertical"
+                android:text="您好，请问有什么可以帮助您"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_16"
+                tools:ignore="RtlHardcoded" />
+
+            <TextView
+                android:id="@+id/output_message_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_corner_window_bg"
+                android:fadeScrollbars="false"
+                android:focusable="true"
+                android:gravity="top"
+                android:maxHeight="@dimen/dp_120"
+                android:maxWidth="@dimen/dp_400"
+                android:paddingLeft="@dimen/dp_10"
+                android:paddingRight="@dimen/dp_5"
+                android:scrollbars="vertical"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_14"
+                tools:ignore="RtlHardcoded" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
