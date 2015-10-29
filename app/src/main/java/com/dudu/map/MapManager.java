@@ -16,13 +16,13 @@ public class MapManager {
 
     private static MapManager mInstance;
 
-    private boolean isShowAddress = false;            //	是否正在地图页面中展示地址选择列表或路线规划策略选择列表
+    private boolean isShowAddress = false;              //	是否正在地图页面中展示地址选择列表或路线规划策略选择列表
 
-    private boolean isNavi = false;                    //  是否正在导航
+    private boolean isNavi = false;                     //  是否正在导航
 
-    private boolean isNaviBack = false;                // 是否正在导航返程中
+    private boolean isNaviBack = false;                  // 是否正在导航返程中
 
-    private boolean isSearch = false;                // 是否为语音“打开导航后”的搜索
+    private boolean isSearch = false;                   // 是否为语音“打开导航后”的搜索
 
     private int searchType = 0;                        // POI 搜索的类型  1、代表poi。某点的位置。 2、代表导航。3、代表附近的poi查询。4、代表从某点到某点。
 

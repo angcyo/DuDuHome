@@ -32,6 +32,7 @@ import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
+import com.dudu.map.MapManager;
 
 
 public class MainActivity extends BaseTitlebarActivity implements
@@ -144,6 +145,25 @@ public class MainActivity extends BaseTitlebarActivity implements
                 break;
 
             case R.id.navigation_button:
+
+                Intent navigationintent = new Intent();
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("isManual", true);
+                navigationintent.putExtras(bundle);
+                if (MapManager.getInstance().isNavi() ||MapManager.getInstance().isNaviBack()) {
+                    if (MapManager.getInstance().isNavi()) {
+                        navigationintent.setClass(mContext,
+                                NaviCustomActivity.class);
+                    } else if (MapManager.getInstance().isNaviBack()) {
+                        navigationintent.setClass(mContext,
+                                NaviBackActivity.class);
+                    }
+                } else {
+                    navigationintent.setClass(mContext, LocationActivity.class);
+
+                }
+                startActivity(navigationintent);
+
                 break;
 
             case R.id.activation_container:

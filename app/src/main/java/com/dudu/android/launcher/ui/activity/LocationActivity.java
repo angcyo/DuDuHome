@@ -674,7 +674,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 						poiItems = poiResult.getPois();// 取得第一页的poiitem数据，页数从数字0开始
 						List<SuggestionCity> suggestionCities = poiResult
 								.getSearchSuggestionCitys();// 当搜索不到poiitem数据时，会返回含有搜索关键字的城市信息
-//						aMap.clear();// 清理之前的图标
+						aMap.clear();// 清理之前的图标
 						if (poiItems != null && poiItems.size() > 0) {
 							setPoiList();
 							switch (mapManager.getSearchType()) {
@@ -1227,6 +1227,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 			// 先将高德坐标转换为真实坐标，再将真实坐标转换为百度坐标，调用百度的获取距离的工具类来计算距离
 			double[] startPoints_gaode = Coordinate.chinatowg(
 					mStartPoint.getLongitude(), mStartPoint.getLatitude());
+			poiResultList.clear();
 			for (int i = 0; i < poiItems.size(); i++) {
 				PoiResultInfo poiResultInfo = new PoiResultInfo();
 				poiResultInfo.setAddressDetial(poiItems.get(i).getSnippet());
