@@ -46,7 +46,7 @@ public class FileUtils {
 	 * @return
 	 */
 	public static File getStorageDir() {
-		File dir = null;
+		File dir;
 		boolean sdCardExist = Environment.getExternalStorageState().equals(
 				Environment.MEDIA_MOUNTED);
 		if (sdCardExist) {

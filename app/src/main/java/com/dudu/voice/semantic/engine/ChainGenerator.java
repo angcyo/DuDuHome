@@ -2,6 +2,7 @@ package com.dudu.voice.semantic.engine;
 
 import com.dudu.voice.semantic.chain.AdjustVolumeChain;
 import com.dudu.voice.semantic.chain.MapSearchChain;
+import com.dudu.voice.semantic.chain.CmdChain;
 
 public class ChainGenerator {
 
@@ -20,4 +21,10 @@ public class ChainGenerator {
         chain.addChildChain(chain);
         return  chain;
     }
+
+    public CmdChain generateCmdChain() {
+        CmdChain chain = new CmdChain();
+        return chain;
+    }
+
 }

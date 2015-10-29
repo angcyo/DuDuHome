@@ -5,6 +5,7 @@ import android.content.Intent;
 
 import com.dudu.android.launcher.exception.CrashHandler;
 import com.dudu.android.launcher.service.NewMessageShowService;
+import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.MainActivity;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.voice.semantic.VoiceManager;
@@ -18,7 +19,7 @@ public class LauncherApplication extends Application {
 
 	public static boolean isLocation = false;
 
-
+	private RecordBindService mRecordService;
 
 	@Override
 	public void onCreate() {
@@ -52,6 +53,14 @@ public class LauncherApplication extends Application {
 	private void startFloatMessageService() {
 		Intent intent = new Intent(LauncherApplication.this, NewMessageShowService.class);
 		startService(intent);
+	}
+
+	public RecordBindService getRecordService() {
+		return mRecordService;
+	}
+
+	public void setRecordService(RecordBindService service) {
+		mRecordService = service;
 	}
 
 }

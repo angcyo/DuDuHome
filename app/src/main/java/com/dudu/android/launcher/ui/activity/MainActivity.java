@@ -1,16 +1,13 @@
 package com.dudu.android.launcher.ui.activity;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -22,17 +19,27 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.amap.api.location.AMapLocalWeatherForecast;
 import com.amap.api.location.AMapLocalWeatherListener;
 import com.amap.api.location.AMapLocalWeatherLive;
 import com.amap.api.location.LocationManagerProxy;
+import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.service.NewMessageShowService;
+import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
+import com.dudu.android.launcher.ui.activity.video.VideoActivity;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
 import com.dudu.map.MapManager;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class MainActivity extends BaseTitlebarActivity implements
@@ -54,6 +61,10 @@ public class MainActivity extends BaseTitlebarActivity implements
     private Timer timer;
 
     private LinearLayout mActivationContainer;
+
+    private RecordBindService mRecordService;
+
+    private ServiceConnection mServiceConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,12 +141,20 @@ public class MainActivity extends BaseTitlebarActivity implements
         if (timer != null) {
             timer.cancel();
         }
+
+        if (mServiceConnection != null) {
+            unbindService(mServiceConnection);
+        }
+
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.video_button:
+                mRecordService.startRecord();
+                mRecordService.startRecordTimer();
+                startActivity(new Intent(mContext, VideoActivity.class));
                 break;
 
             case R.id.nearby_button:
@@ -205,7 +224,23 @@ public class MainActivity extends BaseTitlebarActivity implements
      * 实例化录像服务
      */
     private void initVideoService() {
+        mServiceConnection = new ServiceConnection() {
 
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mRecordService = null;
+            }
+
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                mRecordService = ((RecordBindService.MyBinder) service).getService();
+                ((LauncherApplication) getApplicationContext())
+                        .setRecordService(mRecordService);
+            }
+        };
+
+        Intent intent = new Intent(mContext, RecordBindService.class);
+        bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     /**
@@ -256,6 +291,8 @@ public class MainActivity extends BaseTitlebarActivity implements
         super.onResume();
         requestWeatherInfo();
     }
+
+
 
     @Override
     public void onWeatherForecaseSearched(AMapLocalWeatherForecast arg0) {

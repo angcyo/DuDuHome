@@ -97,6 +97,26 @@
             android:theme="@style/AppBaseTheme" />
 
 
+        <activity
+            android:name=".ui.activity.video.VideoActivity"
+            android:screenOrientation="landscape" >
+        </activity>
+
+        <activity
+            android:name=".ui.activity.video.VideoListActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppBaseTheme" >
+        </activity>
+
+        <activity
+            android:name=".ui.activity.video.VideoPlayActivity"
+            android:screenOrientation="landscape" >
+        </activity>
+
+        <service android:name=".service.NewMessageShowService"/>
+
+        <service android:name=".service.RecordBindService" />
+
     </application>
 
 </manifest>
