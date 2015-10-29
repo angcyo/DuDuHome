@@ -1,7 +1,11 @@
 package com.dudu.android.launcher;
 
 import android.app.Application;
+import android.content.Intent;
+
 import com.dudu.android.launcher.exception.CrashHandler;
+import com.dudu.android.launcher.service.NewMessageShowService;
+import com.dudu.android.launcher.ui.activity.MainActivity;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.voice.semantic.VoiceManager;
 import com.iflytek.cloud.Setting;
@@ -37,10 +41,17 @@ public class LauncherApplication extends Application {
 
 		// 注册crashHandler
 		crashHandler.init(getApplicationContext());
+
+		startFloatMessageService();
 	}
 
 	public static LauncherApplication getContext() {
 		return mApplication;
+	}
+
+	private void startFloatMessageService() {
+		Intent intent = new Intent(LauncherApplication.this, NewMessageShowService.class);
+		startService(intent);
 	}
 
 }

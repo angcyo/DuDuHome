@@ -5,23 +5,12 @@ package com.dudu.voice.semantic;
  */
 public class SemanticConstants {
 
-    /**
-     * 单词
-     */
     public static final String SERVICE_CHAT = "chat";
-    /**
-     * 问题
-     */
+
     public static final String SERVICE_OPENQA = "openQA";
 
-    /**
-     *
-     */
     public static final String SERVICE_FAQ = "faq";
 
-    /**
-     * 百科
-     */
     public static final String SERVICE_BAIKE = "baike";
     /**
      * 地图
@@ -64,15 +53,20 @@ public class SemanticConstants {
 
     public static final String SERVICE_APP = "app";
 
-
     /**
      * "天气(weather)"主要用于天气情况查询的语义解析
      */
     public static final String SERVICE_WEATHER = "weather";
 
-    public static final String SERVICE_WIFI = "mwifi";
-
     public static final String SERVICE_VOICE = "voice";
+
+
+    /**
+     * 语音合成后处理类型
+     */
+    public static final int TTS_START_WAKEUP = 0;
+
+    public static final int TTS_START_UNDERSTANDING = 1;
 
 
 }

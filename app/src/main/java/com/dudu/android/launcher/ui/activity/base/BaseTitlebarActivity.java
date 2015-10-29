@@ -23,55 +23,14 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
 		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,
 				R.layout.activity_custom_title);
 
-		initTitle4G();
-
-		initTitleUserState();
+		initTitleBar();
 	}
 
-	private void initTitle4G() {
+	private void initTitleBar() {
 		TextView textView = (TextView) getWindow().findViewById(
 				R.id.titlebar_fourGTV);
-		TelephonyManager telephoneManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-		PhoneStateListener phoneStateListener = new PhoneStateListener() {
-
-			@Override
-			public void onSignalStrengthsChanged(SignalStrength signalStrength) {
-				super.onSignalStrengthsChanged(signalStrength);
-				int strength = signalStrength.getGsmSignalStrength();
-				LogUtils.i(TAG, "信号强度  :" + strength);
-
-			}
-		};
-
-		telephoneManager.listen(phoneStateListener,
-				PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
-
 		String type = NetworkUtils.getCurrentNetworkType(mContext);
 		textView.setText(type);
-
-	}
-
-	private void initTitleUserState() {
-		TextView tv = (TextView) getWindow().findViewById(
-				R.id.titlebar_userstate);
-		tv.setText("用户未激活");
-	}
-
-	// 信号格数
-	int getGsmSignalStrength(int asu) {
-		int iconLevel;
-		if (asu <= 2 || asu == 99)
-			iconLevel = 0;
-		else if (asu >= 12)
-			iconLevel = 4;
-		else if (asu >= 8)
-			iconLevel = 3;
-		else if (asu >= 5)
-			iconLevel = 2;
-		else
-			iconLevel = 1;
-
-		return iconLevel;
 	}
 
 }

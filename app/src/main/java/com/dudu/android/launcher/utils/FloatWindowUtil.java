@@ -47,6 +47,7 @@ public class FloatWindowUtil {
 			FloatWindow.getInstance().getAddressListItemClickCallback().onAddressListItemClick(listener);
 		}
 	}
+
 	// 话筒的状态改变
 	public static void changeVoice(int voice){
 		if(FloatWindow.getInstance().getFloatVoiceChangeCallBack()!=null){

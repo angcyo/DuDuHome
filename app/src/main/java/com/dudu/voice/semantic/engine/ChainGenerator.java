@@ -8,10 +8,13 @@ public class ChainGenerator {
 
     }
 
-    AdjustVolumeChain generateVoiceChain() {
+    public AdjustVolumeChain generateVoiceChain() {
         AdjustVolumeChain chain = new AdjustVolumeChain();
         chain.addChildChain(chain);
         return chain;
     }
+
+
+
 
 }

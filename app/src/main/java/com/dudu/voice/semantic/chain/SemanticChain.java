@@ -1,5 +1,7 @@
 package com.dudu.voice.semantic.chain;
 
+import com.dudu.voice.semantic.VoiceManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,11 +10,17 @@ import java.util.List;
  */
 public abstract class SemanticChain {
 
+    protected VoiceManager mVoiceManager;
+
     private List<SemanticChain> mChilds = new ArrayList<>();
 
     public abstract boolean matchSemantic(String service);
 
     public abstract boolean doSemantic(String json);
+
+    public SemanticChain() {
+        mVoiceManager = VoiceManager.getInstance();
+    }
 
     public SemanticChain getNextChild() {
         if (!mChilds.isEmpty()) {

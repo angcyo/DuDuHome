@@ -3,9 +3,13 @@ package com.dudu.voice.semantic;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.TextUtils;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.utils.Constants;
+import com.dudu.android.launcher.utils.FloatWindow;
+import com.dudu.android.launcher.utils.FloatWindowUtil;
+import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.NetworkUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
@@ -31,6 +35,8 @@ import com.iflytek.cloud.util.ResourceUtil;
 public class VoiceManager {
 
     private static final String TAG = "VoiceManager";
+
+    private static final int MISUNDERSTAND_REPEAT_COUNT = 3;
 
     private static VoiceManager mInstance;
 
@@ -275,7 +281,11 @@ public class VoiceManager {
     };
 
     public void startSpeaking(String playText) {
+
+        FloatWindowUtil.showMessage(playText, FloatWindow.MESSAGE_IN);
+
         int code = mSpeechSynthesizer.startSpeaking(playText, null);
+
         if (code != ErrorCode.SUCCESS) {
             LogUtils.d(TAG, "语音合成失败,错误码: " + code);
         }
@@ -283,10 +293,17 @@ public class VoiceManager {
 
     public void startSpeaking(String playText, int type) {
 
+        if (mMisunderstandCount >= MISUNDERSTAND_REPEAT_COUNT) {
+            playText = Constants.UNDERSTAND_EXIT;
+        }
+
+        FloatWindowUtil.showMessage(playText, FloatWindow.MESSAGE_IN);
+
         mSynthesizerType = type;
 
         int code = mSpeechSynthesizer.startSpeaking(playText,
                 mSynthesizerListener);
+
         if (code != ErrorCode.SUCCESS) {
             LogUtils.d(TAG, "语音合成失败,错误码: " + code);
         }
@@ -305,7 +322,7 @@ public class VoiceManager {
 
         @Override
         public void onBeginOfSpeech() {
-
+            FloatWindowUtil.createWindow();
         }
 
         @Override
@@ -315,15 +332,36 @@ public class VoiceManager {
 
         @Override
         public void onResult(UnderstanderResult result) {
+
+            stopUnderstanding();
+
             if (null != result) {
                 String text = result.getResultString();
-                SemanticProcessor.getProcessor().processSemantic(text);
+                if (!TextUtils.isEmpty(text)) {
+                    String message = JsonUtils.parseIatResult(text, "text");
+
+                    FloatWindowUtil.showMessage(message, FloatWindow.MESSAGE_OUT);
+
+                    SemanticProcessor.getProcessor().processSemantic(text);
+                }
             }
         }
 
         @Override
         public void onError(SpeechError speechError) {
+            LogUtils.d(TAG, "--------SpeechError:" + speechError.getErrorCode());
+            String playText;
+            if (speechError.getErrorCode() == 10118) {
+                playText = Constants.UNDERSTAND_NO_INPUT;
+            } else {
+                playText = Constants.UNDERSTAND_MISUNDERSTAND;
+            }
 
+            mMisunderstandCount++;
+
+            stopUnderstanding();
+
+            startSpeaking(playText, SemanticConstants.TTS_START_UNDERSTANDING);
         }
 
         @Override
@@ -375,7 +413,17 @@ public class VoiceManager {
         public void onCompleted(SpeechError speechError) {
             if (speechError == null) {
                 switch (mSynthesizerType) {
+                    case SemanticConstants.TTS_START_WAKEUP:
+                        startWakeup();
+                        break;
+                    case SemanticConstants.TTS_START_UNDERSTANDING:
+                        if (mMisunderstandCount >= MISUNDERSTAND_REPEAT_COUNT) {
+                            FloatWindowUtil.removeFloatWindow();
+                            return;
+                        }
 
+                        startUnderstanding();
+                        break;
                 }
             }
         }
