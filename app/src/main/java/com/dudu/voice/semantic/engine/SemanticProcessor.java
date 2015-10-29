@@ -3,8 +3,9 @@ package com.dudu.voice.semantic.engine;
 import com.dudu.android.launcher.bean.Rsphead;
 import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.voice.semantic.SemanticConstants;
-import com.dudu.voice.semantic.chain.DefaultChain;
+import com.dudu.voice.semantic.chain.Defaultchain;
 import com.dudu.voice.semantic.chain.SemanticChain;
+
 import java.util.HashMap;
 
 /**
@@ -19,7 +20,7 @@ public class SemanticProcessor {
     /**
      * 如果没有匹配到链对象，则使用默认链对象处理。
      */
-    private DefaultChain mDefaultChain;
+    private com.dudu.voice.semantic.chain.Defaultchain mDefaultChain;
 
     public static SemanticProcessor getProcessor() {
         if (mInstance == null) {
@@ -36,8 +37,9 @@ public class SemanticProcessor {
     private SemanticProcessor() {
         mChainGenerator = new ChainGenerator();
         mChainMap.put(SemanticConstants.SERVICE_VOICE, mChainGenerator.generateVoiceChain());
-
-        mDefaultChain = new DefaultChain();
+        mDefaultChain = new Defaultchain();
+        mChainMap.put(SemanticConstants.SERVICE_MAP, mChainGenerator.getMapSearchChain());
+        mChainMap.put(SemanticConstants.SERVICE_RESTAURANT, mChainGenerator.getMapSearchChain());
     }
 
     public void processSemantic(final String text) {
