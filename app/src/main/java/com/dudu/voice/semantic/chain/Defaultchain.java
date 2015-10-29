@@ -5,7 +5,7 @@ import com.dudu.voice.semantic.SemanticConstants;
 /**
  * Created by 赵圣琪 on 2015/10/29.
  */
-public class Defaultchain extends SemanticChain {
+public class DefaultChain extends SemanticChain {
 
     @Override
     public boolean matchSemantic(String service) {
