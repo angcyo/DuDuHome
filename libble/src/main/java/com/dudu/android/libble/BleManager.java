@@ -20,6 +20,7 @@ import org.scf4a.EventWrite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -354,7 +355,11 @@ public class BleManager {
         final byte[] data = characteristic.getValue();
         if (data == null) return;
         if (data.length == 0) return;
-        // log.trace("ble receive Data = \n{}", ByteUtils.byteArray2HexStringWithSpace(data));
+        try {
+            log.trace("ble receive Data = \n{}", new String(data, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            log.warn("data parse exception", e);
+        }
         EventBus.getDefault().post(new EventRead.L0ReadDone(data));
     }
 
@@ -380,7 +385,7 @@ public class BleManager {
     }
 
     private void logSysInfo() {
-        log.debug("{} {}", Build.MODEL, Build.VERSION.RELEASE);
+        log.trace("{} {}", Build.MODEL, Build.VERSION.RELEASE);
     }
 
     public void setAuth(final boolean auth) {

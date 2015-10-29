@@ -19,7 +19,6 @@
         <username>review_site@163.com</username>
         <password>nvxirhslwminqaup</password>
         <to>sean.du@dudu.tm</to>
-        <to>evan.zhao@dudu.tm</to>
         <from>review_site@163.com</from>
         <subject>%date{yyyyMMdd'T'HH:mm:ss.SSS}; %msg%n</subject>
         <layout class="ch.qos.logback.classic.html.HTMLLayout"/>
@@ -43,6 +42,8 @@
 
     <root level="DEBUG">
         <appender-ref ref="LOGCAT"/>
+<!--
         <appender-ref ref="EMAIL"/>
+-->
     </root>
 </configuration>

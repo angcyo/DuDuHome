@@ -31,4 +31,6 @@ dependencies {
     compile 'io.reactivex:rxandroid:0.25.0'
     compile 'io.reactivex:rxandroid-framework:0.25.0'
     compile 'com.android.support:design:23.1.0'
+    compile project(':scf4a')
+    compile project(':libble')
 }

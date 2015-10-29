@@ -27,7 +27,7 @@ public class BleScanner {
     private BluetoothAdapter.LeScanCallback mLeScanCallback;
 
     public BleScanner() {
-        this.mName = "";
+        this.mName = "AutoBot";
         log = LoggerFactory.getLogger(BleScanner.class);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -51,11 +51,12 @@ public class BleScanner {
                 @Override
                 public void onLeScan(final BluetoothDevice device, final int rssi, byte[] scanRecord) {
                     log.info("onLeScan {} ", device.toString());
-                    if (mName != null && device.getName() != null && device.getName().equals(mName)) {
+                    if (mName != null && device.getName() != null && device.getName().contains(mName)) {
                         //noinspection deprecation
                         mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                        log.info("Find Device: {}.", mName);
+                        EventBus.getDefault().post(new Event.BackScanResult(device));
                     }
-                    EventBus.getDefault().post(new Event.BackScanResult(device));
                 }
             };
         }

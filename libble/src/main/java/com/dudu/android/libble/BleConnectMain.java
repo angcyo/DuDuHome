@@ -3,6 +3,8 @@ package com.dudu.android.libble;
 import android.content.Context;
 
 import org.scf4a.Event;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.greenrobot.event.EventBus;
 
@@ -11,8 +13,10 @@ public class BleConnectMain {
     private static BleConnectMain ourInstance = new BleConnectMain();
     private BleScanner mBleScanner;
     private BleManager bleManager;
+    private Logger log;
 
     private BleConnectMain() {
+        log = LoggerFactory.getLogger("ble.main");
     }
 
     public static BleConnectMain getInstance() {
@@ -23,6 +27,7 @@ public class BleConnectMain {
         if (null == mBleScanner) {
             mBleScanner = new BleScanner();
         }
+        log.debug("Start BLE Scanner");
         mBleScanner.startScan();
     }
 
@@ -46,6 +51,7 @@ public class BleConnectMain {
     }
 
     public void init(Context context) {
+        EventBus.getDefault().unregister(ourInstance);
         EventBus.getDefault().register(ourInstance);
         if (null == bleManager) {
             bleManager = new BleManager(context);

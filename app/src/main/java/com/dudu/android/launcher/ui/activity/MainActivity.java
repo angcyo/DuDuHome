@@ -34,6 +34,7 @@ import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
 import com.dudu.map.MapManager;
+import com.dudu.obd.BleOBD;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -161,6 +162,8 @@ public class MainActivity extends BaseTitlebarActivity implements
                 break;
 
             case R.id.wlan_button:
+                BleOBD odb = new BleOBD();
+                odb.initOBD();
                 break;
 
             case R.id.navigation_button:
@@ -169,7 +172,7 @@ public class MainActivity extends BaseTitlebarActivity implements
                 Bundle bundle = new Bundle();
                 bundle.putBoolean("isManual", true);
                 navigationintent.putExtras(bundle);
-                if (MapManager.getInstance().isNavi() ||MapManager.getInstance().isNaviBack()) {
+                if (MapManager.getInstance().isNavi() || MapManager.getInstance().isNaviBack()) {
                     if (MapManager.getInstance().isNavi()) {
                         navigationintent.setClass(mContext,
                                 NaviCustomActivity.class);
@@ -278,20 +281,11 @@ public class MainActivity extends BaseTitlebarActivity implements
         mFlowProgressbar.setProgress(0);
     }
 
-    private class FlowUpdateReciever extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            updateFlowUsage();
-        }
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
         requestWeatherInfo();
     }
-
 
 
     @Override
@@ -330,6 +324,14 @@ public class MainActivity extends BaseTitlebarActivity implements
     private void startFloatMessageShowService() {
         Intent i = new Intent(MainActivity.this, NewMessageShowService.class);
         startService(i);
+    }
+
+    private class FlowUpdateReciever extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateFlowUsage();
+        }
     }
 
 }
