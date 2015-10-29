@@ -12,7 +12,7 @@ public abstract class SemanticChain {
 
     protected VoiceManager mVoiceManager;
 
-    private List<SemanticChain> mChilds = new ArrayList<>();
+    private List<SemanticChain> mChildren = new ArrayList<>();
 
     public abstract boolean matchSemantic(String service);
 
@@ -23,8 +23,8 @@ public abstract class SemanticChain {
     }
 
     public SemanticChain getNextChild() {
-        if (!mChilds.isEmpty()) {
-            return mChilds.get(0);
+        if (!mChildren.isEmpty()) {
+            return mChildren.get(0);
         }
 
         return null;
@@ -32,7 +32,7 @@ public abstract class SemanticChain {
 
     public void addChildChain(SemanticChain child) {
         if (child != null) {
-            mChilds.add(child);
+            mChildren.add(child);
         }
     }
 

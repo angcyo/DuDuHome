@@ -3,6 +3,7 @@ package com.dudu.voice.semantic.engine;
 import com.dudu.android.launcher.bean.Rsphead;
 import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.voice.semantic.SemanticConstants;
+import com.dudu.voice.semantic.chain.DefaultChain;
 import com.dudu.voice.semantic.chain.SemanticChain;
 import java.util.HashMap;
 
@@ -14,6 +15,11 @@ public class SemanticProcessor {
     private static SemanticProcessor mInstance = null;
 
     private ChainGenerator mChainGenerator = null;
+
+    /**
+     * 如果没有匹配到链对象，则使用默认链对象处理。
+     */
+    private DefaultChain mDefaultChain;
 
     public static SemanticProcessor getProcessor() {
         if (mInstance == null) {
@@ -31,6 +37,7 @@ public class SemanticProcessor {
         mChainGenerator = new ChainGenerator();
         mChainMap.put(SemanticConstants.SERVICE_VOICE, mChainGenerator.generateVoiceChain());
 
+        mDefaultChain = new DefaultChain();
     }
 
     public void processSemantic(final String text) {
@@ -43,11 +50,15 @@ public class SemanticProcessor {
                 mCurChain = mChainMap.get(service);
                 if (mCurChain != null) {
                     doSemantic(text);
+                } else {
+                    mDefaultChain.doSemantic(text);
                 }
             }
-        } else {
 
+            return;
         }
+
+        mDefaultChain.doSemantic(text);
     }
 
     private boolean isChainExists(Rsphead head) {
@@ -58,8 +69,11 @@ public class SemanticProcessor {
     }
 
     private void doSemantic(String text) {
+
         // 执行当前语义
-        mCurChain.doSemantic(text);
+        if (!mCurChain.doSemantic(text)) {
+            mDefaultChain.doSemantic(text);
+        }
 
         // 如果有孩子，则设置孩子为当前语义
         SemanticChain child = mCurChain.getNextChild();

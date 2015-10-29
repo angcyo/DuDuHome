@@ -309,11 +309,6 @@ public class VoiceManager {
         }
     }
 
-    public void stopSpeaking() {
-        mSpeechSynthesizer.stopSpeaking();
-    }
-
-
     private SpeechUnderstanderListener mRecognizerListener = new SpeechUnderstanderListener() {
         @Override
         public void onVolumeChanged(int i) {
