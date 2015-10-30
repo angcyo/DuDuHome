@@ -30,8 +30,7 @@ public class NaviUnderstandUtil {
 			Activity activity = ActivitiesManager
 					.getInstance().getTopActivity();
 				Bundle bundle = new Bundle();
-				if(slotsObject.has("action")){
-					System.out.println("------action");
+				if(slotsObject.has("action")) {
 					String actionType = slotsObject.getJSONObject(
 							"action").getString("type");
 					switch (actionType) {
