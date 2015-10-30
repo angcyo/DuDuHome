@@ -60,6 +60,8 @@ public class SemanticConstants {
 
     public static final String SERVICE_VOICE = "voice";
 
+    public static final String SERVICE_NAVI = "navi";
+
 
     /**
      * 语音合成后处理类型

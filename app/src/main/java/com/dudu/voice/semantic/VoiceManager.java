@@ -141,7 +141,7 @@ public class VoiceManager {
                 return;
             }
 
-            startSpeaking(Constants.WAKEUP_WORDS, Constants.TTS_ONE);
+            startSpeaking(Constants.WAKEUP_WORDS, SemanticConstants.TTS_START_UNDERSTANDING);
         }
 
         public void onError(SpeechError error) {

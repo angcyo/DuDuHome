@@ -3,7 +3,7 @@ package com.dudu.voice.semantic.chain;
 import com.dudu.voice.semantic.SemanticConstants;
 
 /**
- * Created by 赵圣琪 on 2015/10/29.
+ * Created by Administrator on 2015/10/30.
  */
 public class DefaultChain extends SemanticChain {
 

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.dudu.map.MapManager;
+import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
 
 public class NaviUnderstandUtil {
@@ -97,7 +98,6 @@ public class NaviUnderstandUtil {
 						break;
 					}
 				}else{
-					System.out.println("------no action");
 					switch (optionType) {
 						case Constants.NAVI_PREVIEW:
 							openPriview(activity, bundle);
@@ -124,7 +124,7 @@ public class NaviUnderstandUtil {
 	private static void noticeInvalid(Context context){
 		VoiceManager.getInstance().startSpeaking(
 				ToastUtils.getRandomString(context),
-				Constants.TTS_ONE);
+				SemanticConstants.TTS_START_UNDERSTANDING);
 	}
 	
 	// 打开路况

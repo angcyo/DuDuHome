@@ -3,7 +3,6 @@ package com.dudu.android.launcher.ui.activity;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.location.Location;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -73,7 +72,6 @@ import com.dudu.android.launcher.ui.dialog.RouteSearchPoiDialog.OnListItemClick;
 import com.dudu.android.launcher.ui.dialog.StrategyChoiseDialog;
 import com.dudu.android.launcher.ui.dialog.StrategyChoiseDialog.OnStrategyClickListener;
 import com.dudu.android.launcher.ui.view.CleanableCompletaTextView;
-import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.Coordinate;
 import com.dudu.android.launcher.utils.FloatWindow;
@@ -83,6 +81,7 @@ import com.dudu.android.launcher.utils.LcStringUtil;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.map.MapManager;
+import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
 
 import java.io.Serializable;
@@ -346,8 +345,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 			if (Constants.LOC_BASIC.equals(location.getType())) {
 				String playText = "请提供详细地址";
 				if (!isManual) {
-					VoiceManager.getInstance().startSpeaking(playText,
-							Constants.TTS_ONE);
+					VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_START_UNDERSTANDING);
 				}
 
 			} else if (LcStringUtil.checkStringNotNull(location.getArea())
@@ -371,10 +369,6 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 			if (Constants.CURRENT_POI.equals(startLoc.getPoi())) {
 				mapManager.setSearchType(MapManager.SEARCH_NAVI);
 				keyWord = endKeyWord;
-			} else {
-				mapManager.setSearchType(MapManager.SEARCH_FROM_TO);
-				startKeyWord = LcStringUtil.checkString(startKeyWord);
-				search(startKeyWord);
 			}
 		}
 
@@ -418,7 +412,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 								mapManager.setSearch(true);
 								String playText = "您好，请说出您想去的地方或者关键字";
 								VoiceManager.getInstance().startSpeaking(
-										playText, Constants.TTS_ONE);
+										playText, SemanticConstants.TTS_START_UNDERSTANDING);
 							}
 						}, 500);
 
@@ -430,7 +424,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 					playText = "暂时无法获取到您的详细位置，请稍后再试";
 				}
 				VoiceManager.getInstance().startSpeaking(playText,
-						Constants.TTS_ZERO);
+						SemanticConstants.TTS_START_WAKEUP);
 			}
 		} else if (mapManager.getSearchType() == MapManager.SEARCH_NAVI) {
 			startKeyWord = LcStringUtil.checkString(endKeyWord);
@@ -448,7 +442,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 				Toast.makeText(this, playText, Toast.LENGTH_SHORT).show();
 			} else {
 				VoiceManager.getInstance().startSpeaking(playText,
-						Constants.TTS_ONE);
+						SemanticConstants.TTS_START_UNDERSTANDING);
 			}
 			return;
 		}
@@ -483,7 +477,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 			if (!checkChoiseType(text)) {
 				String playText = "请选择第几个";
 				VoiceManager.getInstance().startSpeaking(playText,
-						Constants.TTS_ONE);
+						SemanticConstants.TTS_START_UNDERSTANDING);
 				return;
 			}
 			calculateNavigationStart(size);
@@ -491,7 +485,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 			if (size > mStrategyMethods.length) {
 				String playText = "选择错误，请重新选择";
 				VoiceManager.getInstance().startSpeaking(playText,
-						Constants.TTS_ONE);
+						SemanticConstants.TTS_START_UNDERSTANDING);
 				return;
 			}
 
@@ -592,7 +586,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 
 				} else {
 					VoiceManager.getInstance().startSpeaking(
-							getString(R.string.no_result), Constants.TTS_ONE);
+							getString(R.string.no_result), SemanticConstants.TTS_START_UNDERSTANDING);
 				}
 			} else if (rCode == 27) {
 				FloatWindowUtil.showMessage(getString(R.string.error_network),
@@ -700,7 +694,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 								} else {
 									String playText = "请选择列表中的地址";
 									VoiceManager.getInstance().startSpeaking(
-											playText, Constants.TTS_ONE);
+											playText, SemanticConstants.TTS_START_UNDERSTANDING);
 									FloatWindowUtil.showAddress(poiResultList,
 											new OnItemClickListener() {
 
@@ -725,13 +719,13 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 							VoiceManager.getInstance().stopUnderstanding();
 							VoiceManager.getInstance().startSpeaking(
 									getString(R.string.no_result),
-									Constants.TTS_ONE);
+									SemanticConstants.TTS_START_UNDERSTANDING);
 						}
 					}
 				} else {
 					VoiceManager.getInstance().stopUnderstanding();
 					VoiceManager.getInstance().startSpeaking(
-							getString(R.string.no_result), Constants.TTS_ONE);
+							getString(R.string.no_result), SemanticConstants.TTS_START_UNDERSTANDING);
 				}
 			} else if (rCode == 27) {
 				VoiceManager.getInstance().stopUnderstanding();
@@ -831,16 +825,8 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 			PoiResultInfo startpoiItem = isManual ? poiResultList.get(position)
 					: poiResultList.get(position - 1);
 			if (startpoiItem != null) {
-				if (startBool && mapManager.getSearchType()==MapManager.SEARCH_FROM_TO) {
-					type = 2;
-					startBool = false;
-					mStartPoint.setLatitude(startpoiItem.getLatitude());
-					mStartPoint.setLongitude(startpoiItem.getLongitude());
-					mStartPoints.add(mStartPoint);
-					endKeyWord = LcStringUtil.checkString(endKeyWord);
-					search(endKeyWord);
-				} else {
-					if (cur_location != null) {
+
+				if (cur_location != null) {
 						mStartPoint.setLatitude(cur_location.getLatitude());
 						mStartPoint.setLongitude(cur_location.getLongitude());
 						mStartPoints.clear();
@@ -872,12 +858,12 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 						if (position > poiResultList.size()) {
 							String playText = "选择错误，请重新选择";
 							VoiceManager.getInstance().startSpeaking(playText,
-									Constants.TTS_ONE);
+									SemanticConstants.TTS_START_UNDERSTANDING);
 							return;
 						}
 						String playText = "请选择路线优先策略。";
 						VoiceManager.getInstance().startSpeaking(playText,
-								Constants.TTS_ONE);
+								SemanticConstants.TTS_START_UNDERSTANDING);
 						FloatWindowUtil.showStrategy(mStrategyMethods,
 								new OnItemClickListener() {
 
@@ -891,7 +877,6 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 
 					}
 
-				}
 			}
 		} catch (IndexOutOfBoundsException e) {
 			e.printStackTrace();
@@ -899,7 +884,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 				if (position > poiItems.size()) {
 					String playText = "选择错误，请重新选择";
 					VoiceManager.getInstance().startSpeaking(playText,
-							Constants.TTS_ONE);
+							SemanticConstants.TTS_START_UNDERSTANDING);
 				}
 			}
 		}
@@ -1219,10 +1204,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 	}
 
 	private void setPoiList() {
-		if(mapManager.getSearchType()==MapManager.SEARCH_FROM_TO && cur_location!=null){
-			mStartPoint.setLatitude(cur_location.getLatitude());
-			mStartPoint.setLongitude(cur_location.getLongitude());
-		}
+
 		if (mStartPoint != null && !poiItems.isEmpty()) {
 			// 先将高德坐标转换为真实坐标，再将真实坐标转换为百度坐标，调用百度的获取距离的工具类来计算距离
 			double[] startPoints_gaode = Coordinate.chinatowg(

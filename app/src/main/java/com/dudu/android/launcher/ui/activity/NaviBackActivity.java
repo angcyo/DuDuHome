@@ -25,6 +25,7 @@ import com.amap.api.navi.model.NaviInfo;
 import com.amap.api.navi.model.NaviLatLng;
 import com.dudu.android.launcher.R;
 import com.dudu.map.MapManager;
+import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
@@ -143,7 +144,7 @@ AMapNaviViewListener{
     	if(mAmapAMapNaviView!=null&&mAmapAMapNaviView.getViewOptions()!=null){
     		FloatWindowUtil.removeFloatWindow();
     		mAmapAMapNaviView.getViewOptions().setTrafficInfoUpdateEnabled(true);
-    		VoiceManager.getInstance().startSpeaking("路况播报已打开", Constants.TTS_EIGHT);
+    		VoiceManager.getInstance().startSpeaking("路况播报已打开", SemanticConstants.TTS_DO_NOTHING);
     	}
     }
     // 关闭路况播报
@@ -151,7 +152,7 @@ AMapNaviViewListener{
     	if(mAmapAMapNaviView!=null&&mAmapAMapNaviView.getViewOptions()!=null){
     		FloatWindowUtil.removeFloatWindow();
     		mAmapAMapNaviView.getViewOptions().setTrafficInfoUpdateEnabled(false);
-    		VoiceManager.getInstance().startSpeaking("路况播报已关闭", Constants.TTS_EIGHT);
+    		VoiceManager.getInstance().startSpeaking("路况播报已关闭", SemanticConstants.TTS_DO_NOTHING);
     	}
     }
     public void closePriview(){
@@ -243,7 +244,7 @@ AMapNaviViewListener{
 				@Override
 				public void onGetNavigationText(int arg0, String arg1) {
 					// TODO Auto-generated method stub
-					VoiceManager.getInstance().startSpeaking(arg1, Constants.TTS_EIGHT);
+					VoiceManager.getInstance().startSpeaking(arg1, SemanticConstants.TTS_DO_NOTHING);
 				}
 
 				@Override

@@ -38,11 +38,14 @@ public class SemanticProcessor {
         mChainGenerator = new ChainGenerator();
 
         mChainMap.put(SemanticConstants.SERVICE_VOICE, mChainGenerator.generateVoiceChain());
-        mDefaultChain = new DefaultChain();
-        mChainMap.put(SemanticConstants.SERVICE_MAP, mChainGenerator.getMapSearchChain());
-        mChainMap.put(SemanticConstants.SERVICE_RESTAURANT, mChainGenerator.getMapSearchChain());
-        mChainMap.put(SemanticConstants.SERVICE_CMD, mChainGenerator.generateCmdChain());
 
+        mDefaultChain = new DefaultChain();
+        mChainMap.put(SemanticConstants.SERVICE_CMD, mChainGenerator.generateCmdChain());
+        mChainMap.put(SemanticConstants.SERVICE_MAP,mChainGenerator.getMapSearchChain());
+        mChainMap.put(SemanticConstants.SERVICE_NEARBY,mChainGenerator.getMapSearchChain());
+        mChainMap.put(SemanticConstants.SERVICE_RESTAURANT,mChainGenerator.getMapSearchChain());
+        mChainMap.put(SemanticConstants.SERVICE_HOTEL,mChainGenerator.getMapSearchChain());
+        mChainMap.put(SemanticConstants.SERVICE_NAVI,mChainGenerator.getNavigationChain());
     }
 
     public void processSemantic(final String text) {

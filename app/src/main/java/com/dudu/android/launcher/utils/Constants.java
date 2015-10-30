@@ -294,4 +294,6 @@ public class Constants {
 	public static final String MAP_BAIDU = "MAP_BAIDU";
 	public static final String MAP_GAODE = "MAP_GAODE";
 	public static final String DEFAULT_MAP = "DEFAULT_MAP";
+
+    public static final String XUFEIID = "55bda6e9";
 }
