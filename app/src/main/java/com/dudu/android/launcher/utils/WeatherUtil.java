@@ -7,6 +7,7 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
@@ -62,10 +63,10 @@ public class WeatherUtil {
 						+ w2.getString("weather") + "\n温度：" + tempRange + "\n"
 						+ w2.getString("wind");
 			}
-			VoiceManager.getInstance().startSpeaking(w_text, Constants.TTS_ONE);
+			VoiceManager.getInstance().startSpeaking(w_text, SemanticConstants.TTS_START_UNDERSTANDING);
 		} catch (JSONException e) {
 			VoiceManager.getInstance().startSpeaking("获取天气信息失败。",
-					Constants.TTS_ONE);
+					SemanticConstants.TTS_START_UNDERSTANDING);
 		}
 	}
 
@@ -145,7 +146,7 @@ public class WeatherUtil {
 					}
 
 					VoiceManager.getInstance().startSpeaking(w_text,
-							Constants.TTS_ONE);
+							SemanticConstants.TTS_START_UNDERSTANDING);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

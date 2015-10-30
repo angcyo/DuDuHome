@@ -202,13 +202,11 @@ AMapNaviViewListener{
 
 				@Override
 				public void onTrafficStatusUpdate() {
-					// TODO Auto-generated method stub
 
 				}
 
 				@Override
 				public void onStartNavi(int arg0) {
-					// TODO Auto-generated method stub
 
 				}
 
@@ -231,25 +229,21 @@ AMapNaviViewListener{
 
 				@Override
 				public void onInitNaviSuccess() {
-					// TODO Auto-generated method stub
 
 				}
 
 				@Override
 				public void onInitNaviFailure() {
-					// TODO Auto-generated method stub
 
 				}
 
 				@Override
 				public void onGetNavigationText(int arg0, String arg1) {
-					// TODO Auto-generated method stub
 					VoiceManager.getInstance().startSpeaking(arg1, SemanticConstants.TTS_DO_NOTHING);
 				}
 
 				@Override
 				public void onEndEmulatorNavi() {
-					// TODO Auto-generated method stub
 
 				}
 
@@ -274,32 +268,26 @@ AMapNaviViewListener{
 
 				@Override
 				public void onArrivedWayPoint(int arg0) {
-					// TODO Auto-generated method stub
 
 				}
 
 				@Override
 				public void onArriveDestination() {
-					// TODO Auto-generated method stub
 
 				}
 
 				@Override
 				public void onGpsOpenStatus(boolean arg0) {
-					// TODO Auto-generated method stub
 
 				}
 
 				@Override
 				public void onNaviInfoUpdated(AMapNaviInfo info) {
-					// TODO Auto-generated method stub
 
 				}
 
 				@Override
 				public void onNaviInfoUpdate(NaviInfo arg0) {
-
-					// TODO Auto-generated method stub
 
 				}
 			};
@@ -329,13 +317,7 @@ AMapNaviViewListener{
 
 	@Override
 	public void onNaviTurnClick() {
-//		Intent intent = new Intent(NaviBackActivity.this,
-//				SimpleHudActivity.class);
-//		intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//		Bundle bundle = new Bundle();
-//		bundle.putInt(Util.ACTIVITYINDEX, Util.EMULATORNAVI);
-//		intent.putExtras(bundle);
-//		startActivity(intent);
+
 	}
 
 	@Override
@@ -431,8 +413,6 @@ AMapNaviViewListener{
 	@Override
 	public void onPause() {
 		mAmapAMapNaviView.onPause();
-//		AMapNavi.getInstance(this)
-//				.removeAMapNaviListener(getAMapNaviListener());
 		super.onPause();
 	}
 

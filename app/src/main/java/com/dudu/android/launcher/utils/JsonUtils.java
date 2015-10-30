@@ -8,6 +8,8 @@ import org.json.JSONTokener;
 
 public class JsonUtils {
 
+	private static final String TAG = "JsonUtils";
+
 	public static Rsphead getRsphead(String json) {
 		Rsphead head = new Rsphead();
 		JSONTokener tokener = new JSONTokener(json);
@@ -21,7 +23,7 @@ public class JsonUtils {
 			head.setText(joResult.optString("text"));
 			return head;
 		} catch (JSONException e) {
-			e.printStackTrace();
+			LogUtils.e(TAG, e.getMessage());
 		}
 		return null;
 	}
@@ -32,8 +34,43 @@ public class JsonUtils {
 			JSONObject joResult = new JSONObject(tokener);
 			return joResult.optString(name);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LogUtils.e(TAG, e.getMessage());
 		} 
+		return null;
+	}
+
+	public static String parseIatResultChoiseSize(String json) {
+		try {
+			JSONTokener tokener = new JSONTokener(json);
+			JSONObject joResult = new JSONObject(tokener);
+			joResult = joResult.optJSONObject("slots");
+			if(joResult != null){
+				joResult = joResult.optJSONObject("choise");
+				if(joResult != null) {
+					return joResult.optString("size");
+				}
+			}
+		} catch (Exception e) {
+			LogUtils.e(TAG, e.getMessage());
+		}
+
+		return null;
+	}
+
+	public static String parseIatResultNearby(String json) {
+		try {
+			JSONTokener tokener = new JSONTokener(json);
+			JSONObject joResult = new JSONObject(tokener);
+			joResult = joResult.optJSONObject("slots");
+			if(joResult != null){
+				joResult = joResult.optJSONObject("nearby");
+				if(joResult != null){
+					return joResult.optString("type");
+				}
+			}
+		} catch (Exception e) {
+			LogUtils.e(TAG, e.getMessage());
+		}
 		return null;
 	}
 

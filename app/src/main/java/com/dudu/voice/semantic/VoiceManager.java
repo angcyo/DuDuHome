@@ -3,6 +3,7 @@ package com.dudu.voice.semantic;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.text.TextUtils;
 
 import com.dudu.android.launcher.LauncherApplication;
@@ -66,6 +67,8 @@ public class VoiceManager {
      */
     private int mMisunderstandCount = 0;
 
+    private Handler mHandler;
+
     /**
      * 获取整个应用唯一语音控制对象
      */
@@ -87,6 +90,8 @@ public class VoiceManager {
                 mSpeechUnderstanderListener);
 
         setTtsParameter();
+
+        mHandler = new Handler();
     }
 
     /**
@@ -138,6 +143,12 @@ public class VoiceManager {
 
             if (!NetworkUtils.isNetworkConnected(mContext)) {
                 startSpeaking(Constants.WAKEUP_NETWORK_UNAVAILABLE);
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        FloatWindowUtil.removeFloatWindow();
+                    }
+                }, 4000);
                 return;
             }
 

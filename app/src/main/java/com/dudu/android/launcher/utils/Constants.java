@@ -13,28 +13,6 @@ public class Constants {
 	public static final UUID UUIDS = UUID.fromString(UUID.randomUUID().toString());
 	public static final String XUFEIID = "55bda6e9";
 
-	public static final String TTS_BROADCAST = "COM.DUDU.ANDROID.LAUNCHER.BROADCAST.TTS_BROADCASTRECEIVER_ACTION";
-	public static final String UNDERSTANDER_DIALOG_BROADCAST = "COM.DUDU.ANDROID.LAUNCHER.BROADCAST.UNDERSTANDER_DIALOG_BROADCASTRECEIVER_ACTION";
-
-	public static final String IN_MESSAGE_BROADCAST = "COM.DUDU.ANDROID.LAUNCHER.BROADCAST.IN_MESSAGE_BROADCAST_ACTION";
-	public static final String OUT_MESSAGE_BROADCAST = "COM.DUDU.ANDROID.LAUNCHER.BROADCAST.OUT_MESSAGE_BROADCAST_ACTION";
-
-	public static final String CHECKBOX_BROADCAST_ACTION = "COM.DUDU.ANDROID.LAUNCHER.BROADCAST.CHECKBOX_BROADCAST_ACTION";
-
-	public static final String LOCAL_ACTION = "com.dudu.android.launcher.service.TtsBroadcastReceiverLocal";
-	public static final String CLOUD_ACTION = "com.dudu.android.launcher.service.TtsBroadcastReceiverCloud";
-
-	public static final String UPLOAD_CONTACTS = "COM.DUDU.ANDROID.LAUNCHER.service.UploadContactsReceiver";
-
-	public static final String VOICE_IDLE_MONTOR = "com.dudu.android.launcher.voice.idle.monitor";
-
-	public static final String WAKEUPER_SERVICE = "com.dudu.android.launcher.service.WakeuperService";
-	public static final String MESSAGESHOW_SERVICE = "com.dudu.android.launcher.service.MessageShowService";
-	public static final String SPEECHUNDERSTANDER_SERVICE = "com.dudu.android.launcher.service.SpeechUnderstanderService";
-	public static final String BLUETOOTH_INCALL = "android.intent.action.incall";
-	public static final String BLUETOOTH_CONNECT = "android.intent.action.connect";
-
-	public static final String KEY_GRAMMAR_BNF_ID = "grammar_bnf_id";
 
 	public static final String NAVIGATION = "导航";
 	public static final String MUSIC = "音乐";
@@ -137,52 +115,13 @@ public class Constants {
 	public static final String CMD_ADDRESS = "address";
 	public static final String CMD_OPTION = "option";
 	public static final String CMD_TYPE = "type";
-
-	public static final String DELETE_CONTACTS = "联系人";
-
-
-	public static final int GUARD_TIME = 5 * 1000;
-	
-	public static final int MESSAGE_TIME = 5 * 1000;
-
-	public static final int MESSAGE_TTS_TIME = 5 * 1000;
 	
 	public static final int VOICE_WAKEUP_CURTHRESH = 10;
-	
-	public static final int VOICE_MISUNDERSTAND_REAPEAT_COUNT = 3;
 
 	// 代表我的位置
 	public static final String CURRENT_POI = "CURRENT_POI";
 	// 地址不够详细
 	public static final String LOC_BASIC = "LOC_BASIC";
-
-	/**
-	 * 播报完成之后 不开启语义跟界面，但是要开启唤醒
-	 */
-	public static final int TTS_ZERO = 0;
-	/**
-	 * 播报完成之后 开启语义
-	 */
-	public static final int TTS_ONE = 1;
-	/**
-	 * 播报完成之后 启动界面
-	 */
-	public static final int TTS_TWO = 2;
-
-	/**
-	 * 播报完成之后 开启语音读写
-	 */
-	public static final int TTS_THREE = 3;
-
-	/**
-	 * 播报完成之后 开启离线命令输入
-	 */
-	public static final int TTS_FOUR = 4;
-
-	/**
-	 * 播报完成之后 什么都不做
-	 */
-	public static final int TTS_EIGHT = 8;
 
 	/**
 	 * Action：开启服务器
@@ -295,5 +234,4 @@ public class Constants {
 	public static final String MAP_GAODE = "MAP_GAODE";
 	public static final String DEFAULT_MAP = "DEFAULT_MAP";
 
-    public static final String XUFEIID = "55bda6e9";
 }

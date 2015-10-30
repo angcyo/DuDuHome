@@ -66,9 +66,12 @@ public class SemanticConstants {
     /**
      * 语音合成后处理类型
      */
-    public static final int TTS_START_WAKEUP = 0;
 
-    public static final int TTS_START_UNDERSTANDING = 1;
+    public static final int TTS_DO_NOTHING = 0;
+
+    public static final int TTS_START_WAKEUP = 1;
+
+    public static final int TTS_START_UNDERSTANDING = 2;
 
 
 }
