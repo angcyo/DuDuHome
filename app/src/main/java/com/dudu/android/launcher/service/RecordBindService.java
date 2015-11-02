@@ -247,7 +247,6 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 		Camera.Parameters p = camera.getParameters();
 		final List<Size> listSize = p.getSupportedPreviewSizes();
 		Size mPreviewSize = listSize.get(2);
-		Log.v(TAG, "use: width = " + mPreviewSize.width + " height = " + mPreviewSize.height);
 		p.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
 		p.setPreviewFormat(PixelFormat.YCbCr_420_SP);
 		p.setPictureSize(1280, 720);
@@ -269,11 +268,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 		camera.unlock();
 		mediaRecorder.setPreviewDisplay(surfaceHolder.getSurface());
 		mediaRecorder.setCamera(camera);
-		// mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
 		mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-		// mediaRecorder.setProfile(CamcorderProfile
-		// .get(CamcorderProfile.QUALITY_HIGH));
-
 		mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
 		CamcorderProfile profile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
 		mediaRecorder.setVideoSize(640, 480);

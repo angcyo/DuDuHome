@@ -7,6 +7,7 @@ import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.os.IBinder;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -33,7 +34,10 @@ import com.dudu.android.launcher.utils.FloatWindow.FloatVoiceChangeCallBack;
 import com.dudu.android.launcher.utils.FloatWindow.MessageShowCallBack;
 import com.dudu.android.launcher.utils.FloatWindow.RemoveFloatWindowCallBack;
 import com.dudu.android.launcher.utils.FloatWindow.StrategyChooseCallBack;
+import com.dudu.map.MapManager;
+import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
+import com.dudu.voice.semantic.chain.ChoosePageChain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +47,7 @@ import java.util.List;
  */
 public class NewMessageShowService extends Service implements MessageShowCallBack, AddressShowCallBack,
         StrategyChooseCallBack, FloatVoiceChangeCallBack,
-        AddressListItemClickCallback, RemoveFloatWindowCallBack, CreateFloatWindowCallBack {
+        AddressListItemClickCallback, RemoveFloatWindowCallBack, CreateFloatWindowCallBack,FloatWindow.ChooseAddressPageCallBack {
 
     private FloatWindow mFloatWindow;
 
@@ -74,6 +78,10 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
     private Handler mHandler;
 
+    private boolean isShowAddress = false;
+
+    private int pageIndex = 0;
+    public static final int VIEW_COUNT = 5;				// 每页显示5条
     @Override
     public IBinder onBind(Intent intent) {
         // TODO Auto-generated method stub
@@ -90,12 +98,14 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
         mHandler = new Handler();
         initWindow();
         mFloatWindow = FloatWindow.getInstance();
+
         mFloatWindow.setAddressShowCallBack(this);
         mFloatWindow.setMessageShowCallBack(this);
         mFloatWindow.setStrategyChooseCallBack(this);
         mFloatWindow.setFloatVoiceChangeCallBack(this);
         mFloatWindow.setAddressListItemClickCallback(this);
         mFloatWindow.setRemoveFloatWindowCallBack(this);
+        mFloatWindow.setChooseAddressPageCallBack(this);
     }
 
     // 初始化window
@@ -110,6 +120,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
                         | LayoutParams.FLAG_NOT_FOCUSABLE;
                 windowParams.width = getWmWidth();
                 windowParams.height = getWmHeigth();
+
                 windowParams.x = 0;
                 windowParams.y = 0;
                 windowParams.alpha = 1.0f;
@@ -154,6 +165,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
     @Override
     public void showStrategy(String[] str) {
+        pageIndex = 0;
         if (!isShowWindow) {
             if (windowManager != null && floatWindowLayout != null && windowParams != null) {
                 windowManager.addView(floatWindowLayout, windowParams);
@@ -171,6 +183,8 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
     @Override
     public void showAddress(List<PoiResultInfo> poiList) {
+        isShowAddress = true;
+        pageIndex = 0;
         if (!isShowWindow) {
             if (windowManager != null && floatWindowLayout != null && windowParams != null) {
                 windowManager.addView(floatWindowLayout, windowParams);
@@ -189,11 +203,10 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
     //消息显示
     @Override
     public void showMessage(String message, String type) {
-
+        if(isShowAddress)
+            return;
         try {
             if (TextUtils.isEmpty(message))
-                return;
-            if (LauncherApplication.isLocation)
                 return;
             if (!isShowWindow) {
                 if (windowManager != null && floatWindowLayout != null && windowParams != null) {
@@ -240,6 +253,29 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
             addressList.setOnItemClickListener(listener);
         VoiceManager.getInstance().stopUnderstanding();
     }
+
+    @Override
+    public void choosePage(int type) {
+        Log.d("choosePage","----------------pageIndex：" + pageIndex);
+
+        if(type== ChoosePageChain.NEXT_PAGE) {
+
+            if (pageIndex >= 3) {
+                VoiceManager.getInstance().startSpeaking("已经是最后一页", SemanticConstants.TTS_START_UNDERSTANDING, false);
+                return;
+            }
+            pageIndex++;
+        }else{
+            if(pageIndex <= 0){
+                VoiceManager.getInstance().startSpeaking("已经是第一页", SemanticConstants.TTS_START_UNDERSTANDING, false);
+                return;
+            }
+            pageIndex--;
+        }
+        addressList.setSelection(pageIndex*VIEW_COUNT);
+    }
+
+
 
     class MessageAdapter extends BaseAdapter {
 
@@ -302,8 +338,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
     @Override
     public void removeFloatWindow() {
-        if (LauncherApplication.isLocation)
-            return;
+
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -312,6 +347,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
                         windowManager.removeView(floatWindowLayout);
                     }
                     isShowWindow = false;
+                    isShowAddress = false;
                     if (!list.isEmpty())
                         list.clear();
                 } catch (Exception e) {

@@ -13,6 +13,7 @@ public class FloatWindow {
 	private AddressListItemClickCallback addressListItemClickCallback;
 	private RemoveFloatWindowCallBack removeFloatWindowCallBack;
 	private CreateFloatWindowCallBack createFloatWindowCallBack;
+	private ChooseAddressPageCallBack chooseAddressPageCallBack;
 	public static final String MESSAGE_IN = "input";
 	public static final String MESSAGE_OUT = "output";
 	public static FloatWindow getInstance(){
@@ -67,6 +68,15 @@ public class FloatWindow {
     public interface CreateFloatWindowCallBack{
     	void createFloatWindow();
     }
+
+	public interface ChooseAddressPageCallBack{
+		/**
+		 * 上一页，下一页
+		 * @param type
+		 */
+		void choosePage(int type);
+	}
+
 	public MessageShowCallBack getMessageShowCallBack() {
 		return messageShowCallBack;
 	}
@@ -122,9 +132,15 @@ public class FloatWindow {
 		return createFloatWindowCallBack;
 	}
 
-	public void setCreateFloatWindowCallBack(
-			CreateFloatWindowCallBack createFloatWindowCallBack) {
+	public void setCreateFloatWindowCallBack(CreateFloatWindowCallBack createFloatWindowCallBack) {
 		this.createFloatWindowCallBack = createFloatWindowCallBack;
 	}
-	
+
+	public ChooseAddressPageCallBack getChooseAddressPageCallBack() {
+		return chooseAddressPageCallBack;
+	}
+
+	public void setChooseAddressPageCallBack(ChooseAddressPageCallBack chooseAddressPageCallBack) {
+		this.chooseAddressPageCallBack = chooseAddressPageCallBack;
+	}
 }

@@ -3,6 +3,7 @@ package com.dudu.android.launcher.ui.activity;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -72,6 +74,7 @@ import com.dudu.android.launcher.ui.dialog.RouteSearchPoiDialog.OnListItemClick;
 import com.dudu.android.launcher.ui.dialog.StrategyChoiseDialog;
 import com.dudu.android.launcher.ui.dialog.StrategyChoiseDialog.OnStrategyClickListener;
 import com.dudu.android.launcher.ui.view.CleanableCompletaTextView;
+import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.Coordinate;
 import com.dudu.android.launcher.utils.FloatWindow;
@@ -83,6 +86,7 @@ import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.map.MapManager;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
+import com.dudu.voice.semantic.chain.ChoosePageChain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -92,7 +96,7 @@ import java.util.List;
 
 @SuppressLint("RtlHardcoded")
 public class LocationActivity extends BaseNoTitlebarAcitivity implements
-		LocationSource, AMapLocationListener {
+		LocationSource, AMapLocationListener{
 
 	private final static int CALCULATEERROR = 1;// 启动路径计算失败状态
 	private final static int CALCULATESUCCESS = 2;// 启动路径计算成功状态
@@ -157,7 +161,6 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 
     private MapManager mapManager = MapManager.getInstance();
 	private Handler mhandler;
-
 	private Runnable removeWindowRunnable = new Runnable() {
 
 		@Override
@@ -165,6 +168,8 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 			FloatWindowUtil.removeFloatWindow();
 		}
 	};
+
+
 
 	@Override
 	public int initContentView() {
@@ -345,7 +350,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 			if (Constants.LOC_BASIC.equals(location.getType())) {
 				String playText = "请提供详细地址";
 				if (!isManual) {
-					VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_START_UNDERSTANDING);
+					VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_START_UNDERSTANDING,false);
 				}
 
 			} else if (LcStringUtil.checkStringNotNull(location.getArea())
@@ -398,7 +403,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 	}
 
 	public void startPoi() {
-		Log.d("lxh", "开始搜索");
+
 		if (mapManager.getSearchType()==MapManager.SEARCH_POI) {
 			if (!Constants.CURRENT_POI.equals(keyWord)) {
 				if (LcStringUtil.checkStringNotNull(keyWord)) {
@@ -425,6 +430,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 				}
 				VoiceManager.getInstance().startSpeaking(playText,
 						SemanticConstants.TTS_START_WAKEUP);
+				removeFloatWindow();
 			}
 		} else if (mapManager.getSearchType() == MapManager.SEARCH_NAVI) {
 			startKeyWord = LcStringUtil.checkString(endKeyWord);
@@ -442,7 +448,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 				Toast.makeText(this, playText, Toast.LENGTH_SHORT).show();
 			} else {
 				VoiceManager.getInstance().startSpeaking(playText,
-						SemanticConstants.TTS_START_UNDERSTANDING);
+						SemanticConstants.TTS_START_UNDERSTANDING,false);
 			}
 			return;
 		}
@@ -477,7 +483,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 			if (!checkChoiseType(text)) {
 				String playText = "请选择第几个";
 				VoiceManager.getInstance().startSpeaking(playText,
-						SemanticConstants.TTS_START_UNDERSTANDING);
+						SemanticConstants.TTS_START_UNDERSTANDING,false);
 				return;
 			}
 			calculateNavigationStart(size);
@@ -485,7 +491,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 			if (size > mStrategyMethods.length) {
 				String playText = "选择错误，请重新选择";
 				VoiceManager.getInstance().startSpeaking(playText,
-						SemanticConstants.TTS_START_UNDERSTANDING);
+						SemanticConstants.TTS_START_UNDERSTANDING,false);
 				return;
 			}
 
@@ -694,7 +700,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 								} else {
 									String playText = "请选择列表中的地址";
 									VoiceManager.getInstance().startSpeaking(
-											playText, SemanticConstants.TTS_START_UNDERSTANDING);
+											playText, SemanticConstants.TTS_START_UNDERSTANDING,false);
 									FloatWindowUtil.showAddress(poiResultList,
 											new OnItemClickListener() {
 
@@ -753,7 +759,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 	 */
 	private void showSuggestCity(List<SuggestionCity> cities) {
 		String infomation = "我没有听清楚，请再说一次";
-		VoiceManager.getInstance().startSpeaking(infomation);
+		VoiceManager.getInstance().startSpeaking(infomation,SemanticConstants.TTS_START_UNDERSTANDING);
 		FloatWindowUtil.showMessage(infomation, FloatWindow.MESSAGE_IN);
 		removeFloatWindow();
 	}
@@ -858,12 +864,13 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 						if (position > poiResultList.size()) {
 							String playText = "选择错误，请重新选择";
 							VoiceManager.getInstance().startSpeaking(playText,
-									SemanticConstants.TTS_START_UNDERSTANDING);
+									SemanticConstants.TTS_START_UNDERSTANDING,false);
 							return;
 						}
 						String playText = "请选择路线优先策略。";
+						VoiceManager.getInstance().clearMisUnderstandCount();
 						VoiceManager.getInstance().startSpeaking(playText,
-								SemanticConstants.TTS_START_UNDERSTANDING);
+								SemanticConstants.TTS_START_UNDERSTANDING,false);
 						FloatWindowUtil.showStrategy(mStrategyMethods,
 								new OnItemClickListener() {
 
@@ -884,7 +891,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 				if (position > poiItems.size()) {
 					String playText = "选择错误，请重新选择";
 					VoiceManager.getInstance().startSpeaking(playText,
-							SemanticConstants.TTS_START_UNDERSTANDING);
+							SemanticConstants.TTS_START_UNDERSTANDING,false);
 				}
 			}
 		}
@@ -941,37 +948,41 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 				}
 
 				@Override
-				public void onGetNavigationText(int arg0, String arg1) {
+				public void onGetNavigationText(int arg0, String text) {
 
+					VoiceManager.getInstance().clearMisUnderstandCount();
+					VoiceManager.getInstance().startSpeaking(text,
+							SemanticConstants.TTS_DO_NOTHING, false);
 				}
 
 				@Override
 				public void onEndEmulatorNavi() {
+
 				}
 
 				@Override
 				public void onCalculateRouteSuccess() {
-//					if (mDBManager != null)
-//						mDBManager.saveSeachHistory(naviAddress);
-//
-//					LocationUtils.getInstance(LocationActivity.this).setNaviStartPoint
-//					(mStartPoints.get(0).getLatitude(), mStartPoints.get(0).getLongitude());
-//
-//					LocationUtils.getInstance(LocationActivity.this).setNaviStartPoint
-//					(mEndPoint.getLatitude(), mEndPoint.getLongitude());
-//
-//					dissmissProgressDialog();
-//					mapManager.setShowAddress(false);
-//					FloatWindowUtil.removeFloatWindow();
-//					if (strategyDialog != null && strategyDialog.isShowing())
-//						strategyDialog.dismiss();
-//					ActivitiesManager.getInstance().closeTargetActivity(
-//							NaviCustomActivity.class);
-//					Intent standIntent = new Intent(LocationActivity.this,
-//							NaviCustomActivity.class);
-//					startActivity(standIntent);
-//					standIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//					LocationActivity.this.finish();
+					if (mDBManager != null)
+						mDBManager.saveSeachHistory(naviAddress);
+
+					LocationUtils.getInstance(LocationActivity.this).setNaviStartPoint
+					(mStartPoints.get(0).getLatitude(), mStartPoints.get(0).getLongitude());
+
+					LocationUtils.getInstance(LocationActivity.this).setNaviStartPoint
+					(mEndPoint.getLatitude(), mEndPoint.getLongitude());
+
+					dissmissProgressDialog();
+					mapManager.setShowAddress(false);
+					FloatWindowUtil.removeFloatWindow();
+					if (strategyDialog != null && strategyDialog.isShowing())
+						strategyDialog.dismiss();
+					ActivitiesManager.getInstance().closeTargetActivity(
+							NaviCustomActivity.class);
+					Intent standIntent = new Intent(LocationActivity.this,
+							NaviCustomActivity.class);
+					startActivity(standIntent);
+					standIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					LocationActivity.this.finish();
 				}
 
 				@Override
@@ -1133,6 +1144,9 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 
 			latlong = new LatLng(mLatLonPoint.getLatitude(),
 					mLatLonPoint.getLongitude());
+			mStartPoint.setLatitude(aLocation.getLatitude());
+			mStartPoint.setLongitude(aLocation.getLongitude());
+
 			if (isFirst) {
 				isFirst = false;
 				startPoi();
@@ -1251,6 +1265,29 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 	private void removeFloatWindow() {
 		if (mhandler != null && removeWindowRunnable != null) {
 			mhandler.postDelayed(removeWindowRunnable, 1500);
+		}
+	}
+
+	public void choosePage(int type){
+
+		if(type== ChoosePageChain.NEXT_PAGE){
+			if(isManual){
+				if(addressDialog!=null)
+					addressDialog.nextPage();
+			}else{
+
+				FloatWindowUtil.chooseAddressPage(ChoosePageChain.NEXT_PAGE);
+			}
+
+		}else{
+			if(isManual){
+				if(addressDialog!=null)
+					addressDialog.lastPage();
+			}else{
+
+				FloatWindowUtil.chooseAddressPage(ChoosePageChain.LAST_PAGE);
+			}
+
 		}
 	}
 }

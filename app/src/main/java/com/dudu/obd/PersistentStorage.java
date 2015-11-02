@@ -50,10 +50,8 @@ public class PersistentStorage {
 
 	public boolean addTail(String jsonStrData) {
 		// TODO Auto-generated method stub
-		Log.i("lxh", "-------------添加 " + jsonStrData);
 		if (alldatas != null)
 			alldatas.add(jsonStrData);
-		Log.i("lxh", "---------------------allDatas.size: " + alldatas.size());
 		String alldataString = "";
 		JSONArray jsonArray = new JSONArray(alldatas);
 
@@ -82,7 +80,6 @@ public class PersistentStorage {
 		} else {
 			return false;
 		}
-		Log.i("lxh", "---------------------alldatas.length: " + alldatas.size());
 
 		return true;
 	}

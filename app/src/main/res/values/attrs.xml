@@ -20,7 +20,7 @@
         <attr name="spacing" />
         <attr name="circleDrawable" />
     </declare-styleable>
-    
+
     <declare-styleable name="WifiProgress">
         <attr name="firstWifiColor" />
         <attr name="secondWifiColor" />
@@ -28,6 +28,13 @@
         <attr name="secondWifiWidth" />
         <attr name="defaultWifiWidth" />
         <attr name="defaultWifiColor" />
+    </declare-styleable>
+
+    <declare-styleable name="TasksCompletedView">
+        <attr name="radius" format="dimension" />
+        <attr name="strokeWidth" format="dimension" />
+        <attr name="circleColor" format="color" />
+        <attr name="ringColor" format="color" />
     </declare-styleable>
 
 </resources>

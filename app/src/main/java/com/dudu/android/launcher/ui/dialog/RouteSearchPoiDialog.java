@@ -1,10 +1,9 @@
 package com.dudu.android.launcher.ui.dialog;
 
-import java.util.List;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -15,6 +14,10 @@ import android.widget.ListView;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.bean.PoiResultInfo;
 import com.dudu.android.launcher.ui.adapter.RouteSearchAdapter;
+import com.dudu.voice.semantic.SemanticConstants;
+import com.dudu.voice.semantic.VoiceManager;
+
+import java.util.List;
 
 public class RouteSearchPoiDialog extends Dialog implements
 		OnItemClickListener, OnItemSelectedListener {
@@ -24,7 +27,11 @@ public class RouteSearchPoiDialog extends Dialog implements
 	private RouteSearchAdapter adapter;
 	protected OnListItemClick mOnClickListener;
 	private Button back_button;
-	
+	private ListView listView;
+    public static final int VIEW_COUNT = 5;				// 每页显示5条
+	private int pageIndex = 0;				// 当前页的索引
+
+
 	public RouteSearchPoiDialog(Context context) {
 		this(context, R.style.RouteSearchPoiDialogStyle);
 	}
@@ -45,7 +52,7 @@ public class RouteSearchPoiDialog extends Dialog implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.routesearch_list_poi);
 		adapter = new RouteSearchAdapter(this.context,poiItems);
-		ListView listView = (ListView) findViewById(R.id.search_list_poi);
+		listView = (ListView) findViewById(R.id.search_list_poi);
 		listView.setAdapter(adapter);
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -83,11 +90,32 @@ public class RouteSearchPoiDialog extends Dialog implements
 	}
 
 	public interface OnListItemClick {
-		public void onListItemClick(int position);
+		 void onListItemClick(int position);
 	}
 
 	public void setOnListClickListener(OnListItemClick l) {
 		mOnClickListener = l;
 		adapter.setOnListItemClick(l);
 	}
+
+	public void nextPage(){
+		if(pageIndex>=4){
+			VoiceManager.getInstance().startSpeaking("已经是最后一页", SemanticConstants.TTS_START_UNDERSTANDING,false);
+			return;
+		}
+
+		pageIndex++;
+		listView.setSelection(pageIndex*VIEW_COUNT);
+	}
+
+	public void lastPage() {
+		if(pageIndex>=0){
+			VoiceManager.getInstance().startSpeaking("已经是第一页", SemanticConstants.TTS_START_UNDERSTANDING,false);
+			return;
+		}
+
+		pageIndex--;
+		listView.setSelection(pageIndex*VIEW_COUNT);
+	}
+
 }

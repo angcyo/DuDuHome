@@ -28,7 +28,7 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
 
 	private void initTitleBar() {
 		TextView textView = (TextView) getWindow().findViewById(
-				R.id.titlebar_fourGTV);
+				R.id.signal_textview);
 		String type = NetworkUtils.getCurrentNetworkType(mContext);
 		textView.setText(type);
 	}

@@ -5,7 +5,7 @@
     android:background="@android:color/transparent" >
 
     <TextView
-        android:id="@+id/titlebar_fourGTV"
+        android:id="@+id/signal_textview"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
@@ -14,26 +14,6 @@
         android:layout_marginRight="20dp"
         android:gravity="center_vertical"
         android:text="4G"
-        android:textColor="@color/white"
-        android:textSize="9sp" />
-
-    <ImageView
-        android:id="@+id/titlebar_btIV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="10dp"
-        android:layout_toLeftOf="@+id/titlebar_fourGTV"
-        android:src="@drawable/titlebar_bluetooth" />
-
-    <TextView
-        android:id="@+id/titlebar_userstate"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/titlebar_btIV"
-        android:gravity="center_vertical"
-        android:text="用户已激活"
         android:textColor="@color/white"
         android:textSize="9sp" />
 

@@ -252,7 +252,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 				@Override
 				public void onGetNavigationText(int arg0, String arg1) {
 					// TODO Auto-generated method stub
-					VoiceManager.getInstance().startSpeaking(arg1,SemanticConstants.TTS_DO_NOTHING);
+					VoiceManager.getInstance().startSpeaking(arg1,SemanticConstants.TTS_DO_NOTHING,false);
 				}
 
 				@Override

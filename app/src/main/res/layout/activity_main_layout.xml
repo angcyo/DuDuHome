@@ -51,6 +51,7 @@
                 android:ellipsize="marquee"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
+                android:text="@string/fetching_weather"
                 android:gravity="center"
                 android:maxWidth="50dp"
                 android:minWidth="30dp"
@@ -68,37 +69,25 @@
                 android:textSize="8sp" />
         </RelativeLayout>
 
-        <LinearLayout
-            android:id="@+id/activation_container"
+        <Button
+            android:id="@+id/version_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="53dp"
-            android:layout_marginTop="8.6dp"
-            android:background="@drawable/activation_button_bg"
-            android:gravity="center_vertical"
-            android:orientation="horizontal" >
+            android:layout_marginRight="60dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/version_info"
+            android:text="@string/versin_info"
+            android:textColor="@android:color/white"
+            android:textSize="11sp"
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/main_activation_button_right_margin"
-                android:layout_marginRight="@dimen/main_activation_button_left_margin"
-                android:background="@drawable/gesture" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/service_activation"
-                android:textColor="@android:color/white"
-                android:textSize="11sp" />
-        </LinearLayout>
+            android:orientation="horizontal" />
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="40dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingLeft="32dp"
@@ -148,46 +137,5 @@
                 android:background="@drawable/menu_wlan_button_selector" />
         </LinearLayout>
     </LinearLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp" >
-
-        <ProgressBar
-            android:id="@+id/flow_progressbar"
-            style="@style/MyProgressBarStyleHorizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="5dp"
-            android:layout_alignLeft="@+id/dot_container"
-            android:layout_alignRight="@+id/dot_container"
-            android:layout_centerVertical="true"
-            android:max="100"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="1dp"
-            android:progress="0" />
-
-        <LinearLayout
-            android:id="@+id/dot_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:orientation="horizontal" >
-
-            <ImageView style="@style/main_dot_style" />
-
-            <ImageView style="@style/main_dot_style" />
-
-            <ImageView style="@style/main_dot_style" />
-
-            <ImageView style="@style/main_dot_style" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/dot_selector" />
-        </LinearLayout>
-    </RelativeLayout>
 
 </LinearLayout>

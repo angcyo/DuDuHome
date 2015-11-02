@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Launcher</string>
-    <string name="service_activation">车主服务激活</string>
+    <string name="versin_info">版本信息</string>
     <string name="flow_500m">500M</string>
     <string name="flow_1.5g">1.5G</string>
     <string name="flow_3g">3G</string>
@@ -61,7 +61,14 @@
     <string name="alert_cache_space_full">视频存储控件已满，请手动释放空间.</string>
     <string name="get_weather_info_failed">获取天气预报失败!</string>
     <string name="unkown_weather_info">未知天气</string>
+    <string name="fetching_weather">正在获取天气信息...</string>
     <string name="no_network_connection_toast">没有网络</string>
+    <string name="delete_video">确定删除此视频？</string>
+    <string name="ok">确认</string>
+    <string name="cancel">取消</string>
+    <string name="message_no_video">暂无视频信息</string>
+    <string name="used_flow">已用流量</string>
+    <string name="rest_flow">剩余流量</string>
 
     <string-array name="action_menu_list_select">
         <item>选择</item>
@@ -72,7 +79,5 @@
     <string-array name="cannot_understand_list">
         <item>我没有听清楚，请再说一次</item>
     </string-array>
-    <string name="nearby">附近评价最高的轮胎保养品牌</string>
-    <string name="appointment">立即预约</string>
-    <string name="title_activity_location">title_activity_location</string>
+
 </resources>

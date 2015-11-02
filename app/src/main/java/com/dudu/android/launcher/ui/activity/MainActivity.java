@@ -1,10 +1,8 @@
 package com.dudu.android.launcher.ui.activity;
 
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -16,7 +14,6 @@ import android.view.View.OnLongClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,11 +27,9 @@ import com.dudu.android.launcher.service.NewMessageShowService;
 import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
-import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
 import com.dudu.map.MapManager;
-import com.dudu.obd.BleOBD;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -49,10 +44,6 @@ public class MainActivity extends BaseTitlebarActivity implements
     private Button mVideoButton, mNavigationButton, mPhoneButton,
             mNearbyButton, mWlanButton;
 
-    private ProgressBar mFlowProgressbar;
-
-    private FlowUpdateReciever mFlowReciever;
-
     private LocationManagerProxy mLocationManagerProxy;
 
     private TextView mDateTextView, mWeatherView, mTemperatureView;
@@ -60,8 +51,6 @@ public class MainActivity extends BaseTitlebarActivity implements
     private ImageView mWeatherImage;
 
     private Timer timer;
-
-    private LinearLayout mActivationContainer;
 
     private RecordBindService mRecordService;
 
@@ -71,14 +60,12 @@ public class MainActivity extends BaseTitlebarActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        registerFlowReciever();
-
         startFloatMessageShowService();
     }
 
     @Override
     public int initContentView() {
-        return R.layout.main_layout;
+        return R.layout.activity_main_layout;
     }
 
     @Override
@@ -92,13 +79,9 @@ public class MainActivity extends BaseTitlebarActivity implements
         mVideoButton = (Button) findViewById(R.id.video_button);
         mNavigationButton = (Button) findViewById(R.id.navigation_button);
         mDateTextView = (TextView) findViewById(R.id.date_text);
-
-        mFlowProgressbar = (ProgressBar) findViewById(R.id.flow_progressbar);
         mWeatherView = (TextView) findViewById(R.id.weather_text);
         mTemperatureView = (TextView) findViewById(R.id.temperature_text);
         mWeatherImage = (ImageView) findViewById(R.id.weather_image);
-
-        mActivationContainer = (LinearLayout) findViewById(R.id.activation_container);
     }
 
     @Override
@@ -108,7 +91,6 @@ public class MainActivity extends BaseTitlebarActivity implements
         mWlanButton.setOnClickListener(this);
         mVideoButton.setOnClickListener(this);
         mNavigationButton.setOnClickListener(this);
-        mActivationContainer.setOnClickListener(this);
         mNearbyButton.setOnLongClickListener(new OnLongClickListener() {
 
             @Override
@@ -136,9 +118,6 @@ public class MainActivity extends BaseTitlebarActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        unregisterFlowReciever();
-
         if (timer != null) {
             timer.cancel();
         }
@@ -155,40 +134,35 @@ public class MainActivity extends BaseTitlebarActivity implements
             case R.id.video_button:
                 mRecordService.startRecord();
                 mRecordService.startRecordTimer();
-                startActivity(new Intent(mContext, VideoActivity.class));
+                startActivity(new Intent(MainActivity.this, VideoActivity.class));
                 break;
 
             case R.id.nearby_button:
                 break;
 
             case R.id.wlan_button:
-                BleOBD odb = new BleOBD();
-                odb.initOBD();
+                startActivity(new Intent(MainActivity.this, WifiActivity.class));
                 break;
 
             case R.id.navigation_button:
-
-                Intent navigationintent = new Intent();
+                Intent navigationIntent = new Intent();
                 Bundle bundle = new Bundle();
                 bundle.putBoolean("isManual", true);
-                navigationintent.putExtras(bundle);
+                navigationIntent.putExtras(bundle);
                 if (MapManager.getInstance().isNavi() || MapManager.getInstance().isNaviBack()) {
                     if (MapManager.getInstance().isNavi()) {
-                        navigationintent.setClass(mContext,
+                        navigationIntent.setClass(MainActivity.this,
                                 NaviCustomActivity.class);
                     } else if (MapManager.getInstance().isNaviBack()) {
-                        navigationintent.setClass(mContext,
+                        navigationIntent.setClass(MainActivity.this,
                                 NaviBackActivity.class);
                     }
                 } else {
-                    navigationintent.setClass(mContext, LocationActivity.class);
+                    navigationIntent.setClass(MainActivity.this, LocationActivity.class);
 
                 }
-                startActivity(navigationintent);
 
-                break;
-
-            case R.id.activation_container:
+                startActivity(navigationIntent);
                 break;
         }
     }
@@ -199,19 +173,6 @@ public class MainActivity extends BaseTitlebarActivity implements
             return false;
         }
         return super.onKeyDown(keyCode, event);
-    }
-
-    private void registerFlowReciever() {
-        mFlowReciever = new FlowUpdateReciever();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Constants.FLOW_UPDATE_BROADCAST);
-        registerReceiver(mFlowReciever, intentFilter);
-    }
-
-    private void unregisterFlowReciever() {
-        if (mFlowReciever != null) {
-            unregisterReceiver(mFlowReciever);
-        }
     }
 
     /**
@@ -274,13 +235,6 @@ public class MainActivity extends BaseTitlebarActivity implements
         }
     }
 
-    /**
-     * 更新流量进度条
-     */
-    private void updateFlowUsage() {
-        mFlowProgressbar.setProgress(0);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -324,14 +278,6 @@ public class MainActivity extends BaseTitlebarActivity implements
     private void startFloatMessageShowService() {
         Intent i = new Intent(MainActivity.this, NewMessageShowService.class);
         startService(i);
-    }
-
-    private class FlowUpdateReciever extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            updateFlowUsage();
-        }
     }
 
 }

@@ -94,6 +94,10 @@ public class VoiceManager {
         mHandler = new Handler();
     }
 
+    public void clearMisUnderstandCount() {
+        mMisunderstandCount = 0;
+    }
+
     /**
      * 开始启动唤醒服务
      */
@@ -320,10 +324,31 @@ public class VoiceManager {
         }
     }
 
+    public void startSpeaking(String playText, int type, boolean showMessage) {
+
+        if (mMisunderstandCount >= MISUNDERSTAND_REPEAT_COUNT) {
+            playText = Constants.UNDERSTAND_EXIT;
+        }
+
+        if (showMessage) {
+            FloatWindowUtil.showMessage(playText, FloatWindow.MESSAGE_IN);
+        }
+
+        mSynthesizerType = type;
+
+        int code = mSpeechSynthesizer.startSpeaking(playText,
+                mSynthesizerListener);
+
+        if (code != ErrorCode.SUCCESS) {
+            LogUtils.d(TAG, "语音合成失败,错误码: " + code);
+        }
+    }
+
+
     private SpeechUnderstanderListener mRecognizerListener = new SpeechUnderstanderListener() {
         @Override
         public void onVolumeChanged(int i) {
-
+            FloatWindowUtil.changeVoice(i);
         }
 
         @Override

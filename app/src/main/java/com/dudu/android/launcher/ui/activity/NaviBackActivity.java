@@ -239,7 +239,7 @@ AMapNaviViewListener{
 
 				@Override
 				public void onGetNavigationText(int arg0, String arg1) {
-					VoiceManager.getInstance().startSpeaking(arg1, SemanticConstants.TTS_DO_NOTHING);
+					VoiceManager.getInstance().startSpeaking(arg1, SemanticConstants.TTS_DO_NOTHING,false);
 				}
 
 				@Override
@@ -353,15 +353,7 @@ AMapNaviViewListener{
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			// Intent intent = new Intent();
-			// if (LauncherApplication.cmdType == 2) {
-			// intent.setClass(NaviCustomActivity.this, LocationActivity.class);
-			// } else {
-			// intent.setClass(NaviCustomActivity.this,
-			// NaviRouteActivity.class);
-			// }
-			// intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-			// startActivity(intent);
+
 			finish();
 		}
 		return super.onKeyDown(keyCode, event);

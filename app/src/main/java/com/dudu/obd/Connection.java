@@ -316,15 +316,12 @@ public class Connection extends Thread {
 					}
 				}
 				if(jsonResult.has("method")&&jsonResult.has("openid")&&jsonResult.has("lat")&&jsonResult.has("lon")){
-//					if(jsonResult.get("method").equals("")){
 						double lat = Double.parseDouble(jsonResult.getString("lat"));
 						double lon = Double.parseDouble(jsonResult.getString("lon"));
 						if(startNaviCallBack!=null){
-							System.out.println("-------startNavi");
 							startNaviCallBack.startNavi(lat, lon);
 						}
-//					}
-					
+
 				}
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block

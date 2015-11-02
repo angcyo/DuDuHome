@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/main_bg"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/back_button_selector"
+        android:onClick="onBackPressed" />
+
+    <com.dudu.android.launcher.ui.view.TasksCompletedView
+        android:id="@+id/tasks_completed"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_centerVertical="true"
+        android:layout_gravity="left|center_vertical"
+        android:layout_marginLeft="@dimen/dp_70"
+        android:layout_toRightOf="@+id/back_button" />
+
+    <TextView
+        android:id="@+id/ues_text"
+        android:layout_width="200dp"
+        android:layout_height="70dp"
+        android:layout_marginLeft="@dimen/dp_50"
+        android:layout_marginTop="@dimen/dp_40"
+        android:layout_toRightOf="@+id/tasks_completed"
+        android:gravity="center_vertical"
+        android:text="@string/used_flow"
+        android:textSize="18sp"
+        android:textStyle="italic" />
+
+    <View
+        android:layout_width="200dp"
+        android:layout_height="3dp"
+        android:layout_below="@+id/ues_text"
+        android:layout_marginLeft="@dimen/dp_50"
+        android:layout_toRightOf="@+id/tasks_completed"
+        android:background="@color/color_ed6512" />
+
+    <TextView
+        android:id="@+id/unuesd_text"
+        android:layout_width="200dp"
+        android:layout_height="70dp"
+        android:layout_below="@+id/ues_text"
+        android:layout_marginLeft="@dimen/dp_50"
+        android:layout_toRightOf="@+id/tasks_completed"
+        android:gravity="center_vertical"
+        android:text="@string/rest_flow"
+        android:textSize="18sp"
+        android:textStyle="italic" />
+
+    <View
+        android:layout_width="200dp"
+        android:layout_height="3dp"
+        android:layout_below="@+id/unuesd_text"
+        android:layout_marginLeft="@dimen/dp_50"
+        android:layout_toRightOf="@+id/tasks_completed"
+        android:background="@color/color_ed6512" />
+
+</RelativeLayout>

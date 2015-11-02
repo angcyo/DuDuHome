@@ -5,6 +5,7 @@ import java.util.List;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.dudu.android.launcher.bean.PoiResultInfo;
+import com.dudu.map.MapManager;
 
 public class FloatWindowUtil {
 
@@ -54,4 +55,12 @@ public class FloatWindowUtil {
 			FloatWindow.getInstance().getFloatVoiceChangeCallBack().onVoiceChange(voice);
 		}
 	}
+
+	// 地址列表的分页
+	public static void chooseAddressPage(int type){
+		if(FloatWindow.getInstance().getChooseAddressPageCallBack()!=null){
+			FloatWindow.getInstance().getChooseAddressPageCallBack().choosePage(type);
+		}
+	}
+
 }

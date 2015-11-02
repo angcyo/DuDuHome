@@ -23,6 +23,8 @@ import com.amap.api.navi.model.AMapNaviInfo;
 import com.amap.api.navi.model.AMapNaviLocation;
 import com.amap.api.navi.model.NaviInfo;
 import com.amap.api.navi.model.NaviLatLng;
+import com.dudu.android.launcher.ui.activity.NaviCustomActivity;
+import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.FloatWindow;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.LocationFilter;
@@ -32,9 +34,9 @@ import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.obd.Connection.OnRecieveCallBack;
 import com.dudu.obd.Connection.StartNaviCallBack;
 import com.dudu.obd.Connection.onSessionStateChangeCallBack;
+import com.dudu.voice.semantic.SemanticConstants;
+import com.dudu.voice.semantic.VoiceManager;
 import com.google.gson.Gson;
-import com.sd.core.callback.OBDDataListener;
-import com.sd.sdk.SuperOBD;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,7 +44,6 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -53,7 +54,7 @@ import java.util.List;
  */
 public class OBDDataService extends Service implements AMapLocationListener,
         LocationSource, onSessionStateChangeCallBack, OnRecieveCallBack,
-        DriveBehaviorHappendListener, OBDDataListener, StartNaviCallBack {
+        DriveBehaviorHappend.DriveBehaviorHappendListener, StartNaviCallBack ,CarStatusManager.CarStatusListener{
     public final static int SENSOR_SLOW = 0; // 传感器频率为20HZ左右(或20HZ以下)
     public final static int SENSOR_NORMAL = 1; // 传感器频率为 40HZ左右
     public final static int SENSOR_FASTER = 2; // 传感器频率为60HZ左右
@@ -65,7 +66,7 @@ public class OBDDataService extends Service implements AMapLocationListener,
     private final static int CALCULATESUCCESS = 2;// 启动路径计算成功状态
     private static String TAG = "OBDDataService";
     private static OBDDataService mOBDDataService;
-    private static LinkedList<CarStateListener> mCarStateListenerList = new LinkedList<CarStateListener>();
+
     String flamoutStr = "";
     NaviLatLng mEndPoint;
     private LocationManagerProxy mLocationManagerProxy;
@@ -77,7 +78,6 @@ public class OBDDataService extends Service implements AMapLocationListener,
     private List<MyGPSData> gpsDataListToSend; // 通过过滤后的定位点的集合
     private List<JSONArray> positionAry_list; // 存放要发送的定位点的队列
     private List<JSONArray> postOBDDataArr; // 存放要发送的OBD数据队列
-    private List<OBDData> obdCollectionList; // OBD 数据
     private Integer mSyncObj = new Integer(0);
     private boolean isAlive = true;
     private long delayTime = 30 * 1000;// 每隔30s发送一次数据
@@ -86,8 +86,6 @@ public class OBDDataService extends Service implements AMapLocationListener,
     private boolean isOpen = false;
     private Handler mhandler;
     private int carState;
-    private FlamoutData flamoutData;
-    private SuperOBD superOBD;
     private int acc_spd, break_spd;
     private String obe_id = "111";
     private String gpsStr, obdStr, fStr;
@@ -111,6 +109,7 @@ public class OBDDataService extends Service implements AMapLocationListener,
     private List<NaviLatLng> mEndPoints = new ArrayList<NaviLatLng>();
     private boolean startNavi;
     private Logger log;
+    private BleOBD bleOBD;
     /**
      * 采集数据线程 30s 将所有数据风封装到JSONArray里
      */
@@ -174,7 +173,7 @@ public class OBDDataService extends Service implements AMapLocationListener,
                         obdSize = postOBDDataArr.size();
                     else
                         obdSize = 0;
-                    if (carState == 0 && flamoutData != null)
+                    if (carState == 0)
                         sendFlameOutData();
                 }
 
@@ -182,13 +181,7 @@ public class OBDDataService extends Service implements AMapLocationListener,
         }
     });
 
-    public static OBDDataService getInstance() {
-        if (mCarStateListenerList == null)
-            mCarStateListenerList = new LinkedList<CarStateListener>();
-        if (mOBDDataService == null)
-            mOBDDataService = new OBDDataService();
-        return mOBDDataService;
-    }
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -198,8 +191,11 @@ public class OBDDataService extends Service implements AMapLocationListener,
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         log = LoggerFactory.getLogger("odb.service");
-        log.info("OBDDataService onStartCommand");
-//        initOBD();
+//        log.info("OBDDataService onStartCommand");
+        Log.d(TAG,"OBDDataService onStartCommand");
+        bleOBD = new BleOBD();
+        bleOBD.initOBD();
+        DriveBehaviorHappend.getInstance().setListener(this);
         try {
             if (conn != null && !isOpen) {
 //				conn.closeConn();
@@ -229,10 +225,8 @@ public class OBDDataService extends Service implements AMapLocationListener,
         gpsDataListToSend = new ArrayList<MyGPSData>();
         positionAry_list = new ArrayList<JSONArray>();
         unAvalableList = new ArrayList<AMapLocation>();
-        obdCollectionList = new ArrayList<OBDData>();
         postOBDDataArr = new ArrayList<JSONArray>();
         mhandler = new Handler();
-        superOBD = SuperOBD.getInstance(getApplicationContext(), this);
         initSensor();
         initConn();
         mAmapNavi.setAMapNaviListener(getAMapNaviListener());
@@ -243,7 +237,7 @@ public class OBDDataService extends Service implements AMapLocationListener,
         conn = Connection.getInstance(this);
         conn.addStateChangeCallBack(this);
         conn.addReceivedCallBack(this);
-        conn.setStartNaviCallBack((Connection.StartNaviCallBack) this);
+        conn.setStartNaviCallBack((StartNaviCallBack) this);
     }
 
     // 初始化传感器相关
@@ -430,19 +424,7 @@ public class OBDDataService extends Service implements AMapLocationListener,
         cur_Location = location;
     }
 
-    // 添加车辆状态改变监听
-    public boolean addCarStateListener(CarStateListener listener) {
-        if (mCarStateListenerList != null)
-            return mCarStateListenerList.add(listener);
-        return false;
-    }
 
-    // 移除车辆状态改变监听
-    public boolean removeCarStateListener(CarStateListener listener) {
-        if (!mCarStateListenerList.isEmpty())
-            return mCarStateListenerList.remove(listener);
-        return false;
-    }
 
     // 将gps数据转换为JSON 格式
     private void putGpsDataToJSON() {
@@ -485,9 +467,8 @@ public class OBDDataService extends Service implements AMapLocationListener,
     // 发送熄火数据
     private void sendFlameOutData() {
         Gson gson = new Gson();
-        fStr = gson.toJson(flamoutData);
+        fStr = gson.toJson(bleOBD.getFlamoutData());
         conn.sendMessage(fStr, true);
-        flamoutData = null;
         if (last_Location != null) {
             MyGPSData flameOutgps = new MyGPSData(last_Location.getLatitude(),
                     last_Location.getLongitude(), last_Location.getSpeed(),
@@ -549,23 +530,23 @@ public class OBDDataService extends Service implements AMapLocationListener,
     @Override
     public void onDriveBehaviorHappend(int type) {
         switch (type) {
-            case DriveBehaviorHappendListener.TYPE_HARDACCL:
-                putEventGPS(TYPE_HARDACCL);
+            case DriveBehaviorHappend.TYPE_HARDACCL:
+                putEventGPS(DriveBehaviorHappend.TYPE_HARDACCL);
                 break;
-            case DriveBehaviorHappendListener.TYPE_HARDBRAK:
-                putEventGPS(TYPE_HARDBRAK);
+            case DriveBehaviorHappend.TYPE_HARDBRAK:
+                putEventGPS(DriveBehaviorHappend.TYPE_HARDBRAK);
                 break;
-            case DriveBehaviorHappendListener.TYPE_HARDTURN:
-                putEventGPS(TYPE_HARDTURN);
+            case DriveBehaviorHappend.TYPE_HARDTURN:
+                putEventGPS(DriveBehaviorHappend.TYPE_HARDTURN);
                 break;
-            case DriveBehaviorHappendListener.TYPE_SNAP:
-                putEventGPS(TYPE_SNAP);
+            case DriveBehaviorHappend.TYPE_SNAP:
+                putEventGPS(DriveBehaviorHappend.TYPE_SNAP);
                 break;
-            case DriveBehaviorHappendListener.TYPE_FATIGUEDRIVING:
-                putEventGPS(TYPE_FATIGUEDRIVING);
+            case DriveBehaviorHappend.TYPE_FATIGUEDRIVING:
+                putEventGPS(DriveBehaviorHappend.TYPE_FATIGUEDRIVING);
                 break;
-            case DriveBehaviorHappendListener.TYPE_MISMATCH:
-                putEventGPS(TYPE_MISMATCH);
+            case DriveBehaviorHappend.TYPE_MISMATCH:
+                putEventGPS(DriveBehaviorHappend.TYPE_MISMATCH);
                 break;
         }
     }
@@ -589,10 +570,11 @@ public class OBDDataService extends Service implements AMapLocationListener,
 
     // 将OBD数据存放在JSONArray中
     private void putOBDData() {
-        if (!obdCollectionList.isEmpty()) {
+
+        if (!bleOBD.getObdCollectionList().isEmpty()) {
             JSONArray jsArr = new JSONArray();
-            for (int i = 0; i < obdCollectionList.size(); i++) {
-                OBDData obdData = obdCollectionList.get(i);
+            for (int i = 0; i < bleOBD.getObdCollectionList().size(); i++) {
+                OBDData obdData = bleOBD.getObdCollectionList().get(i);
                 Gson obd = new Gson();
                 try {
                     if (obdData != null)
@@ -603,250 +585,12 @@ public class OBDDataService extends Service implements AMapLocationListener,
                 }
             }
             postOBDDataArr.add(jsArr);
-            obdCollectionList.clear();
+            bleOBD.getObdCollectionList().clear();
         }
     }
 
-    @Override
-    public void AIRData(String arg0) {
-        // TODO Auto-generated method stub
 
-    }
 
-    @Override
-    public void CARSTATUS(String arg0) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void DRONData(String arg0) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void DTCData(JSONObject arg0) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void MPHData(String arg0) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void OBDTYPEData(String arg0) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void REMOILData(String arg0) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void RPMData(String arg0) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void SENSORVOLTAGEData(String arg0) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void SPEEDData(String arg0) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void TEMPERATUREData(String arg0) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void THROTTELPOSData(String arg0) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void VINData(String arg0) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void VOLTAGEData(String arg0) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void startIntent(String result, int request) {
-
-    }
-
-    @Override
-    public void resultData(String result) {
-        Log.d(TAG, "---------obdData:" + result);
-        if (result.startsWith("BD$")) {
-            carState = 1;
-            if (!isNotice_start) {
-                isNotice_flamout = false;
-                isNotice_start = true;
-                if (!mCarStateListenerList.isEmpty()) {
-                    for (int i = 0; i < mCarStateListenerList.size(); i++) {
-                        mCarStateListenerList.get(i).onCarStateChange(1);
-                    }
-                }
-                noticeFating();
-            }
-            obdCollectionList.add(getOBDData(result.substring(3,
-                    result.length() - 3)));
-            misMatch();
-        } else if (result.contains("$OBD-DR$")) {
-            carState = 0;
-            if (!isNotice_flamout) {
-                isNotice_start = false;
-                if (!mCarStateListenerList.isEmpty()) {
-                    isNotice_flamout = true;
-                    for (int i = 0; i < mCarStateListenerList.size(); i++) {
-                        mCarStateListenerList.get(i).onCarStateChange(0);
-                    }
-                }
-            }
-            String f_Str = result.substring(result.indexOf("$OBD-DR$") + 1,
-                    result.length());
-            if (!f_Str.equals(flamoutStr)) {
-                getFlamoutData(f_Str);
-            }
-            flamoutStr = f_Str;
-            Log.d(TAG, "熄火数据：" + f_Str);
-
-        } else if (result.contains("CONNECTED")) {
-            carState = 1;
-            if (!isNotice_start) {
-                if (!mCarStateListenerList.isEmpty()) {
-                    isNotice_start = true;
-                    for (int i = 0; i < mCarStateListenerList.size(); i++) {
-                        mCarStateListenerList.get(i).onCarStateChange(1);
-                    }
-                }
-                noticeFating();
-            }
-            Log.d(TAG,
-                    "------点火  "
-                            + TimeUtils.dateLongFormatString(
-                            System.currentTimeMillis(),
-                            TimeUtils.format1));
-        }
-
-    }
-
-    // 解析OBD数据
-    private OBDData getOBDData(String result) {
-        OBDData obdData = new OBDData();
-        String[] obdStr = result.split(";");
-        for (int i = 0; i < obdStr.length; i++) {
-            String s = obdStr[i];
-            if (obdStr[i].startsWith("SS")) {
-
-            } else if (s.startsWith("S")) {
-                speed = Integer.parseInt((s.substring(1, s.length())));
-                // 速度
-                obdData.setSpd(speed);
-            } else if (s.startsWith("V")) {
-                // 电瓶电压
-                obdData.setBatteryV(Float.parseFloat(s.substring(1, s.length())));
-            } else if (s.startsWith("R")) {
-                revolution = Float.parseFloat(s.substring(1, s.length()));
-                // 发动机转速
-                obdData.setEngSpd(revolution);
-            } else if (s.startsWith("A")) {
-                int acc = Integer.parseInt(s.substring(1, s.length()));
-                if (acc > acc_spd)
-                    onDriveBehaviorHappend(1);
-                acc_spd = acc;
-            } else if (s.startsWith("B")) {
-                int b_spd = Integer.parseInt(s.substring(1, s.length()));
-                if (b_spd > break_spd)
-                    onDriveBehaviorHappend(2);
-                break_spd = b_spd;
-            } else if (s.startsWith("XH") || s.startsWith("YH")) {
-
-            } else if (s.startsWith("XM") || s.startsWith("YM")) {
-                obdData.setCuron(Float.parseFloat(s.substring(2, s.length())));
-            } else if (s.startsWith("O")) {
-                // 发动机负荷
-                obdData.setEngLoad(Float.parseFloat(s.substring(1, s.length())));
-            } else if (s.startsWith("L")) {
-                // 剩余油量
-                obdData.setResOil(Float.parseFloat(s.substring(1, s.length())));
-            } else if (s.startsWith("C")) {
-                // 冷却液温度
-                obdData.setEngCoolant(Float.parseFloat(s.substring(1,
-                        s.length())));
-            }
-        }
-        obdData.setTime(TimeUtils.dateLongFormatString(
-                System.currentTimeMillis(), TimeUtils.format1));
-        obdData.setRunState(1);
-        return obdData;
-    }
-
-    // 解析熄火数据
-    private FlamoutData getFlamoutData(String result) {
-        flamoutData = new FlamoutData();
-        String[] flamout = result.split(";");
-        for (int i = 0; i < flamout.length; i++) {
-            String s = flamout[i];
-            String s_value = s.split(":")[1].toString();
-            if (s.startsWith("AVGSPD")) {
-                flamoutData.setAvgspd(new BigDecimal(s_value).setScale(0,
-                        BigDecimal.ROUND_HALF_UP).intValue());
-            } else if (s.startsWith("MAXRPM")) {
-                flamoutData.setMaxrpm(Integer.parseInt(s_value));
-                System.out.println("----s" + s_value);
-            } else if (s.startsWith("MINRPM")) {
-                flamoutData.setMinrpm(Integer.parseInt(s_value));
-            } else if (s.startsWith("MAXSPD")) {
-
-                flamoutData.setMaxspd(Integer.parseInt(s_value));
-            } else if (s.startsWith("MAXACL")) {
-                flamoutData.setMaxacl(Integer.parseInt(s_value));
-            } else if (s.startsWith("MILE-T")) {
-                flamoutData.setMileT(Float.parseFloat(s_value));
-            } else if (s.startsWith("FUEL-T")) {
-                flamoutData.setFuelT(Float.parseFloat(s_value));
-            } else if (s.startsWith("MILES")) {
-                flamoutData.setMiles(Float.parseFloat(s_value));
-            } else if (s.startsWith("FUELS")) {
-                flamoutData.setFuels(Float.parseFloat(s_value));
-            } else if (s.startsWith("TIMES")) {
-                flamoutData.setTimes(new BigDecimal(s_value).setScale(0,
-                        BigDecimal.ROUND_HALF_UP).intValue());
-            } else if (s.startsWith("STARTS")) {
-                flamoutData.setStarts(Integer.parseInt(s_value));
-            } else if (s.startsWith("POWER")) {
-                flamoutData.setPower(0);
-            }
-        }
-        flamoutData.setCreateTime(TimeUtils.dateLongFormatString(
-                System.currentTimeMillis(), TimeUtils.format1));
-        flamoutData.setMethod("driveDatas");
-        flamoutData.setObeId(obe_id);
-        return flamoutData;
-    }
 
     // 疲劳驾驶判定,如果驾驶4小时后还未熄火，则每隔15分钟再判定一次是否为疲劳驾驶
     private void noticeFating() {
@@ -855,7 +599,7 @@ public class OBDDataService extends Service implements AMapLocationListener,
             public void run() {
                 if (carState == 1)
                     mhandler.postDelayed(this, 15 * 60 * 1000);
-                onDriveBehaviorHappend(TYPE_FATIGUEDRIVING);
+                onDriveBehaviorHappend(DriveBehaviorHappend.TYPE_FATIGUEDRIVING);
             }
         }, 4 * 60 * 60 * 1000);
     }
@@ -869,7 +613,7 @@ public class OBDDataService extends Service implements AMapLocationListener,
         boolean five = (speed < 130 && speed > 110) && revolution > 5000;
         boolean six = (speed < 150 && speed > 130) && revolution > 5500;
         if (first || second || third || forth || five || six) {
-            onDriveBehaviorHappend(TYPE_MISMATCH);
+            onDriveBehaviorHappend(DriveBehaviorHappend.TYPE_MISMATCH);
         }
     }
 
@@ -878,12 +622,7 @@ public class OBDDataService extends Service implements AMapLocationListener,
         Log.d(TAG, "startNavi");
         if (cur_Location != null) {
             startNavi = true;
-//			String mapType = MapChooseUtil.getMapType(this);
-//			if(mapType.equals(Constants.MAP_BAIDU)){
-//				naviBaidu(lat, lon);
-//			}else{
             naviGaode(lat, lon);
-//			}
         }
     }
 
@@ -902,7 +641,6 @@ public class OBDDataService extends Service implements AMapLocationListener,
     private int calculateDriverRoute(double elat, double elon) {
         int code = CALCULATEERROR;
         if (cur_Location != null) {
-            System.out.println("----路径规划");
             NaviLatLng naviLatLng = new NaviLatLng(cur_Location.getLatitude(),
                     cur_Location.getLongitude());
             NaviLatLng endLatlon = new NaviLatLng(elat, elon);
@@ -958,7 +696,8 @@ public class OBDDataService extends Service implements AMapLocationListener,
 
                 @Override
                 public void onGetNavigationText(int arg0, String arg1) {
-//					VoiceManager.getInstance().startSpeaking(arg1, Constants.TTS_EIGHT);
+                    if(startNavi)
+					    VoiceManager.getInstance().startSpeaking(arg1, SemanticConstants.TTS_DO_NOTHING,false);
                 }
 
                 @Override
@@ -974,11 +713,11 @@ public class OBDDataService extends Service implements AMapLocationListener,
                         LocationUtils.getInstance(OBDDataService.this).setNaviStartPoint
                                 (mEndPoint.getLatitude(), mEndPoint.getLongitude());
 
-//						ActivitiesManager.getInstance().closeTargetActivity(
-//								NaviCustomActivity.class);
-//						Intent standIntent = new Intent(getBaseContext(),NaviCustomActivity.class);
-//						standIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//						startActivity(standIntent);
+						ActivitiesManager.getInstance().closeTargetActivity(
+								NaviCustomActivity.class);
+						Intent standIntent = new Intent(getBaseContext(),NaviCustomActivity.class);
+						standIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						startActivity(standIntent);
                         startNavi = false;
                     }
 
@@ -986,9 +725,13 @@ public class OBDDataService extends Service implements AMapLocationListener,
 
                 @Override
                 public void onCalculateRouteFailure(int arg0) {
-                    System.out.println("-------路径规划失败" + arg0);
-                    FloatWindowUtil.showMessage("路径规划出错",
-                            FloatWindow.MESSAGE_OUT);
+                    if(startNavi){
+                        String playText = "路径规划出错";
+                        VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_DO_NOTHING,false);
+                        FloatWindowUtil.showMessage(playText,
+                                FloatWindow.MESSAGE_OUT);
+                    }
+
                 }
 
                 @Override
@@ -1013,6 +756,11 @@ public class OBDDataService extends Service implements AMapLocationListener,
             };
         }
         return mAmapNaviListener;
+    }
+
+    @Override
+    public void onCarStateChange(int state) {
+        carState = state;
     }
 
     // 传感器监听
@@ -1077,7 +825,7 @@ public class OBDDataService extends Service implements AMapLocationListener,
                 float avg_x = Math.abs(x_sum / (mAcceList.size())); // 加速度传感器的X轴平均值
                 // 速度大于0 x轴方向的绝对值大雨0.5则认为发生了急转弯
                 if (speed > 0 && avg_x >= 0.5) {
-                    onDriveBehaviorHappend(TYPE_HARDTURN);
+                    onDriveBehaviorHappend(DriveBehaviorHappend.TYPE_HARDTURN);
                 }
             }
             mAcceList.clear();

@@ -60,9 +60,15 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Black">
 
+        <!--
+            debug key 6d9506f145dbf546da02076d89294390
+        	正式key 476a2032389d1d702025e4183c74a51d
+        	小慧key cb9e16530f8f81e2fce995b4fc078ae4
+        -->
+
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="cb9e16530f8f81e2fce995b4fc078ae4" />
+            android:value="6d9506f145dbf546da02076d89294390" />
 
         <activity
             android:name=".ui.activity.MainActivity"
@@ -110,13 +116,19 @@
 
         <activity
             android:name=".ui.activity.video.VideoPlayActivity"
-            android:screenOrientation="landscape" >
+            android:screenOrientation="landscape">
+        </activity>
+
+        <activity
+            android:name=".ui.activity.WifiActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppBaseTheme" >
         </activity>
 
         <service android:name=".service.NewMessageShowService"/>
 
         <service android:name=".service.RecordBindService" />
-
+        <service android:name="com.dudu.obd.OBDDataService"/>
     </application>
 
 </manifest>
