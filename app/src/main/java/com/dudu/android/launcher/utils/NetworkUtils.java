@@ -4,9 +4,17 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.TrafficStats;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.telephony.TelephonyManager;
 
+import com.dudu.android.launcher.LauncherApplication;
+
+import java.lang.reflect.Method;
+
 public class NetworkUtils {
+
+    private static final String TAG = "NetworkUtils";
 
 	public static final int NETWORK_TYPE_UNKNOWN = 0;
 	/** Current network is GPRS */
@@ -53,6 +61,8 @@ public class NetworkUtils {
 	private static final int NETWORK_CLASS_3_G = 2;
 	/** Class of broadly defined "4G" networks. */
 	private static final int NETWORK_CLASS_4_G = 3;
+
+    private static String SSID = "\"DuDuHotSpot\"";
 
 	public static String getCurrentNetworkType(Context context) {
 		int networkClass = getNetworkClass(context);
@@ -165,5 +175,27 @@ public class NetworkUtils {
 		return TrafficStats.getTotalRxBytes() == TrafficStats.UNSUPPORTED ? 0
 				: (TrafficStats.getTotalRxBytes() / 1024);
 	}
+
+    /**
+     * 打开网络热点
+     */
+	public static void startWifiAp() {
+        WifiManager wifiManager = (WifiManager) LauncherApplication.getContext().
+                getSystemService(Context.WIFI_SERVICE);
+        if (wifiManager.isWifiEnabled()) {
+            wifiManager.setWifiEnabled(false);
+        }
+
+        Method method;
+        try {
+            method = wifiManager.getClass().getMethod("setWifiApEnabled",
+                    WifiConfiguration.class, boolean.class);
+            WifiConfiguration config = new WifiConfiguration();
+            config.SSID = SSID;
+            method.invoke(wifiManager, config, true);
+        } catch (Exception e) {
+            LogUtils.e(TAG, e.getMessage());
+        }
+    }
 
 }

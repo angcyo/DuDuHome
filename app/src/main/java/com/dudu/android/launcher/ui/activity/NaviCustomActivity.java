@@ -27,6 +27,7 @@ import com.amap.api.navi.model.NaviInfo;
 import com.amap.api.navi.model.NaviLatLng;
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
+import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.map.MapManager;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
@@ -44,6 +45,8 @@ import com.dudu.android.launcher.utils.ToastUtils;
  */
 public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 		AMapNaviViewListener {
+
+	private static final String TAG = "NaviCustomActivity";
 
 	private AMapNaviView mAmapAMapNaviView;
 	// 导航可以设置的参数
@@ -93,12 +96,11 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 					if(activity!=null){
 						startActivity(new Intent(NaviCustomActivity.this, activity.getClass()));
 					}else{
-						startActivity(new Intent(NaviCustomActivity.this,MainActivity.class));
+						startActivity(new Intent(NaviCustomActivity.this, MainActivity.class));
 					}
 				} catch (Exception e) {
-					// TODO: handle exception
-					e.printStackTrace();
-					startActivity(new Intent(NaviCustomActivity.this,MainActivity.class));
+					LogUtils.e(TAG, e.getMessage());
+					startActivity(new Intent(NaviCustomActivity.this, MainActivity.class));
 					finish();
 				}
 			}

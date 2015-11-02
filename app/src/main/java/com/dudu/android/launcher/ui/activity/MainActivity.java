@@ -43,7 +43,7 @@ public class MainActivity extends BaseTitlebarActivity implements
         OnClickListener, AMapLocalWeatherListener {
 
     private Button mVideoButton, mNavigationButton, mPhoneButton,
-            mNearbyButton, mWlanButton;
+            mDiDiButton, mWlanButton;
 
     private LocationManagerProxy mLocationManagerProxy;
 
@@ -76,8 +76,7 @@ public class MainActivity extends BaseTitlebarActivity implements
 
         setContext(this);
 
-        mPhoneButton = (Button) findViewById(R.id.phone_button);
-        mNearbyButton = (Button) findViewById(R.id.nearby_button);
+        mDiDiButton = (Button) findViewById(R.id.didi_button);
         mWlanButton = (Button) findViewById(R.id.wlan_button);
         mVideoButton = (Button) findViewById(R.id.video_button);
         mNavigationButton = (Button) findViewById(R.id.navigation_button);
@@ -89,12 +88,11 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     @Override
     public void initListener() {
-        mPhoneButton.setOnClickListener(this);
-        mNearbyButton.setOnClickListener(this);
+        mDiDiButton.setOnClickListener(this);
         mWlanButton.setOnClickListener(this);
         mVideoButton.setOnClickListener(this);
         mNavigationButton.setOnClickListener(this);
-        mNearbyButton.setOnLongClickListener(new OnLongClickListener() {
+        mDiDiButton.setOnLongClickListener(new OnLongClickListener() {
 
             @Override
             public boolean onLongClick(View v) {
@@ -140,7 +138,7 @@ public class MainActivity extends BaseTitlebarActivity implements
                 startActivity(new Intent(MainActivity.this, VideoActivity.class));
                 break;
 
-            case R.id.nearby_button:
+            case R.id.didi_button:
                 break;
 
             case R.id.wlan_button:

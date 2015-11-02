@@ -27,12 +27,11 @@ public class MapSearchChain extends SemanticChain {
 
     @Override
     public boolean doSemantic(String json) {
-
-        String serivce = JsonUtils.getRsphead(json).getService();
+        String service = JsonUtils.getRsphead(json).getService();
         String semantic = JsonUtils.parseIatResult(json,
                 "semantic");
-        if(!TextUtils.isEmpty(serivce)){
-            switch (serivce){
+        if(!TextUtils.isEmpty(service)){
+            switch (service){
                 case SemanticConstants.SERVICE_MAP:
 
                     MapEntity mapEntity = (MapEntity) GsonUtil
@@ -50,7 +49,6 @@ public class MapSearchChain extends SemanticChain {
                             .parseIatResultNearby(semantic);
                     mapManager.mapControl(mContext, null, poiKeyWord,
                             MapManager.SEARCH_NEARBY);
-
                     break;
                 case SemanticConstants.SERVICE_RESTAURANT:
                     RestaurantEntity restaurantEntity = (RestaurantEntity) GsonUtil

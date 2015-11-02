@@ -110,23 +110,12 @@
         </LinearLayout>
 
         <LinearLayout
-            style="@style/main_grid_linearlayout_style"
-            android:visibility="gone" >
-
-            <Button
-                android:id="@+id/phone_button"
-                style="@style/main_grid_button_style"
-                android:background="@drawable/menu_phone_button_selector" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/nearbyLL"
             style="@style/main_grid_linearlayout_style" >
 
             <Button
-                android:id="@+id/nearby_button"
+                android:id="@+id/didi_button"
                 style="@style/main_grid_button_style"
-                android:background="@drawable/menu_nearby_button_selector" />
+                android:background="@drawable/menu_didi_button_selector" />
         </LinearLayout>
 
         <LinearLayout style="@style/main_grid_linearlayout_style" >
