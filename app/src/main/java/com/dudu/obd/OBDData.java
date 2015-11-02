@@ -12,7 +12,7 @@ public class OBDData implements Serializable{
 	private String time;					//采集时间
 	private float engLoad;			 		//发动机负荷
 	private float engCoolant;		  		//发动机冷却液
-	private float resOil;			 		//剩余油量
+
 	private float curon;				 	//瞬时油耗
 	private float engSpd;				 	//发动机转速
 	private float batteryV;			    	//电瓶电压
@@ -22,12 +22,11 @@ public class OBDData implements Serializable{
 		
 	}
 	
-	public OBDData(int spd,String time,float engload,float engCoolant,float resOill,float curon,float engSpd,float batteryV,int runState){
+	public OBDData(int spd,String time,float engload,float engCoolant,float curon,float engSpd,float batteryV,int runState){
 		this.spd = spd;
 		this.time = time;
 		this.engLoad = engload;
 		this.engCoolant = engCoolant;
-		this.resOil = resOill;
 		this.curon = curon;
 		this.engSpd = engSpd;
 		this.batteryV = batteryV;
@@ -57,12 +56,6 @@ public class OBDData implements Serializable{
 	}
 	public void setEngCoolant(float engineCoolant) {
 		this.engCoolant = engineCoolant;
-	}
-	public float getResOil() {
-		return resOil;
-	}
-	public void setResOil(float residualOil) {
-		this.resOil = residualOil;
 	}
 	public float getCuron() {
 		return curon;

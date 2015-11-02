@@ -20,7 +20,6 @@ public class MapManager {
     public static final int SEARCH_POI = 1;    // poi搜索
     public static final int SEARCH_NAVI = 2;    // 导航搜索
     public static final int SEARCH_NEARBY = 3;    //  附近POI
-    public static final int SEARCH_FROM_TO = 4;     // 从某点到某点
 
     private static MapManager mInstance;
 

@@ -34,12 +34,18 @@ public class MapSearchChain extends SemanticChain {
         if(!TextUtils.isEmpty(serivce)){
             switch (serivce){
                 case SemanticConstants.SERVICE_MAP:
-                case SemanticConstants.SERVICE_HOTEL:
+
                     MapEntity mapEntity = (MapEntity) GsonUtil
                             .jsonToObject(semantic, MapEntity.class);
-                    mapManager.mapControl(mContext, mapEntity, null, MapManager.SEARCH_NAVI);
+                    mapManager.mapControl(mContext, mapEntity, null, MapManager.SEARCH_POI);
+                    break;
+                case SemanticConstants.SERVICE_HOTEL:
+                    MapEntity hotelEntity = (MapEntity) GsonUtil
+                            .jsonToObject(semantic, MapEntity.class);
+                    mapManager.mapControl(mContext, hotelEntity, null, MapManager.SEARCH_NEARBY);
                     break;
                 case SemanticConstants.SERVICE_NEARBY:
+
                     String poiKeyWord = JsonUtils
                             .parseIatResultNearby(semantic);
                     mapManager.mapControl(mContext, null, poiKeyWord,
@@ -54,7 +60,7 @@ public class MapSearchChain extends SemanticChain {
                             mContext,
                             null,
                             restaurantEntity.getRestaurantSlots()
-                                    .getCategory(), MapManager.SEARCH_NAVI);
+                                    .getCategory(), MapManager.SEARCH_NEARBY);
 
                     break;
 

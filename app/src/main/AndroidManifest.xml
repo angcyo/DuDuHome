@@ -63,12 +63,12 @@
         <!--
             debug key 6d9506f145dbf546da02076d89294390
         	正式key 476a2032389d1d702025e4183c74a51d
-        	小慧key cb9e16530f8f81e2fce995b4fc078ae4
+        	小慧key 8daa43bc94833f1d449658d6fef0cbf2
         -->
 
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="6d9506f145dbf546da02076d89294390" />
+            android:value="8daa43bc94833f1d449658d6fef0cbf2" />
 
         <activity
             android:name=".ui.activity.MainActivity"

@@ -30,6 +30,7 @@ import com.dudu.android.launcher.ui.activity.video.VideoActivity;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
 import com.dudu.map.MapManager;
+import com.dudu.obd.OBDDataService;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -61,6 +62,8 @@ public class MainActivity extends BaseTitlebarActivity implements
         super.onCreate(savedInstanceState);
 
         startFloatMessageShowService();
+
+//        startOBDService();
     }
 
     @Override
@@ -280,4 +283,8 @@ public class MainActivity extends BaseTitlebarActivity implements
         startService(i);
     }
 
+    private void startOBDService() {
+        Intent i = new Intent(MainActivity.this, OBDDataService.class);
+        startService(i);
+    }
 }

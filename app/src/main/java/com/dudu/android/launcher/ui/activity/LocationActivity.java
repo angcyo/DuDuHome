@@ -443,7 +443,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 	public void search(String name) {
 		keyWord = LcStringUtil.checkString(name);
 		if ("".equals(keyWord)) {
-			String playText = "您好，关键字有误，请重新";
+			String playText = "您好，关键字有误，请重新输入";
 			if (isManual) {
 				Toast.makeText(this, playText, Toast.LENGTH_SHORT).show();
 			} else {

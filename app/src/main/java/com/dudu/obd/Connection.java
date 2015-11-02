@@ -20,6 +20,8 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.util.Log;
 
+import de.greenrobot.event.EventBus;
+
 public class Connection extends Thread {
 	private String TAG = "DUDU_CONNETION";
 	private String host = "192.168.1.177";
@@ -318,9 +320,7 @@ public class Connection extends Thread {
 				if(jsonResult.has("method")&&jsonResult.has("openid")&&jsonResult.has("lat")&&jsonResult.has("lon")){
 						double lat = Double.parseDouble(jsonResult.getString("lat"));
 						double lon = Double.parseDouble(jsonResult.getString("lon"));
-						if(startNaviCallBack!=null){
-							startNaviCallBack.startNavi(lat, lon);
-						}
+					EventBus.getDefault().post(new PickPeopleEvent(new double[]{lat,lon}));
 
 				}
 			} catch (Exception e1) {

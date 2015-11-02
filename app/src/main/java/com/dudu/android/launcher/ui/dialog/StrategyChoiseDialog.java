@@ -170,6 +170,7 @@ public class StrategyChoiseDialog extends Dialog {
         RouteSearch routeSearch3 =  new RouteSearch(context);
         routeSearch3.setRouteSearchListener(listener3);
         RouteSearch.DriveRouteQuery query3 = new RouteSearch.DriveRouteQuery(fromAndTo, RouteSearch.DrivingAvoidCongestion, null, null, "");
+		query3.getPassedByPoints();
         routeSearch3.calculateDriveRouteAsyn(query3);
 	}
 	

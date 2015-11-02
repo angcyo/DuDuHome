@@ -6,14 +6,9 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.util.Log;
 
 import com.dudu.android.launcher.LauncherApplication;
-import com.dudu.android.launcher.utils.StringUtils;
 import com.dudu.android.launcher.utils.TimeUtils;
 import com.dudu.android.libble.BleConnectMain;
-import com.google.gson.Gson;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.scf4a.ConnSession;
 import org.scf4a.Event;
 import org.scf4a.EventRead;
@@ -95,9 +90,9 @@ public class BleOBD {
         final byte[] data = event.getData();
 
         try {
-//            log.debug("Receive OBD Data: = {}", new String(data, "UTF-8"));
-            Log.d("lxh","Receive OBD Data: = {}"+new String(data, "UTF-8"));
-            parseOBDData(new String(data,"UTF-8"));
+            log.debug("Receive OBD Data: = {}", new String(data, "UTF-8"));
+            Log.d("lxh","Receive OBD Data: = {}"+ new String(data, "UTF-8"));
+            parseOBDData(new String(data, "UTF-8"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -162,13 +157,13 @@ public class BleOBD {
     private void parseTotalData(String result){
         ttData = result.split(",");
 
-        int acc = Integer.parseInt(ttData[9].toString());
+        int acc = Integer.parseInt(new String(ttData[9]));
         if(acc > acc_spd){
             if(driveBehaviorHappendListener!=null)
                 driveBehaviorHappendListener.onDriveBehaviorHappend(DriveBehaviorHappend.TYPE_HARDACCL);
         }
         acc_spd = acc;
-        int b_spd = Integer.parseInt(ttData[10].toString());
+        int b_spd = Integer.parseInt(new String(ttData[10].trim()));
 
         if(b_spd > break_spd){
             if(driveBehaviorHappendListener!=null)

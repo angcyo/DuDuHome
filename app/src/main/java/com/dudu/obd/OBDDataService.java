@@ -17,25 +17,11 @@ import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
 import com.amap.api.location.LocationProviderProxy;
 import com.amap.api.maps.LocationSource;
-import com.amap.api.navi.AMapNavi;
-import com.amap.api.navi.AMapNaviListener;
-import com.amap.api.navi.model.AMapNaviInfo;
-import com.amap.api.navi.model.AMapNaviLocation;
-import com.amap.api.navi.model.NaviInfo;
-import com.amap.api.navi.model.NaviLatLng;
-import com.dudu.android.launcher.ui.activity.NaviCustomActivity;
-import com.dudu.android.launcher.utils.ActivitiesManager;
-import com.dudu.android.launcher.utils.FloatWindow;
-import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.LocationFilter;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.TimeUtils;
-import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.obd.Connection.OnRecieveCallBack;
-import com.dudu.obd.Connection.StartNaviCallBack;
 import com.dudu.obd.Connection.onSessionStateChangeCallBack;
-import com.dudu.voice.semantic.SemanticConstants;
-import com.dudu.voice.semantic.VoiceManager;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -46,15 +32,16 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * 采集OBD数据,GPS数据
  */
 public class OBDDataService extends Service implements AMapLocationListener,
         LocationSource, onSessionStateChangeCallBack, OnRecieveCallBack,
-        DriveBehaviorHappend.DriveBehaviorHappendListener, StartNaviCallBack ,CarStatusManager.CarStatusListener{
+        DriveBehaviorHappend.DriveBehaviorHappendListener, CarStatusManager.CarStatusListener{
     public final static int SENSOR_SLOW = 0; // 传感器频率为20HZ左右(或20HZ以下)
     public final static int SENSOR_NORMAL = 1; // 传感器频率为 40HZ左右
     public final static int SENSOR_FASTER = 2; // 传感器频率为60HZ左右
@@ -62,13 +49,8 @@ public class OBDDataService extends Service implements AMapLocationListener,
     private static final String DRIVE_DATAS = "driveDatas";
     private static final String OBD_DATA = "obdDatas";
     private static final String COORDINATES = "coordinates";
-    private final static int CALCULATEERROR = 1;// 启动路径计算失败状态
-    private final static int CALCULATESUCCESS = 2;// 启动路径计算成功状态
-    private static String TAG = "OBDDataService";
-    private static OBDDataService mOBDDataService;
 
-    String flamoutStr = "";
-    NaviLatLng mEndPoint;
+    private static String TAG = "OBDDataService";
     private LocationManagerProxy mLocationManagerProxy;
     private int GPSdataTime = 0;// 第几个GPS点
     private AMapLocation last_Location;// 前一个位置点
@@ -103,13 +85,10 @@ public class OBDDataService extends Service implements AMapLocationListener,
     private MySensorRunnable myRunnable;
     private int speed = 0;
     private float revolution = 0;
-    private AMapNavi mAmapNavi;
-    private AMapNaviListener mAmapNaviListener;
-    private List<NaviLatLng> mStartPoints = new ArrayList<NaviLatLng>();
-    private List<NaviLatLng> mEndPoints = new ArrayList<NaviLatLng>();
-    private boolean startNavi;
     private Logger log;
+
     private BleOBD bleOBD;
+    private PickPeople pickPeople;
     /**
      * 采集数据线程 30s 将所有数据风封装到JSONArray里
      */
@@ -190,11 +169,16 @@ public class OBDDataService extends Service implements AMapLocationListener,
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        startCommand();
+        return START_STICKY;
+    }
+    private void startCommand(){
         log = LoggerFactory.getLogger("odb.service");
-//        log.info("OBDDataService onStartCommand");
         Log.d(TAG,"OBDDataService onStartCommand");
         bleOBD = new BleOBD();
         bleOBD.initOBD();
+        pickPeople = new PickPeople();
+        pickPeople.init(this);
         DriveBehaviorHappend.getInstance().setListener(this);
         try {
             if (conn != null && !isOpen) {
@@ -208,14 +192,12 @@ public class OBDDataService extends Service implements AMapLocationListener,
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return START_STICKY;
-    }
 
+    }
     @Override
     public void onCreate() {
         super.onCreate();
         Log.i(TAG, "OBDDataService create");
-        mAmapNavi = AMapNavi.getInstance(this);// 初始化导航引擎
         init();
         initMapLocation();
 
@@ -229,15 +211,12 @@ public class OBDDataService extends Service implements AMapLocationListener,
         mhandler = new Handler();
         initSensor();
         initConn();
-        mAmapNavi.setAMapNaviListener(getAMapNaviListener());
-        mAmapNavi.startGPS();
     }
 
     private void initConn() {
         conn = Connection.getInstance(this);
         conn.addStateChangeCallBack(this);
         conn.addReceivedCallBack(this);
-        conn.setStartNaviCallBack((StartNaviCallBack) this);
     }
 
     // 初始化传感器相关
@@ -617,146 +596,6 @@ public class OBDDataService extends Service implements AMapLocationListener,
         }
     }
 
-    @Override
-    public void startNavi(double lat, double lon) {
-        Log.d(TAG, "startNavi");
-        if (cur_Location != null) {
-            startNavi = true;
-            naviGaode(lat, lon);
-        }
-    }
-
-    // 高德导航
-    private void naviGaode(double lat, double lon) {
-        System.out.println("---导航");
-        mEndPoint = new NaviLatLng(lat, lon);
-        int driverIndex = calculateDriverRoute(lat, lon);
-        if (driverIndex == CALCULATEERROR) {
-            ToastUtils.showTip("路线计算失败,检查参数情况");
-            return;
-        }
-    }
-
-    // 高德路径规划
-    private int calculateDriverRoute(double elat, double elon) {
-        int code = CALCULATEERROR;
-        if (cur_Location != null) {
-            NaviLatLng naviLatLng = new NaviLatLng(cur_Location.getLatitude(),
-                    cur_Location.getLongitude());
-            NaviLatLng endLatlon = new NaviLatLng(elat, elon);
-            mEndPoints.clear();
-            mEndPoints.add(endLatlon);
-            mStartPoints.clear();
-            mStartPoints.add(naviLatLng);
-            if (mAmapNavi.calculateDriveRoute(mStartPoints, mEndPoints, null,
-                    AMapNavi.DrivingDefault)) {
-                code = CALCULATESUCCESS;
-            } else {
-                code = CALCULATEERROR;
-            }
-        }
-        return code;
-    }
-
-    private AMapNaviListener getAMapNaviListener() {
-        if (mAmapNaviListener == null) {
-
-            mAmapNaviListener = new AMapNaviListener() {
-
-                @Override
-                public void onTrafficStatusUpdate() {
-
-                }
-
-                @Override
-                public void onStartNavi(int arg0) {
-                    System.out.println("-------onStartNavi");
-                }
-
-                @Override
-                public void onReCalculateRouteForYaw() {
-                }
-
-                @Override
-                public void onReCalculateRouteForTrafficJam() {
-                }
-
-                @Override
-                public void onLocationChange(AMapNaviLocation location) {
-                }
-
-                @Override
-                public void onInitNaviSuccess() {
-                }
-
-                @Override
-                public void onInitNaviFailure() {
-
-                }
-
-                @Override
-                public void onGetNavigationText(int arg0, String arg1) {
-                    if(startNavi)
-					    VoiceManager.getInstance().startSpeaking(arg1, SemanticConstants.TTS_DO_NOTHING,false);
-                }
-
-                @Override
-                public void onEndEmulatorNavi() {
-                }
-
-                @Override
-                public void onCalculateRouteSuccess() {
-                    if (startNavi) {
-                        LocationUtils.getInstance(OBDDataService.this).setNaviStartPoint
-                                (mStartPoints.get(0).getLatitude(), mStartPoints.get(0).getLongitude());
-
-                        LocationUtils.getInstance(OBDDataService.this).setNaviStartPoint
-                                (mEndPoint.getLatitude(), mEndPoint.getLongitude());
-
-						ActivitiesManager.getInstance().closeTargetActivity(
-								NaviCustomActivity.class);
-						Intent standIntent = new Intent(getBaseContext(),NaviCustomActivity.class);
-						standIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						startActivity(standIntent);
-                        startNavi = false;
-                    }
-
-                }
-
-                @Override
-                public void onCalculateRouteFailure(int arg0) {
-                    if(startNavi){
-                        String playText = "路径规划出错";
-                        VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_DO_NOTHING,false);
-                        FloatWindowUtil.showMessage(playText,
-                                FloatWindow.MESSAGE_OUT);
-                    }
-
-                }
-
-                @Override
-                public void onArrivedWayPoint(int arg0) {
-                }
-
-                @Override
-                public void onArriveDestination() {
-                }
-
-                @Override
-                public void onGpsOpenStatus(boolean arg0) {
-                }
-
-                @Override
-                public void onNaviInfoUpdated(AMapNaviInfo arg0) {
-                }
-
-                @Override
-                public void onNaviInfoUpdate(NaviInfo arg0) {
-                }
-            };
-        }
-        return mAmapNaviListener;
-    }
 
     @Override
     public void onCarStateChange(int state) {
