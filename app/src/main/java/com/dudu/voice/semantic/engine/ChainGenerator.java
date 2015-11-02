@@ -10,6 +10,7 @@ import com.dudu.voice.semantic.chain.MapSearchChain;
 import com.dudu.voice.semantic.chain.CmdChain;
 import com.dudu.voice.semantic.chain.NavigationChain;
 import com.dudu.voice.semantic.chain.OpenQaChain;
+import com.dudu.voice.semantic.chain.PoiChain;
 import com.dudu.voice.semantic.chain.SemanticChain;
 import com.dudu.voice.semantic.chain.WeatherChain;
 
@@ -73,6 +74,11 @@ public class ChainGenerator {
     public ChoosePageChain getChoosePageChain(){
         ChoosePageChain chain = new ChoosePageChain();
         chain.addChildChain(chain);
+        return chain;
+    }
+
+    public PoiChain getPoiChain() {
+        PoiChain chain = new PoiChain();
         return chain;
     }
 

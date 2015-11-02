@@ -41,18 +41,15 @@ public class Constants {
 	public static final String NO = "否";
 	public static final String JIE = "接";
 
-	public static final String CALL = "打";
-	public static final String SEND = "发";
-	public static final String SYN = "同步";
+    public static final String REFUEL = "加油";
+	public static final String GAS_STATION = "加油站";
+	public static final String DRAW_MONEY = "取钱";
+	public static final String BANK = "银行";
+	public static final String HOTEL = "旅馆";
+	public static final String SLEEP = "睡觉";
+	public static final String TIRED = "累了";
+	public static final String SLEEPY = "困了";
 
-	public static final String ANSWER = "接听";
-	public static final String ANSWER_CALL = "接听电话";
-	public static final String REJECT = "拒绝接听";
-	public static final String REJECT_ANSWER = "拒绝";
-	public static final String END_CALL = "结束通话";
-	public static final String END = "结束";
-	public static final String HANGUP = "挂断";
-	public static final String HANGUP_CALL = "挂断电话";
 	
 //	public static final String WAKEUP_WORDS = "您有什么需要？";
 	public static final String WAKEUP_WORDS = "您好。";

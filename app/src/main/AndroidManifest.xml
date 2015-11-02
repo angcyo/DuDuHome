@@ -68,7 +68,7 @@
 
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="8daa43bc94833f1d449658d6fef0cbf2" />
+            android:value="6d9506f145dbf546da02076d89294390" />
 
         <activity
             android:name=".ui.activity.MainActivity"
@@ -105,17 +105,20 @@
 
         <activity
             android:name=".ui.activity.video.VideoActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="landscape" >
         </activity>
 
         <activity
             android:name=".ui.activity.video.VideoListActivity"
             android:screenOrientation="landscape"
+            android:launchMode="singleTop"
             android:theme="@style/AppBaseTheme" >
         </activity>
 
         <activity
             android:name=".ui.activity.video.VideoPlayActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="landscape">
         </activity>
 
@@ -125,10 +128,10 @@
             android:theme="@style/AppBaseTheme" >
         </activity>
 
-        <service android:name=".service.NewMessageShowService"/>
-
+        <service android:name=".service.NewMessageShowService" />
         <service android:name=".service.RecordBindService" />
-        <service android:name="com.dudu.obd.OBDDataService"/>
+        <service android:name="com.dudu.obd.OBDDataService" />
+
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package com.dudu.voice.semantic;
+package com.dudu.voice.semantic.chain;
 
 import com.dudu.voice.semantic.chain.SemanticChain;
 
@@ -16,4 +16,5 @@ public class CommonAddressChain extends SemanticChain{
     public boolean doSemantic(String json) {
         return false;
     }
+
 }

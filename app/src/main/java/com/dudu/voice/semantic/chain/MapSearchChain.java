@@ -15,14 +15,14 @@ import com.dudu.voice.semantic.SemanticConstants;
  * Created by lxh on 2015/10/29.
  */
 public class MapSearchChain extends SemanticChain {
+
     private MapManager mapManager = null;
 
     private Context mContext;
 
-
     public MapSearchChain(){
         mapManager = MapManager.getInstance();
-        this.mContext = LauncherApplication.getContext().getApplicationContext();
+        mContext = LauncherApplication.getContext();
     }
 
     @Override
@@ -30,10 +30,9 @@ public class MapSearchChain extends SemanticChain {
         String service = JsonUtils.getRsphead(json).getService();
         String semantic = JsonUtils.parseIatResult(json,
                 "semantic");
-        if(!TextUtils.isEmpty(service)){
+        if(!TextUtils.isEmpty(service)) {
             switch (service){
                 case SemanticConstants.SERVICE_MAP:
-
                     MapEntity mapEntity = (MapEntity) GsonUtil
                             .jsonToObject(semantic, MapEntity.class);
                     mapManager.mapControl(mContext, mapEntity, null, MapManager.SEARCH_POI);
@@ -44,7 +43,6 @@ public class MapSearchChain extends SemanticChain {
                     mapManager.mapControl(mContext, hotelEntity, null, MapManager.SEARCH_NEARBY);
                     break;
                 case SemanticConstants.SERVICE_NEARBY:
-
                     String poiKeyWord = JsonUtils
                             .parseIatResultNearby(semantic);
                     mapManager.mapControl(mContext, null, poiKeyWord,
@@ -61,8 +59,8 @@ public class MapSearchChain extends SemanticChain {
                                     .getCategory(), MapManager.SEARCH_NEARBY);
 
                     break;
-
             }
+
             return  true;
         }
 
