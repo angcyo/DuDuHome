@@ -3,4 +3,5 @@
 
     <item android:drawable="@drawable/video_lock" android:state_checked="true"/>
     <item android:drawable="@drawable/video_unlock"/>
+
 </selector>

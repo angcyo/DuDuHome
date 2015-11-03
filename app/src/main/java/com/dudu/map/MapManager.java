@@ -137,8 +137,7 @@ public class MapManager {
             case 4:
                 activity.startSearchPoi(poiKeyWord, false);
                 break;
-            case 5:
-                break;
+
         }
     }
 

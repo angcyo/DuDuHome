@@ -1,9 +1,6 @@
 package com.dudu.android.launcher.ui.activity.video;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -15,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -24,6 +20,8 @@ import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.bean.VideoEntity;
 import com.dudu.android.launcher.db.DbHelper;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
+import com.dudu.android.launcher.ui.dialog.ConfirmCancelDialog;
+import com.dudu.android.launcher.ui.dialog.ConfirmDialog;
 import com.dudu.android.launcher.utils.cache.ThumbsFetcher;
 import java.io.File;
 import java.util.ArrayList;
@@ -40,6 +38,8 @@ public class VideoListActivity extends BaseNoTitlebarAcitivity {
 	private DbHelper mDbHelper;
 
 	private ThumbsFetcher mThumbsFetcher;
+
+	private View mEmptyView;
 	
 	@Override
 	public int initContentView() {
@@ -50,6 +50,7 @@ public class VideoListActivity extends BaseNoTitlebarAcitivity {
 	public void initView(Bundle savedInstanceState) {
 		mGridView = (GridView) findViewById(R.id.video_grid);
 		mGridView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+		mEmptyView = findViewById(R.id.empty_view);
 	}
 
 	@Override
@@ -63,7 +64,7 @@ public class VideoListActivity extends BaseNoTitlebarAcitivity {
 
 		mDbHelper = DbHelper.getDbHelper(VideoListActivity.this);
 
-		mVideoData = new ArrayList<VideoEntity>();
+		mVideoData = new ArrayList<>();
 
 		mAdapter = new VideoAdapter(this, mVideoData);
 
@@ -76,6 +77,11 @@ public class VideoListActivity extends BaseNoTitlebarAcitivity {
 		List<VideoEntity> videos = mDbHelper.getVideos();
 		if (videos != null && !videos.isEmpty()) {
 			mVideoData.addAll(videos);
+			mGridView.setVisibility(View.VISIBLE);
+			mEmptyView.setVisibility(View.GONE);
+		} else {
+			mEmptyView.setVisibility(View.VISIBLE);
+			mGridView.setVisibility(View.GONE);
 		}
 	}
 
@@ -136,57 +142,52 @@ public class VideoListActivity extends BaseNoTitlebarAcitivity {
 		}
 
 		private void showDeleteDialog(final VideoEntity video) {
-			new AlertDialog.Builder(context)
-					.setTitle(R.string.alert_notification)
-					.setMessage(R.string.alert_delete_video)
-					.setPositiveButton(android.R.string.ok,
-							new DialogInterface.OnClickListener() {
+            ConfirmCancelDialog dialog = new ConfirmCancelDialog(context);
+            dialog.setOnButtonClicked(new ConfirmCancelDialog.OnDialogButttonClickListener() {
+                @Override
+                public void onConfirmClick() {
+                    data.remove(video);
+					if (data.isEmpty()) {
+						mEmptyView.setVisibility(View.VISIBLE);
+						mGridView.setVisibility(View.GONE);
+					}
 
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									data.remove(video);
-									new Thread(new Runnable() {
+                    new Thread(new Runnable() {
 
-										@Override
-										public void run() {
-											File file = video.getFile();
-											if (file != null && file.exists()) {
-												file.delete();
-											}
+                        @Override
+                        public void run() {
+                            File file = video.getFile();
+                            if (file != null && file.exists()) {
+                                file.delete();
+                            }
 
-											mDbHelper.deleteVideo(video
-													.getName());
-										}
-									}).start();
+                            mDbHelper.deleteVideo(video
+                                    .getName());
+                        }
+                    }).start();
 
-									notifyDataSetChanged();
-								}
-							})
-					.setNegativeButton(android.R.string.cancel,
-							new DialogInterface.OnClickListener() {
+                    notifyDataSetChanged();
+                }
 
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
+                @Override
+                public void onCancelClick() {
 
-								}
-							}).show();
+                }
+            });
+
+			dialog.show();
 		}
 
 		private void showLockDialog() {
-			new AlertDialog.Builder(context)
-					.setTitle(R.string.alert_notification)
-					.setMessage(R.string.alert_lock_video)
-					.setPositiveButton(android.R.string.ok,
-							new DialogInterface.OnClickListener() {
+            ConfirmDialog dialog = new ConfirmDialog(context);
+            dialog.setOnConfirmClickListener(new ConfirmDialog.OnConfirmClickListener() {
+                @Override
+                public void onConfirmClick() {
 
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
+                }
+            });
 
-								}
-							}).show();
+            dialog.show();
 		}
 
 		@Override
@@ -195,11 +196,9 @@ public class VideoListActivity extends BaseNoTitlebarAcitivity {
 			if (convertView == null) {
 				holder = new ViewHolder();
 				convertView = LayoutInflater.from(context).inflate(
-						R.layout.video_item, parent, false);
+						R.layout.video_taxi_item, parent, false);
 				holder.delete = (ImageButton) convertView
 						.findViewById(R.id.delete_button);
-				holder.weixin = (ImageButton) convertView
-						.findViewById(R.id.weixin_button);
 				holder.date = (TextView) convertView
 						.findViewById(R.id.date_text);
 				holder.thumbnail = (ImageView) convertView
@@ -241,7 +240,7 @@ public class VideoListActivity extends BaseNoTitlebarAcitivity {
 			holder.checkBox.setOnCheckedChangeListener(null);
 			holder.checkBox.setChecked(video.getStatus() == 1);
 			holder.checkBox
-					.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+					.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
 						@Override
 						public void onCheckedChanged(CompoundButton buttonView,
@@ -256,13 +255,6 @@ public class VideoListActivity extends BaseNoTitlebarAcitivity {
 						}
 					});
 
-			holder.weixin.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-
-				}
-			});
 			mThumbsFetcher.loadImage(video.getFile().getAbsolutePath(),
 					holder.thumbnail);
 			return convertView;
@@ -271,7 +263,6 @@ public class VideoListActivity extends BaseNoTitlebarAcitivity {
 		class ViewHolder {
 			ImageView thumbnail;
 			ImageButton delete;
-			ImageButton weixin;
 			ImageButton play;
 			TextView date;
 			CheckBox checkBox;

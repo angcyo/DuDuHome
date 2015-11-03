@@ -72,7 +72,6 @@ public class RouteSearchPoiDialog extends Dialog implements
 				dismiss();
 			}
 		});
-
 	}
 
 	@Override
