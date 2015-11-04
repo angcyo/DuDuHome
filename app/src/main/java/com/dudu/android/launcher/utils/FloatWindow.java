@@ -3,6 +3,7 @@ package com.dudu.android.launcher.utils;
 import java.util.List;
 import android.widget.AdapterView.OnItemClickListener;
 import com.dudu.android.launcher.bean.PoiResultInfo;
+import com.dudu.android.launcher.bean.StrategyMethod;
 
 public class FloatWindow {
 	private static FloatWindow floatWindow;
@@ -46,9 +47,9 @@ public class FloatWindow {
 	public interface StrategyChooseCallBack{
 		/**
 		 * 显示路线优先策略选择列表
-		 * @param str
+		 * @param
 		 */
-		void showStrategy(String[] str);
+		void showStrategy(List<StrategyMethod> mStrategyMethods);
 	}
 	
     public interface AddressListItemClickCallback{

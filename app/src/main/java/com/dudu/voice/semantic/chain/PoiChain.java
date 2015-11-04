@@ -39,21 +39,21 @@ public class PoiChain extends SemanticChain {
         Context context = LauncherApplication.getContext();
         switch (keyword) {
             case Constants.REFUEL:
-                mapManager.mapControl(context, null, Constants.GAS_STATION,
+                mapManager.mapControl(null, Constants.GAS_STATION,
                         MapManager.SEARCH_NEARBY);
                 break;
             case Constants.SLEEPY:
             case Constants.TIRED:
             case Constants.SLEEP:
-                mapManager.mapControl(context, null, Constants.HOTEL,
+                mapManager.mapControl(null, Constants.HOTEL,
                         MapManager.SEARCH_NEARBY);
                 break;
             case Constants.DRAW_MONEY:
-                mapManager.mapControl(context, null, Constants.BANK,
+                mapManager.mapControl(null, Constants.BANK,
                         MapManager.SEARCH_NEARBY);
                 break;
             default:
-                mapManager.mapControl(context, null, keyword,
+                mapManager.mapControl(null, keyword,
                         MapManager.SEARCH_NEARBY);
         }
 

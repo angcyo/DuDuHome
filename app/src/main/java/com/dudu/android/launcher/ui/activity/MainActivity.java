@@ -63,7 +63,7 @@ public class MainActivity extends BaseTitlebarActivity implements
 
         startFloatMessageShowService();
 
-//        startOBDService();
+        startOBDService();
     }
 
     @Override
@@ -159,7 +159,7 @@ public class MainActivity extends BaseTitlebarActivity implements
                                 NaviBackActivity.class);
                     }
                 } else {
-                    navigationIntent.setClass(MainActivity.this, LocationActivity.class);
+                    navigationIntent.setClass(MainActivity.this, LocationMapActivity.class);
 
                 }
 

@@ -5,6 +5,7 @@ import java.util.List;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.dudu.android.launcher.bean.PoiResultInfo;
+import com.dudu.android.launcher.bean.StrategyMethod;
 import com.dudu.map.MapManager;
 
 public class FloatWindowUtil {
@@ -40,9 +41,9 @@ public class FloatWindowUtil {
 	}
 	
 	// 显示路线优先策略选择
-	public static void showStrategy(String[] str,OnItemClickListener listener){
+	public static void showStrategy(List<StrategyMethod> mStrategyMethods,OnItemClickListener listener){
 		if(FloatWindow.getInstance().getStrategyChooseCallBack()!=null){
-			FloatWindow.getInstance().getStrategyChooseCallBack().showStrategy(str);
+			FloatWindow.getInstance().getStrategyChooseCallBack().showStrategy(mStrategyMethods);
 		}
 		if(FloatWindow.getInstance().getAddressListItemClickCallback()!=null){
 			FloatWindow.getInstance().getAddressListItemClickCallback().onAddressListItemClick(listener);

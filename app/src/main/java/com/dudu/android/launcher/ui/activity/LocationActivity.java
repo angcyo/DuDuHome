@@ -84,6 +84,7 @@ import com.dudu.android.launcher.utils.LcStringUtil;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.map.MapManager;
+import com.dudu.map.Navigation;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
 import com.dudu.voice.semantic.chain.ChoosePageChain;
@@ -93,6 +94,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 @SuppressLint("RtlHardcoded")
 public class LocationActivity extends BaseNoTitlebarAcitivity implements
@@ -108,8 +111,6 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 	private NaviLatLng mEndPoint = new NaviLatLng();
 	private MapView mapView;
 	private AMap aMap;
-	private AMapNavi mAmapNavi;
-	private AMapNaviListener mAmapNaviListener;
 	private OnLocationChangedListener mListener;
 	private LocationManagerProxy mAMapLocationManager;
 	private String cityCode;
@@ -251,9 +252,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 	public void initDatas() {
 		Bundle bundle = getIntent().getExtras();
 		isManual = bundle.getBoolean("isManual", false);
-		if (isManual) {
-			// endLocationLL.setVisibility(View.VISIBLE);
-		} else {
+		if (!isManual) {
 			endLocationLL.setVisibility(View.GONE);
 		}
 
@@ -274,12 +273,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 			}
 		} else {
 			boolean isPoi = bundle.getBoolean("isPoi", false);
-			boolean isSearchPoi = bundle.getBoolean("isSearchPoi", false);
-			if (isSearchPoi) {
-				mapManager.setSearchType(MapManager.SEARCH_NAVI);
-				endKeyWord = bundle.getString("poiKeyWord");
-			} else if (isPoi) {
-				mapManager.setSearchType(MapManager.SEARCH_NEARBY);
+			if (isPoi) {
 				this.keyWord = bundle.getString("poiKeyWord");
 			} else {
 				mapManager.setSearchType(MapManager.SEARCH_POI);
@@ -301,8 +295,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 		aMap.setMyLocationType(AMap.LOCATION_TYPE_MAP_FOLLOW);
 		// 初始语音播报资源
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);// 设置声音控制
-		// 语音播报开始
-		mAmapNavi = AMapNavi.getInstance(getApplicationContext());// 初始化导航引擎
+
 	}
 
 	/**
@@ -376,6 +369,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 				keyWord = endKeyWord;
 			}
 		}
+
 
 		if (bool) {
 			startPoi();
@@ -725,13 +719,14 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 							VoiceManager.getInstance().stopUnderstanding();
 							VoiceManager.getInstance().startSpeaking(
 									getString(R.string.no_result),
-									SemanticConstants.TTS_START_UNDERSTANDING);
+									SemanticConstants.TTS_DO_NOTHING);
+
 						}
 					}
 				} else {
 					VoiceManager.getInstance().stopUnderstanding();
 					VoiceManager.getInstance().startSpeaking(
-							getString(R.string.no_result), SemanticConstants.TTS_START_UNDERSTANDING);
+							getString(R.string.no_result), SemanticConstants.TTS_DO_NOTHING);
 				}
 			} else if (rCode == 27) {
 				VoiceManager.getInstance().stopUnderstanding();
@@ -803,8 +798,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 			if (strategyDialog != null && strategyDialog.isShowing()) {
 				strategyDialog.dismiss();
 			}
-			strategyDialog = new StrategyChoiseDialog(LocationActivity.this,
-					mStrategyMethods, end_Address, points);
+			strategyDialog = new StrategyChoiseDialog(LocationActivity.this,end_Address, points);
 
 			Window dialogWindow = strategyDialog.getWindow();
 			WindowManager.LayoutParams lp = dialogWindow.getAttributes();
@@ -824,6 +818,15 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 						}
 					});
 		}
+	}
+
+	private void startDriveMode(int driveMode){
+
+		double[] destination = {mEndPoints.get(0).getLatitude(),mEndPoints.get(0).getLongitude()};
+
+		EventBus.getDefault().post(new Navigation(destination,Navigation.NAVI_NORMAL,driveMode));
+
+
 	}
 
 	private void calculateNavigationStart(int position) {
@@ -871,14 +874,15 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 						VoiceManager.getInstance().clearMisUnderstandCount();
 						VoiceManager.getInstance().startSpeaking(playText,
 								SemanticConstants.TTS_START_UNDERSTANDING,false);
-						FloatWindowUtil.showStrategy(mStrategyMethods,
+						FloatWindowUtil.showStrategy(null,
 								new OnItemClickListener() {
 
 									@Override
 									public void onItemClick(
 											AdapterView<?> arg0, View view,
 											int position, long arg3) {
-										startDriveMode(position);
+
+
 									}
 								});
 
@@ -898,142 +902,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 
 	}
 
-	private void startDriveMode(int driveMode) {
-		showProgressDialog();
-		int driverIndex = calculateDriverRoute(driveMode);
-		dissmissProgressDialog();
-		if (driverIndex == CALCULATEERROR) {
-			mapManager.setShowAddress(false);
-			FloatWindowUtil.removeFloatWindow();
-			ToastUtils.showTip(LocationActivity.this, "路线计算失败,检查参数情况");
-			return;
-		}
-	}
 
-	/**
-	 * 导航回调函数
-	 * 
-	 * @return
-	 */
-	private AMapNaviListener getAMapNaviListener() {
-		if (mAmapNaviListener == null) {
-			mAmapNaviListener = new AMapNaviListener() {
-
-				@Override
-				public void onTrafficStatusUpdate() {
-				}
-
-				@Override
-				public void onStartNavi(int arg0) {
-				}
-
-				@Override
-				public void onReCalculateRouteForYaw() {
-				}
-
-				@Override
-				public void onReCalculateRouteForTrafficJam() {
-				}
-
-				@Override
-				public void onLocationChange(AMapNaviLocation location) {
-				}
-
-				@Override
-				public void onInitNaviSuccess() {
-				}
-
-				@Override
-				public void onInitNaviFailure() {
-				}
-
-				@Override
-				public void onGetNavigationText(int arg0, String text) {
-
-					VoiceManager.getInstance().clearMisUnderstandCount();
-					VoiceManager.getInstance().startSpeaking(text,
-							SemanticConstants.TTS_DO_NOTHING, false);
-				}
-
-				@Override
-				public void onEndEmulatorNavi() {
-
-				}
-
-				@Override
-				public void onCalculateRouteSuccess() {
-					if (mDBManager != null)
-						mDBManager.saveSeachHistory(naviAddress);
-
-					LocationUtils.getInstance(LocationActivity.this).setNaviStartPoint
-					(mStartPoints.get(0).getLatitude(), mStartPoints.get(0).getLongitude());
-
-					LocationUtils.getInstance(LocationActivity.this).setNaviStartPoint
-					(mEndPoint.getLatitude(), mEndPoint.getLongitude());
-
-					dissmissProgressDialog();
-					mapManager.setShowAddress(false);
-					FloatWindowUtil.removeFloatWindow();
-					if (strategyDialog != null && strategyDialog.isShowing())
-						strategyDialog.dismiss();
-					ActivitiesManager.getInstance().closeTargetActivity(
-							NaviCustomActivity.class);
-					Intent standIntent = new Intent(LocationActivity.this,
-							NaviCustomActivity.class);
-					startActivity(standIntent);
-					standIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-					LocationActivity.this.finish();
-				}
-
-				@Override
-				public void onCalculateRouteFailure(int arg0) {
-					dissmissProgressDialog();
-					FloatWindowUtil.showMessage("路径规划出错",
-							FloatWindow.MESSAGE_OUT);
-					removeFloatWindow();
-				}
-
-				@Override
-				public void onArrivedWayPoint(int arg0) {
-				}
-
-				@Override
-				public void onArriveDestination() {
-				}
-
-				@Override
-				public void onGpsOpenStatus(boolean arg0) {
-				}
-
-				@Override
-				public void onNaviInfoUpdated(AMapNaviInfo arg0) {
-				}
-
-				@Override
-				public void onNaviInfoUpdate(NaviInfo arg0) {
-				}
-			};
-		}
-		return mAmapNaviListener;
-	}
-
-	/**
-	 * 对行车路线进行规划
-	 */
-	private int calculateDriverRoute(int driveMode) {
-		if (!mStartPoints.isEmpty() && !mEndPoints.isEmpty()) {
-			int code = CALCULATEERROR;
-			if (mAmapNavi.calculateDriveRoute(mStartPoints, mEndPoints, null,
-					driveMode)) {
-				code = CALCULATESUCCESS;
-			} else {
-				code = CALCULATEERROR;
-			}
-			return code;
-		}
-		return CALCULATEERROR;
-
-	}
 
 	/**
 	 * 方法必须重写
@@ -1042,10 +911,6 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 	protected void onResume() {
 		super.onResume();
 		mapView.onResume();
-		// 以上两句必须重写
-		// 以下两句逻辑是为了保证进入首页开启定位和加入导航回调
-		mAmapNavi.setAMapNaviListener(getAMapNaviListener());
-		mAmapNavi.startGPS();
 		mDBManager.open();
 		if(LocationUtils.getInstance(this).getCurrentLocation()!=null){
 			mStartPoint.setLatitude(LocationUtils.getInstance(this).getCurrentLocation()[0]);
@@ -1102,8 +967,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 			addressDialog.dismiss();
 		if (strategyDialog != null && strategyDialog.isShowing())
 			strategyDialog.dismiss();
-		if (mAmapNavi != null && mAmapNaviListener != null)
-			mAmapNavi.removeAMapNaviListener(mAmapNaviListener);
+
 		if(mDBManager!=null)
 			mDBManager.close();
 	}
@@ -1165,12 +1029,6 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 		mListener = listener;
 		if (mAMapLocationManager == null) {
 			mAMapLocationManager = LocationManagerProxy.getInstance(this);
-			/*
-			 * mAMapLocManager.setGpsEnable(false);
-			 * 1.0.2版本新增方法，设置true表示混合定位中包含gps定位，false表示纯网络定位，默认是true Location
-			 * API定位采用GPS和网络混合定位方式
-			 * ，第一个参数是定位provider，第二个参数时间最短是2000毫秒，第三个参数距离间隔单位是米，第四个参数是定位监听者
-			 */
 			mAMapLocationManager.requestLocationData(
 					LocationProviderProxy.AMapNetwork, 2000, 10, this);
 		}

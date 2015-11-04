@@ -78,4 +78,7 @@ public class SemanticConstants {
     public static final int TTS_START_UNDERSTANDING = 2;
 
 
+    public static final String SERVICE_COMMONADDRESS = "common_address";
+
+    public static final String SERVICE_WHETHER = "whether";
 }

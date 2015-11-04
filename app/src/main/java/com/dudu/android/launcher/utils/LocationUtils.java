@@ -77,7 +77,7 @@ public class LocationUtils {
 	
 	/**
 	 * 保存导航的起始点
-	 * @param point
+	 * @param
 	 */
 	public void setNaviStartPoint(double lat,double lon){
 		if(locationPreferences==null)

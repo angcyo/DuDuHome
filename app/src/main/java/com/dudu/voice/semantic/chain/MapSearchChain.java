@@ -2,6 +2,7 @@ package com.dudu.voice.semantic.chain;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.bean.MapEntity;
@@ -16,6 +17,8 @@ import com.dudu.voice.semantic.SemanticConstants;
  */
 public class MapSearchChain extends SemanticChain {
 
+    private String TAG = "MapSearchChain";
+
     private MapManager mapManager = null;
 
     private Context mContext;
@@ -27,35 +30,35 @@ public class MapSearchChain extends SemanticChain {
 
     @Override
     public boolean doSemantic(String json) {
+        Log.d(TAG,"---------------map : " + json);
+
         String service = JsonUtils.getRsphead(json).getService();
         String semantic = JsonUtils.parseIatResult(json,
                 "semantic");
         if(!TextUtils.isEmpty(service)) {
             switch (service){
                 case SemanticConstants.SERVICE_MAP:
+
                     MapEntity mapEntity = (MapEntity) GsonUtil
                             .jsonToObject(semantic, MapEntity.class);
-                    mapManager.mapControl(mContext, mapEntity, null, MapManager.SEARCH_POI);
+                    mapManager.mapControl(mapEntity, null, MapManager.SEARCH_POI);
                     break;
                 case SemanticConstants.SERVICE_HOTEL:
                     MapEntity hotelEntity = (MapEntity) GsonUtil
                             .jsonToObject(semantic, MapEntity.class);
-                    mapManager.mapControl(mContext, hotelEntity, null, MapManager.SEARCH_NEARBY);
+                    mapManager.mapControl(hotelEntity, null, MapManager.SEARCH_NEARBY);
                     break;
                 case SemanticConstants.SERVICE_NEARBY:
                     String poiKeyWord = JsonUtils
                             .parseIatResultNearby(semantic);
-                    mapManager.mapControl(mContext, null, poiKeyWord,
+                    mapManager.mapControl(null, poiKeyWord,
                             MapManager.SEARCH_NEARBY);
                     break;
                 case SemanticConstants.SERVICE_RESTAURANT:
                     RestaurantEntity restaurantEntity = (RestaurantEntity) GsonUtil
                             .jsonToObject(semantic,
                                     RestaurantEntity.class);
-                    MapManager.getInstance().mapControl(
-                            mContext,
-                            null,
-                            restaurantEntity.getRestaurantSlots()
+                    mapManager.mapControl(null,restaurantEntity.getRestaurantSlots()
                                     .getCategory(), MapManager.SEARCH_NEARBY);
 
                     break;

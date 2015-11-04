@@ -20,6 +20,8 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.util.Log;
 
+import com.amap.api.navi.AMapNavi;
+
 import de.greenrobot.event.EventBus;
 
 public class Connection extends Thread {
@@ -320,7 +322,7 @@ public class Connection extends Thread {
 				if(jsonResult.has("method")&&jsonResult.has("openid")&&jsonResult.has("lat")&&jsonResult.has("lon")){
 						double lat = Double.parseDouble(jsonResult.getString("lat"));
 						double lon = Double.parseDouble(jsonResult.getString("lon"));
-					EventBus.getDefault().post(new PickPeopleEvent(new double[]{lat,lon}));
+					EventBus.getDefault().post(new Navigation(new double[]{lat,lon},Navigation.NAVI_TWO, AMapNavi.DrivingDefault));
 
 				}
 			} catch (Exception e1) {

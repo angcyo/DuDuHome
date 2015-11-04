@@ -35,7 +35,7 @@ public class BleOBD {
     private boolean isNotice_start = false;
     private boolean isNotice_flamout = false;
 
-    private List<OBDData> obdCollectionList; // OBD 数据
+    private List<OBDData> obdCollectionList = new ArrayList<>(); // OBD 数据
 
     private FlamoutData flamoutData ;
 
@@ -91,7 +91,6 @@ public class BleOBD {
 
         try {
             log.debug("Receive OBD Data: = {}", new String(data, "UTF-8"));
-            Log.d("lxh","Receive OBD Data: = {}"+ new String(data, "UTF-8"));
             parseOBDData(new String(data, "UTF-8"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

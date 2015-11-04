@@ -5,6 +5,7 @@ import com.dudu.voice.semantic.chain.BaikeChain;
 import com.dudu.voice.semantic.chain.ChatChain;
 import com.dudu.voice.semantic.chain.ChoiseChain;
 import com.dudu.voice.semantic.chain.ChoosePageChain;
+import com.dudu.voice.semantic.chain.CommonAddressChain;
 import com.dudu.voice.semantic.chain.FaqChain;
 import com.dudu.voice.semantic.chain.MapSearchChain;
 import com.dudu.voice.semantic.chain.CmdChain;
@@ -13,6 +14,7 @@ import com.dudu.voice.semantic.chain.OpenQaChain;
 import com.dudu.voice.semantic.chain.PoiChain;
 import com.dudu.voice.semantic.chain.SemanticChain;
 import com.dudu.voice.semantic.chain.WeatherChain;
+import com.dudu.voice.semantic.chain.WhetherChain;
 
 public class ChainGenerator {
 
@@ -82,4 +84,11 @@ public class ChainGenerator {
         return chain;
     }
 
+    public CommonAddressChain getCommonAddressChain(){
+
+        CommonAddressChain chain = new CommonAddressChain();
+        WhetherChain whetherChain = new WhetherChain();
+        chain.addChildChain(whetherChain);
+        return chain;
+    }
 }

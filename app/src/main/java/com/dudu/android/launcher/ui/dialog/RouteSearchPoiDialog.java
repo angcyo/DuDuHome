@@ -99,7 +99,7 @@ public class RouteSearchPoiDialog extends Dialog implements
 
 	public void nextPage(){
 		if(pageIndex>=4){
-			VoiceManager.getInstance().startSpeaking("已经是最后一页", SemanticConstants.TTS_START_UNDERSTANDING,false);
+			VoiceManager.getInstance().startSpeaking("已经是最后一页", SemanticConstants.TTS_DO_NOTHING,false);
 			return;
 		}
 
@@ -109,7 +109,7 @@ public class RouteSearchPoiDialog extends Dialog implements
 
 	public void lastPage() {
 		if(pageIndex>=0){
-			VoiceManager.getInstance().startSpeaking("已经是第一页", SemanticConstants.TTS_START_UNDERSTANDING,false);
+			VoiceManager.getInstance().startSpeaking("已经是第一页", SemanticConstants.TTS_DO_NOTHING,false);
 			return;
 		}
 

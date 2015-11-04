@@ -25,6 +25,7 @@ import com.amap.api.navi.model.NaviInfo;
 import com.amap.api.navi.model.NaviLatLng;
 import com.dudu.android.launcher.R;
 import com.dudu.map.MapManager;
+import com.dudu.map.Navigation;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
@@ -34,6 +35,8 @@ import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.NaviSettingUtil;
 import com.dudu.android.launcher.utils.ToastUtils;
+
+import de.greenrobot.event.EventBus;
 
 // 返程导航
 public class NaviBackActivity extends BaseNoTitlebarAcitivity implements
@@ -53,11 +56,6 @@ AMapNaviViewListener{
 	private AMapNaviListener mAmapNaviListener;
 
 	private Button back_button;
-    private NaviLatLng cur_NaviLatLng;
-    private List<NaviLatLng> mStartPoints = new ArrayList<NaviLatLng>();
-	private List<NaviLatLng> mEndPoints = new ArrayList<NaviLatLng>();
-	private final static int CALCULATEERROR = 1;// 启动路径计算失败状态
-	private final static int CALCULATESUCCESS = 2;// 启动路径计算成功状态
 	private AMapNavi mAmapNavi;
 	private Handler mHandler;
 	private boolean needBack;
@@ -161,34 +159,15 @@ AMapNaviViewListener{
     }
     // 继续之前的导航
     public void continueNavi(){
-    	double[] point = LocationUtils.getInstance(this).getNaviEndPoint();
+    	final double[] point = LocationUtils.getInstance(this).getNaviEndPoint();
     	final NaviLatLng startLatLng = new NaviLatLng(point[0], point[1]);
-    	if(cur_NaviLatLng==null){
-    		double[] curlocation = LocationUtils.getInstance(this).getCurrentLocation();
-    		cur_NaviLatLng = new NaviLatLng(curlocation[0], curlocation[1]);
-    	}
-    	if(startLatLng!=null&&cur_NaviLatLng!=null){
+
+    	if(startLatLng!=null){
     		VoiceManager.getInstance().startSpeaking("正在为您进行路线规划");
     		mHandler.postDelayed(new Runnable() {
 				@Override
 				public void run() {
-		    		NaviLatLng naviLatLng = new NaviLatLng(cur_NaviLatLng.getLatitude(),
-		    				cur_NaviLatLng.getLongitude());
-		    		mStartPoints.clear();
-		    		mStartPoints.add(naviLatLng);
-		    		mEndPoints.clear();
-		    		mEndPoints.add(startLatLng);
-		    		int code = CALCULATEERROR;
-		    		if (mAmapNavi.calculateDriveRoute(mStartPoints, mEndPoints, null,
-		    				AMapNavi.DrivingDefault)) {
-		    			code = CALCULATESUCCESS;
-		    		} else {
-		    			code = CALCULATEERROR;
-		    		}
-		    		if (code == CALCULATEERROR) {
-		    			ToastUtils.showTip("路线计算失败,检查参数情况");
-		    			return;
-		    		}
+					EventBus.getDefault().post(new Navigation(point, Navigation.NAVI_TWO,AMapNavi.DrivingDefault));
 				}
 			}, 800);
     		
@@ -222,9 +201,7 @@ AMapNaviViewListener{
 
 				@Override
 				public void onLocationChange(AMapNaviLocation location) {
-					if(location!=null&&location.getCoord()!=null){
-						cur_NaviLatLng = location.getCoord();
-					}
+
 				}
 
 				@Override
@@ -239,7 +216,7 @@ AMapNaviViewListener{
 
 				@Override
 				public void onGetNavigationText(int arg0, String arg1) {
-					VoiceManager.getInstance().startSpeaking(arg1, SemanticConstants.TTS_DO_NOTHING,false);
+
 				}
 
 				@Override
@@ -249,16 +226,7 @@ AMapNaviViewListener{
 
 				@Override
 				public void onCalculateRouteSuccess() {
-					if(needBack){
-						ActivitiesManager.getInstance().closeTargetActivity(
-								NaviCustomActivity.class);
-						Intent standIntent = new Intent(NaviBackActivity.this,
-								NaviCustomActivity.class);
-						standIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-						startActivity(standIntent);
-						NaviBackActivity.this.finish();
-						needBack = false;
-					}
+
 				}
 
 				@Override

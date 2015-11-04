@@ -25,8 +25,6 @@ public class StrategyChoiseDialog extends Dialog {
 
 	private OnStrategyClickListener listener;
 
-	private String[] mStrategyMethods;
-
 	private Button backButton;
 
 	private View mStrategy1;
@@ -56,13 +54,13 @@ public class StrategyChoiseDialog extends Dialog {
 		this(context, R.style.RouteSearchPoiDialogStyle);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		this.context = context;
-		mStrategyMethods = strategyMethods;
+
 	}
-	public StrategyChoiseDialog(Context context, String[] strategyMethods,String[] endPoint,LatLonPoint[] points) {
+	public StrategyChoiseDialog(Context context,String[] endPoint,LatLonPoint[] points) {
 		this(context, R.style.RouteSearchPoiDialogStyle);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		this.context = context;
-		mStrategyMethods = strategyMethods;
+
 		this.endPoint = endPoint;
 		this.points = points;
 	}

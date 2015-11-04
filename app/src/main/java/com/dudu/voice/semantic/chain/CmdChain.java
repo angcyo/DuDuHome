@@ -7,6 +7,7 @@ import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.bean.CmdEntity;
 import com.dudu.android.launcher.bean.CmdSlots;
 import com.dudu.android.launcher.ui.activity.LocationActivity;
+import com.dudu.android.launcher.ui.activity.LocationMapActivity;
 import com.dudu.android.launcher.ui.activity.MainActivity;
 import com.dudu.android.launcher.ui.activity.NaviBackActivity;
 import com.dudu.android.launcher.ui.activity.NaviCustomActivity;
@@ -95,7 +96,7 @@ public class CmdChain extends SemanticChain {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     mApplication.startActivity(intent);
                 }else {
-                    MapManager.getInstance().mapControl(mApplication,null,null,MapManager.SEARCH_POI);
+                    MapManager.getInstance().mapControl(null,null,MapManager.SEARCH_NAVI);
                 }
                 break;
             case Constants.CLOSE:
@@ -103,7 +104,7 @@ public class CmdChain extends SemanticChain {
                 ActivitiesManager.getInstance().closeTargetActivity(
                         NaviCustomActivity.class);
                 ActivitiesManager.getInstance().closeTargetActivity(
-                        LocationActivity.class);
+                        LocationMapActivity.class);
                 ActivitiesManager.getInstance().closeTargetActivity(
                         NaviBackActivity.class);
 

@@ -20,6 +20,8 @@ import com.amap.api.maps.LocationSource;
 import com.dudu.android.launcher.utils.LocationFilter;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.TimeUtils;
+import com.dudu.map.AmapLocationHandler;
+import com.dudu.map.NavigationHandler;
 import com.dudu.obd.Connection.OnRecieveCallBack;
 import com.dudu.obd.Connection.onSessionStateChangeCallBack;
 import com.google.gson.Gson;
@@ -34,30 +36,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
-
 /**
  * 采集OBD数据,GPS数据
  */
-public class OBDDataService extends Service implements AMapLocationListener,
-        LocationSource, onSessionStateChangeCallBack, OnRecieveCallBack,
+public class OBDDataService extends Service implements onSessionStateChangeCallBack, OnRecieveCallBack,
         DriveBehaviorHappend.DriveBehaviorHappendListener, CarStatusManager.CarStatusListener{
     public final static int SENSOR_SLOW = 0; // 传感器频率为20HZ左右(或20HZ以下)
     public final static int SENSOR_NORMAL = 1; // 传感器频率为 40HZ左右
     public final static int SENSOR_FASTER = 2; // 传感器频率为60HZ左右
     public final static int SENSOR_FASTEST = 3; // 传感器频率为最快的频率
+
     private static final String DRIVE_DATAS = "driveDatas";
     private static final String OBD_DATA = "obdDatas";
     private static final String COORDINATES = "coordinates";
 
     private static String TAG = "OBDDataService";
-    private LocationManagerProxy mLocationManagerProxy;
-    private int GPSdataTime = 0;// 第几个GPS点
-    private AMapLocation last_Location;// 前一个位置点
-    private AMapLocation cur_Location; // 当前位置点
-    private boolean isAvalable = false; // 标志定位点是否有效
-    private List<AMapLocation> unAvalableList; // 存放通过第一阶段但没通过第二阶段过滤的点
-    private List<MyGPSData> gpsDataListToSend; // 通过过滤后的定位点的集合
+
     private List<JSONArray> positionAry_list; // 存放要发送的定位点的队列
     private List<JSONArray> postOBDDataArr; // 存放要发送的OBD数据队列
     private Integer mSyncObj = new Integer(0);
@@ -68,11 +62,9 @@ public class OBDDataService extends Service implements AMapLocationListener,
     private boolean isOpen = false;
     private Handler mhandler;
     private int carState;
-    private int acc_spd, break_spd;
     private String obe_id = "111";
     private String gpsStr, obdStr, fStr;
-    private boolean isNotice_start = false;
-    private boolean isNotice_flamout = false;
+
     private SensorManager mSensorManager;
     private MyAccSensorEventListener mMysensorEventListener;
     private MyGyrSensorEventListener mGyrSensorEventListener;
@@ -80,15 +72,19 @@ public class OBDDataService extends Service implements AMapLocationListener,
     private Sensor mGyroscopSensor; // 陀螺仪
     private List<MotionData> mAcceList;
     private List<MotionData> mGyrList;
-    private boolean isFirstRun = true; // 第一个点
-    private boolean isFirstLoc = true; // 是否第一次定位成功
+
     private MySensorRunnable myRunnable;
     private int speed = 0;
     private float revolution = 0;
     private Logger log;
 
     private BleOBD bleOBD;
-    private PickPeople pickPeople;
+    private NavigationHandler navigationHandle;
+    private AmapLocationHandler amapLocationHandler;
+
+    private AMapLocation last_Location;// 前一个位置点
+
+    private AMapLocation cur_Location; // 当前位置点
     /**
      * 采集数据线程 30s 将所有数据风封装到JSONArray里
      */
@@ -177,8 +173,8 @@ public class OBDDataService extends Service implements AMapLocationListener,
         Log.d(TAG,"OBDDataService onStartCommand");
         bleOBD = new BleOBD();
         bleOBD.initOBD();
-        pickPeople = new PickPeople();
-        pickPeople.init(this);
+        navigationHandle = new NavigationHandler();
+        navigationHandle.initNavigationHandle(this);
         DriveBehaviorHappend.getInstance().setListener(this);
         try {
             if (conn != null && !isOpen) {
@@ -199,18 +195,30 @@ public class OBDDataService extends Service implements AMapLocationListener,
         super.onCreate();
         Log.i(TAG, "OBDDataService create");
         init();
-        initMapLocation();
 
     }
 
     private void init() {
-        gpsDataListToSend = new ArrayList<MyGPSData>();
         positionAry_list = new ArrayList<JSONArray>();
-        unAvalableList = new ArrayList<AMapLocation>();
         postOBDDataArr = new ArrayList<JSONArray>();
         mhandler = new Handler();
+        amapLocationHandler = new AmapLocationHandler();
+        amapLocationHandler.init(this);
         initSensor();
         initConn();
+
+        if (dataCollectionThread == null) {
+            dataCollectionThread = new Thread();
+        }
+        if (!dataCollectionThread.isAlive()) {
+            dataCollectionThread.start();
+        }
+        if (dataSendThread == null) {
+            dataSendThread = new Thread();
+        }
+        if (!dataSendThread.isAlive()) {
+            dataSendThread.start();
+        }
     }
 
     private void initConn() {
@@ -221,6 +229,7 @@ public class OBDDataService extends Service implements AMapLocationListener,
 
     // 初始化传感器相关
     private void initSensor() {
+
         myRunnable = new MySensorRunnable();
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mMysensorEventListener = new MyAccSensorEventListener();
@@ -238,170 +247,16 @@ public class OBDDataService extends Service implements AMapLocationListener,
         mhandler.postDelayed(myRunnable, 1000);
     }
 
-    // 初始化定位相关
-    private void initMapLocation() {
-        mLocationManagerProxy = LocationManagerProxy.getInstance(this);
-        mLocationManagerProxy.requestLocationData(
-                LocationProviderProxy.AMapNetwork, 1000, 10, this);
-    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         isAlive = false;
         conn.closeConn();
+        navigationHandle.destoryAmapNavi();
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-    }
 
-    @Override
-    public void onProviderDisabled(String provider) {
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onLocationChanged(AMapLocation location) {
-        String provider = location.getProvider();
-        if (GPSdataTime < 2 && !provider.equals("lbs")) {
-            GPSdataTime++;
-            return;
-        }
-        // 保存当前定位点
-        LocationUtils.getInstance(this).setCurrentLocation(
-                location.getLatitude(), location.getLongitude());
-        // m每秒转换成千米每小时
-        if (location.hasSpeed() && location.getSpeed() > 0)
-            location.setSpeed(location.getSpeed() * 36 / 10);
-        if (isFirstLoc) {
-            last_Location = location;
-            isFirstLoc = false;
-        }
-        // 第一阶段过滤
-        if (LocationFilter.checkStageOne(location.getLatitude(),
-                location.getLongitude(), location.getAccuracy(),
-                location.getBearing())) {
-            // 第一个点，只用第一阶段过滤和速度过滤
-            if (isFirstRun) {
-                if (LocationFilter.checkSpeed(location.getSpeed())) {
-                    isFirstRun = false;
-                    isAvalable = true;
-                } else {
-                    isAvalable = false;
-                    unAvalableList.add(location);
-                }
-            } else {
-                if (location.getSpeed() > 2
-                        && LocationFilter.checkStageTwo(last_Location
-                        .getSpeed(), location.getSpeed(), TimeUtils
-                        .dateLongFormatString(last_Location.getTime(),
-                                TimeUtils.format1), TimeUtils
-                        .dateLongFormatString(location.getTime(),
-                                TimeUtils.format1))) { // 如果不是第一个点且速度大于2，则需通过第二阶段过滤
-                    Log.w("lxh", "第二阶段过滤成功");
-                    isAvalable = true;
-                    unAvalableList.clear();
-                } else if (location.getSpeed() >= 0
-                        && location.getSpeed() <= 2
-                        && LocationFilter.checkStageTwo(last_Location
-                        .getSpeed(), location.getSpeed(), TimeUtils
-                        .dateLongFormatString(last_Location.getTime(),
-                                TimeUtils.format1), TimeUtils
-                        .dateLongFormatString(location.getTime(),
-                                TimeUtils.format1))
-                        && LocationFilter
-                        .checkSpeedDValue(location.getSpeed(), location
-                                        .getSpeed(), TimeUtils
-                                        .dateLongFormatString(
-                                                location.getTime(),
-                                                TimeUtils.format1), TimeUtils
-                                        .dateLongFormatString(
-                                                location.getTime(),
-                                                TimeUtils.format1), location
-                                        .getLatitude(),
-                                location.getLongitude(), location
-                                        .getLatitude(), location
-                                        .getLongitude())) { // 速度小于2，需经过第二阶段过滤
-
-                    Log.w("lxh", "第三阶段过滤成功");
-                    // 和静态过滤)
-                    isAvalable = true;
-                    unAvalableList.clear();
-                } else {
-                    isAvalable = false;
-                    unAvalableList.add(location);
-                    if (unAvalableList.size() == 3) {
-                        // 如果第一个点和第二个点通过第二阶段过滤，则再将第二个点和第三个点用第二阶段的规则过滤，否则清空列表
-                        if (LocationFilter.checkStageTwo(unAvalableList.get(0)
-                                        .getSpeed(), unAvalableList.get(1).getSpeed(),
-                                TimeUtils.dateLongFormatString(unAvalableList
-                                        .get(0).getTime(), TimeUtils.format1),
-                                TimeUtils.dateLongFormatString(unAvalableList
-                                        .get(1).getTime(), TimeUtils.format1))) {
-                            if (LocationFilter.checkStageTwo(unAvalableList
-                                            .get(1).getSpeed(), unAvalableList.get(2)
-                                            .getSpeed(), TimeUtils
-                                            .dateLongFormatString(unAvalableList.get(1)
-                                                    .getTime(), TimeUtils.format1),
-                                    TimeUtils.dateLongFormatString(
-                                            unAvalableList.get(2).getTime(),
-                                            TimeUtils.format1))) {
-                                isAvalable = true;
-                                location = unAvalableList.get(2);
-                                // unAvalableList.clear();
-                            } else {
-                                unAvalableList.clear();
-                            }
-                        } else {
-                            unAvalableList.clear();
-                        }
-                    }
-                }
-            }
-            if (isAvalable) {
-                MyGPSData myGpsData = new MyGPSData(location.getLatitude(),
-                        location.getLongitude(), location.getSpeed(),
-                        location.getAltitude(), location.getBearing(),
-                        TimeUtils.dateLongFormatString(location.getTime(),
-                                TimeUtils.format1), location.getAccuracy(), 0);
-                if (gpsDataListToSend != null
-                        && !gpsDataListToSend.contains(myGpsData)) {
-                    gpsDataListToSend.add(myGpsData);
-                }
-                unAvalableList.clear();
-            }
-
-        } else {
-            Log.d(TAG, "GPS未通过过滤");
-        }
-
-        if (dataCollectionThread == null) {
-            dataCollectionThread = new Thread();
-        }
-        if (!dataCollectionThread.isAlive()) {
-            dataCollectionThread.start();
-        }
-        if (dataSendThread == null) {
-            dataSendThread = new Thread();
-        }
-        if (!dataSendThread.isAlive()) {
-            dataSendThread.start();
-        }
-
-        // 更新preLocation
-        last_Location = location;
-
-        cur_Location = location;
-    }
 
 
 
@@ -409,9 +264,9 @@ public class OBDDataService extends Service implements AMapLocationListener,
     private void putGpsDataToJSON() {
         JSONArray positionAry = new JSONArray();
         try {
-            if (gpsDataListToSend != null && gpsDataListToSend.size() > 0) {
-                for (int i = 0; i < gpsDataListToSend.size(); i++) {
-                    MyGPSData position = gpsDataListToSend.get(i);
+            if (!amapLocationHandler.getGpsDataListToSend().isEmpty()) {
+                for (int i = 0; i < amapLocationHandler.getGpsDataListToSend().size(); i++) {
+                    MyGPSData position = amapLocationHandler.getGpsDataListToSend().get(i);
                     if (position != null) {
                         Gson gson = new Gson();
                         positionAry.put(i,
@@ -419,7 +274,7 @@ public class OBDDataService extends Service implements AMapLocationListener,
                     }
                 }
                 positionAry_list.add(positionAry);
-                gpsDataListToSend.clear();
+                amapLocationHandler.getGpsDataListToSend().clear();
                 Log.d(TAG, "collect gpsData:" + positionAry.length());
             }
         } catch (JSONException e) {
@@ -448,6 +303,8 @@ public class OBDDataService extends Service implements AMapLocationListener,
         Gson gson = new Gson();
         fStr = gson.toJson(bleOBD.getFlamoutData());
         conn.sendMessage(fStr, true);
+
+        last_Location = amapLocationHandler.getLast_Location();
         if (last_Location != null) {
             MyGPSData flameOutgps = new MyGPSData(last_Location.getLatitude(),
                     last_Location.getLongitude(), last_Location.getSpeed(),
@@ -460,20 +317,7 @@ public class OBDDataService extends Service implements AMapLocationListener,
         }
     }
 
-    @Override
-    public void activate(OnLocationChangedListener listener) {
 
-    }
-
-    @Override
-    public void deactivate() {
-        // TODO Auto-generated method stub
-        if (mLocationManagerProxy != null) {
-            mLocationManagerProxy.removeUpdates(this);
-            mLocationManagerProxy.destroy();
-        }
-        mLocationManagerProxy = null;
-    }
 
     @Override
     public void onSessionStateChange(int state) {
@@ -536,6 +380,7 @@ public class OBDDataService extends Service implements AMapLocationListener,
      * @param type
      */
     private void putEventGPS(int type) {
+        cur_Location = amapLocationHandler.getCur_Location();
         if (cur_Location != null) {
             MyGPSData event = new MyGPSData(cur_Location.getLatitude(),
                     cur_Location.getLongitude(), cur_Location.getSpeed(),
@@ -543,14 +388,15 @@ public class OBDDataService extends Service implements AMapLocationListener,
                     TimeUtils.dateLongFormatString(cur_Location.getTime(),
                             TimeUtils.format1), cur_Location.getAccuracy(),
                     type);
-            gpsDataListToSend.add(event);
+            amapLocationHandler.getGpsDataListToSend().add(event);
         }
     }
 
     // 将OBD数据存放在JSONArray中
     private void putOBDData() {
 
-        if (!bleOBD.getObdCollectionList().isEmpty()) {
+        if (bleOBD!=null&&!bleOBD.getObdCollectionList().isEmpty()) {
+
             JSONArray jsArr = new JSONArray();
             for (int i = 0; i < bleOBD.getObdCollectionList().size(); i++) {
                 OBDData obdData = bleOBD.getObdCollectionList().get(i);
@@ -583,23 +429,12 @@ public class OBDDataService extends Service implements AMapLocationListener,
         }, 4 * 60 * 60 * 1000);
     }
 
-    // 车速与发动机转速不匹配
-    private void misMatch() {
-        boolean first = speed < 30 && revolution > 3000;
-        boolean second = (speed < 60 && speed > 30) && revolution > 3500;
-        boolean third = (speed < 90 && speed > 60) && revolution > 4000;
-        boolean forth = (speed < 110 && speed > 90) && revolution > 4500;
-        boolean five = (speed < 130 && speed > 110) && revolution > 5000;
-        boolean six = (speed < 150 && speed > 130) && revolution > 5500;
-        if (first || second || third || forth || five || six) {
-            onDriveBehaviorHappend(DriveBehaviorHappend.TYPE_MISMATCH);
-        }
-    }
-
 
     @Override
     public void onCarStateChange(int state) {
         carState = state;
+        if(state==1)
+            noticeFating();
     }
 
     // 传感器监听

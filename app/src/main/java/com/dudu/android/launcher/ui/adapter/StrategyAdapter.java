@@ -8,14 +8,17 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.dudu.android.launcher.R;
+import com.dudu.android.launcher.bean.StrategyMethod;
+
+import java.util.List;
 
 public class StrategyAdapter extends BaseAdapter {
 	private Context mContext;
-	private String[] mPoiItems = null;
+	private List<StrategyMethod> mStrategyMethods = null;
 	private LayoutInflater mInflater;
-	public StrategyAdapter(Context context, String[] poiItems) {
+	public StrategyAdapter(Context context, List<StrategyMethod> mStrategyMethods) {
 		this.mContext = context;
-		this.mPoiItems = poiItems;
+		this.mStrategyMethods = mStrategyMethods;
 		mInflater = LayoutInflater.from(this.mContext);
 	}
 	public StrategyAdapter(Context context) {
@@ -24,20 +27,21 @@ public class StrategyAdapter extends BaseAdapter {
 	}
 	@Override
 	public int getCount() {
-		return mPoiItems == null ? 0 : mPoiItems.length;
+		return mStrategyMethods == null ? 0 : mStrategyMethods.size();
 	}
 
 	@Override
 	public Object getItem(int position) {
-		return mPoiItems[position];
+		return mStrategyMethods.get(position);
 	}
 
 	@Override
 	public long getItemId(int position) {
 		return position;
 	}
-    public void setStrategyName(String[] str){
-    	this.mPoiItems = str;
+
+    public void setStrategyName(List<StrategyMethod> mStrategyMethods){
+    	this.mStrategyMethods = mStrategyMethods;
     }
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
@@ -49,7 +53,7 @@ public class StrategyAdapter extends BaseAdapter {
 		TextView strategyName = ((TextView) convertView
 				.findViewById(R.id.strategyName));
 		int size = position + 1;
-		strategyName.setText(size + "." + mPoiItems[position]);
+		strategyName.setText(size + "." + mStrategyMethods.get(position).getStrategy());
 		return convertView;
 	}
 }

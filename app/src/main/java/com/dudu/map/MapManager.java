@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import com.dudu.android.launcher.bean.MapEntity;
 import com.dudu.android.launcher.ui.activity.LocationActivity;
+import com.dudu.android.launcher.ui.activity.LocationMapActivity;
 import com.dudu.android.launcher.ui.activity.NaviBackActivity;
 import com.dudu.android.launcher.ui.activity.NaviCustomActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
@@ -17,9 +19,17 @@ import java.util.List;
 
 public class MapManager {
 
-    public static final int SEARCH_POI = 1;    // poi搜索
-    public static final int SEARCH_NAVI = 2;    // 导航搜索
-    public static final int SEARCH_NEARBY = 3;    //  附近POI
+    public static final int SEARCH_POI = 1;             // poi地点搜索
+    public static final int SEARCH_NAVI = 2;            // 打开导航搜索
+    public static final int SEARCH_NEARBY = 3;          // 附近POI
+    public static final int SEARCH_COMMONADDRESS = 4;   // 搜索常用地址
+    public static final int SEARCH_PLACE_LOCATION = 5;  // 搜索某地的位置
+
+    public static final String HAS_KEYWORD = "HAS_KEYWORD";
+
+    public static final String SEARCH_KEYWORD = "SEARCH_KEYWORD";
+
+    public static final String ISMANUAL = "isManual";
 
     private static MapManager mInstance;
 
@@ -31,7 +41,18 @@ public class MapManager {
 
     private boolean isSearch = false;                   // 是否为语音“打开导航后”的搜索
 
-    private int searchType = 0;                        // POI 搜索的类型  1、代表poi。某点的位置。 2、代表导航。3、代表附近的poi查询。4、代表从某点到某点。
+    private int searchType = 0;
+
+    private String commonAddressType;
+
+    public String getCommonAddressType() {
+        return commonAddressType;
+    }
+
+    public void setCommonAddressType(String commonAddressType) {
+        this.commonAddressType = commonAddressType;
+
+    }
 
     private MapManager() {
 
@@ -85,60 +106,33 @@ public class MapManager {
         return mInstance;
     }
 
-    public void mapControl(Context context, Serializable data,
+    public void mapControl(Serializable data,
                            String poiKeyWord, int type) {
-		Activity activity = ActivitiesManager.getInstance().getTopActivity();
-		if (activity != null && activity instanceof LocationActivity) {
-			choiseType(data, (LocationActivity) activity, poiKeyWord, type);
+
+		Activity topActivity = ActivitiesManager.getInstance().getTopActivity();
+
+        setSearchType(type);
+
+		if (topActivity != null && topActivity instanceof LocationMapActivity) {
+
+			((LocationMapActivity) topActivity).handlerSarch(data,poiKeyWord);
+
 		} else {
-			if (activity instanceof NaviCustomActivity) {
-				if(!isNavi)
-					ActivitiesManager.getInstance().closeTargetActivity(
-							NaviCustomActivity.class);
-				if(!isNaviBack)
-					ActivitiesManager.getInstance().closeTargetActivity(NaviBackActivity.class);
-				List<Activity> activities = ActivitiesManager.getInstance()
-						.getTargetActivity(LocationActivity.class);
-				if (!activities.isEmpty()) {
-					activity = activities.get(0);
-				}
-				if (activity != null && activity instanceof LocationActivity) {
-					choiseType(data, (LocationActivity) activity, poiKeyWord,
-							type);
-				}
-			}
 
 			Bundle bundle = new Bundle();
 			bundle.putSerializable(Constants.PARAM_MAP_DATA, data);
-			if (type == SEARCH_NEARBY) {
-				bundle.putBoolean("isPoi", true);
-				bundle.putString("poiKeyWord", poiKeyWord);
+			if (!TextUtils.isEmpty(poiKeyWord)) {
+				bundle.putBoolean(HAS_KEYWORD, true);
+				bundle.putString(SEARCH_KEYWORD, poiKeyWord);
 			}
 
-			bundle.putBoolean("isManual", false);
+			bundle.putBoolean(ISMANUAL, false);
 			Intent intent = new Intent();
 			intent.putExtras(bundle);
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			intent.setClass(context, LocationActivity.class);
-			context.startActivity(intent);
+			intent.setClass(topActivity, LocationMapActivity.class);
+            topActivity.startActivity(intent);
 		}
-    }
-
-    private static void choiseType(Serializable data,
-                                   LocationActivity activity, String poiKeyWord, int type) {
-        switch (type) {
-            case 1:
-            case 2:
-                activity.startLocationInit((MapEntity) data, true, false);
-                break;
-            case 3:
-                activity.startLocationPoi(poiKeyWord, false);
-                break;
-            case 4:
-                activity.startSearchPoi(poiKeyWord, false);
-                break;
-
-        }
     }
 
 }

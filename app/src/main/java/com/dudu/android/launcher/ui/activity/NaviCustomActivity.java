@@ -29,6 +29,7 @@ import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.map.MapManager;
+import com.dudu.map.Navigation;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
@@ -38,6 +39,8 @@ import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.NaviSettingUtil;
 import com.dudu.android.launcher.utils.ToastUtils;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * 实时导航界面
@@ -62,14 +65,9 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 	private AMapNaviListener mAmapNaviListener;
 
 	private Button back_button;
-    private NaviLatLng cur_NaviLatLng;
-    private List<NaviLatLng> mStartPoints = new ArrayList<NaviLatLng>();
-	private List<NaviLatLng> mEndPoints = new ArrayList<NaviLatLng>();
-	private final static int CALCULATEERROR = 1;// 启动路径计算失败状态
-	private final static int CALCULATESUCCESS = 2;// 启动路径计算成功状态
 	private AMapNavi mAmapNavi;
 	private Handler mHandler;
-	private boolean needBack = false;
+
 	@Override
 	public int initContentView() {
 		return R.layout.activity_navicustom;
@@ -169,36 +167,16 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
     }
     // 返程
     public void goBack(){
-    	double[] points = LocationUtils.getInstance(this).getNaviStartPoint();
-    	final NaviLatLng startLatLng = new NaviLatLng(points[0], points[1]);
+    	final double[] points = LocationUtils.getInstance(this).getNaviStartPoint();
     	FloatWindowUtil.removeFloatWindow();
-    	if(cur_NaviLatLng==null){
-    		double[] curlocation = LocationUtils.getInstance(this).getCurrentLocation();
-    		cur_NaviLatLng = new NaviLatLng(curlocation[0], curlocation[1]);
-    	}
-    	if(startLatLng!=null&&cur_NaviLatLng!=null){
-    		VoiceManager.getInstance().startSpeaking("正在为您进行路线规划");
+
+    	if(points!=null){
+    		VoiceManager.getInstance().startSpeaking("正在为您进行路线规划",SemanticConstants.TTS_DO_NOTHING,false);
     		mHandler.postDelayed(new Runnable() {
 				
 				@Override
 				public void run() {
-		    		NaviLatLng naviLatLng = new NaviLatLng(cur_NaviLatLng.getLatitude(),
-		    				cur_NaviLatLng.getLongitude());
-		    		mStartPoints.clear();
-		    		mStartPoints.add(naviLatLng);
-		    		mEndPoints.clear();
-		    		mEndPoints.add(startLatLng);
-		    		int code = CALCULATEERROR;
-		    		if (mAmapNavi.calculateDriveRoute(mStartPoints, mEndPoints, null,
-		    				AMapNavi.DrivingDefault)) {
-		    			code = CALCULATESUCCESS;
-		    		} else {
-		    			code = CALCULATEERROR;
-		    		}
-		    		if (code == CALCULATEERROR) {
-		    			ToastUtils.showTip("路线计算失败,检查参数情况");
-		    			return;
-		    		}
+					EventBus.getDefault().post(new Navigation(points,Navigation.NAVI_BACK,AMapNavi.DrivingDefault));
 				}
 			}, 800);
     		
@@ -233,10 +211,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 
 				@Override
 				public void onLocationChange(AMapNaviLocation location) {
-					System.out.println("-----navilocation:" + location.getCoord().getLatitude());
-					if(location!=null&&location.getCoord()!=null){
-						cur_NaviLatLng = location.getCoord();
-					}
+
 				}
 
 				@Override
@@ -253,8 +228,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 
 				@Override
 				public void onGetNavigationText(int arg0, String arg1) {
-					// TODO Auto-generated method stub
-					VoiceManager.getInstance().startSpeaking(arg1,SemanticConstants.TTS_DO_NOTHING,false);
+
 				}
 
 				@Override
@@ -265,17 +239,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 
 				@Override
 				public void onCalculateRouteSuccess() {
-					if(needBack){
-						ActivitiesManager.getInstance().closeTargetActivity(
-								NaviBackActivity.class);
-						Intent standIntent = new Intent(NaviCustomActivity.this,
-								NaviBackActivity.class);
-						standIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-						startActivity(standIntent);
-						NaviCustomActivity.this.finish();
-						needBack = false;
-					}
-					
+
 				}
 
 				@Override
@@ -419,7 +383,6 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 					mapPriview();	
 					break;
 				case Constants.RERURN_JOURNEY:
-					needBack = true;
 					goBack();
 					break;
 				case Constants.CLOSE+Constants.NAVI_TRAFFIC:

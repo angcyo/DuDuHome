@@ -1,6 +1,7 @@
 package com.dudu.android.launcher.bean;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 public class PoiResultInfo implements Serializable{
 
@@ -55,4 +56,20 @@ public class PoiResultInfo implements Serializable{
 	}
 
 
+
+	public static class MyComparator implements Comparator<PoiResultInfo> {
+
+		@Override
+		public int compare(PoiResultInfo lhs, PoiResultInfo rhs) {
+			if (lhs.getDistance() > rhs.getDistance())
+				return 1;
+			else if (lhs.getDistance() == rhs.getDistance()) {
+				return 0;
+			} else {
+				return -1;
+			}
+
+		}
+
+	}
 }
