@@ -74,4 +74,22 @@ public class JsonUtils {
 		return null;
 	}
 
+	public static String getNearbyOptionType(String json){
+
+		try {
+			JSONTokener tokener = new JSONTokener(json);
+			JSONObject joResult = new JSONObject(tokener);
+			joResult = joResult.optJSONObject("slots");
+			if(joResult != null){
+				joResult = joResult.optJSONObject("option");
+				if(joResult != null){
+					return joResult.optString("type");
+				}
+			}
+		} catch (Exception e) {
+			LogUtils.e(TAG, e.getMessage());
+		}
+		return null;
+	}
+
 }

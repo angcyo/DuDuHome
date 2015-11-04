@@ -19,11 +19,13 @@ import java.util.List;
 
 public class MapManager {
 
-    public static final int SEARCH_POI = 1;             // poi地点搜索
-    public static final int SEARCH_NAVI = 2;            // 打开导航搜索
-    public static final int SEARCH_NEARBY = 3;          // 附近POI
+    public static final int SEARCH_POI = 1;             // poi地点搜索（我要去XXX，导航到XXX）
+    public static final int SEARCH_NAVI = 2;            // 打开导航搜索（打开导航）
+    public static final int SEARCH_NEARBY = 3;          // 附近POI(附近的XXX)
     public static final int SEARCH_COMMONADDRESS = 4;   // 搜索常用地址
-    public static final int SEARCH_PLACE_LOCATION = 5;  // 搜索某地的位置
+    public static final int SEARCH_PLACE_LOCATION = 5;  // 搜索某地的位置(如我现在的位置，XXX地的位置)
+    public static final int SEARCH_NEAREST = 6;         // 搜索最近的XXX
+
 
     public static final String HAS_KEYWORD = "HAS_KEYWORD";
 

@@ -23,7 +23,13 @@ public class ChoosePageChain extends SemanticChain {
 
     public static final String NEXT = "下一页";
 
+    public static final String NEXT_TWO = "夏夜";
+
+    public static final String NEXT_THREE = "下页";
+
     public static final String LAST = "上一页";
+
+    public static final String LAST_TWO = "上页";
 
     private int type = 0;
 
@@ -54,9 +60,12 @@ public class ChoosePageChain extends SemanticChain {
             if(actionObject!=null){
                 switch (actionObject.getString("type")){
                     case NEXT:
+                    case NEXT_TWO:
+                    case NEXT_THREE:
                         type = NEXT_PAGE;
                       break;
                     case LAST:
+                    case LAST_TWO:
                         type = LAST_PAGE;
                        break;
                 }

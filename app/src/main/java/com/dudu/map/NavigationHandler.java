@@ -170,6 +170,7 @@ public class NavigationHandler {
                 @Override
                 public void onCalculateRouteSuccess() {
 
+                    MapManager.getInstance().setSearchType(0);
                     switch (naviType){
 
                         case Navigation.NAVI_NORMAL:

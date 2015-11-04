@@ -2,6 +2,7 @@ package com.dudu.android.launcher.ui.activity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.location.Location;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -26,7 +27,9 @@ import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
+import com.amap.api.maps.model.CircleOptions;
 import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.overlay.PoiOverlay;
 import com.amap.api.navi.AMapNavi;
@@ -58,6 +61,7 @@ import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.JourneyTool;
 import com.dudu.android.launcher.utils.LcStringUtil;
 import com.dudu.android.launcher.utils.LocationUtils;
+import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.map.AmapLocationChangeEvent;
 import com.dudu.map.MapManager;
 import com.dudu.map.Navigation;
@@ -132,6 +136,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     private Bundle bundle;
 
+    private CircleOptions mCircleOptions;
     private Runnable removeWindowRunnable = new Runnable() {
 
         @Override
@@ -250,7 +255,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         aMap.getUiSettings().setMyLocationButtonEnabled(false);// 设置默认定位按钮是否显示，true显示，false不显示
         aMap.getUiSettings().setZoomControlsEnabled(false);// 隐藏地图放大缩小按钮
         aMap.setMyLocationEnabled(true);// 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
-
+        mCircleOptions = new CircleOptions();
         // 初始语音播报资源
         setVolumeControlStream(AudioManager.STREAM_MUSIC);// 设置声音控制
 
@@ -266,12 +271,16 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         if (cur_location != null) {
 
             aMap.clear();
-
+            mCircleOptions.radius(cur_location.getAccuracy() * 15);
+            mCircleOptions.center(new LatLng(cur_location.getLatitude(), cur_location.getLongitude()));
+            mCircleOptions.fillColor(Color.argb(50, 0, 128, 255));
+            mCircleOptions.strokeColor(Color.TRANSPARENT);
+            aMap.addCircle(mCircleOptions);
             aMap.addMarker(new MarkerOptions()
                     .position(new LatLng(cur_location.getLatitude(), cur_location.getLongitude()))
                     .icon(BitmapDescriptorFactory
                             .fromResource(R.drawable.location_marker)));
-            aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(cur_location.getLatitude(), cur_location.getLongitude()), 18));
+            aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(cur_location.getLatitude(), cur_location.getLongitude()), 15));
 
             if (listener != null)
                 listener.onLocationChanged(event.getAMapLocation());
@@ -285,6 +294,9 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 isFirstLocaion = false;
                 handlerOpenNavi();
             }
+        }else{
+
+            ToastUtils.showTip("获取定位失败，请检查网络");
         }
 
     }
@@ -336,6 +348,8 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 break;
             case MapManager.SEARCH_POI:
             case MapManager.SEARCH_NEARBY:
+            case MapManager.SEARCH_PLACE_LOCATION:
+            case MapManager.SEARCH_NEAREST:
                 Serializable data = bundle.getSerializable(Constants.PARAM_MAP_DATA);
                 if (data != null) {
                     getMapEntity(data);
@@ -380,7 +394,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
             mapManager.setSearchType(MapManager.SEARCH_NEARBY);
             searchKeyWord = slots.getCategory();
         }
-        Log.d(TAG, "---------searchKeyWord:" + searchKeyWord);
+        Log.d(TAG, "---------resuaurantkeyWord:" + searchKeyWord);
     }
 
     public void startLocationInit(MapEntity mapEntity) {
@@ -391,31 +405,47 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         }
 
         MapSlots slots = mapEntity.getSlots();
-        MapLocation location = slots.getLocation();
+        MapSlotsLoc location = slots.getEndLoc();
         if (location != null) {
+            if(!TextUtils.isEmpty(location.getPoi())){
+                searchKeyWord = location.getPoi();
 
-            if (Constants.LOC_BASIC.equals(location.getType())) {
-                String playText = "请提供详细地址";
-                if (!isManual) {
-                    VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_START_UNDERSTANDING, false);
+            }else{
+                if(!TextUtils.isEmpty(location.getAreaAddr())){
+                    searchKeyWord = location.getAreaAddr();
+                }else{
+                    if(!TextUtils.isEmpty(location.getCity())){
+                        searchKeyWord = location.getCity();
+                    }
                 }
 
-            } else if (LcStringUtil.checkStringNotNull(location.getArea())
-                    && LcStringUtil.checkStringNotNull(location.getPoi())) {
-                searchKeyWord = LcStringUtil.checkString(location.getCity());
-            } else {
-                searchKeyWord = LcStringUtil.checkString(location.getArea())
-                        + location.getPoi();
             }
-        }
 
-        Log.d(TAG, "---------searchKeyWord:" + searchKeyWord);
+        }else{
+
+            MapLocation mapLocation = slots.getLocation();
+            if(mapLocation!=null){
+                if(!TextUtils.isEmpty(mapLocation.getPoi())){
+                    searchKeyWord = mapLocation.getPoi();
+                }else{
+
+                    if(!TextUtils.isEmpty(mapLocation.getAreaAddr())){
+                        searchKeyWord = mapLocation.getAreaAddr();
+                    }else{
+                        if(!TextUtils.isEmpty(mapLocation.getCity())){
+                            searchKeyWord = mapLocation.getCity();
+                        }
+                    }
+                }
+
+            }
+
+        }
 
     }
 
     private void search() {
-
-        Log.d(TAG, "---------searchKeyWord:" + searchKeyWord);
+        Log.d(TAG,"searchKeyWord ： "+ searchKeyWord);
 
         if (!TextUtils.isEmpty(searchKeyWord)) {
 
@@ -426,7 +456,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 }
                 VoiceManager.getInstance().startSpeaking(playText,
                         SemanticConstants.TTS_START_WAKEUP);
-                removeFloatWindow(1500);
+                removeFloatWindow(5000);
                 return;
             }
 
@@ -593,8 +623,22 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     };
 
     private void handlerPoiResult() {
-        chooseType = 1;
         setPoiList();
+        if(mapManager.getSearchType()==MapManager.SEARCH_PLACE_LOCATION){
+
+            String playText = "您好，"+ searchKeyWord +"的位置为：" + poiResultList.get(0).getAddressDetial();
+            mVoiceManager.startSpeaking(playText, SemanticConstants.TTS_DO_NOTHING, true);
+            removeFloatWindow(10000);
+            return;
+        }
+        if(mapManager.getSearchType()==MapManager.SEARCH_NEAREST){
+            PoiResultInfo startpoiItem = poiResultList.get(0);
+            mEndPoint = new NaviLatLng(startpoiItem.getLatitude(),startpoiItem.getLongitude());
+            showStrategyMethod();
+            return;
+        }
+        chooseType = 1;
+
         aMap.moveCamera(CameraUpdateFactory.zoomTo(18));
         aMap.addMarker(new MarkerOptions()
                 .position(new LatLng(cur_location.getLatitude(), cur_location.getLongitude()))
@@ -608,7 +652,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         if (isManual) {
             showAddressDialog();
         } else {
-
             String playText = "请选择列表中的地址";
             VoiceManager.getInstance().startSpeaking(
                     playText, SemanticConstants.TTS_START_UNDERSTANDING, false);
@@ -622,8 +665,8 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                                 int position, long arg3) {
 
                             isAddressManual = true;
+                            mVoiceManager.clearMisUnderstandCount();
                             chooseAddress(position);
-
                         }
                     });
 
@@ -675,28 +718,14 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     LatLonPoint[] points = {startPoint, point};
                     showStrategyDialog(points);
                 } else {
-                    chooseType = 2;
+
                     if (position > poiResultList.size()) {
                         String playText = "选择错误，请重新选择";
                         VoiceManager.getInstance().startSpeaking(playText,
                                 SemanticConstants.TTS_START_UNDERSTANDING, false);
                         return;
                     }
-                    String playText = "请选择路线优先策略。";
-                    VoiceManager.getInstance().clearMisUnderstandCount();
-                    VoiceManager.getInstance().startSpeaking(playText,
-                            SemanticConstants.TTS_START_UNDERSTANDING, false);
-                    FloatWindowUtil.showStrategy(mStrategyMethods,
-                            new AdapterView.OnItemClickListener() {
-
-                                @Override
-                                public void onItemClick(
-                                        AdapterView<?> arg0, View view,
-                                        int position, long arg3) {
-
-                                    startNavigation(position);
-                                }
-                            });
+                    showStrategyMethod();
 
                 }
 
@@ -712,6 +741,25 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
             }
         }
 
+    }
+
+    private void showStrategyMethod(){
+        chooseType = 2;
+        String playText = "请选择路线优先策略。";
+        VoiceManager.getInstance().clearMisUnderstandCount();
+        VoiceManager.getInstance().startSpeaking(playText,
+                SemanticConstants.TTS_START_UNDERSTANDING, false);
+        FloatWindowUtil.showStrategy(mStrategyMethods,
+                new AdapterView.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(
+                            AdapterView<?> arg0, View view,
+                            int position, long arg3) {
+
+                        startNavigation(position);
+                    }
+                });
     }
 
     // 选择路径规划策略
@@ -845,14 +893,30 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     @Override
     public void activate(OnLocationChangedListener onLocationChangedListener) {
-
         listener = onLocationChangedListener;
-
-
     }
 
     @Override
     public void deactivate() {
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        MapManager.getInstance().setSearchType(0);
+        if (mapView != null) {
+            mapView.onDestroy();
+            mapView = null;
+        }
+        if (progDialog != null && progDialog.isShowing()) {
+            progDialog.dismiss();
+            progDialog = null;
+        }
+        if (addressDialog != null && addressDialog.isShowing())
+            addressDialog.dismiss();
+        if (strategyDialog != null && strategyDialog.isShowing())
+            strategyDialog.dismiss();
+
+        super.onDestroy();
     }
 }

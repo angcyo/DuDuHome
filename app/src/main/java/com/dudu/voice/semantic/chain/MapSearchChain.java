@@ -12,6 +12,9 @@ import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.map.MapManager;
 import com.dudu.voice.semantic.SemanticConstants;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by lxh on 2015/10/29.
  */
@@ -23,6 +26,16 @@ public class MapSearchChain extends SemanticChain {
 
     private Context mContext;
 
+    private String mapOperation = "";
+
+    private static final String ROUTE = "ROUTE";
+
+    private static final String POSITION = "POSITION";
+
+    private static final String NEAREST = "最近";
+
+    private int type = 0;
+
     public MapSearchChain(){
         mapManager = MapManager.getInstance();
         mContext = LauncherApplication.getContext();
@@ -30,8 +43,7 @@ public class MapSearchChain extends SemanticChain {
 
     @Override
     public boolean doSemantic(String json) {
-        Log.d(TAG,"---------------map : " + json);
-
+        Log.d(TAG,"--------map：" + json);
         String service = JsonUtils.getRsphead(json).getService();
         String semantic = JsonUtils.parseIatResult(json,
                 "semantic");
@@ -39,9 +51,20 @@ public class MapSearchChain extends SemanticChain {
             switch (service){
                 case SemanticConstants.SERVICE_MAP:
 
-                    MapEntity mapEntity = (MapEntity) GsonUtil
-                            .jsonToObject(semantic, MapEntity.class);
-                    mapManager.mapControl(mapEntity, null, MapManager.SEARCH_POI);
+                    parseOperation(json);
+
+                    if(!TextUtils.isEmpty(mapOperation)){
+
+                        if(mapOperation.equals(ROUTE)){
+                            type = MapManager.SEARCH_POI;
+                        }else if(mapOperation.equals(POSITION)){
+                            type = MapManager.SEARCH_PLACE_LOCATION;
+                        }
+                        MapEntity mapEntity = (MapEntity) GsonUtil
+                                    .jsonToObject(semantic, MapEntity.class);
+                        mapManager.mapControl(mapEntity, null,type);
+                    }
+
                     break;
                 case SemanticConstants.SERVICE_HOTEL:
                     MapEntity hotelEntity = (MapEntity) GsonUtil
@@ -49,10 +72,17 @@ public class MapSearchChain extends SemanticChain {
                     mapManager.mapControl(hotelEntity, null, MapManager.SEARCH_NEARBY);
                     break;
                 case SemanticConstants.SERVICE_NEARBY:
+
+                    String optionType = JsonUtils.getNearbyOptionType(semantic);
+                    if(optionType.equals(NEAREST)){
+                        type = MapManager.SEARCH_NEAREST;
+                    }else{
+                        type =  MapManager.SEARCH_NEARBY;
+                    }
                     String poiKeyWord = JsonUtils
                             .parseIatResultNearby(semantic);
                     mapManager.mapControl(null, poiKeyWord,
-                            MapManager.SEARCH_NEARBY);
+                            type);
                     break;
                 case SemanticConstants.SERVICE_RESTAURANT:
                     RestaurantEntity restaurantEntity = (RestaurantEntity) GsonUtil
@@ -70,6 +100,7 @@ public class MapSearchChain extends SemanticChain {
         return false;
     }
 
+
     @Override
     public boolean matchSemantic(String service) {
         boolean match_map = service.equalsIgnoreCase(SemanticConstants.SERVICE_MAP);
@@ -83,5 +114,12 @@ public class MapSearchChain extends SemanticChain {
         return match_map||match_nearby||match_restaurant||match_hotel;
     }
 
+    private void parseOperation(String json){
 
+        try {
+            mapOperation = new JSONObject(json).getString("operation");
+        } catch (JSONException e) {
+            mapOperation = "";
+        }
+    }
 }
