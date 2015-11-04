@@ -4,6 +4,9 @@ import com.dudu.android.launcher.utils.CmdType;
 import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.voice.semantic.SemanticConstants;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by Administrator on 2015/10/31.
  */

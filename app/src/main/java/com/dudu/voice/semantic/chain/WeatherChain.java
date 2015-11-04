@@ -72,7 +72,7 @@ public class WeatherChain extends SemanticChain {
 
         String result = null;
         try {
-            result = parseWeatherResult(json, city, date);
+            result = parseWeatherResult(json, city, date, dateOrig);
         } catch (JSONException e) {
             LogUtils.e(TAG, e.getMessage());
         }
@@ -84,7 +84,7 @@ public class WeatherChain extends SemanticChain {
         }
     }
 
-    private String parseWeatherResult(String json, String city, String date) throws JSONException {
+    private String parseWeatherResult(String json, String city, String date, String dateOrig) throws JSONException {
         JSONObject root = new JSONObject(json);
         if (!root.isNull("data")) {
             JSONObject data = root.getJSONObject("data");
@@ -99,7 +99,7 @@ public class WeatherChain extends SemanticChain {
                     if (weather.get("date").equals(date)) {
                         range = weather.getString("tempRange").split("~")[1] + "~"
                                 + weather.getString("tempRange").split("~")[0];
-                        weatherText = city + "天气 ：" + "\n"
+                        weatherText = city + dateOrig + "天气 ：" + "\n"
                                 + weather.getString("weather") + "\n温度" + range
                                 + "\n" + weather.getString("wind");
                         return weatherText;

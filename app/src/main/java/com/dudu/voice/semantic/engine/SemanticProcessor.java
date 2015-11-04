@@ -3,6 +3,7 @@ package com.dudu.voice.semantic.engine;
 import com.dudu.android.launcher.bean.Rsphead;
 import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.voice.semantic.SemanticConstants;
+import com.dudu.voice.semantic.VoiceManager;
 import com.dudu.voice.semantic.chain.DefaultChain;
 import com.dudu.voice.semantic.chain.SemanticChain;
 
@@ -58,7 +59,6 @@ public class SemanticProcessor {
         mChainMap.put(SemanticConstants.SERVICE_BAIKE, mChainGenerator.getBaikeChain());
 
         mChainMap.put(SemanticConstants.SERVICE_CHAT, mChainGenerator.getChatChain());
-        mChainMap.put(SemanticConstants.SERVICE_FAQ, mChainGenerator.getFaqChain());
         mChainMap.put(SemanticConstants.SERVICE_OPENQA, mChainGenerator.getOpenQaChain());
         mChainMap.put(SemanticConstants.SERVICE_CHOOSEPAGE, mChainGenerator.getChoosePageChain());
         mChainMap.put(SemanticConstants.SERVICE_POI, mChainGenerator.getPoiChain());
@@ -83,9 +83,10 @@ public class SemanticProcessor {
                     mCurChain = mSemanticStack.pop();
                 }
             }
-
             return;
         }
+
+        VoiceManager.getInstance().clearMisUnderstandCount();
 
         mDefaultChain.doSemantic(text);
     }
@@ -130,6 +131,5 @@ public class SemanticProcessor {
 
         return null;
     }
-
 
 }

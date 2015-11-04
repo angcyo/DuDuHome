@@ -15,7 +15,7 @@ import com.dudu.voice.semantic.SemanticConstants;
  */
 public class AdjustVolumeChain extends SemanticChain {
 
-    public static final int VOLUME_INCREMENTAL = 2;
+    public static final int VOLUME_INCREMENTAL = 3;
 
     public enum VolumeState {
         NORMAL,
@@ -75,9 +75,11 @@ public class AdjustVolumeChain extends SemanticChain {
             turnVolumeToValue(mMaxVolume);
         } else if (state.equals("min")) {
             turnVolumeToValue(1);
+        } else if (state.equals("open")) {
+            return turnOnVolume();
         } else {
-            mState = VolumeState.NORMAL;
-            return false;
+                mState = VolumeState.NORMAL;
+                return false;
         }
 
         return true;
@@ -105,11 +107,25 @@ public class AdjustVolumeChain extends SemanticChain {
 
 
     private void turnVolumeToValue(int value) {
+        mCurVolume = value;
         mAudioManager.setStreamVolume(
                 AudioManager.STREAM_MUSIC,
                 value,
                 AudioManager.FLAG_PLAY_SOUND
                         | AudioManager.FLAG_SHOW_UI);
+    }
+
+    private boolean turnOnVolume() {
+        if (mCurVolume != 0) {
+            return false;
+        }
+
+        mAudioManager.setStreamVolume(
+                AudioManager.STREAM_MUSIC,
+                VOLUME_INCREMENTAL,
+                AudioManager.FLAG_PLAY_SOUND
+                        | AudioManager.FLAG_SHOW_UI);
+        return true;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.dudu.voice.semantic.chain;
 
+import com.dudu.android.launcher.utils.Constants;
 import com.dudu.voice.semantic.SemanticConstants;
 
 /**
@@ -14,8 +15,7 @@ public class DefaultChain extends SemanticChain {
 
     @Override
     public boolean doSemantic(String json) {
-        String playText = "嘟嘟识别不了，请重试。";
-        mVoiceManager.startSpeaking(playText, SemanticConstants.TTS_START_UNDERSTANDING);
+        mVoiceManager.startSpeaking(Constants.UNDERSTAND_MISUNDERSTAND, SemanticConstants.TTS_START_UNDERSTANDING);
         return true;
     }
 

@@ -50,14 +50,14 @@ public class Constants {
 	public static final String TIRED = "累了";
 	public static final String SLEEPY = "困了";
 
-	
-//	public static final String WAKEUP_WORDS = "您有什么需要？";
+
 	public static final String WAKEUP_WORDS = "您好。";
-	public static final String WAKEUP_NETWORK_UNAVAILABLE = "网络状态关闭，请检查网络。";
+	public static final String WAKEUP_NETWORK_UNAVAILABLE = "网络状态关闭，请检查网络";
 	
-	public static final String UNDERSTAND_EXIT = "嘟嘟累了，稍后与你再见。";
-	public static final String UNDERSTAND_MISUNDERSTAND = "嘟嘟识别不了，请重试";
-	public static final String UNDERSTAND_NO_INPUT = "嘟嘟识别不了，请重试";
+	public static final String UNDERSTAND_EXIT = "嘟嘟累了，稍后与你再见";
+	public static final String UNDERSTAND_MISUNDERSTAND = "嘟嘟无法识别，请重说";
+	public static final String UNDERSTAND_NO_INPUT = "没有检测到语音输入";
+	public static final String UNDERSTAND_NETWORK_PROBLEM = "当前网络较差，请稍后再试";
 
 	public static final String ONE1 = "1";
 	public static final String ONE = "一";

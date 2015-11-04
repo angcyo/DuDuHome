@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.text.TextUtils;
-
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FloatWindow;
@@ -37,7 +36,7 @@ public class VoiceManager {
 
     private static final String TAG = "VoiceManager";
 
-    private static final int MISUNDERSTAND_REPEAT_COUNT = 3;
+    private static final int MISUNDERSTAND_REPEAT_COUNT = 4;
 
     private static VoiceManager mInstance;
 
@@ -204,6 +203,8 @@ public class VoiceManager {
 
         mSpeechUnderstander.stopUnderstanding();
 
+//        mSpeechUnderstander.cancel();
+
         startWakeup();
     }
 
@@ -230,7 +231,7 @@ public class VoiceManager {
         mSpeechUnderstander.setParameter(SpeechConstant.ASR_PTT, "1");
 
         // 网络连接超时时间
-        mSpeechUnderstander.setParameter(SpeechConstant.NET_TIMEOUT, "6000");
+        mSpeechUnderstander.setParameter(SpeechConstant.NET_TIMEOUT, "5000");
 
         // 设置音频保存路径
         mSpeechUnderstander.setParameter(SpeechConstant.ASR_AUDIO_PATH,
@@ -346,6 +347,7 @@ public class VoiceManager {
 
 
     private SpeechUnderstanderListener mRecognizerListener = new SpeechUnderstanderListener() {
+
         @Override
         public void onVolumeChanged(int i) {
             FloatWindowUtil.changeVoice(i);
@@ -380,19 +382,21 @@ public class VoiceManager {
 
         @Override
         public void onError(SpeechError speechError) {
-            LogUtils.d(TAG, "--------SpeechError:" + speechError.getErrorCode());
-            String playText;
-            if (speechError.getErrorCode() == 10118) {
-                playText = Constants.UNDERSTAND_NO_INPUT;
-            } else {
-                playText = Constants.UNDERSTAND_MISUNDERSTAND;
-            }
-
+            LogUtils.e(TAG, "--------SpeechError:" + speechError.getErrorCode());
+            stopUnderstanding();
             mMisunderstandCount++;
 
-            stopUnderstanding();
-
-            startSpeaking(playText, SemanticConstants.TTS_START_UNDERSTANDING);
+            if (speechError.getErrorCode() == 10118) {
+                if (mMisunderstandCount == 2 || mMisunderstandCount >= 4) {
+                    startSpeaking(Constants.UNDERSTAND_NO_INPUT, SemanticConstants.TTS_START_UNDERSTANDING);
+                } else {
+                    startUnderstanding();
+                }
+            } else if (speechError.getErrorCode() == 10114) {
+                startSpeaking(Constants.UNDERSTAND_NETWORK_PROBLEM, SemanticConstants.TTS_START_UNDERSTANDING);
+            } else {
+                startSpeaking(Constants.UNDERSTAND_MISUNDERSTAND, SemanticConstants.TTS_START_UNDERSTANDING);
+            }
         }
 
         @Override
