@@ -103,7 +103,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     private String cityCode = "";
     private List<PoiItem> poiItems = null;
     private List<PoiResultInfo> poiResultList = new ArrayList<PoiResultInfo>();
-    private int chooseType ;
+    private int chooseType;
 
     private String searchKeyWord;
 
@@ -120,7 +120,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     private Handler mhandler;
 
-    private MapManager mapManager ;
+    private MapManager mapManager;
 
     private boolean isFirstLocaion = true;
 
@@ -235,13 +235,15 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         }
 
     }
-    private void getMapEntity(Serializable data){
+
+    private void getMapEntity(Serializable data) {
         if (data instanceof MapEntity) {
             startLocationInit((MapEntity) data);
         } else if (data instanceof RestaurantEntity) {
             startRestaurantLocationInit((RestaurantEntity) data);
         }
     }
+
     private void setUpMap() {
         aMap.moveCamera(CameraUpdateFactory.zoomTo(16));
         aMap.setLocationSource(this);
@@ -253,14 +255,15 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         setVolumeControlStream(AudioManager.STREAM_MUSIC);// 设置声音控制
 
     }
-    public void onEventMainThread(AmapLocationChangeEvent event){
+
+    public void onEventMainThread(AmapLocationChangeEvent event) {
 
         cur_location = event.getAMapLocation();
 
         listener = event.getListener();
 
 
-        if(cur_location != null) {
+        if (cur_location != null) {
 
             aMap.clear();
 
@@ -270,15 +273,15 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                             .fromResource(R.drawable.location_marker)));
             aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(cur_location.getLatitude(), cur_location.getLongitude()), 18));
 
-            if(listener!=null)
-              listener.onLocationChanged(event.getAMapLocation());
+            if (listener != null)
+                listener.onLocationChanged(event.getAMapLocation());
             Bundle locBundle = cur_location.getExtras();
             if (locBundle != null) {
                 cityCode = locBundle.getString("citycode");
                 cur_locationDesc = locBundle.getString("desc");
             }
 
-            if(isFirstLocaion){
+            if (isFirstLocaion) {
                 isFirstLocaion = false;
                 handlerOpenNavi();
             }
@@ -287,39 +290,37 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     }
 
 
-    public void handlerSarch(Serializable data,String keyWord){
+    public void handlerSarch(Serializable data, String keyWord) {
 
-        if(data!=null){
+        if (data != null) {
             getMapEntity(data);
         }
-        if(keyWord!=null){
+        if (keyWord != null) {
             this.searchKeyWord = keyWord;
         }
-
-
 
         search();
 
     }
 
-    public void handlerOpenNavi(){
+    public void handlerOpenNavi() {
 
-        switch (mapManager.getSearchType()){
+        switch (mapManager.getSearchType()) {
 
             case MapManager.SEARCH_NAVI:
                 if (!Constants.CURRENT_POI.equals(searchKeyWord)) {
 
                     if (!isManual) {
-                            mhandler.postDelayed(new Runnable() {
+                        mhandler.postDelayed(new Runnable() {
 
-                                @Override
-                                public void run() {
-                                    mapManager.setSearch(true);
-                                    String playText = "您好，请说出您想去的地方或者关键字";
-                                    VoiceManager.getInstance().startSpeaking(
-                                            playText, SemanticConstants.TTS_START_UNDERSTANDING);
-                                }
-                            }, 200);
+                            @Override
+                            public void run() {
+                                mapManager.setSearch(true);
+                                String playText = "您好，请说出您想去的地方或者关键字";
+                                VoiceManager.getInstance().startSpeaking(
+                                        playText, SemanticConstants.TTS_START_UNDERSTANDING);
+                            }
+                        }, 200);
 
                     }
 
@@ -347,7 +348,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     }
                 }
                 search();
-               break;
+                break;
 
             case MapManager.SEARCH_COMMONADDRESS:
                 isAddCommonAddress = true;
@@ -379,10 +380,10 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
             mapManager.setSearchType(MapManager.SEARCH_NEARBY);
             searchKeyWord = slots.getCategory();
         }
-        Log.d(TAG,"---------searchKeyWord:" + searchKeyWord);
+        Log.d(TAG, "---------searchKeyWord:" + searchKeyWord);
     }
 
-    public void startLocationInit(MapEntity mapEntity){
+    public void startLocationInit(MapEntity mapEntity) {
         if (mapEntity == null) {
             Toast.makeText(this, "无法识别，请从新输入",
                     Toast.LENGTH_SHORT).show();
@@ -396,7 +397,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
             if (Constants.LOC_BASIC.equals(location.getType())) {
                 String playText = "请提供详细地址";
                 if (!isManual) {
-                    VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_START_UNDERSTANDING,false);
+                    VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_START_UNDERSTANDING, false);
                 }
 
             } else if (LcStringUtil.checkStringNotNull(location.getArea())
@@ -408,17 +409,17 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
             }
         }
 
-        Log.d(TAG,"---------searchKeyWord:" + searchKeyWord);
+        Log.d(TAG, "---------searchKeyWord:" + searchKeyWord);
 
     }
 
-    private void search(){
+    private void search() {
 
-        Log.d(TAG,"---------searchKeyWord:" + searchKeyWord);
+        Log.d(TAG, "---------searchKeyWord:" + searchKeyWord);
 
-        if(!TextUtils.isEmpty(searchKeyWord)){
+        if (!TextUtils.isEmpty(searchKeyWord)) {
 
-            if(Constants.CURRENT_POI.equals(searchKeyWord)){
+            if (Constants.CURRENT_POI.equals(searchKeyWord)) {
                 String playText = "您好，您现在在" + cur_locationDesc;
                 if (TextUtils.isEmpty(cur_locationDesc)) {
                     playText = "暂时无法获取到您的详细位置，请稍后再试";
@@ -434,19 +435,19 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
             query.setPageSize(20);// 设置每页最多返回多少条poi item
             query.setPageNum(0);// 设置查第一页
             poiSearch = new PoiSearch(this, query);
-            if (mapManager.getSearchType()==MapManager.SEARCH_NEARBY) {
-                poiSearch.setBound(new PoiSearch.SearchBound(new LatLonPoint(cur_location.getLatitude(),cur_location.getLongitude()), 2000));
+            if (mapManager.getSearchType() == MapManager.SEARCH_NEARBY) {
+                poiSearch.setBound(new PoiSearch.SearchBound(new LatLonPoint(cur_location.getLatitude(), cur_location.getLongitude()), 2000));
             }
             poiSearch.setOnPoiSearchListener(onPoiSearchListener);
             poiSearch.searchPOIAsyn();
-        }else {
+        } else {
 
             String playText = "您好，关键字有误，请重新输入";
             if (isManual) {
                 Toast.makeText(this, playText, Toast.LENGTH_SHORT).show();
             } else {
                 VoiceManager.getInstance().startSpeaking(playText,
-                        SemanticConstants.TTS_START_UNDERSTANDING,false);
+                        SemanticConstants.TTS_START_UNDERSTANDING, false);
             }
         }
 
@@ -465,22 +466,22 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     private void initResources() {
 
-        StrategyMethod strategy_one = new StrategyMethod (getString(R.string.navi_strategy_speed),
+        StrategyMethod strategy_one = new StrategyMethod(getString(R.string.navi_strategy_speed),
                 AMapNavi.DrivingDefault);
 
-        StrategyMethod strategy_two = new StrategyMethod (getString(R.string.navi_strategy_cost),
+        StrategyMethod strategy_two = new StrategyMethod(getString(R.string.navi_strategy_cost),
                 AMapNavi.DrivingSaveMoney);
 
-        StrategyMethod strategy_three = new StrategyMethod (getString(R.string.navi_strategy_distance),
+        StrategyMethod strategy_three = new StrategyMethod(getString(R.string.navi_strategy_distance),
                 AMapNavi.DrivingShortDistance);
 
-        StrategyMethod strategy_four = new StrategyMethod (getString(R.string.navi_strategy_nohighway),
+        StrategyMethod strategy_four = new StrategyMethod(getString(R.string.navi_strategy_nohighway),
                 AMapNavi.DrivingNoExpressways);
 
-        StrategyMethod strategy_five = new StrategyMethod (getString(R.string.navi_strategy_timenojam),
+        StrategyMethod strategy_five = new StrategyMethod(getString(R.string.navi_strategy_timenojam),
                 AMapNavi.DrivingFastestTime);
 
-        StrategyMethod strategy_six = new StrategyMethod (getString(R.string.navi_strategy_costnojam),
+        StrategyMethod strategy_six = new StrategyMethod(getString(R.string.navi_strategy_costnojam),
                 AMapNavi.DrivingAvoidCongestion);
 
         mStrategyMethods.add(strategy_one);
@@ -492,6 +493,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
 
     }
+
     /**
      * 弹出策略选择框
      */
@@ -523,16 +525,15 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     }
 
 
-
     PoiSearch.OnPoiSearchListener onPoiSearchListener = new PoiSearch.OnPoiSearchListener() {
 
         @Override
         public void onPoiSearched(PoiResult poiResult, int code) {
             dissmissProgressDialog();
 
-            switch (code){
+            switch (code) {
 
-                case 0 :
+                case 0:
                     if (poiResult != null && poiResult.getQuery() != null) {
 
                         mapManager.setSearch(false);
@@ -544,7 +545,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                         if (poiItems != null && poiItems.size() > 0) {
 
                             handlerPoiResult();
-                        }else{
+                        } else {
 
                             VoiceManager.getInstance().stopUnderstanding();
                             VoiceManager.getInstance().startSpeaking(
@@ -552,7 +553,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                                     SemanticConstants.TTS_DO_NOTHING);
                             removeFloatWindow(1500);
                         }
-                    }else{
+                    } else {
 
                         VoiceManager.getInstance().stopUnderstanding();
                         VoiceManager.getInstance().startSpeaking(
@@ -575,7 +576,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     break;
                 default:
                     VoiceManager.getInstance().stopUnderstanding();
-                    FloatWindowUtil.showMessage(getString(R.string.error_other)+code,
+                    FloatWindowUtil.showMessage(getString(R.string.error_other) + code,
                             FloatWindow.MESSAGE_IN);
                     removeFloatWindow(1500);
 
@@ -591,12 +592,12 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         }
     };
 
-    private void handlerPoiResult(){
+    private void handlerPoiResult() {
         chooseType = 1;
         setPoiList();
         aMap.moveCamera(CameraUpdateFactory.zoomTo(18));
         aMap.addMarker(new MarkerOptions()
-                .position(new LatLng(cur_location.getLatitude(),cur_location.getLongitude()))
+                .position(new LatLng(cur_location.getLatitude(), cur_location.getLongitude()))
                 .icon(BitmapDescriptorFactory
                         .fromResource(R.drawable.location_marker)));
         poiOverlay = new PoiOverlay(aMap, poiItems);
@@ -610,7 +611,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
             String playText = "请选择列表中的地址";
             VoiceManager.getInstance().startSpeaking(
-                    playText, SemanticConstants.TTS_START_UNDERSTANDING,false);
+                    playText, SemanticConstants.TTS_START_UNDERSTANDING, false);
             FloatWindowUtil.showAddress(poiResultList,
                     new AdapterView.OnItemClickListener() {
 
@@ -620,8 +621,8 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                                 View arg1,
                                 int position, long arg3) {
 
-                                isAddressManual = true;
-                                chooseAddress(position);
+                            isAddressManual = true;
+                            chooseAddress(position);
 
                         }
                     });
@@ -630,11 +631,11 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     }
 
-    private void chooseAddress(int position){
+    private void chooseAddress(int position) {
 
-        try{
+        try {
 
-            PoiResultInfo startpoiItem = (isManual||isAddressManual) ? poiResultList.get(position)
+            PoiResultInfo startpoiItem = (isManual || isAddressManual) ? poiResultList.get(position)
                     : poiResultList.get(position - 1);
             if (startpoiItem != null) {
 
@@ -649,10 +650,10 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 if (addressDialog != null && addressDialog.isShowing()) {
                     addressDialog.dismiss();
                 }
-                if(isAddCommonAddress){
+                if (isAddCommonAddress) {
                     mapManager.setShowAddress(false);
                     FloatWindowUtil.removeFloatWindow();
-                    String addType  = mapManager.getCommonAddressType();
+                    String addType = mapManager.getCommonAddressType();
                     CommonAddressUtil.setCommonAddress(addType, this, startpoiItem.getAddressTitle());
                     CommonAddressUtil.setCommonLocation(addType,
                             this, point.getLatitude(), point.getLongitude());
@@ -665,26 +666,26 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
                     chooseType = 2;
                     String address = startpoiItem.getAddressDetial();
-                    end_Address = new String[] {
+                    end_Address = new String[]{
                             startpoiItem.getAddressTitle(),
-                            TextUtils.isEmpty(address) ? "中国" : address };
+                            TextUtils.isEmpty(address) ? "中国" : address};
                     LatLonPoint startPoint = new LatLonPoint(
                             cur_location.getLatitude(),
                             cur_location.getLongitude());
-                    LatLonPoint[] points = { startPoint, point };
+                    LatLonPoint[] points = {startPoint, point};
                     showStrategyDialog(points);
                 } else {
                     chooseType = 2;
                     if (position > poiResultList.size()) {
                         String playText = "选择错误，请重新选择";
                         VoiceManager.getInstance().startSpeaking(playText,
-                                SemanticConstants.TTS_START_UNDERSTANDING,false);
+                                SemanticConstants.TTS_START_UNDERSTANDING, false);
                         return;
                     }
                     String playText = "请选择路线优先策略。";
                     VoiceManager.getInstance().clearMisUnderstandCount();
                     VoiceManager.getInstance().startSpeaking(playText,
-                            SemanticConstants.TTS_START_UNDERSTANDING,false);
+                            SemanticConstants.TTS_START_UNDERSTANDING, false);
                     FloatWindowUtil.showStrategy(mStrategyMethods,
                             new AdapterView.OnItemClickListener() {
 
@@ -706,7 +707,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 if (position > poiItems.size()) {
                     String playText = "选择错误，请重新选择";
                     VoiceManager.getInstance().startSpeaking(playText,
-                            SemanticConstants.TTS_START_UNDERSTANDING,false);
+                            SemanticConstants.TTS_START_UNDERSTANDING, false);
                 }
             }
         }
@@ -714,23 +715,23 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     }
 
     // 选择路径规划策略
-    private void chooseDriveMode(int position){
+    private void chooseDriveMode(int position) {
         if (position > mStrategyMethods.size()) {
             String playText = "选择错误，请重新选择";
             VoiceManager.getInstance().startSpeaking(playText,
-                    SemanticConstants.TTS_START_UNDERSTANDING,false);
+                    SemanticConstants.TTS_START_UNDERSTANDING, false);
             return;
         }
 
-        startNavigation(mStrategyMethods.get(position-1).getDriveMode());
+        startNavigation(mStrategyMethods.get(position - 1).getDriveMode());
 
     }
 
-    public void startChooseResult(int size){
+    public void startChooseResult(int size) {
 
-        if(chooseType==1){
+        if (chooseType == 1) {
             chooseAddress(size);
-        }else{
+        } else {
             chooseDriveMode(size);
         }
     }
@@ -804,11 +805,12 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     }
 
 
-
     // 开始导航
-    private void startNavigation(int driveMode){
-        double[] destination = {mEndPoint.getLatitude(),mEndPoint.getLongitude()};
-        EventBus.getDefault().post(new Navigation(destination,Navigation.NAVI_NORMAL,driveMode));
+    private void startNavigation(int driveMode) {
+
+        FloatWindowUtil.removeFloatWindow();
+        double[] destination = {mEndPoint.getLatitude(), mEndPoint.getLongitude()};
+        EventBus.getDefault().post(new Navigation(destination, Navigation.NAVI_NORMAL, driveMode));
     }
 
 
@@ -818,22 +820,22 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         }
     }
 
-    public void choosePage(int type){
+    public void choosePage(int type) {
 
-        if(type== ChoosePageChain.NEXT_PAGE){
-            if(isManual){
-                if(addressDialog!=null)
+        if (type == ChoosePageChain.NEXT_PAGE) {
+            if (isManual) {
+                if (addressDialog != null)
                     addressDialog.nextPage();
-            }else{
+            } else {
 
                 FloatWindowUtil.chooseAddressPage(ChoosePageChain.NEXT_PAGE);
             }
 
-        }else{
-            if(isManual){
-                if(addressDialog!=null)
+        } else {
+            if (isManual) {
+                if (addressDialog != null)
                     addressDialog.lastPage();
-            }else{
+            } else {
 
                 FloatWindowUtil.chooseAddressPage(ChoosePageChain.LAST_PAGE);
             }

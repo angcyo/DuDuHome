@@ -92,7 +92,8 @@ public class BleOBD {
         try {
             log.debug("Receive OBD Data: = {}", new String(data, "UTF-8"));
             parseOBDData(new String(data, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
+        } catch (Exception e) {
+            log.error("OBD Parse exception", e);
             e.printStackTrace();
         }
     }

@@ -19,7 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  * Created by pc on 2015/11/3.
  */
@@ -49,18 +50,19 @@ public class AmapLocationHandler implements AMapLocationListener,LocationSource 
 
     private List<MyGPSData> gpsDataListToSend; // 通过过滤后的定位点的集合
 
+    private Logger log;
 
     public AmapLocationHandler (){
 
-
+        log = LoggerFactory.getLogger("lbs.gps");
     }
 
     public void init(Context context){
         mLocationManagerProxy = LocationManagerProxy.getInstance(context);
         mLocationManagerProxy.requestLocationData(
                 LocationProviderProxy.AMapNetwork, 1000, 10, this);
-        gpsDataListToSend = new ArrayList<MyGPSData>();
-        unAvalableList = new ArrayList<AMapLocation>();
+        gpsDataListToSend = new ArrayList<>();
+        unAvalableList = new ArrayList<>();
     }
 
     @Override
@@ -107,7 +109,7 @@ public class AmapLocationHandler implements AMapLocationListener,LocationSource 
                                 TimeUtils.format1), TimeUtils
                         .dateLongFormatString(location.getTime(),
                                 TimeUtils.format1))) { // 如果不是第一个点且速度大于2，则需通过第二阶段过滤
-                    Log.w("lxh", "第二阶段过滤成功");
+                    log.debug("gps第二阶段过滤成功");
                     isAvalable = true;
                     unAvalableList.clear();
                 } else if (location.getSpeed() >= 0
@@ -132,7 +134,7 @@ public class AmapLocationHandler implements AMapLocationListener,LocationSource 
                                         .getLatitude(), location
                                         .getLongitude())) { // 速度小于2，需经过第二阶段过滤
 
-                    Log.w("lxh", "第三阶段过滤成功");
+                    log.debug("gps第三阶段过滤成功");
                     // 和静态过滤)
                     isAvalable = true;
                     unAvalableList.clear();
@@ -181,7 +183,7 @@ public class AmapLocationHandler implements AMapLocationListener,LocationSource 
             }
 
         } else {
-            Log.d(TAG, "------GPS未通过过滤");
+            log.debug("gps未通过过滤locaion:{},{}",location.getLatitude(),location.getLongitude());
         }
 
         // 更新preLocation

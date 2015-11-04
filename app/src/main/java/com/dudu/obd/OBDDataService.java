@@ -40,7 +40,7 @@ import java.util.List;
  * 采集OBD数据,GPS数据
  */
 public class OBDDataService extends Service implements onSessionStateChangeCallBack, OnRecieveCallBack,
-        DriveBehaviorHappend.DriveBehaviorHappendListener, CarStatusManager.CarStatusListener{
+        DriveBehaviorHappend.DriveBehaviorHappendListener, CarStatusManager.CarStatusListener {
     public final static int SENSOR_SLOW = 0; // 传感器频率为20HZ左右(或20HZ以下)
     public final static int SENSOR_NORMAL = 1; // 传感器频率为 40HZ左右
     public final static int SENSOR_FASTER = 2; // 传感器频率为60HZ左右
@@ -129,7 +129,6 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
                     try {
                         Thread.sleep(5000);
                     } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
 
@@ -157,7 +156,6 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
     });
 
 
-
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -168,9 +166,9 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
         startCommand();
         return START_STICKY;
     }
-    private void startCommand(){
+
+    private void startCommand() {
         log = LoggerFactory.getLogger("odb.service");
-        Log.d(TAG,"OBDDataService onStartCommand");
         bleOBD = new BleOBD();
         bleOBD.initOBD();
         navigationHandle = new NavigationHandler();
@@ -190,6 +188,7 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
         }
 
     }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -257,9 +256,6 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
     }
 
 
-
-
-
     // 将gps数据转换为JSON 格式
     private void putGpsDataToJSON() {
         JSONArray positionAry = new JSONArray();
@@ -275,10 +271,10 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
                 }
                 positionAry_list.add(positionAry);
                 amapLocationHandler.getGpsDataListToSend().clear();
-                Log.d(TAG, "collect gpsData:" + positionAry.length());
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+
+            log.error("putGpsDataToJSON error", e);
         }
     }
 
@@ -318,7 +314,6 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
     }
 
 
-
     @Override
     public void onSessionStateChange(int state) {
         if (state == Connection.SESSION_OPEND) {
@@ -329,9 +324,8 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
     @Override
     public void OnRecieveFromServerMsg(String method, String resultCode,
                                        String resultDes) {
-        // TODO Auto-generated method stub
-        Log.i(TAG, "Received msg:" + method);
         switch (method) {
+
             case DRIVE_DATAS:
                 fStr = null;
                 break;
@@ -395,26 +389,27 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
     // 将OBD数据存放在JSONArray中
     private void putOBDData() {
 
-        if (bleOBD!=null&&!bleOBD.getObdCollectionList().isEmpty()) {
+            if (bleOBD != null && !bleOBD.getObdCollectionList().isEmpty()) {
+                JSONArray jsArr = new JSONArray();
+                for (int i = 0; i < bleOBD.getObdCollectionList().size(); i++) {
+                    OBDData obdData = bleOBD.getObdCollectionList().get(i);
+                    Gson obd = new Gson();
 
-            JSONArray jsArr = new JSONArray();
-            for (int i = 0; i < bleOBD.getObdCollectionList().size(); i++) {
-                OBDData obdData = bleOBD.getObdCollectionList().get(i);
-                Gson obd = new Gson();
-                try {
-                    if (obdData != null)
-                        jsArr.put(new JSONObject(obd.toJson(obdData)));
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    if (obdData != null) {
+                        try {
+                             jsArr.put(new JSONObject(obd.toJson(obdData)));
+                        }catch (JSONException e) {
+
+                            log.error("putOBDData error ",e);
+
+                        }
+                    }
                 }
+                postOBDDataArr.add(jsArr);
+                bleOBD.getObdCollectionList().clear();
             }
-            postOBDDataArr.add(jsArr);
-            bleOBD.getObdCollectionList().clear();
-        }
+
     }
-
-
 
 
     // 疲劳驾驶判定,如果驾驶4小时后还未熄火，则每隔15分钟再判定一次是否为疲劳驾驶
@@ -433,7 +428,7 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
     @Override
     public void onCarStateChange(int state) {
         carState = state;
-        if(state==1)
+        if (state == 1)
             noticeFating();
     }
 
