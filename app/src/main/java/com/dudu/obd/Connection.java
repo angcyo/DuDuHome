@@ -21,6 +21,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.amap.api.navi.AMapNavi;
+import com.dudu.map.Navigation;
 
 import de.greenrobot.event.EventBus;
 

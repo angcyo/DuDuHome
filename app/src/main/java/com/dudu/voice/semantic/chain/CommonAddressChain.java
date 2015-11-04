@@ -9,15 +9,14 @@ import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.utils.CommonAddressUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.map.MapManager;
+import com.dudu.map.Navigation;
 import com.dudu.voice.semantic.SemanticConstants;
 
 import org.json.JSONObject;
 
 import de.greenrobot.event.EventBus;
 
-/**
- * Created by pc on 2015/11/2.
- */
+
 public class CommonAddressChain extends SemanticChain{
 
     private static final String TAG = "CommonAddressChain";
@@ -74,7 +73,7 @@ public class CommonAddressChain extends SemanticChain{
                 EventBus.getDefault().post(new Navigation(location,Navigation.NAVI_TWO, AMapNavi.DrivingDefault));
 
             }else{
-                String playText = "��û�г��õ�" + addressType + "��ַ���Ƿ���ӣ�";
+                String playText = "您还没有常用的" + addressType + "地址，是否添加？";
                 mVoiceManager.startSpeaking(playText,SemanticConstants.TTS_START_UNDERSTANDING,true);
             }
 
