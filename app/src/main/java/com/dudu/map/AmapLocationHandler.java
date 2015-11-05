@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by pc on 2015/11/3.
  */
-public class AmapLocationHandler implements AMapLocationListener,LocationSource {
+public class AmapLocationHandler implements AMapLocationListener {
 
     private static final String TAG = "AmapLocationHandler";
 
@@ -32,7 +32,7 @@ public class AmapLocationHandler implements AMapLocationListener,LocationSource 
 
     private LocationManagerProxy mLocationManagerProxy;
 
-    private OnLocationChangedListener mListener;
+//    private OnLocationChangedListener mListener;
 
     private int GPSdataTime = 0;// 第几个GPS点
 
@@ -51,6 +51,7 @@ public class AmapLocationHandler implements AMapLocationListener,LocationSource 
     private List<MyGPSData> gpsDataListToSend; // 通过过滤后的定位点的集合
 
     private Logger log;
+
 
     public AmapLocationHandler (){
 
@@ -213,22 +214,22 @@ public class AmapLocationHandler implements AMapLocationListener,LocationSource 
 
     }
 
-    @Override
-    public void activate(LocationSource.OnLocationChangedListener onLocationChangedListener) {
-
-
-        mListener = onLocationChangedListener;
-
-    }
-
-    @Override
-    public void deactivate() {
-        if (mLocationManagerProxy != null) {
-            mLocationManagerProxy.removeUpdates(this);
-            mLocationManagerProxy.destroy();
-        }
-        mLocationManagerProxy = null;
-    }
+//    @Override
+//    public void activate(LocationSource.OnLocationChangedListener onLocationChangedListener) {
+//
+//
+////        mListener = onLocationChangedListener;
+//
+//    }
+//
+//    @Override
+//    public void deactivate() {
+//        if (mLocationManagerProxy != null) {
+//            mLocationManagerProxy.removeUpdates(this);
+//            mLocationManagerProxy.destroy();
+//        }
+//        mLocationManagerProxy = null;
+//    }
 
     public AMapLocation getLast_Location (){
 

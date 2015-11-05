@@ -128,7 +128,6 @@ public class MapManager {
 				bundle.putString(SEARCH_KEYWORD, poiKeyWord);
 			}
 
-			bundle.putBoolean(ISMANUAL, false);
 			Intent intent = new Intent();
 			intent.putExtras(bundle);
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

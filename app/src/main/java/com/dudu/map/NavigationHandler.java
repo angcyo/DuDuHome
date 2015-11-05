@@ -156,7 +156,7 @@ public class NavigationHandler {
                 @Override
                 public void onGetNavigationText(int arg0, String arg1) {
 
-
+                    FloatWindowUtil.removeFloatWindow();
                     VoiceManager.getInstance().clearMisUnderstandCount();
                     VoiceManager.getInstance().startSpeaking(arg1, SemanticConstants.TTS_DO_NOTHING, false);
 
@@ -205,7 +205,7 @@ public class NavigationHandler {
 
                     String playText = "路径规划出错,请检查网络";
                     VoiceManager.getInstance().clearMisUnderstandCount();
-                    VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_DO_NOTHING, true);
+                    VoiceManager.getInstance().startSpeaking(playText);
                     removeWindow();
 
 

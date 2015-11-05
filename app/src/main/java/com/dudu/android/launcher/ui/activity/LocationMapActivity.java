@@ -31,6 +31,7 @@ import com.amap.api.maps.model.CircleOptions;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
+import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.maps.overlay.PoiOverlay;
 import com.amap.api.navi.AMapNavi;
 import com.amap.api.navi.model.NaviLatLng;
@@ -136,7 +137,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     private Bundle bundle;
 
-    private CircleOptions mCircleOptions;
     private Runnable removeWindowRunnable = new Runnable() {
 
         @Override
@@ -242,7 +242,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         }
 
         bundle = getIntent().getExtras();
-        isManual = bundle.getBoolean(MapManager.ISMANUAL, false);
+
         if (!isManual) {
             endLocationLL.setVisibility(View.GONE);
         }
@@ -259,11 +259,21 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     private void setUpMap() {
         aMap.moveCamera(CameraUpdateFactory.zoomTo(16));
-        aMap.setLocationSource(this);
-        aMap.getUiSettings().setMyLocationButtonEnabled(false);// 设置默认定位按钮是否显示，true显示，false不显示
+        MyLocationStyle myLocationStyle = new MyLocationStyle();
+        myLocationStyle.myLocationIcon(BitmapDescriptorFactory
+                .fromResource(R.drawable.location_marker));// 设置小蓝点的图标
+        myLocationStyle.strokeColor(Color.TRANSPARENT);// 设置圆形的边框颜色
+        myLocationStyle.radiusFillColor(Color.argb(80, 0, 0, 180));// 设置圆形的填充颜色
+        myLocationStyle.strokeWidth(0.1f);// 设置圆形的边框粗细
         aMap.getUiSettings().setZoomControlsEnabled(false);// 隐藏地图放大缩小按钮
+        aMap.setMyLocationStyle(myLocationStyle);
+        aMap.setMyLocationRotateAngle(180);
+        aMap.setLocationSource(this);// 设置定位监听
+        aMap.getUiSettings().setMyLocationButtonEnabled(true);// 设置默认定位按钮是否显示
         aMap.setMyLocationEnabled(true);// 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
-        mCircleOptions = new CircleOptions();
+        //设置定位的类型为定位模式 ，可以由定位、跟随或地图根据面向方向旋转几种
+        aMap.setMyLocationType(AMap.LOCATION_TYPE_LOCATE);
+
         // 初始语音播报资源
         setVolumeControlStream(AudioManager.STREAM_MUSIC);// 设置声音控制
 
@@ -272,23 +282,11 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     public void onEventMainThread(AmapLocationChangeEvent event) {
 
         cur_location = event.getAMapLocation();
-
-        listener = event.getListener();
-
-
         if (cur_location != null) {
 
-            aMap.clear();
-            mCircleOptions.radius(cur_location.getAccuracy() * 15);
-            mCircleOptions.center(new LatLng(cur_location.getLatitude(), cur_location.getLongitude()));
-            mCircleOptions.fillColor(Color.argb(50, 0, 128, 255));
-            mCircleOptions.strokeColor(Color.TRANSPARENT);
-            aMap.addCircle(mCircleOptions);
-            aMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(cur_location.getLatitude(), cur_location.getLongitude()))
-                    .icon(BitmapDescriptorFactory
-                            .fromResource(R.drawable.location_marker)));
-            aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(cur_location.getLatitude(), cur_location.getLongitude()), 15));
+            if (listener!=null){
+                listener.onLocationChanged(cur_location);// 显示系统小蓝点
+            }
 
             if (listener != null)
                 listener.onLocationChanged(event.getAMapLocation());
@@ -557,6 +555,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
                         @Override
                         public void onStrategyClick(int position) {
+                            strategyDialog.dismiss();
                             startNavigation(position);
                         }
                     });
@@ -648,7 +647,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         }
         chooseType = 1;
 
-        aMap.moveCamera(CameraUpdateFactory.zoomTo(18));
+        aMap.moveCamera(CameraUpdateFactory.zoomTo(17));
         aMap.addMarker(new MarkerOptions()
                 .position(new LatLng(cur_location.getLatitude(), cur_location.getLongitude()))
                 .icon(BitmapDescriptorFactory
@@ -674,7 +673,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                                 int position, long arg3) {
 
                             isAddressManual = true;
-                            mVoiceManager.clearMisUnderstandCount();
+                            mVoiceManager.stopUnderstanding();
                             chooseAddress(position);
                         }
                     });
@@ -708,7 +707,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                             this, point.getLatitude(), point.getLongitude());
                     VoiceManager.getInstance().startSpeaking("添加" + startpoiItem.getAddressTitle() + "为" + addType + "地址成功！",
                             SemanticConstants.TTS_DO_NOTHING, true);
-                    removeFloatWindow(5000);
+                    removeFloatWindow(10000);
                     return;
                 }
                 if (isManual) {
@@ -725,12 +724,13 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     showStrategyDialog(points);
                 } else {
 
-                    if (position > poiResultList.size()) {
+                    if (!isAddressManual&&position > poiResultList.size()) {
                         String playText = "选择错误，请重新选择";
                         VoiceManager.getInstance().startSpeaking(playText,
                                 SemanticConstants.TTS_START_UNDERSTANDING, false);
                         return;
                     }
+
                     showStrategyMethod();
 
                 }
@@ -752,8 +752,8 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     private void showStrategyMethod(){
         chooseType = 2;
         String playText = "请选择路线优先策略。";
-        VoiceManager.getInstance().clearMisUnderstandCount();
-        VoiceManager.getInstance().startSpeaking(playText,
+        mVoiceManager.clearMisUnderstandCount();
+        mVoiceManager.startSpeaking(playText,
                 SemanticConstants.TTS_START_UNDERSTANDING, false);
         FloatWindowUtil.showStrategy(mStrategyMethods,
                 new AdapterView.OnItemClickListener() {
@@ -904,6 +904,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     @Override
     public void activate(OnLocationChangedListener onLocationChangedListener) {
+        Log.d(TAG,"------------LocationMapActivity activate");
         listener = onLocationChangedListener;
     }
 
