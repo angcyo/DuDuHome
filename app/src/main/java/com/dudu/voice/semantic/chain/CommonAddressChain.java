@@ -7,6 +7,8 @@ import android.util.Log;
 import com.amap.api.navi.AMapNavi;
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.utils.CommonAddressUtil;
+import com.dudu.android.launcher.utils.FloatWindow;
+import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.map.MapManager;
 import com.dudu.map.Navigation;
@@ -68,8 +70,9 @@ public class CommonAddressChain extends SemanticChain{
 
             }
 
-            if(!TextUtils.isEmpty(address)&&checkPoint(location)){
-                Log.d(TAG,"---------address:" + address + "===locaton:" + location[0] + "   " + location[1]);
+
+            if(!TextUtils.isEmpty(address)&&!checkPoint(location)){
+                FloatWindowUtil.removeFloatWindow();
                 EventBus.getDefault().post(new Navigation(location,Navigation.NAVI_TWO, AMapNavi.DrivingDefault));
 
             }else{
