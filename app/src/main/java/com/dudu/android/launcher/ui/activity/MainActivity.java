@@ -1,5 +1,7 @@
 package com.dudu.android.launcher.ui.activity;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -64,7 +66,22 @@ public class MainActivity extends BaseTitlebarActivity implements
         startFloatMessageShowService();
 
         startOBDService();
+        //检测蓝牙设配
+        checkBlueTooth();
     }
+
+    private void checkBlueTooth() {
+        //初始化蓝牙的适配器
+        BluetoothManager bluetoothManager=(BluetoothManager)getSystemService(Context.BLUETOOTH_SERVICE);
+        BluetoothAdapter bluetoothAdapter=bluetoothManager.getAdapter();
+        if (bluetoothAdapter!=null){
+            if(!bluetoothAdapter.isEnabled()){
+             //如果蓝牙没有开启的话，则开启蓝牙
+                bluetoothAdapter.enable();
+         }
+        }
+    }
+
 
     @Override
     public int initContentView() {
