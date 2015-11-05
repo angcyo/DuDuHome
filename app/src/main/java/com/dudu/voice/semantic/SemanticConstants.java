@@ -67,6 +67,7 @@ public class SemanticConstants {
     public static final String SERVICE_POI = "poi";
 
 
+
     /**
      * 语音合成后处理类型
      */
@@ -81,4 +82,6 @@ public class SemanticConstants {
     public static final String SERVICE_COMMONADDRESS = "common_address";
 
     public static final String SERVICE_WHETHER = "whether";
+
+    public static final String SERVICE_WIFI = "mwifi";
 }

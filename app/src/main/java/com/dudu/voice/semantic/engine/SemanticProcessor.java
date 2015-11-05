@@ -63,6 +63,7 @@ public class SemanticProcessor {
         mChainMap.put(SemanticConstants.SERVICE_CHOOSEPAGE, mChainGenerator.getChoosePageChain());
         mChainMap.put(SemanticConstants.SERVICE_POI, mChainGenerator.getPoiChain());
         mChainMap.put(SemanticConstants.SERVICE_COMMONADDRESS,mChainGenerator.getCommonAddressChain());
+        mChainMap.put(SemanticConstants.SERVICE_WIFI,mChainGenerator.getWIFIChain());
     }
 
     public void processSemantic(final String text) {
