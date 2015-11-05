@@ -64,6 +64,11 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 	// 导航监听
 	private AMapNaviListener mAmapNaviListener;
 
+	@Override
+	protected void onPostResume() {
+		super.onPostResume();
+	}
+
 	private Button back_button;
 	private AMapNavi mAmapNavi;
 	private Handler mHandler;
@@ -110,6 +115,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 		mAmapNavi = AMapNavi.getInstance(getApplicationContext());
 		// 实时导航方式进行导航
 		mAmapNavi.startNavi(AMapNavi.GPSNaviMode);
+		mAmapNavi.startGPS();
 		mHandler = new Handler();
 	}
 
@@ -304,13 +310,13 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 
 	@Override
 	public void onNaviTurnClick() {
-//		Intent intent = new Intent(NaviCustomActivity.this,
-//				SimpleHudActivity.class);
-//		intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//		Bundle bundle = new Bundle();
-//		bundle.putInt(NaviSettingUtil.ACTIVITYINDEX, NaviSettingUtil.EMULATORNAVI);
-//		intent.putExtras(bundle);
-//		startActivity(intent);
+		Intent intent = new Intent(NaviCustomActivity.this,
+				SimpleHudActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		Bundle bundle = new Bundle();
+		bundle.putInt(NaviSettingUtil.ACTIVITYINDEX, NaviSettingUtil.EMULATORNAVI);
+		intent.putExtras(bundle);
+		startActivity(intent);
 	}
 
 	@Override
@@ -346,15 +352,6 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			// Intent intent = new Intent();
-			// if (LauncherApplication.cmdType == 2) {
-			// intent.setClass(NaviCustomActivity.this, LocationActivity.class);
-			// } else {
-			// intent.setClass(NaviCustomActivity.this,
-			// NaviRouteActivity.class);
-			// }
-			// intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-			// startActivity(intent);
 			finish();
 		}
 		return super.onKeyDown(keyCode, event);
@@ -370,6 +367,8 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 	@Override
 	public void onResume() {
 		super.onResume();
+		setAmapNaviViewOptions();
+		AMapNavi.getInstance(this).setAMapNaviListener(getAMapNaviListener());
 		Bundle bundle = getIntent().getExtras();
 		processBundle(bundle);
 		if(bundle!=null){
@@ -396,8 +395,6 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 				}
 			}
 		}
-		setAmapNaviViewOptions();
-		mAmapNavi.setAMapNaviListener(getAMapNaviListener());
 		mAmapAMapNaviView.onResume();
 
 	}
@@ -405,8 +402,6 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 	@Override
 	public void onPause() {
 		mAmapAMapNaviView.onPause();
-//		AMapNavi.getInstance(this)
-//				.removeAMapNaviListener(getAMapNaviListener());
 		super.onPause();
 	}
 

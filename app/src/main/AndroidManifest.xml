@@ -125,6 +125,17 @@
             android:theme="@style/AppBaseTheme" >
         </activity>
 
+        <activity
+            android:name="com.dudu.android.launcher.ui.activity.ActivationActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppBaseTheme">
+            </activity>
+
+        <activity
+            android:name="com.dudu.android.launcher.ui.activity.SimpleHudActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppBaseTheme" />
+
         <service android:name=".service.NewMessageShowService" />
         <service android:name=".service.RecordBindService" />
         <service android:name="com.dudu.obd.OBDDataService" />

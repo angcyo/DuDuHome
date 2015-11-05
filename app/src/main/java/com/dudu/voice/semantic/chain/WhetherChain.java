@@ -13,7 +13,7 @@ import org.json.JSONObject;
 /**
  * Created by pc on 2015/11/3.
  */
-public class WhetherChain extends SemanticChain{
+public class WhetherChain extends SemanticChain {
 
 
     public static final String YES = "是";
@@ -22,9 +22,13 @@ public class WhetherChain extends SemanticChain{
 
     public static final String YES_TWO = "设置";
 
+    public static final String YES_THREE = "添加";
+
     public static final String NO_TWO = "不设置";
 
-    private String actionType ;
+    public static final String NO_THREE = "不添加";
+
+    private String actionType;
 
 
     @Override
@@ -37,18 +41,20 @@ public class WhetherChain extends SemanticChain{
 
         getActionType(json);
 
-        if(!TextUtils.isEmpty(json)){
+        if (!TextUtils.isEmpty(json)) {
 
-            switch (actionType){
+            switch (actionType) {
 
                 case YES:
                 case YES_TWO:
+                case YES_THREE:
 
-                    MapManager.getInstance().mapControl(null,null,MapManager.SEARCH_COMMONADDRESS);
+                    MapManager.getInstance().mapControl(null, null, MapManager.SEARCH_COMMONADDRESS);
 
                     break;
                 case NO:
                 case NO_TWO:
+                case NO_THREE:
                     FloatWindowUtil.removeFloatWindow();
                     mVoiceManager.startWakeup();
                     break;
@@ -61,7 +67,7 @@ public class WhetherChain extends SemanticChain{
         return false;
     }
 
-    private String getActionType(String json){
+    private String getActionType(String json) {
 
         try {
 
@@ -69,13 +75,13 @@ public class WhetherChain extends SemanticChain{
                     "semantic"));
             actionType = semnticObject.getJSONObject("slots").getJSONObject("action").getString("type");
 
-        }catch (Exception e){
+        } catch (Exception e) {
 
             actionType = "";
             e.printStackTrace();
 
         }
 
-        return  actionType;
+        return actionType;
     }
 }

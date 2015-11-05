@@ -163,6 +163,14 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         mBackButton = (Button) findViewById(R.id.back_button);
         search_enter = (Button) findViewById(R.id.search_enter);
         mhandler = new Handler();
+
+        if (progDialog == null)
+            progDialog = new ProgressDialog(LocationMapActivity.this);
+        if (progDialog.isShowing())
+            progDialog.dismiss();
+        progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progDialog.setIndeterminate(false);
+        progDialog.setCancelable(false);
     }
 
     @Override
@@ -343,8 +351,9 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     }
                     VoiceManager.getInstance().startSpeaking(playText,
                             SemanticConstants.TTS_START_WAKEUP);
-                    removeFloatWindow(3000);
+                    removeFloatWindow(5000);
                 }
+
                 break;
             case MapManager.SEARCH_POI:
             case MapManager.SEARCH_NEARBY:
@@ -459,7 +468,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 removeFloatWindow(5000);
                 return;
             }
-
+            FloatWindowUtil.removeFloatWindow();
             showProgressDialog();// 显示进度框
             query = new PoiSearch.Query(searchKeyWord, "", cityCode);// 第一个参数表示搜索字符串，第二个参数表示poi搜索类型，第三个参数表示poi搜索区域（空字符串代表全国）
             query.setPageSize(20);// 设置每页最多返回多少条poi item
@@ -581,7 +590,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                             VoiceManager.getInstance().startSpeaking(
                                     getString(R.string.no_result),
                                     SemanticConstants.TTS_DO_NOTHING);
-                            removeFloatWindow(1500);
+                            removeFloatWindow(3000);
                         }
                     } else {
 
@@ -589,26 +598,26 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                         VoiceManager.getInstance().startSpeaking(
                                 getString(R.string.no_result),
                                 SemanticConstants.TTS_DO_NOTHING);
-                        removeFloatWindow(1500);
+                        removeFloatWindow(5000);
                     }
                     break;
                 case 27:
                     VoiceManager.getInstance().stopUnderstanding();
                     FloatWindowUtil.showMessage(getString(R.string.error_network),
                             FloatWindow.MESSAGE_IN);
-                    removeFloatWindow(1500);
+                    removeFloatWindow(5000);
                     break;
                 case 32:
                     VoiceManager.getInstance().stopUnderstanding();
                     FloatWindowUtil.showMessage(getString(R.string.error_key),
                             FloatWindow.MESSAGE_IN);
-                    removeFloatWindow(1500);
+                    removeFloatWindow(5000);
                     break;
                 default:
                     VoiceManager.getInstance().stopUnderstanding();
                     FloatWindowUtil.showMessage(getString(R.string.error_other) + code,
                             FloatWindow.MESSAGE_IN);
-                    removeFloatWindow(1500);
+                    removeFloatWindow(5000);
 
                     break;
 
@@ -797,7 +806,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
      * 弹出地址选择框
      */
     private void showAddressDialog() {
-        // ReceiverSendUtils.stopMessageShowService(this);
+
         if (isManual) {
             if (addressDialog != null && addressDialog.isShowing()) {
                 addressDialog.dismiss();
@@ -855,8 +864,13 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     // 开始导航
     private void startNavigation(int driveMode) {
-
+        mapManager.setSearchType(0);
         FloatWindowUtil.removeFloatWindow();
+
+        if(progDialog!=null){
+            progDialog.setMessage("路径规划中...");
+            progDialog.show();
+        }
         double[] destination = {mEndPoint.getLatitude(), mEndPoint.getLongitude()};
         EventBus.getDefault().post(new Navigation(destination, Navigation.NAVI_NORMAL, driveMode));
     }
@@ -916,7 +930,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
             addressDialog.dismiss();
         if (strategyDialog != null && strategyDialog.isShowing())
             strategyDialog.dismiss();
-
+        poiSearch = null;
         super.onDestroy();
     }
 }

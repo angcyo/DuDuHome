@@ -100,7 +100,7 @@ AMapNaviViewListener{
 	@Override
 	public void initDatas() {
 		mAmapNavi = AMapNavi.getInstance(getApplicationContext());
-		// 实时导航方式进行导航
+		mAmapNavi.startGPS();
 		mAmapNavi.startNavi(AMapNavi.GPSNaviMode);
 		mHandler = new Handler();
 	}
@@ -286,6 +286,13 @@ AMapNaviViewListener{
 	@Override
 	public void onNaviTurnClick() {
 
+		Intent intent = new Intent(NaviBackActivity.this,
+				SimpleHudActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		Bundle bundle = new Bundle();
+		bundle.putInt(NaviSettingUtil.ACTIVITYINDEX, NaviSettingUtil.EMULATORNAVI);
+		intent.putExtras(bundle);
+		startActivity(intent);
 	}
 
 	@Override
@@ -337,6 +344,8 @@ AMapNaviViewListener{
 	@Override
 	public void onResume() {
 		super.onResume();
+		setAmapNaviViewOptions();
+		AMapNavi.getInstance(this).setAMapNaviListener(getAMapNaviListener());
 		Bundle bundle = getIntent().getExtras();
 		processBundle(bundle);
 		if(bundle!=null){
@@ -364,8 +373,7 @@ AMapNaviViewListener{
 				}
 			}
 		}
-		setAmapNaviViewOptions();
-		mAmapNavi.setAMapNaviListener(getAMapNaviListener());
+
 		mAmapAMapNaviView.onResume();
 
 	}

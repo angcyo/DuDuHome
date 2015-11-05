@@ -194,7 +194,7 @@ public class NavigationHandler {
                                 NaviCustomActivity.class);
                     Activity topActivity = ActivitiesManager.getInstance().getTopActivity();
                     Intent standIntent = new Intent(topActivity,naviClass);
-                    standIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    standIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     topActivity.startActivity(standIntent);
                     topActivity.finish();
 
