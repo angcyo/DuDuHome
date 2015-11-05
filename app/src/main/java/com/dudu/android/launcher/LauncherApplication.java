@@ -20,6 +20,8 @@ public class LauncherApplication extends Application {
 
 	public static boolean isLocation = false;
 
+	private boolean mReceivingOrder = false;
+
 	private RecordBindService mRecordService;
 
 	@Override
@@ -60,6 +62,14 @@ public class LauncherApplication extends Application {
 
 	public RecordBindService getRecordService() {
 		return mRecordService;
+	}
+
+	public boolean isReceivingOrder() {
+		return mReceivingOrder;
+	}
+
+	public void setReceivingOrder(boolean receivingOrder) {
+        mReceivingOrder = receivingOrder;
 	}
 
 	public void setRecordService(RecordBindService service) {

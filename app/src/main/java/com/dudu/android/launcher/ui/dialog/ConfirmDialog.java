@@ -28,13 +28,13 @@ public class ConfirmDialog extends Dialog implements View.OnClickListener {
     }
 
     public ConfirmDialog(Context context) {
-        super(context, R.style.dialog_style);
+        super(context, R.style.GeneralDialogStyle);
         mContext = context;
         mConfirmText = context.getString(R.string.ok);
     }
 
     public ConfirmDialog(Context context, String confirmText, String cancelText) {
-        super(context, R.style.dialog_style);
+        super(context, R.style.GeneralDialogStyle);
         mContext = context;
 
         if (TextUtils.isEmpty(confirmText)) {

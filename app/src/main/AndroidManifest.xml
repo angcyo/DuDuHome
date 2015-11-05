@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
-    package="com.dudu.android.launcher"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.dudu.android.launcher">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -70,12 +70,13 @@
 
         <activity
             android:name=".ui.activity.MainActivity"
-            android:screenOrientation="landscape"
             android:largeHeap="true"
+            android:screenOrientation="landscape"
             android:supportsRtl="true"
             android:theme="@style/AppBaseTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -89,52 +90,58 @@
 
         <activity
             android:name=".ui.activity.NaviCustomActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape"
-            android:theme="@style/AppBaseTheme"
-            android:launchMode="singleTask"/>
+            android:theme="@style/AppBaseTheme" />
 
         <activity
             android:name=".ui.activity.NaviBackActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape"
-            android:theme="@style/AppBaseTheme"
-            android:launchMode="singleTask"/>
+            android:theme="@style/AppBaseTheme" />
 
 
         <activity
             android:name=".ui.activity.video.VideoActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="landscape" >
-        </activity>
+            android:screenOrientation="landscape"></activity>
 
         <activity
             android:name=".ui.activity.video.VideoListActivity"
-            android:screenOrientation="landscape"
             android:launchMode="singleTop"
-            android:theme="@style/AppBaseTheme" >
-        </activity>
+            android:screenOrientation="landscape"
+            android:theme="@style/AppBaseTheme"></activity>
 
         <activity
             android:name=".ui.activity.video.VideoPlayActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="landscape">
-        </activity>
+            android:screenOrientation="landscape"></activity>
 
         <activity
             android:name=".ui.activity.WifiActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/AppBaseTheme" >
-        </activity>
+            android:theme="@style/AppBaseTheme"></activity>
 
         <activity
-            android:name="com.dudu.android.launcher.ui.activity.ActivationActivity"
+            android:name=".ui.activity.ActivationActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/AppBaseTheme">
-            </activity>
+            android:theme="@style/AppBaseTheme"></activity>
 
         <activity
-            android:name="com.dudu.android.launcher.ui.activity.SimpleHudActivity"
+            android:name=".ui.activity.SimpleHudActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppBaseTheme" />
+
+        <activity
+            android:name=".ui.activity.OBDCheckingActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="landscape"></activity>
+
+        <activity
+            android:name=".ui.activity.NearbyRepairActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppBaseTheme"></activity>
 
         <service android:name=".service.NewMessageShowService" />
         <service android:name=".service.RecordBindService" />

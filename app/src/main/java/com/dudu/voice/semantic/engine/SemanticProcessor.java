@@ -3,10 +3,11 @@ package com.dudu.voice.semantic.engine;
 import com.dudu.android.launcher.bean.Rsphead;
 import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.voice.semantic.SemanticConstants;
+import com.dudu.voice.semantic.SemanticType;
 import com.dudu.voice.semantic.VoiceManager;
+import com.dudu.voice.semantic.chain.CarCheckingDefault;
 import com.dudu.voice.semantic.chain.DefaultChain;
 import com.dudu.voice.semantic.chain.SemanticChain;
-
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -44,26 +45,9 @@ public class SemanticProcessor {
     private SemanticProcessor() {
         mChainGenerator = new ChainGenerator();
 
-        mChainMap.put(SemanticConstants.SERVICE_VOICE, mChainGenerator.generateVoiceChain());
-
         mDefaultChain = new DefaultChain();
-        mChainMap.put(SemanticConstants.SERVICE_CMD, mChainGenerator.generateCmdChain());
-        mChainMap.put(SemanticConstants.SERVICE_MAP, mChainGenerator.getMapSearchChain());
-        mChainMap.put(SemanticConstants.SERVICE_NEARBY, mChainGenerator.getMapSearchChain());
-        mChainMap.put(SemanticConstants.SERVICE_RESTAURANT, mChainGenerator.getMapSearchChain());
-        mChainMap.put(SemanticConstants.SERVICE_HOTEL, mChainGenerator.getMapSearchChain());
-        mChainMap.put(SemanticConstants.SERVICE_NAVI, mChainGenerator.getNavigationChain());
 
-        mChainMap.put(SemanticConstants.SERVICE_WEATHER, mChainGenerator.getWeatherChain());
-        mChainMap.put(SemanticConstants.SERVICE_CHOISE, mChainGenerator.getChoiseChain());
-        mChainMap.put(SemanticConstants.SERVICE_BAIKE, mChainGenerator.getBaikeChain());
-
-        mChainMap.put(SemanticConstants.SERVICE_CHAT, mChainGenerator.getChatChain());
-        mChainMap.put(SemanticConstants.SERVICE_OPENQA, mChainGenerator.getOpenQaChain());
-        mChainMap.put(SemanticConstants.SERVICE_CHOOSEPAGE, mChainGenerator.getChoosePageChain());
-        mChainMap.put(SemanticConstants.SERVICE_POI, mChainGenerator.getPoiChain());
-        mChainMap.put(SemanticConstants.SERVICE_COMMONADDRESS,mChainGenerator.getCommonAddressChain());
-        mChainMap.put(SemanticConstants.SERVICE_WIFI,mChainGenerator.getWIFIChain());
+        addNormalChains();
     }
 
     public void processSemantic(final String text) {
@@ -74,16 +58,17 @@ public class SemanticProcessor {
                 doSemantic(text);
             } else {
                 // 将当前的操作链入栈
-                mSemanticStack.push(mCurChain);
+                pushSemanticStack(mCurChain);
 
                 mCurChain = mChainMap.get(service);
                 if (mCurChain != null) {
                     doSemantic(text);
                 } else {
                     mDefaultChain.doSemantic(text);
-                    mCurChain = mSemanticStack.pop();
+                    mCurChain = popSemanticStack();
                 }
             }
+
             return;
         }
 
@@ -131,6 +116,66 @@ public class SemanticProcessor {
         }
 
         return null;
+    }
+
+    public void processNextChain() {
+        if (mCurChain == null) {
+            return;
+        }
+
+        SemanticChain child = mCurChain.getNextChild();
+        if (child != null) {
+            mCurChain = child;
+        }
+    }
+
+    public void switchSemanticType(SemanticType type) {
+        mChainMap.clear();
+
+        switch (type) {
+            case NORMAL:
+                VoiceManager.getInstance().setShowMessageWindow(true);
+
+                addNormalChains();
+
+                mDefaultChain = new DefaultChain();
+                break;
+            case CAR_CHECKING:
+                VoiceManager.getInstance().setShowMessageWindow(false);
+
+                addCarCheckingChains();
+
+                mDefaultChain = new CarCheckingDefault();
+                break;
+        }
+    }
+
+    private void addNormalChains() {
+        mChainMap.put(SemanticConstants.SERVICE_VOICE, mChainGenerator.generateVoiceChain());
+        mChainMap.put(SemanticConstants.SERVICE_CMD, mChainGenerator.generateCmdChain());
+        mChainMap.put(SemanticConstants.SERVICE_MAP, mChainGenerator.getMapSearchChain());
+        mChainMap.put(SemanticConstants.SERVICE_NEARBY, mChainGenerator.getMapSearchChain());
+        mChainMap.put(SemanticConstants.SERVICE_RESTAURANT, mChainGenerator.getMapSearchChain());
+        mChainMap.put(SemanticConstants.SERVICE_HOTEL, mChainGenerator.getMapSearchChain());
+        mChainMap.put(SemanticConstants.SERVICE_NAVI, mChainGenerator.getNavigationChain());
+        mChainMap.put(SemanticConstants.SERVICE_WEATHER, mChainGenerator.getWeatherChain());
+        mChainMap.put(SemanticConstants.SERVICE_CHOISE, mChainGenerator.getChoiseChain());
+        mChainMap.put(SemanticConstants.SERVICE_BAIKE, mChainGenerator.getBaikeChain());
+        mChainMap.put(SemanticConstants.SERVICE_CHAT, mChainGenerator.getChatChain());
+        mChainMap.put(SemanticConstants.SERVICE_OPENQA, mChainGenerator.getOpenQaChain());
+        mChainMap.put(SemanticConstants.SERVICE_CHOOSEPAGE, mChainGenerator.getChoosePageChain());
+        mChainMap.put(SemanticConstants.SERVICE_POI, mChainGenerator.getPoiChain());
+        mChainMap.put(SemanticConstants.SERVICE_COMMONADDRESS, mChainGenerator.getCommonAddressChain());
+        mChainMap.put(SemanticConstants.SERVICE_CAR_CHECKING, mChainGenerator.getCarCheckingChain());
+        mChainMap.put(SemanticConstants.SERVICE_WIFI, mChainGenerator.getWIFIChain());
+    }
+
+    private void addCarCheckingChains() {
+        mChainMap.put(SemanticConstants.SERVICE_VOICE, mChainGenerator.generateVoiceChain());
+        mChainMap.put(SemanticConstants.SERVICE_CMD, mChainGenerator.generateCmdChain());
+        mChainMap.put(SemanticConstants.SERVICE_WHETHER, mChainGenerator.getCarCheckingWhetherChain());
+        mChainMap.put(SemanticConstants.SERVICE_CAR_CHECKING, mChainGenerator.getCarCheckingChain());
+        mChainMap.put(SemanticConstants.SERVICE_CHOISE, mChainGenerator.getCarCheckingChoiseChain());
     }
 
 }

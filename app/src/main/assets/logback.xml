@@ -56,6 +56,22 @@
         </rollingPolicy>
     </appender>
 
+    <appender name="FILE_VOICE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- active log file -->
+        <file>${LOG_DIR}/log_voice.today.txt</file>
+        <encoder>
+            <pattern>%date [%thread] %-5level %logger{36} [%file:%line] - %msg%n</pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover period -->
+            <fileNamePattern>${LOG_DIR}/log_voice.%d.txt</fileNamePattern>
+
+            <!-- keep 7 days' worth of history -->
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
     <logger name="obd" level="DEBUG">
         <appender-ref ref="EMAIL" />
     </logger>
@@ -67,6 +83,10 @@
 
     <logger name="lbs.gps" level="DEBUG">
         <appender-ref ref="FILE_GPS" />
+    </logger>
+
+    <logger name="voice.manager" level="DEBUG">
+        <appender-ref ref="FILE_VOICE" />
     </logger>
 
     <logger name="cache.persist" level="DEBUG">

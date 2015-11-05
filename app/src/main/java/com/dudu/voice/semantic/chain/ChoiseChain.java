@@ -27,7 +27,6 @@ public class ChoiseChain extends SemanticChain{
 
     @Override
     public boolean doSemantic(String json) {
-
         String semantic = JsonUtils.parseIatResult(json,
                 "semantic");
 

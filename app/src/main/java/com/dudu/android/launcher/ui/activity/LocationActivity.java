@@ -356,7 +356,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 		} else {
 			MapSlotsLoc startLoc = slots.getStartLoc();
 			startKeyWord = LcStringUtil.checkString(startLoc.getArea())
-					+ startLoc.getPoi();
+                    + startLoc.getPoi();
 
 			MapSlotsLoc endLoc = slots.getEndLoc();
 			endKeyWord = LcStringUtil.checkString(endLoc.getArea())
@@ -422,6 +422,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 				if (TextUtils.isEmpty(desc)) {
 					playText = "暂时无法获取到您的详细位置，请稍后再试";
 				}
+
 				VoiceManager.getInstance().startSpeaking(playText,
 						SemanticConstants.TTS_START_WAKEUP);
 				removeFloatWindow();

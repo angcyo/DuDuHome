@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.TextUtils;
@@ -30,6 +31,7 @@ import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
 import com.dudu.android.launcher.utils.LocationUtils;
+import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
 import com.dudu.map.MapManager;
 import com.dudu.obd.OBDDataService;
@@ -44,7 +46,7 @@ import java.util.TimerTask;
 public class MainActivity extends BaseTitlebarActivity implements
         OnClickListener, AMapLocalWeatherListener {
 
-    private Button mVideoButton, mNavigationButton, mPhoneButton,
+    private Button mVideoButton, mNavigationButton,
             mDiDiButton, mWlanButton;
 
     private LocationManagerProxy mLocationManagerProxy;
@@ -52,6 +54,8 @@ public class MainActivity extends BaseTitlebarActivity implements
     private TextView mDateTextView, mWeatherView, mTemperatureView;
 
     private ImageView mWeatherImage;
+
+    private LinearLayout mSelfCheckingView;
 
     private Timer timer;
 
@@ -66,8 +70,11 @@ public class MainActivity extends BaseTitlebarActivity implements
         startFloatMessageShowService();
 
         startOBDService();
+
         //检测蓝牙设配
         checkBlueTooth();
+
+        requestWeatherInfo();
     }
 
     private void checkBlueTooth() {
@@ -101,6 +108,7 @@ public class MainActivity extends BaseTitlebarActivity implements
         mWeatherView = (TextView) findViewById(R.id.weather_text);
         mTemperatureView = (TextView) findViewById(R.id.temperature_text);
         mWeatherImage = (ImageView) findViewById(R.id.weather_image);
+        mSelfCheckingView = (LinearLayout) findViewById(R.id.self_checking_container);
     }
 
     @Override
@@ -120,6 +128,8 @@ public class MainActivity extends BaseTitlebarActivity implements
                 return true;
             }
         });
+
+        mSelfCheckingView.setOnClickListener(this);
     }
 
     @Override
@@ -156,10 +166,22 @@ public class MainActivity extends BaseTitlebarActivity implements
                 break;
 
             case R.id.didi_button:
+                Intent intent;
+                PackageManager packageManager = getPackageManager();
+                intent = packageManager.getLaunchIntentForPackage("com.sdu.didi.gsui");
+                if (intent != null) {
+                    ((LauncherApplication) getApplication()).setReceivingOrder(true);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
+                            | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                } else {
+                    ToastUtils.showToast("您还没安装滴滴客户端，请先安装滴滴出行客户端");
+                }
                 break;
 
             case R.id.wlan_button:
-                startActivity(new Intent(MainActivity.this, WifiActivity.class));
+                startActivity(new Intent(MainActivity.this, ActivationActivity.class));
                 break;
 
             case R.id.navigation_button:
@@ -181,6 +203,9 @@ public class MainActivity extends BaseTitlebarActivity implements
                 }
 
                 startActivity(navigationIntent);
+                break;
+            case R.id.self_checking_container:
+                startActivity(new Intent(MainActivity.this, OBDCheckingActivity.class));
                 break;
         }
     }
@@ -252,13 +277,6 @@ public class MainActivity extends BaseTitlebarActivity implements
                     LocationManagerProxy.WEATHER_TYPE_LIVE, MainActivity.this);
         }
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        requestWeatherInfo();
-    }
-
 
     @Override
     public void onWeatherForecaseSearched(AMapLocalWeatherForecast arg0) {

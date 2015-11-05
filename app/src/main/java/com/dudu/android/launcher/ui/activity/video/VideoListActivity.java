@@ -77,11 +77,6 @@ public class VideoListActivity extends BaseNoTitlebarAcitivity {
 		List<VideoEntity> videos = mDbHelper.getVideos();
 		if (videos != null && !videos.isEmpty()) {
 			mVideoData.addAll(videos);
-			mGridView.setVisibility(View.VISIBLE);
-			mEmptyView.setVisibility(View.GONE);
-		} else {
-			mEmptyView.setVisibility(View.VISIBLE);
-			mGridView.setVisibility(View.GONE);
 		}
 	}
 
@@ -105,6 +100,14 @@ public class VideoListActivity extends BaseNoTitlebarAcitivity {
 
 		@Override
 		protected void onPostExecute(Void result) {
+			if (!mVideoData.isEmpty()) {
+				mGridView.setVisibility(View.VISIBLE);
+				mEmptyView.setVisibility(View.GONE);
+			} else {
+				mEmptyView.setVisibility(View.VISIBLE);
+				mGridView.setVisibility(View.GONE);
+			}
+
 			mAdapter.setData(mVideoData);
 		}
 

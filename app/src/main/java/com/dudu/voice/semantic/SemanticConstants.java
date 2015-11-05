@@ -66,6 +66,7 @@ public class SemanticConstants {
 
     public static final String SERVICE_POI = "poi";
 
+    public static final String SERVICE_CAR_CHECKING = "car_checking";
 
 
     /**

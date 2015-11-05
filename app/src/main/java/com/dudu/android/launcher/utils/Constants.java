@@ -36,10 +36,12 @@ public class Constants {
 	public static final String OPEN = "打开";
 	public static final String START = "开始";
 	public static final String CLOSE = "关闭";
+	public static final String END = "结束";
 	public static final String BACK = "返回";
 	public static final String YES = "是";
 	public static final String NO = "否";
-	public static final String JIE = "接";
+	public static final String JIE = "单";
+	public static final String ZIJIAN = "自检";
 
     public static final String REFUEL = "加油";
 	public static final String GAS_STATION = "加油站";
@@ -186,14 +188,6 @@ public class Constants {
 	public static final int MODERATE_TO_HEAVY_SNOW = 23;
 	public static final int HEAVY_TO_SNOWSTORM = 24;
 
-	// public static final int STRONGSANDSTORM = 18;//强沙尘暴
-	// public static final int SANDSTORM = 19;//沙尘暴
-	// public static final int SAND = 20;//沙尘
-	// public static final int BLOWING_SAND = 21;//风沙
-	// public static final int ICE_RAIN = 22;//冻雨
-	// public static final int DUST = 23;//尘土
-	// public static final int HAZE = 24;//霾
-
 	public static final String FIND = "<find>";
 	public static final String NEARBY = "<nearby>";
 	public static final String POINT = "<point>";
@@ -208,14 +202,8 @@ public class Constants {
 	public static final String SITE = "<site>";
 	public static final String DATE = "<date>";
 	
-	// Intent相关参数常量
-	public static final String PARAM_VOICE_PLAY_TEXT = "play_text";
-	public static final String PARAM_VOICE_TTS_TYPE = "tts_type";
-	public static final String PARAM_VOICE_SHOW_MESSAGE = "show_message";
-	
 	public static final String PARAM_MAP_DATA = "map_data";
-	
-	public static final String SERVICE_NAVI = "navi";
+
 	public static final String NAVI_TRAFFIC_BROADCAST = "路况播报";
 	public static final String NAVI_TRAFFIC = "路况";
 	public static final String RERURN_JOURNEY = "返程";
@@ -223,12 +211,6 @@ public class Constants {
 	public static final String REALTIME_TRAFFIC = "实时路况";
 	public static final String NAVI_LISTEN = "听";
 	public static final String NAVI_LOOK = "查看";
-	
-	public static final String SERVICE_BACK_MAIN = "back_main";
-	
-	public static final String MAP_CHOOSEPREFERENCE = "MAP_CHOOSEPREFERENCE";
-	public static final String MAP_BAIDU = "MAP_BAIDU";
-	public static final String MAP_GAODE = "MAP_GAODE";
-	public static final String DEFAULT_MAP = "DEFAULT_MAP";
+
 
 }

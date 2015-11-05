@@ -45,7 +45,6 @@ public class RouteSearchPoiDialog extends Dialog implements
 		this.context = context;
 		this.poiItems = poiItems;
 	}
-    
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

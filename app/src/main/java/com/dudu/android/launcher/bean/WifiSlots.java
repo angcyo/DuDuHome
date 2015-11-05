@@ -18,7 +18,4 @@ public class WifiSlots implements Serializable{
 	public void setState(String state) {
 		this.state = state;
 	}
-	
-	
-
 }

@@ -69,6 +69,8 @@
     <string name="message_no_video">暂无视频信息</string>
     <string name="used_flow">已用流量</string>
     <string name="rest_flow">剩余流量</string>
+    <string name="car_self_checking">车辆自检</string>
+    <string name="nearby_tire_repair_brand">附近评价最高的轮胎保养品牌</string>
 
     <string-array name="action_menu_list_select">
         <item>选择</item>

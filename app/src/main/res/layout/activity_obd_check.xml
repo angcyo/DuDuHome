@@ -15,7 +15,8 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginBottom="30dp"
-        android:background="@drawable/back_button_selector" >
+        android:background="@drawable/back_button_selector"
+        android:onClick="onBackPressed">
     </Button>
 
 </RelativeLayout>

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.text.TextUtils;
+
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FloatWindow;
@@ -29,6 +30,9 @@ import com.iflytek.cloud.WakeuperListener;
 import com.iflytek.cloud.WakeuperResult;
 import com.iflytek.cloud.util.ResourceUtil;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Created by 赵圣琪 on 2015/10/27.
  */
@@ -41,6 +45,8 @@ public class VoiceManager {
     private static VoiceManager mInstance;
 
     private Context mContext;
+
+    private Logger log;
 
     /**
      * 语音识别对象
@@ -68,6 +74,8 @@ public class VoiceManager {
 
     private Handler mHandler;
 
+    private boolean mShowMessageWindow = true;
+
     /**
      * 获取整个应用唯一语音控制对象
      */
@@ -91,10 +99,16 @@ public class VoiceManager {
         setTtsParameter();
 
         mHandler = new Handler();
+
+        log = LoggerFactory.getLogger("voice.manager");
     }
 
     public void clearMisUnderstandCount() {
         mMisunderstandCount = 0;
+    }
+
+    public void setShowMessageWindow(boolean showMessageWindow) {
+        mShowMessageWindow = showMessageWindow;
     }
 
     /**
@@ -203,8 +217,6 @@ public class VoiceManager {
 
         mSpeechUnderstander.stopUnderstanding();
 
-//        mSpeechUnderstander.cancel();
-
         startWakeup();
     }
 
@@ -298,7 +310,9 @@ public class VoiceManager {
 
     public void startSpeaking(String playText) {
 
-        FloatWindowUtil.showMessage(playText, FloatWindow.MESSAGE_IN);
+        if (mShowMessageWindow) {
+            FloatWindowUtil.showMessage(playText, FloatWindow.MESSAGE_IN);
+        }
 
         int code = mSpeechSynthesizer.startSpeaking(playText, null);
 
@@ -313,7 +327,9 @@ public class VoiceManager {
             playText = Constants.UNDERSTAND_EXIT;
         }
 
-        FloatWindowUtil.showMessage(playText, FloatWindow.MESSAGE_IN);
+        if (mShowMessageWindow) {
+            FloatWindowUtil.showMessage(playText, FloatWindow.MESSAGE_IN);
+        }
 
         mSynthesizerType = type;
 
@@ -326,12 +342,11 @@ public class VoiceManager {
     }
 
     public void startSpeaking(String playText, int type, boolean showMessage) {
-
         if (mMisunderstandCount >= MISUNDERSTAND_REPEAT_COUNT) {
             playText = Constants.UNDERSTAND_EXIT;
         }
 
-        if (showMessage) {
+        if (mShowMessageWindow && showMessage) {
             FloatWindowUtil.showMessage(playText, FloatWindow.MESSAGE_IN);
         }
 
@@ -355,7 +370,7 @@ public class VoiceManager {
 
         @Override
         public void onBeginOfSpeech() {
-            FloatWindowUtil.createWindow();
+
         }
 
         @Override
@@ -373,7 +388,9 @@ public class VoiceManager {
                 if (!TextUtils.isEmpty(text)) {
                     String message = JsonUtils.parseIatResult(text, "text");
 
-                    FloatWindowUtil.showMessage(message, FloatWindow.MESSAGE_OUT);
+                    if (mShowMessageWindow) {
+                        FloatWindowUtil.showMessage(message, FloatWindow.MESSAGE_OUT);
+                    }
 
                     SemanticProcessor.getProcessor().processSemantic(text);
                 }
@@ -382,7 +399,8 @@ public class VoiceManager {
 
         @Override
         public void onError(SpeechError speechError) {
-            LogUtils.e(TAG, "--------SpeechError:" + speechError.getErrorCode());
+            log.warn("SpeechError:{}", speechError.getErrorCode());
+
             stopUnderstanding();
             mMisunderstandCount++;
 

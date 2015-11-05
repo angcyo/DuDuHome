@@ -230,7 +230,6 @@ public class NavigationChain extends SemanticChain {
     }
 
     private void closePriview(){
-
             if (mContext != null
                     && mContext instanceof NaviCustomActivity) {
                 ((NaviCustomActivity) mContext)

@@ -2,6 +2,9 @@ package com.dudu.voice.semantic.engine;
 
 import com.dudu.voice.semantic.chain.AdjustVolumeChain;
 import com.dudu.voice.semantic.chain.BaikeChain;
+import com.dudu.voice.semantic.chain.CarCheckingChain;
+import com.dudu.voice.semantic.chain.CarCheckingChoiseChain;
+import com.dudu.voice.semantic.chain.CarCheckingWhetherChain;
 import com.dudu.voice.semantic.chain.ChatChain;
 import com.dudu.voice.semantic.chain.ChoiseChain;
 import com.dudu.voice.semantic.chain.ChoosePageChain;
@@ -79,7 +82,6 @@ public class ChainGenerator {
     }
 
     public CommonAddressChain getCommonAddressChain(){
-
         CommonAddressChain chain = new CommonAddressChain();
         WhetherChain whetherChain = new WhetherChain();
         chain.addChildChain(whetherChain);
@@ -91,4 +93,22 @@ public class ChainGenerator {
         WIFIChain chain = new WIFIChain();
         return  chain;
     }
+
+    public CarCheckingChain getCarCheckingChain() {
+        CarCheckingChain chain = new CarCheckingChain();
+        return chain;
+    }
+
+    public CarCheckingWhetherChain getCarCheckingWhetherChain() {
+        CarCheckingWhetherChain chain = new CarCheckingWhetherChain();
+        CarCheckingChoiseChain choiseChain = new CarCheckingChoiseChain();
+        chain.addChildChain(choiseChain);
+        return chain;
+    }
+
+    public CarCheckingWhetherChain getCarCheckingChoiseChain() {
+        CarCheckingWhetherChain chain = new CarCheckingWhetherChain();
+        return chain;
+    }
+
 }

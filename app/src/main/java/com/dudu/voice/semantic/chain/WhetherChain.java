@@ -48,9 +48,7 @@ public class WhetherChain extends SemanticChain {
                 case YES:
                 case YES_TWO:
                 case YES_THREE:
-
                     MapManager.getInstance().mapControl(null, null, MapManager.SEARCH_COMMONADDRESS);
-
                     break;
                 case NO:
                 case NO_TWO:
@@ -58,7 +56,6 @@ public class WhetherChain extends SemanticChain {
                     FloatWindowUtil.removeFloatWindow();
                     mVoiceManager.startWakeup();
                     break;
-
             }
 
             return true;

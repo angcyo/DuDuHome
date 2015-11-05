@@ -678,15 +678,12 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                             chooseAddress(position);
                         }
                     });
-
         }
 
     }
 
     private void chooseAddress(int position) {
-
         try {
-
             PoiResultInfo startpoiItem = (isManual || isAddressManual) ? poiResultList.get(position)
                     : poiResultList.get(position - 1);
             if (startpoiItem != null) {
@@ -866,7 +863,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     private void startNavigation(int driveMode) {
         mapManager.setSearchType(0);
         FloatWindowUtil.removeFloatWindow();
-
+        mVoiceManager.stopUnderstanding();
         if(progDialog!=null){
             progDialog.setMessage("路径规划中...");
             progDialog.show();

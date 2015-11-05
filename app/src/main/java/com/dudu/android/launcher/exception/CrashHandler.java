@@ -99,6 +99,6 @@ public class CrashHandler implements UncaughtExceptionHandler {
 		}
 
 		return mContext.openFileOutput(fileName, Context.MODE_PRIVATE);
-	}
+}
 
 }

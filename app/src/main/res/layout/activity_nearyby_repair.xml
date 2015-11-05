@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_marginRight="10dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/nearby_tire_repair_brand"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:layout_marginTop="10dp"
+        android:id="@+id/tv_nearyby_title"
+        android:layout_marginLeft="65dp"/>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="3dp"
+        android:background="@color/white"
+        android:layout_marginTop="5dp"
+        android:id="@+id/nearyby_line"
+        android:layout_below="@+id/tv_nearyby_title"
+        android:layout_marginLeft="65dp"/>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@color/white"
+        android:layout_marginTop="1dp"
+        android:id="@+id/nearyby_line2"
+        android:layout_below="@+id/nearyby_line"
+        android:layout_marginLeft="65dp"/>
+    <ListView
+        android:id="@+id/nearby_repair_listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="15dp"
+        android:horizontalSpacing="25dp"
+        android:paddingLeft="65dp"
+        android:paddingRight="15dp"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="20dp"
+        android:layout_below="@+id/nearyby_line2"
+        android:layout_marginTop="10dp"
+        >
+    </ListView>
+
+    <Button
+        android:id="@+id/back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:onClick="onBackPressed"
+        android:background="@drawable/back_button_selector" >
+    </Button>
+
+</RelativeLayout>

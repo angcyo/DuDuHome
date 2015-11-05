@@ -20,7 +20,7 @@
 
     <RatingBar
         android:id="@+id/nearyby_ratingBar"
-        style="@style/roomRatingBar"
+        style="@style/RoomRatingBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"

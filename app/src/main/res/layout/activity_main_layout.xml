@@ -69,17 +69,43 @@
                 android:textSize="8sp" />
         </RelativeLayout>
 
-        <Button
-            android:id="@+id/version_button"
+        <!--<Button-->
+            <!--android:id="@+id/version_button"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_marginRight="60dp"-->
+            <!--android:layout_marginTop="15dp"-->
+            <!--android:background="@drawable/version_info"-->
+            <!--android:textColor="@android:color/white"-->
+            <!--android:textSize="11sp"-->
+            <!--android:orientation="horizontal" />-->
+        <LinearLayout
+            android:id="@+id/self_checking_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="60dp"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/version_info"
-            android:textColor="@android:color/white"
-            android:textSize="11sp"
-            android:orientation="horizontal" />
+            android:layout_marginRight="53dp"
+            android:layout_marginTop="8.6dp"
+            android:background="@drawable/self_checking_button_bg"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_activation_button_right_margin"
+                android:layout_marginRight="@dimen/main_activation_button_left_margin"
+                android:background="@drawable/self_checking_gesture" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/car_self_checking"
+                android:textColor="@android:color/white"
+                android:textStyle="italic"
+                android:textSize="13sp" />
+        </LinearLayout>
     </RelativeLayout>
 
     <LinearLayout
