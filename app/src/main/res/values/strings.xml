@@ -6,9 +6,8 @@
     <string name="flow_500m">500M</string>
     <string name="flow_1.5g">1.5G</string>
     <string name="flow_3g">3G</string>
-    <string name="recharge_10">充值10元</string>
-    <string name="recharge_30">充值30元</string>
-    <string name="recharge_50">充值50元</string>
+    <string name="weixin_recharge">微信充值</string>
+    <string name="zhifubao_recharge">支付宝充值</string>
     <string name="pay_info">请使用微信或者支付宝扫一扫支付充值金额</string>
     <string name="temperature_degree">度</string>
     <string name="weather_turn">转</string>

@@ -168,7 +168,7 @@ public class SlideSwitch extends View {
 
 	/**
 	 * 设置开关上面的文本
-	 * 
+	 *
 	 * @param onText
 	 *            控件打开时要显示的文本
 	 * @param offText
