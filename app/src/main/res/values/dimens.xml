@@ -1,7 +1,7 @@
 <resources>
 
     <dimen name="main_grid_button_margin">60dp</dimen>
-    <dimen name="main_activation_button_left_margin">5dp</dimen>
+    <dimen name="main_activation_button_left_margin">10dp</dimen>
     <dimen name="main_activation_button_right_margin">10dp</dimen>
 
     <dimen name="activity_horizontal_margin">16dp</dimen>

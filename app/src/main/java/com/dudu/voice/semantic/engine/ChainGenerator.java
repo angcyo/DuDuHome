@@ -14,7 +14,7 @@ import com.dudu.voice.semantic.chain.CmdChain;
 import com.dudu.voice.semantic.chain.NavigationChain;
 import com.dudu.voice.semantic.chain.OpenQaChain;
 import com.dudu.voice.semantic.chain.PoiChain;
-import com.dudu.voice.semantic.chain.WifiChain;
+import com.dudu.voice.semantic.chain.WIFIChain;
 import com.dudu.voice.semantic.chain.WeatherChain;
 import com.dudu.voice.semantic.chain.WhetherChain;
 
@@ -89,8 +89,8 @@ public class ChainGenerator {
         return chain;
     }
 
-    public WifiChain getWIFIChain(){
-        WifiChain chain = new WifiChain();
+    public WIFIChain getWIFIChain(){
+        WIFIChain chain = new WIFIChain();
         return  chain;
     }
 
