@@ -15,11 +15,11 @@ import com.dudu.voice.semantic.SemanticConstants;
 /**
  * Created by pc on 2015/11/5.
  */
-public class WIFIChain extends SemanticChain {
+public class WifiChain extends SemanticChain {
 
     private Context mContext;
 
-    public WIFIChain(){
+    public WifiChain(){
 
         mContext = LauncherApplication.getContext().getApplicationContext();
     }

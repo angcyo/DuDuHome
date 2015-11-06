@@ -30,11 +30,14 @@ import com.dudu.android.launcher.service.NewMessageShowService;
 import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
+import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
+import com.dudu.android.launcher.utils.Util;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
 import com.dudu.map.MapManager;
 import com.dudu.obd.OBDDataService;
+import com.dudu.voice.semantic.VoiceManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -63,6 +66,8 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     private ServiceConnection mServiceConnection;
 
+    private Button mVoiceButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,9 +94,12 @@ public class MainActivity extends BaseTitlebarActivity implements
         }
     }
 
-
     @Override
     public int initContentView() {
+        if (Util.isTaxiVersion()) {
+            return R.layout.activity_taxi_main_layout;
+        }
+
         return R.layout.activity_main_layout;
     }
 
@@ -108,7 +116,12 @@ public class MainActivity extends BaseTitlebarActivity implements
         mWeatherView = (TextView) findViewById(R.id.weather_text);
         mTemperatureView = (TextView) findViewById(R.id.temperature_text);
         mWeatherImage = (ImageView) findViewById(R.id.weather_image);
-        mSelfCheckingView = (LinearLayout) findViewById(R.id.self_checking_container);
+
+        if (Util.isTaxiVersion()) {
+            initTaxiView();
+        } else {
+            initCarView();
+        }
     }
 
     @Override
@@ -128,7 +141,15 @@ public class MainActivity extends BaseTitlebarActivity implements
                 return true;
             }
         });
+    }
 
+    private void initTaxiView(){
+        mVoiceButton = (Button) findViewById(R.id.voice_button);
+        mVoiceButton.setOnClickListener(this);
+    }
+
+    private void initCarView() {
+        mSelfCheckingView = (LinearLayout) findViewById(R.id.self_checking_container);
         mSelfCheckingView.setOnClickListener(this);
     }
 
@@ -178,10 +199,15 @@ public class MainActivity extends BaseTitlebarActivity implements
                 } else {
                     ToastUtils.showToast("您还没安装滴滴客户端，请先安装滴滴出行客户端");
                 }
+
                 break;
 
             case R.id.wlan_button:
-                startActivity(new Intent(MainActivity.this, ActivationActivity.class));
+                if (Util.isTaxiVersion()) {
+                    startActivity(new Intent(MainActivity.this, WifiActivity.class));
+                } else {
+                    startActivity(new Intent(MainActivity.this, ActivationActivity.class));
+                }
                 break;
 
             case R.id.navigation_button:
@@ -206,6 +232,9 @@ public class MainActivity extends BaseTitlebarActivity implements
                 break;
             case R.id.self_checking_container:
                 startActivity(new Intent(MainActivity.this, OBDCheckingActivity.class));
+                break;
+            case R.id.voice_button:
+                VoiceManager.getInstance().startVoiceService();
                 break;
         }
     }

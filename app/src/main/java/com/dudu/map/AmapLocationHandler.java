@@ -72,13 +72,11 @@ public class AmapLocationHandler implements AMapLocationListener {
 
     @Override
     public void onLocationChanged(AMapLocation location) {
-
         String provider = location.getProvider();
         if (GPSdataTime < 2 && !provider.equals("lbs")) {
             GPSdataTime++;
             return;
         }
-
 
         // 保存当前定位点
         LocationUtils.getInstance(mContext).setCurrentLocation(

@@ -641,7 +641,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
             removeFloatWindow(10000);
             return;
         }
-        if(mapManager.getSearchType()==MapManager.SEARCH_NEAREST){
+        if(mapManager.getSearchType()==MapManager.SEARCH_NEAREST) {
             PoiResultInfo startpoiItem = poiResultList.get(0);
             mEndPoint = new NaviLatLng(startpoiItem.getLatitude(),startpoiItem.getLongitude());
             showStrategyMethod();

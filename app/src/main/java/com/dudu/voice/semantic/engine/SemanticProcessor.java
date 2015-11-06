@@ -87,7 +87,6 @@ public class SemanticProcessor {
     }
 
     private void doSemantic(String text) {
-
         // 执行当前语义
         if (!mCurChain.doSemantic(text)) {
             mDefaultChain.doSemantic(text);
@@ -116,17 +115,6 @@ public class SemanticProcessor {
         }
 
         return null;
-    }
-
-    public void processNextChain() {
-        if (mCurChain == null) {
-            return;
-        }
-
-        SemanticChain child = mCurChain.getNextChild();
-        if (child != null) {
-            mCurChain = child;
-        }
     }
 
     public void switchSemanticType(SemanticType type) {

@@ -211,14 +211,19 @@ public class NearbyRepairActivity extends BaseNoTitlebarAcitivity implements
 	}
 
     public void onBackPressed(View v) {
-        SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
+		exitCarChecking();
         finish();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
+        exitCarChecking();
     }
+
+	private void exitCarChecking() {
+		SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
+		mVoiceManager.stopUnderstanding();
+	}
 
 }

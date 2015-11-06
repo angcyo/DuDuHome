@@ -101,19 +101,6 @@ public class Constants {
 	public static final String NINETEEN = "十九";
 	public static final String TWENTW1 = "20";
 	public static final String TWENTW = "二十";
-
-	public static final String HOME = "家";
-	public static final String HOMETOWN = "老家";
-	public static final String COMPANY = "公司";
-
-	public static final String HOME_TYPE = "home";
-	public static final String HOMETOWN_TYPE = "hometown";
-	public static final String COMPANY_TYPE = "company";
-
-	public static final String CMD_CHOISE = "choise";
-	public static final String CMD_ADDRESS = "address";
-	public static final String CMD_OPTION = "option";
-	public static final String CMD_TYPE = "type";
 	
 	public static final int VOICE_WAKEUP_CURTHRESH = 10;
 
@@ -121,44 +108,6 @@ public class Constants {
 	public static final String CURRENT_POI = "CURRENT_POI";
 	// 地址不够详细
 	public static final String LOC_BASIC = "LOC_BASIC";
-
-	/**
-	 * Action：开启服务器
-	 */
-	public static final String ACTION_START_SERVER = "ACTION_STARRT_SERVER";
-
-	/**
-	 * Action：关闭后台Service
-	 */
-	public static final String ACTION_STOP_SERVICE = "ACTION_STOP_SERVICE";
-
-	/**
-	 * Action：连接成功
-	 */
-	public static final String ACTION_CONNECT_SUCCESS = "ACTION_CONNECT_SUCCESS";
-	/**
-	 * Action：到Service的数据
-	 */
-	public static final String ACTION_DATA_TO_SERVICE = "ACTION_DATA_TO_SERVICE";
-	/**
-	 * Action：连接错误
-	 */
-	public static final String ACTION_CONNECT_ERROR = "ACTION_CONNECT_ERROR";
-
-	/**
-	 * Message类型标识符，连接成功
-	 */
-	public static final int MESSAGE_CONNECT_SUCCESS = 0x00000002;
-
-	/**
-	 * Message：连接失败
-	 */
-	public static final int MESSAGE_CONNECT_ERROR = 0x00000003;
-
-	/**
-	 * Message：读取到一个对象
-	 */
-	public static final int MESSAGE_READ_OBJECT = 0x00000004;
 
 	public static final int NO_VALUE_FLAG = -999;// 无
 	public static final int SUNNY = 0;// 晴
@@ -187,20 +136,6 @@ public class Constants {
 	public static final int LIGHT_TO_MODERATE_SNOW = 22;
 	public static final int MODERATE_TO_HEAVY_SNOW = 23;
 	public static final int HEAVY_TO_SNOWSTORM = 24;
-
-	public static final String FIND = "<find>";
-	public static final String NEARBY = "<nearby>";
-	public static final String POINT = "<point>";
-	public static final String OL_OPEN = "<open>";
-	public static final String OL_CLOSE = "<close>";
-	public static final String APP = "<app>";
-	public static final String VOICE = "<voice>";
-	public static final String BIGSMALL = "<bigsmall>";
-	public static final String TURNUP = "<turnup>";
-	public static final String TURNDOWN = "<turndown>";
-	public static final String WEATHER = "<weather>";
-	public static final String SITE = "<site>";
-	public static final String DATE = "<date>";
 	
 	public static final String PARAM_MAP_DATA = "map_data";
 
@@ -212,5 +147,7 @@ public class Constants {
 	public static final String NAVI_LISTEN = "听";
 	public static final String NAVI_LOOK = "查看";
 
+    public static final int VERSION_TYPE_TAXI = 1;
+	public static final int VERSION_TYPE_CAR = 2;
 
 }

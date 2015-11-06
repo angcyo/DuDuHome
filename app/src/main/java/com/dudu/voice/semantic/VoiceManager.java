@@ -46,8 +46,6 @@ public class VoiceManager {
 
     private Context mContext;
 
-    private Logger log;
-
     /**
      * 语音识别对象
      */
@@ -99,8 +97,6 @@ public class VoiceManager {
         setTtsParameter();
 
         mHandler = new Handler();
-
-        log = LoggerFactory.getLogger("voice.manager");
     }
 
     public void clearMisUnderstandCount() {
@@ -154,22 +150,9 @@ public class VoiceManager {
      * 语音唤醒监听器
      */
     private WakeuperListener mWakeuperListener = new WakeuperListener() {
+
         public void onResult(WakeuperResult result) {
-
-            mMisunderstandCount = 0;
-
-            if (!NetworkUtils.isNetworkConnected(mContext)) {
-                startSpeaking(Constants.WAKEUP_NETWORK_UNAVAILABLE);
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        FloatWindowUtil.removeFloatWindow();
-                    }
-                }, 4000);
-                return;
-            }
-
-            startSpeaking(Constants.WAKEUP_WORDS, SemanticConstants.TTS_START_UNDERSTANDING);
+            startVoiceService();
         }
 
         public void onError(SpeechError error) {
@@ -190,6 +173,23 @@ public class VoiceManager {
         }
 
     };
+
+    public void startVoiceService() {
+        mMisunderstandCount = 0;
+
+        if (!NetworkUtils.isNetworkConnected(mContext)) {
+            startSpeaking(Constants.WAKEUP_NETWORK_UNAVAILABLE);
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    FloatWindowUtil.removeFloatWindow();
+                }
+            }, 4000);
+            return;
+        }
+
+        startSpeaking(Constants.WAKEUP_WORDS, SemanticConstants.TTS_START_UNDERSTANDING);
+    }
 
     /**
      * 开始语义理解
@@ -399,9 +399,10 @@ public class VoiceManager {
 
         @Override
         public void onError(SpeechError speechError) {
-            log.warn("SpeechError:{}", speechError.getErrorCode());
+            LogUtils.e(TAG, "speech error: " + speechError.getErrorCode());
 
             stopUnderstanding();
+
             mMisunderstandCount++;
 
             if (speechError.getErrorCode() == 10118) {
