@@ -36,6 +36,7 @@ public class ActivationActivity extends BaseTitlebarActivity {
 
 	@Override
 	public void initView(Bundle savedInstanceState) {
+		setContext(this);
 		slideSwitch = (SlideSwitch) findViewById(R.id.switch_wifi);
 		wifiPasswordSet = (TextView) findViewById(R.id.wifiPasswordSet);
 		backButton = (Button)findViewById(R.id.back_button);
@@ -62,7 +63,6 @@ public class ActivationActivity extends BaseTitlebarActivity {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				ActivationActivity.this.finish();
 			}
 		});

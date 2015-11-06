@@ -69,7 +69,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
 	private ImageButton localVideo;
 
-	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss", Locale.getDefault());
 
 	private String videoName = "";
 
