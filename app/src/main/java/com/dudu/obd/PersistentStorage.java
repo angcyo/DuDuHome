@@ -59,7 +59,7 @@ public class PersistentStorage {
 
         if (jsonArray != null) {
             alldataString = jsonArray.toString();
-            if (!alldataString.equals(new JSONArray().toString())) {
+            if (!alldataString.equals("[]")) {
                 mPreferences.edit().putString(JSONSTR, alldataString).commit();
             } else {
                 mPreferences.edit().putString(JSONSTR, "").commit();
@@ -73,7 +73,7 @@ public class PersistentStorage {
         if (alldatas != null && alldatas.size() > 0) {
             alldatas.remove(0);
             JSONArray jsonArray2 = new JSONArray(alldatas);
-            if (!jsonArray2.toString().equals(new JSONArray().toString())) {
+            if (!jsonArray2.toString().equals("[]")) {
                 mPreferences.edit().putString(JSONSTR, jsonArray2.toString())
                         .commit();
             } else {
@@ -96,7 +96,7 @@ public class PersistentStorage {
             if (jsonArray2 != null) {
                 alldatasing = jsonArray2.toString();
                 jsonArray2 = null;
-                if (!alldatasing.equals(new JSONArray().toString())) {
+                if (!alldatasing.equals("[]")) {
                     mPreferences.edit().putString(JSONSTR, alldatasing)
                             .commit();
                 } else {
@@ -115,7 +115,7 @@ public class PersistentStorage {
             alldatas.clear();
         try {
             if (str != null && !str.equals("")
-                    && !str.equals(new JSONArray().toString())) {
+                    && !str.equals("[]")) {
                 JSONArray jsonArray = new JSONArray(str);
 
                 if (jsonArray != null) {

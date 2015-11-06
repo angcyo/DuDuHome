@@ -186,7 +186,7 @@ public class Connection extends Thread {
                     Thread.sleep(3000);
                 }
                 checkCache();
-                Thread.sleep(2000);
+                Thread.sleep(3000);
             }
         } catch (Exception e) {
             isSessionOpen = false;

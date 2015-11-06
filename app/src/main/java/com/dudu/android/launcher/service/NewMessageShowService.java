@@ -139,6 +139,15 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
         }
         radioDialog = (RadioDialog) floatWindowLayout
                 .findViewById(R.id.radioDialog);
+
+        radioDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                removeFloatWindow();
+                VoiceManager.getInstance().stopUnderstanding();
+            }
+        });
     }
 
     @Override

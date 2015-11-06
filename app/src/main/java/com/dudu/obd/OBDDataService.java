@@ -186,7 +186,6 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -291,6 +290,7 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
     private void sendOBDData(JSONArray obdData) {
         obdStr = new ExtraDataProcess().getUpLoadOBDData(obdData, obe_id)
                 .toString();
+        Log.d(TAG, "------------sendGpsData:" + obdStr);
         conn.sendMessage(obdStr, true);
         postOBDDataArr.remove(0);
     }

@@ -90,7 +90,7 @@
     </logger>
 
     <logger name="cache.persist" level="DEBUG">
-        <appender-ref ref="EMAIL" />
+        <appender-ref ref="FILE" />
     </logger>
     <root level="DEBUG">
         <appender-ref ref="LOGCAT" />
