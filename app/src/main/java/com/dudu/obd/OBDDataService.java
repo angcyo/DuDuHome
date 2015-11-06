@@ -176,11 +176,11 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
         DriveBehaviorHappend.getInstance().setListener(this);
         try {
             if (conn != null && !isOpen) {
-//				conn.closeConn();
-//				conn.interrupt();
-//				conn = null;
-//				initConn();
-//				conn.start();
+				conn.closeConn();
+				conn.interrupt();
+				conn = null;
+				initConn();
+				conn.start();
             }
 
         } catch (Exception e) {

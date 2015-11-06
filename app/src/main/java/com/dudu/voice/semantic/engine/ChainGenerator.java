@@ -52,6 +52,7 @@ public class ChainGenerator {
 
     public ChoiseChain getChoiseChain(){
         ChoiseChain chain = new ChoiseChain();
+        chain.addChildChain(chain);
         return chain;
     }
 

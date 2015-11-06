@@ -1135,7 +1135,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 					addressDialog.nextPage();
 			}else{
 
-				FloatWindowUtil.chooseAddressPage(ChoosePageChain.NEXT_PAGE);
+				FloatWindowUtil.chooseAddressPage(ChoosePageChain.NEXT_PAGE,0);
 			}
 
 		}else{
@@ -1144,7 +1144,7 @@ public class LocationActivity extends BaseNoTitlebarAcitivity implements
 					addressDialog.lastPage();
 			}else{
 
-				FloatWindowUtil.chooseAddressPage(ChoosePageChain.LAST_PAGE);
+				FloatWindowUtil.chooseAddressPage(ChoosePageChain.LAST_PAGE,0);
 			}
 
 		}

@@ -21,6 +21,8 @@ public class ChoosePageChain extends SemanticChain {
 
     public static final int LAST_PAGE = 2;
 
+    public static final int CHOOSE_PAGE = 3;
+
     public static final String NEXT = "下一页";
 
     public static final String NEXT_TWO = "夏夜";

@@ -103,7 +103,7 @@ public class RouteSearchPoiDialog extends Dialog implements
 		}
 
 		pageIndex++;
-		listView.setSelection(pageIndex*VIEW_COUNT);
+		listView.setSelection(pageIndex * VIEW_COUNT);
 	}
 
 	public void lastPage() {
@@ -116,4 +116,12 @@ public class RouteSearchPoiDialog extends Dialog implements
 		listView.setSelection(pageIndex*VIEW_COUNT);
 	}
 
+	public void choosePage(int page){
+		if(page > 5|| page < 1){
+			VoiceManager.getInstance().startSpeaking("选择错误，请重新选择",SemanticConstants.TTS_DO_NOTHING,false);
+			return;
+		}
+		pageIndex = page;
+		listView.setSelection(pageIndex*VIEW_COUNT);
+	}
 }

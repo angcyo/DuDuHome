@@ -24,6 +24,7 @@ import com.amap.api.navi.model.AMapNaviLocation;
 import com.amap.api.navi.model.NaviInfo;
 import com.amap.api.navi.model.NaviLatLng;
 import com.dudu.android.launcher.R;
+import com.dudu.map.AmapLocationChangeEvent;
 import com.dudu.map.MapManager;
 import com.dudu.map.Navigation;
 import com.dudu.voice.semantic.SemanticConstants;
@@ -73,8 +74,14 @@ AMapNaviViewListener{
 		setAmapNaviViewOptions();
 		back_button = (Button) findViewById(R.id.back_button);
 		MapManager.getInstance().setNaviBack(true);
+		EventBus.getDefault().unregister(this);
+		EventBus.getDefault().register(this);
+
 	}
 
+	public void onEventMainThread(AmapLocationChangeEvent event){
+
+	}
 	@Override
 	public void initListener() {
 		back_button.setOnClickListener(new OnClickListener() {

@@ -38,6 +38,7 @@ import com.dudu.android.launcher.utils.FloatWindow.StrategyChooseCallBack;
 import com.dudu.map.MapManager;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
+import com.dudu.voice.semantic.chain.ChoiseChain;
 import com.dudu.voice.semantic.chain.ChoosePageChain;
 
 import java.util.ArrayList;
@@ -252,27 +253,33 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
         // TODO Auto-generated method stub
         if (addressList != null)
             addressList.setOnItemClickListener(listener);
-        VoiceManager.getInstance().stopUnderstanding();
+
     }
 
     @Override
-    public void choosePage(int type) {
+    public void choosePage(int type,int page) {
 
-        if(type== ChoosePageChain.NEXT_PAGE) {
+        if(type == ChoosePageChain.NEXT_PAGE) {
 
             if (pageIndex >= 3) {
                 VoiceManager.getInstance().startSpeaking("已经是最后一页", SemanticConstants.TTS_DO_NOTHING, false);
                 return;
             }
             pageIndex++;
-        }else{
+        }else if(type == ChoosePageChain.LAST_PAGE){
             if(pageIndex <= 0){
                 VoiceManager.getInstance().startSpeaking("已经是第一页", SemanticConstants.TTS_DO_NOTHING, false);
                 return;
             }
             pageIndex--;
+        }else{
+            if(page > 5|| page < 1){
+                VoiceManager.getInstance().startSpeaking("选择错误，请重新选择",SemanticConstants.TTS_DO_NOTHING,false);
+                return;
+            }
+            pageIndex = page;
         }
-        addressList.setSelection(pageIndex*VIEW_COUNT);
+        addressList.setSelection(pageIndex * VIEW_COUNT);
     }
 
 
@@ -313,12 +320,6 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
             return convertView;
         }
 
-        class ViewHolder {
-            public ImageView iv_userhead;
-            public TextView tv_username;
-            public TextView tv_chatcontent;
-            public TextView tv_sendtime;
-        }
     }
 
     private synchronized WindowManager getWindowManager() {

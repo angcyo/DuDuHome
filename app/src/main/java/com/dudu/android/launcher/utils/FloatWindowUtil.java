@@ -58,9 +58,9 @@ public class FloatWindowUtil {
 	}
 
 	// 地址列表的分页
-	public static void chooseAddressPage(int type){
+	public static void chooseAddressPage(int type,int page){
 		if(FloatWindow.getInstance().getChooseAddressPageCallBack()!=null){
-			FloatWindow.getInstance().getChooseAddressPageCallBack().choosePage(type);
+			FloatWindow.getInstance().getChooseAddressPageCallBack().choosePage(type,page);
 		}
 	}
 

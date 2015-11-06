@@ -68,6 +68,7 @@ import com.dudu.map.MapManager;
 import com.dudu.map.Navigation;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
+import com.dudu.voice.semantic.chain.ChoiseChain;
 import com.dudu.voice.semantic.chain.ChoosePageChain;
 import com.dudu.voice.semantic.chain.CommonAddressChain;
 
@@ -77,6 +78,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import ch.qos.logback.core.util.LocationUtil;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -114,6 +116,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     private AMapLocation cur_location;
     private NaviLatLng mEndPoint = new NaviLatLng();
+    private LatLng latLng;
 
     private boolean isManual = false;
 
@@ -258,7 +261,8 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     }
 
     private void setUpMap() {
-        aMap.moveCamera(CameraUpdateFactory.zoomTo(16));
+        double[] curPoint = LocationUtils.getInstance(this).getCurrentLocation();
+        latLng = new LatLng(curPoint[0],curPoint[1]);
         MyLocationStyle myLocationStyle = new MyLocationStyle();
         myLocationStyle.myLocationIcon(BitmapDescriptorFactory
                 .fromResource(R.drawable.location_marker));// 设置小蓝点的图标
@@ -273,7 +277,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         aMap.setMyLocationEnabled(true);// 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
         //设置定位的类型为定位模式 ，可以由定位、跟随或地图根据面向方向旋转几种
         aMap.setMyLocationType(AMap.LOCATION_TYPE_LOCATE);
-
+        aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
         // 初始语音播报资源
         setVolumeControlStream(AudioManager.STREAM_MUSIC);// 设置声音控制
 
@@ -288,8 +292,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 listener.onLocationChanged(cur_location);// 显示系统小蓝点
             }
 
-            if (listener != null)
-                listener.onLocationChanged(event.getAMapLocation());
             Bundle locBundle = cur_location.getExtras();
             if (locBundle != null) {
                 cityCode = locBundle.getString("citycode");
@@ -660,9 +662,10 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         if (isManual) {
             showAddressDialog();
         } else {
-            String playText = "请选择列表中的地址";
-            VoiceManager.getInstance().startSpeaking(
+            final String playText = "请选择列表中的地址";
+            mVoiceManager.startSpeaking(
                     playText, SemanticConstants.TTS_START_UNDERSTANDING, false);
+
             FloatWindowUtil.showAddress(poiResultList,
                     new AdapterView.OnItemClickListener() {
 
@@ -677,6 +680,8 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                             chooseAddress(position);
                         }
                     });
+
+
         }
 
     }
@@ -752,9 +757,8 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     private void showStrategyMethod(){
         chooseType = 2;
         String playText = "请选择路线优先策略。";
-        mVoiceManager.clearMisUnderstandCount();
         mVoiceManager.startSpeaking(playText,
-                SemanticConstants.TTS_START_UNDERSTANDING, false);
+                SemanticConstants.TTS_DO_NOTHING, false);
         FloatWindowUtil.showStrategy(mStrategyMethods,
                 new AdapterView.OnItemClickListener() {
 
@@ -766,6 +770,13 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                         startNavigation(position);
                     }
                 });
+        mhandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mVoiceManager.startUnderstanding();
+            }
+        },2000);
+
     }
 
     // 选择路径规划策略
@@ -781,14 +792,27 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     }
 
-    public void startChooseResult(int size) {
+    public void startChooseResult(int size,int type) {
 
-        if (chooseType == 1) {
-            chooseAddress(size);
-        } else {
-            chooseDriveMode(size);
+        if(type == ChoiseChain.TYPE_NORMAL){
+
+            if (chooseType == 1) {
+                chooseAddress(size);
+            } else {
+                chooseDriveMode(size);
+            }
+        }else{
+
+            if(isManual){
+                addressDialog.choosePage(size);
+            }else{
+                FloatWindowUtil.chooseAddressPage(ChoosePageChain.CHOOSE_PAGE,size);
+            }
         }
+
     }
+
+
 
     /**
      * 隐藏进度框
@@ -881,13 +905,14 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     public void choosePage(int type) {
 
+
         if (type == ChoosePageChain.NEXT_PAGE) {
             if (isManual) {
                 if (addressDialog != null)
                     addressDialog.nextPage();
             } else {
 
-                FloatWindowUtil.chooseAddressPage(ChoosePageChain.NEXT_PAGE);
+                FloatWindowUtil.chooseAddressPage(ChoosePageChain.NEXT_PAGE,0);
             }
 
         } else {
@@ -896,7 +921,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     addressDialog.lastPage();
             } else {
 
-                FloatWindowUtil.chooseAddressPage(ChoosePageChain.LAST_PAGE);
+                FloatWindowUtil.chooseAddressPage(ChoosePageChain.LAST_PAGE,0);
             }
 
         }
@@ -904,7 +929,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     @Override
     public void activate(OnLocationChangedListener onLocationChangedListener) {
-        Log.d(TAG,"------------LocationMapActivity activate");
         listener = onLocationChangedListener;
     }
 

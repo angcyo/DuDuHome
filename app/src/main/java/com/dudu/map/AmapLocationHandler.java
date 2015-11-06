@@ -1,5 +1,6 @@
 package com.dudu.map;
 
+import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
@@ -10,6 +11,9 @@ import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
 import com.amap.api.location.LocationProviderProxy;
 import com.amap.api.maps.LocationSource;
+import com.dudu.android.launcher.ui.activity.LocationMapActivity;
+import com.dudu.android.launcher.ui.activity.NaviCustomActivity;
+import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.LocationFilter;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.TimeUtils;
@@ -52,7 +56,7 @@ public class AmapLocationHandler implements AMapLocationListener {
 
     private Logger log;
 
-
+    private Activity topActivity;
     public AmapLocationHandler (){
 
         log = LoggerFactory.getLogger("lbs.gps");
@@ -79,8 +83,14 @@ public class AmapLocationHandler implements AMapLocationListener {
         // 保存当前定位点
         LocationUtils.getInstance(mContext).setCurrentLocation(
                 location.getLatitude(), location.getLongitude());
+        topActivity = ActivitiesManager.getInstance().getTopActivity();
 
-        EventBus.getDefault().post(new AmapLocationChangeEvent(location));
+        if((topActivity instanceof LocationMapActivity)||
+                (topActivity instanceof NaviCustomActivity)||
+                (topActivity instanceof  NaviCustomActivity)){
+
+            EventBus.getDefault().post(new AmapLocationChangeEvent(location));
+        }
 
         // m每秒转换成千米每小时
         if (location.hasSpeed() && location.getSpeed() > 0)
@@ -214,22 +224,6 @@ public class AmapLocationHandler implements AMapLocationListener {
 
     }
 
-//    @Override
-//    public void activate(LocationSource.OnLocationChangedListener onLocationChangedListener) {
-//
-//
-////        mListener = onLocationChangedListener;
-//
-//    }
-//
-//    @Override
-//    public void deactivate() {
-//        if (mLocationManagerProxy != null) {
-//            mLocationManagerProxy.removeUpdates(this);
-//            mLocationManagerProxy.destroy();
-//        }
-//        mLocationManagerProxy = null;
-//    }
 
     public AMapLocation getLast_Location (){
 

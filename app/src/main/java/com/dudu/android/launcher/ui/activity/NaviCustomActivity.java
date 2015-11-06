@@ -28,6 +28,7 @@ import com.amap.api.navi.model.NaviLatLng;
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.LogUtils;
+import com.dudu.map.AmapLocationChangeEvent;
 import com.dudu.map.MapManager;
 import com.dudu.map.Navigation;
 import com.dudu.voice.semantic.SemanticConstants;
@@ -87,6 +88,13 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 		setAmapNaviViewOptions();
 		back_button = (Button) findViewById(R.id.back_button);
 		MapManager.getInstance().setNavi(true);
+		EventBus.getDefault().unregister(this);
+		EventBus.getDefault().register(this);
+
+	}
+
+	public void onEventMainThread(AmapLocationChangeEvent event){
+
 	}
 
 	@Override

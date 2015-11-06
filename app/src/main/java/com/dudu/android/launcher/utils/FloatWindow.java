@@ -74,8 +74,9 @@ public class FloatWindow {
 		/**
 		 * 上一页，下一页
 		 * @param type
+		 * @param page 第几页
 		 */
-		void choosePage(int type);
+		void choosePage(int type,int page);
 	}
 
 	public MessageShowCallBack getMessageShowCallBack() {

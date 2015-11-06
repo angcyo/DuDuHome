@@ -62,6 +62,12 @@ public class CmdChain extends SemanticChain {
         }
 
         if (type.contains(Constants.NAVIGATION)) {
+            Activity activity = ActivitiesManager.getInstance().getTopActivity();
+            if((activity instanceof LocationMapActivity)||
+                    (activity instanceof  NaviCustomActivity)||
+                    (activity instanceof  NaviCustomActivity)){
+                return false;
+            }
             handleNavigationCmd(option);
             return true;
         } else if (type.contains(Constants.LUXIANG)) {
@@ -88,6 +94,8 @@ public class CmdChain extends SemanticChain {
         switch (option) {
             case Constants.OPEN:
             case Constants.START:
+
+
                 Intent intent = new Intent();
                 if (MapManager.getInstance().isNavi()) {
                     intent.setClass(mApplication, NaviCustomActivity.class);

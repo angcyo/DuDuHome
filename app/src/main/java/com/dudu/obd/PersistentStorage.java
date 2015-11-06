@@ -38,7 +38,7 @@ public class PersistentStorage {
 
     public int getCount() {
         getAll();
-        if (alldatas != null)
+        if (!alldatas.isEmpty())
             return alldatas.size();
         return 0;
     }
