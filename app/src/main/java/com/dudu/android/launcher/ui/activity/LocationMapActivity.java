@@ -351,7 +351,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     }
                     VoiceManager.getInstance().startSpeaking(playText,
                             SemanticConstants.TTS_START_WAKEUP);
-                    removeFloatWindow(5000);
+                    removeFloatWindow(10000);
                 }
 
                 break;
@@ -775,7 +775,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
             public void run() {
                 mVoiceManager.startUnderstanding();
             }
-        },2000);
+        },3000);
 
     }
 

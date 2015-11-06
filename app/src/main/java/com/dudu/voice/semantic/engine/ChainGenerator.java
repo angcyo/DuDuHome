@@ -37,6 +37,7 @@ public class ChainGenerator {
 
     public MapSearchChain getMapSearchChain(){
         MapSearchChain chain = new MapSearchChain();
+        chain.addChildChain(chain);
         return chain;
     }
 

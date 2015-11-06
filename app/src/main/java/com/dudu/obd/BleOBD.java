@@ -184,7 +184,7 @@ public class BleOBD {
         flamoutData.setCreateTime(TimeUtils.dateLongFormatString(
                 System.currentTimeMillis(), TimeUtils.format1));
         flamoutData.setMethod("driveDatas");
-        flamoutData.setObeId("");
+        flamoutData.setObeId("111");
         flamoutData.setPower(0);
 
 

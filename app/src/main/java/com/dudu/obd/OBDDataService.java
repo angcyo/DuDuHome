@@ -10,6 +10,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
@@ -35,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 采集OBD数据,GPS数据
@@ -95,15 +97,13 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
             while (isAlive) {
                 putGpsDataToJSON();
                 putOBDData();
-                if (isFirstTime_post) {
-                    isFirstTime_post = false;
-                } else {
-                    try {
-                        Thread.sleep(delayTime);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+
+                try {
+                    Thread.sleep(delayTime);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+
             }
         }
     });
@@ -176,11 +176,11 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
         DriveBehaviorHappend.getInstance().setListener(this);
         try {
             if (conn != null && !isOpen) {
-				conn.closeConn();
-				conn.interrupt();
-				conn = null;
-				initConn();
-				conn.start();
+                conn.closeConn();
+                conn.interrupt();
+                conn = null;
+                initConn();
+                conn.start();
             }
 
         } catch (Exception e) {
@@ -282,6 +282,7 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
     private void sendGpsData(JSONArray gpsData) {
         gpsStr = new ExtraDataProcess().getUpLoadGpsData(gpsData, obe_id)
                 .toString();
+        Log.d(TAG, "------------sendGpsData:" + gpsStr);
         conn.sendMessage(gpsStr, true);
         positionAry_list.remove(0);
     }
@@ -298,18 +299,27 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
     private void sendFlameOutData() {
         Gson gson = new Gson();
         fStr = gson.toJson(bleOBD.getFlamoutData());
-        conn.sendMessage(fStr, true);
-
-        last_Location = amapLocationHandler.getLast_Location();
-        if (last_Location != null) {
-            MyGPSData flameOutgps = new MyGPSData(last_Location.getLatitude(),
-                    last_Location.getLongitude(), last_Location.getSpeed(),
-                    last_Location.getAltitude(), last_Location.getBearing(),
-                    TimeUtils.dateLongFormatString(last_Location.getTime(),
-                            TimeUtils.format1), last_Location.getAccuracy(), 0);
-            Gson gson2 = new Gson();
-            String flameOutgpsStr = gson2.toJson(flameOutgps);
-            conn.sendMessage(flameOutgpsStr, true);
+        if (!TextUtils.isEmpty(fStr) && !fStr.equals("null")) {
+            conn.sendMessage(fStr, true);
+            log.debug("sendFlameOutData:{}", fStr);
+            last_Location = amapLocationHandler.getLast_Location();
+            if (last_Location != null) {
+                MyGPSData flameOutgps = new MyGPSData(last_Location.getLatitude(),
+                        last_Location.getLongitude(), last_Location.getSpeed(),
+                        last_Location.getAltitude(), last_Location.getBearing(),
+                        TimeUtils.dateLongFormatString(last_Location.getTime(),
+                                TimeUtils.format1), last_Location.getAccuracy(), 0);
+                Gson gson2 = new Gson();
+                JSONArray positionAry = new JSONArray();
+                try {
+                    positionAry.put(new JSONObject(gson2.toJson(flameOutgps)));
+                    String flameOutgpsStr = new ExtraDataProcess().getUpLoadGpsData(positionAry, obe_id).toString();
+                    conn.sendMessage(flameOutgpsStr, true);
+                    log.debug("sendFlameOutGPSData:{}", flameOutgpsStr);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -389,25 +399,25 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
     // 将OBD数据存放在JSONArray中
     private void putOBDData() {
 
-            if (bleOBD != null && !bleOBD.getObdCollectionList().isEmpty()) {
-                JSONArray jsArr = new JSONArray();
-                for (int i = 0; i < bleOBD.getObdCollectionList().size(); i++) {
-                    OBDData obdData = bleOBD.getObdCollectionList().get(i);
-                    Gson obd = new Gson();
+        if (bleOBD != null && !bleOBD.getObdCollectionList().isEmpty()) {
+            JSONArray jsArr = new JSONArray();
+            for (int i = 0; i < bleOBD.getObdCollectionList().size(); i++) {
+                OBDData obdData = bleOBD.getObdCollectionList().get(i);
+                Gson obd = new Gson();
 
-                    if (obdData != null) {
-                        try {
-                             jsArr.put(new JSONObject(obd.toJson(obdData)));
-                        }catch (JSONException e) {
+                if (obdData != null) {
+                    try {
+                        jsArr.put(new JSONObject(obd.toJson(obdData)));
+                    } catch (JSONException e) {
 
-                            log.error("putOBDData error ",e);
+                        log.error("putOBDData error ", e);
 
-                        }
                     }
                 }
-                postOBDDataArr.add(jsArr);
-                bleOBD.getObdCollectionList().clear();
             }
+            postOBDDataArr.add(jsArr);
+            bleOBD.getObdCollectionList().clear();
+        }
 
     }
 

@@ -9,7 +9,7 @@ public class OBDData implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	private int spd;					    //车速
-	private String time;					//采集时间
+	private String createTime;					//采集时间
 	private float engLoad;			 		//发动机负荷
 	private float engCoolant;		  		//发动机冷却液
 
@@ -24,7 +24,7 @@ public class OBDData implements Serializable{
 	
 	public OBDData(int spd,String time,float engload,float engCoolant,float curon,float engSpd,float batteryV,int runState){
 		this.spd = spd;
-		this.time = time;
+		this.createTime = time;
 		this.engLoad = engload;
 		this.engCoolant = engCoolant;
 		this.curon = curon;
@@ -40,10 +40,10 @@ public class OBDData implements Serializable{
 		this.spd = spd;
 	}
 	public String getTime() {
-		return time;
+		return createTime;
 	}
 	public void setTime(String time) {
-		this.time = time;
+		this.createTime = time;
 	}
 	public float getEngineLoad() {
 		return engLoad;

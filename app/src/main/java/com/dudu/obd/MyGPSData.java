@@ -11,7 +11,7 @@ public class MyGPSData implements Serializable{
 	
 	private Double lon;	//经度
 	private Double lat;	//纬度
-	private String time;
+	private String createTime;
 	private String obeId;
 	private float speeds;	//速度
 	private Double accuracy;	//精度
@@ -22,7 +22,7 @@ public class MyGPSData implements Serializable{
 	public MyGPSData(double lat,double lon,float speeds,double altutude,float direction ,String time,double accuracy ,int type){
 		this.lat = lat;
 		this.lon = lon;
-		this.time = time;
+		this.createTime = time;
 		this.speeds = speeds;
 		this.altitude = altutude;
 		this.direction = direction;
@@ -70,10 +70,10 @@ public class MyGPSData implements Serializable{
 		this.direction = direction;
 	}
 	public String getTime() {
-		return time;
+		return createTime;
 	}
 	public void setTime(String time) {
-		this.time = time;
+		this.createTime = time;
 	}
 	public double getAccuracy() {
 		return accuracy;

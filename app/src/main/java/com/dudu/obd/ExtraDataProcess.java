@@ -19,7 +19,6 @@ public class ExtraDataProcess {
 			json.put("obeId",deviceID );
 			json.put("lals", gpsData);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return json;
@@ -38,7 +37,6 @@ public class ExtraDataProcess {
 			json.put("obeId", deviceID);
 			json.put("obds", obdData);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return json;
@@ -57,7 +55,6 @@ public class ExtraDataProcess {
 			json.put("obeId", deviceID);
 			json.put("drives", flameOutdata);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return json;
