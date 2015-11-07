@@ -5,6 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.telephony.CellLocation;
+import android.telephony.PhoneStateListener;
+import android.telephony.SignalStrength;
+import android.telephony.TelephonyManager;
 import android.view.Window;
 import android.widget.TextView;
 
@@ -15,8 +19,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class BaseTitlebarActivity extends BaseActivity {
+
     private Logger log;
+
     private BroadcastReceiver receiver;
+
+    private TelephonyManager mTelephoneManager;
+
+    private PhoneStateListener mPhoneStateListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +57,22 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
         TextView textView = (TextView) getWindow().findViewById(
                 R.id.signal_textview);
         String type = NetworkUtils.getCurrentNetworkType(mContext);
-        log.debug("Net.Conn.change: {}", type);
         textView.setText(type);
+    }
+
+    private void initPhoneStateListener() {
+        mPhoneStateListener = new PhoneStateListener() {
+
+            @Override
+            public void onCellLocationChanged(CellLocation location) {
+                super.onCellLocationChanged(location);
+            }
+
+            @Override
+            public void onSignalStrengthsChanged(SignalStrength signalStrength) {
+                super.onSignalStrengthsChanged(signalStrength);
+            }
+        };
     }
 
 }

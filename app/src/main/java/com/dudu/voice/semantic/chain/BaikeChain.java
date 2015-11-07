@@ -1,8 +1,6 @@
 package com.dudu.voice.semantic.chain;
 
 import android.app.Activity;
-
-import com.dudu.android.launcher.ui.activity.LocationActivity;
 import com.dudu.android.launcher.ui.activity.LocationMapActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.JsonUtils;
@@ -23,19 +21,26 @@ public class BaikeChain extends SemanticChain {
 
     @Override
     public boolean doSemantic(String json) {
+
         mapManager = MapManager.getInstance();
+
         if(mapManager.isSearch()){
 
             mapManager.setSearch(false);
+
             String message = JsonUtils.parseIatResult(json, "text");
+
             Activity activity = ActivitiesManager
                     .getInstance().getTopActivity();
             if(activity instanceof LocationMapActivity){
-                ((LocationMapActivity) activity).handlerSarch(null,message);
+                ((LocationMapActivity) activity).handlerSarch(null, message);
             }
-            return  true;
+        } else {
+            String answer = JsonUtils.parseIatResult(json, "answer");
+            mVoiceManager.startSpeaking(JsonUtils.parseIatResult(answer, "text"),
+                    SemanticConstants.TTS_START_UNDERSTANDING);
         }
 
-        return false;
+        return  true;
     }
 }

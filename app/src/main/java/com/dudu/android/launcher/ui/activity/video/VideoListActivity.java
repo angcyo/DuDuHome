@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -19,33 +20,41 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.bean.VideoEntity;
 import com.dudu.android.launcher.db.DbHelper;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.ui.dialog.ConfirmCancelDialog;
 import com.dudu.android.launcher.ui.dialog.ConfirmDialog;
+import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.cache.ImageCache;
 import com.dudu.android.launcher.utils.cache.ThumbsFetcher;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class VideoListActivity extends FragmentActivity {
 
-	private static final String IMAGE_CACHE_DIR = "thumbs";
+    private static final String IMAGE_CACHE_DIR = "thumbs";
 
-	private GridView mGridView;
+    private GridView mGridView;
 
-	private VideoAdapter mAdapter;
+    private VideoAdapter mAdapter;
 
-	private List<VideoEntity> mVideoData;
+    private List<VideoEntity> mVideoData;
 
-	private DbHelper mDbHelper;
+    private DbHelper mDbHelper;
 
-	private ThumbsFetcher mThumbsFetcher;
+    private ThumbsFetcher mThumbsFetcher;
 
-	private View mEmptyView;
+    private View mEmptyView;
+
+    private int mPerPageItemNum = 9;
+
+    private int mCurrentPage = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,110 +71,133 @@ public class VideoListActivity extends FragmentActivity {
         initDatas();
     }
 
-	public void initDatas() {
-		ImageCache.ImageCacheParams cacheParams =
-				new ImageCache.ImageCacheParams(this, IMAGE_CACHE_DIR);
+    public void initDatas() {
+        ImageCache.ImageCacheParams cacheParams =
+                new ImageCache.ImageCacheParams(this, IMAGE_CACHE_DIR);
 
         cacheParams.setMemCacheSizePercent(0.25f);
 
         cacheParams.diskCacheEnabled = false;
 
-		mThumbsFetcher = new ThumbsFetcher(VideoListActivity.this);
+        mThumbsFetcher = new ThumbsFetcher(VideoListActivity.this);
 
         mThumbsFetcher.addImageCache(getSupportFragmentManager(), cacheParams);
 
-		mDbHelper = DbHelper.getDbHelper(VideoListActivity.this);
+        mDbHelper = DbHelper.getDbHelper(VideoListActivity.this);
 
-		mVideoData = new ArrayList<>();
+        mVideoData = new ArrayList<>();
 
-		mAdapter = new VideoAdapter(this, mVideoData);
+        mAdapter = new VideoAdapter(this, mVideoData);
 
-		mGridView.setAdapter(mAdapter);
+        mGridView.setAdapter(mAdapter);
 
-		new LoadVideoTask().execute();
-	}
+        mGridView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (view.getLastVisiblePosition() == view.getCount() - 1 &&
+                        scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                    if (view.getCount() ==  mDbHelper.getVideoTotalCount()) {
+                        return;
+                    }
 
-	private void loadVideos() {
-		List<VideoEntity> videos = mDbHelper.getVideos();
-		if (videos != null && !videos.isEmpty()) {
-			mVideoData.addAll(videos);
-		}
-	}
+                    mCurrentPage++;
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		mThumbsFetcher.closeCache();
-	}
+                    new LoadVideoTask().execute();
+                }
+            }
 
-	public void onBackPressed(View v) {
-		finish();
-	}
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
 
-	private class LoadVideoTask extends AsyncTask<Void, Void, Void> {
+            }
+        });
 
-		@Override
-		protected Void doInBackground(Void... params) {
-			loadVideos();
-			return null;
-		}
+        new LoadVideoTask().execute();
+    }
 
-		@Override
-		protected void onPostExecute(Void result) {
-			if (!mVideoData.isEmpty()) {
-				mGridView.setVisibility(View.VISIBLE);
-				mEmptyView.setVisibility(View.GONE);
-			} else {
-				mEmptyView.setVisibility(View.VISIBLE);
-				mGridView.setVisibility(View.GONE);
-			}
+    private void loadVideos() {
+        List<VideoEntity> videos = mDbHelper.getVideos(mCurrentPage * mPerPageItemNum,
+                mPerPageItemNum);
+        if (videos != null && !videos.isEmpty()) {
+            mVideoData.addAll(videos);
+        }
+    }
 
-			mAdapter.setData(mVideoData);
-		}
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mThumbsFetcher.closeCache();
+    }
 
-	}
+    public void onBackPressed(View v) {
+        finish();
+    }
 
-	private class VideoAdapter extends BaseAdapter {
+    private class LoadVideoTask extends AsyncTask<Void, Void, Void> {
 
-		private Context context;
+        @Override
+        protected Void doInBackground(Void... params) {
+            loadVideos();
+            return null;
+        }
 
-		private List<VideoEntity> data;
+        @Override
+        protected void onPostExecute(Void result) {
+            if (!mVideoData.isEmpty()) {
+                mGridView.setVisibility(View.VISIBLE);
+                mEmptyView.setVisibility(View.GONE);
+            } else {
+                mEmptyView.setVisibility(View.VISIBLE);
+                mGridView.setVisibility(View.GONE);
+            }
 
-		public VideoAdapter(Context context, List<VideoEntity> data) {
-			this.context = context;
-			this.data = data;
-		}
+            mAdapter.setData(mVideoData);
+        }
 
-		public void setData(List<VideoEntity> data) {
-			this.data = data;
-			notifyDataSetChanged();
-		}
+    }
 
-		@Override
-		public int getCount() {
-			return data.size();
-		}
+    private class VideoAdapter extends BaseAdapter {
 
-		@Override
-		public Object getItem(int position) {
-			return data.get(position);
-		}
+        private Context context;
 
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
+        private List<VideoEntity> data;
 
-		private void showDeleteDialog(final VideoEntity video) {
+        public VideoAdapter(Context context, List<VideoEntity> data) {
+            this.context = context;
+            this.data = data;
+        }
+
+        public void setData(List<VideoEntity> data) {
+            this.data = data;
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public int getCount() {
+            return data.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return data.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        private void showDeleteDialog(final VideoEntity video) {
             ConfirmCancelDialog dialog = new ConfirmCancelDialog(context);
             dialog.setOnButtonClicked(new ConfirmCancelDialog.OnDialogButttonClickListener() {
                 @Override
                 public void onConfirmClick() {
                     data.remove(video);
-					if (data.isEmpty()) {
-						mEmptyView.setVisibility(View.VISIBLE);
-						mGridView.setVisibility(View.GONE);
-					}
+                    if (data.isEmpty()) {
+                        mEmptyView.setVisibility(View.VISIBLE);
+                        mGridView.setVisibility(View.GONE);
+                    }
 
                     new Thread(new Runnable() {
 
@@ -190,10 +222,10 @@ public class VideoListActivity extends FragmentActivity {
                 }
             });
 
-			dialog.show();
-		}
+            dialog.show();
+        }
 
-		private void showLockDialog() {
+        private void showLockDialog() {
             ConfirmDialog dialog = new ConfirmDialog(context);
             dialog.setOnConfirmClickListener(new ConfirmDialog.OnConfirmClickListener() {
                 @Override
@@ -203,86 +235,86 @@ public class VideoListActivity extends FragmentActivity {
             });
 
             dialog.show();
-		}
+        }
 
-		@Override
-		public View getView(final int position, View convertView, ViewGroup parent) {
-			ViewHolder holder;
-			if (convertView == null) {
-				holder = new ViewHolder();
-				convertView = LayoutInflater.from(context).inflate(
-						R.layout.video_taxi_item, parent, false);
-				holder.delete = (ImageButton) convertView
-						.findViewById(R.id.delete_button);
-				holder.date = (TextView) convertView
-						.findViewById(R.id.date_text);
-				holder.thumbnail = (ImageView) convertView
-						.findViewById(R.id.thumbnail);
-				holder.play = (ImageButton) convertView
-						.findViewById(R.id.video_play);
-				holder.checkBox = (CheckBox) convertView
-						.findViewById(R.id.video_check_box);
-				convertView.setTag(holder);
-			} else {
-				holder = (ViewHolder) convertView.getTag();
-			}
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            ViewHolder holder;
+            if (convertView == null) {
+                holder = new ViewHolder();
+                convertView = LayoutInflater.from(context).inflate(
+                        R.layout.video_taxi_item, parent, false);
+                holder.delete = (ImageButton) convertView
+                        .findViewById(R.id.delete_button);
+                holder.date = (TextView) convertView
+                        .findViewById(R.id.date_text);
+                holder.thumbnail = (ImageView) convertView
+                        .findViewById(R.id.thumbnail);
+                holder.play = (ImageButton) convertView
+                        .findViewById(R.id.video_play);
+                holder.checkBox = (CheckBox) convertView
+                        .findViewById(R.id.video_check_box);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
 
-			final VideoEntity video = data.get(position);
-			holder.date.setText(video.getName());
-			holder.delete.setOnClickListener(new OnClickListener() {
+            final VideoEntity video = data.get(position);
+            holder.date.setText(video.getName());
+            holder.delete.setOnClickListener(new OnClickListener() {
 
-				@Override
-				public void onClick(View v) {
-					if (video.getStatus() == 0) {
-						showDeleteDialog(video);
-					} else {
-						showLockDialog();
-					}
-				}
-			});
+                @Override
+                public void onClick(View v) {
+                    if (video.getStatus() == 0) {
+                        showDeleteDialog(video);
+                    } else {
+                        showLockDialog();
+                    }
+                }
+            });
 
-			holder.play.setOnClickListener(new OnClickListener() {
+            holder.play.setOnClickListener(new OnClickListener() {
 
-				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(VideoListActivity.this,
-							VideoPlayActivity.class);
-					intent.setData(Uri.fromFile(video.getFile()));
-					startActivity(intent);
-				}
-			});
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(VideoListActivity.this,
+                            VideoPlayActivity.class);
+                    intent.setData(Uri.fromFile(video.getFile()));
+                    startActivity(intent);
+                }
+            });
 
-			holder.checkBox.setOnCheckedChangeListener(null);
-			holder.checkBox.setChecked(video.getStatus() == 1);
-			holder.checkBox
-					.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            holder.checkBox.setOnCheckedChangeListener(null);
+            holder.checkBox.setChecked(video.getStatus() == 1);
+            holder.checkBox
+                    .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
-						@Override
-						public void onCheckedChanged(CompoundButton buttonView,
-								boolean isChecked) {
-							if (isChecked) {
-								video.setStatus(1);
-								mDbHelper.updateVideoStatus(video.getName(), 1);
-							} else {
-								video.setStatus(0);
-								mDbHelper.updateVideoStatus(video.getName(), 0);
-							}
-						}
-					});
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView,
+                                                     boolean isChecked) {
+                            if (isChecked) {
+                                video.setStatus(1);
+                                mDbHelper.updateVideoStatus(video.getName(), 1);
+                            } else {
+                                video.setStatus(0);
+                                mDbHelper.updateVideoStatus(video.getName(), 0);
+                            }
+                        }
+                    });
 
-			mThumbsFetcher.loadImage(video.getFile().getAbsolutePath(),
-					holder.thumbnail);
-			return convertView;
-		}
+            mThumbsFetcher.loadImage(video.getFile().getAbsolutePath(),
+                    holder.thumbnail);
+            return convertView;
+        }
 
-		class ViewHolder {
-			ImageView thumbnail;
-			ImageButton delete;
-			ImageButton play;
-			TextView date;
-			CheckBox checkBox;
-		}
+        class ViewHolder {
+            ImageView thumbnail;
+            ImageButton delete;
+            ImageButton play;
+            TextView date;
+            CheckBox checkBox;
+        }
 
-	}
+    }
 
 }

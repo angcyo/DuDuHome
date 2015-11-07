@@ -66,10 +66,10 @@ public class NetworkUtils {
 
 	public static String getCurrentNetworkType(Context context) {
 		int networkClass = getNetworkClass(context);
-		String type = "未知";
+		String type = "无网络信号";
 		switch (networkClass) {
 		case NETWORK_CLASS_UNAVAILABLE:
-			type = "无";
+			type = "无网络信号";
 			break;
 		case NETWORK_CLASS_WIFI:
 			type = "Wi-Fi";

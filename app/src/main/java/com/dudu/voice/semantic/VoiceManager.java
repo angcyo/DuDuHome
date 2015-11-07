@@ -74,6 +74,13 @@ public class VoiceManager {
 
     private boolean mShowMessageWindow = true;
 
+    private Runnable mRemoveFloatWindow = new Runnable() {
+        @Override
+        public void run() {
+            FloatWindowUtil.removeFloatWindow();
+        }
+    };
+
     /**
      * 获取整个应用唯一语音控制对象
      */
@@ -179,16 +186,15 @@ public class VoiceManager {
 
         if (!NetworkUtils.isNetworkConnected(mContext)) {
             startSpeaking(Constants.WAKEUP_NETWORK_UNAVAILABLE);
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    FloatWindowUtil.removeFloatWindow();
-                }
-            }, 4000);
+            mHandler.postDelayed(mRemoveFloatWindow, 4000);
             return;
         }
 
         startSpeaking(Constants.WAKEUP_WORDS, SemanticConstants.TTS_START_UNDERSTANDING);
+    }
+
+    public void removeFloatCallback() {
+        mHandler.removeCallbacks(mRemoveFloatWindow);
     }
 
     /**
@@ -215,7 +221,7 @@ public class VoiceManager {
      */
     public void stopUnderstanding() {
 
-        mSpeechUnderstander.stopUnderstanding();
+        mSpeechUnderstander.cancel();
 
         startWakeup();
     }

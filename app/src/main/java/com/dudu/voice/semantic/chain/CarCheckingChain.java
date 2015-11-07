@@ -11,6 +11,7 @@ import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.GsonUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
+import com.dudu.android.launcher.utils.Util;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.SemanticType;
 import com.dudu.voice.semantic.engine.SemanticProcessor;
@@ -34,6 +35,10 @@ public class CarCheckingChain extends  SemanticChain  {
 
     @Override
     public boolean doSemantic(String json) {
+        if (Util.isTaxiVersion()) {
+            return false;
+        }
+
         mVoiceManager.setShowMessageWindow(false);
 
         FloatWindowUtil.removeFloatWindow();
