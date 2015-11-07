@@ -39,7 +39,7 @@ public class ChoiseChain extends SemanticChain{
     public boolean doSemantic(String json) {
 
         Log.d("lxh","--------json:" + json);
-
+        mVoiceManager.startUnderstanding();
         String semantic = JsonUtils.parseIatResult(json,
                 "semantic");
 

@@ -6,25 +6,18 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.location.Location;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
-import com.amap.api.location.AMapLocationListener;
-import com.amap.api.location.LocationManagerProxy;
-import com.amap.api.location.LocationProviderProxy;
-import com.amap.api.maps.LocationSource;
-import com.dudu.android.launcher.utils.LocationFilter;
-import com.dudu.android.launcher.utils.LocationUtils;
+import com.dudu.android.launcher.utils.DeviceIDUtil;
 import com.dudu.android.launcher.utils.TimeUtils;
+import com.dudu.conn.Connection;
+import com.dudu.conn.ConnectionEvent;
+import com.dudu.conn.SendMessage;
 import com.dudu.map.AmapLocationHandler;
 import com.dudu.map.NavigationHandler;
-import com.dudu.obd.Connection.OnRecieveCallBack;
-import com.dudu.obd.Connection.onSessionStateChangeCallBack;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -36,13 +29,14 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * 采集OBD数据,GPS数据
  */
-public class OBDDataService extends Service implements onSessionStateChangeCallBack, OnRecieveCallBack,
-        DriveBehaviorHappend.DriveBehaviorHappendListener, CarStatusManager.CarStatusListener {
+public class OBDDataService extends Service implements
+        DriveBehaviorHappend.DriveBehaviorHappendListener{
     public final static int SENSOR_SLOW = 0; // 传感器频率为20HZ左右(或20HZ以下)
     public final static int SENSOR_NORMAL = 1; // 传感器频率为 40HZ左右
     public final static int SENSOR_FASTER = 2; // 传感器频率为60HZ左右
@@ -59,7 +53,6 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
     private Integer mSyncObj = new Integer(0);
     private boolean isAlive = true;
     private long delayTime = 30 * 1000;// 每隔30s发送一次数据
-    private boolean isFirstTime_post = true;
     private Connection conn;
     private boolean isOpen = false;
     private Handler mhandler;
@@ -87,6 +80,10 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
     private AMapLocation last_Location;// 前一个位置点
 
     private AMapLocation cur_Location; // 当前位置点
+
+    private SendMessage sendMessage;
+
+    private  Gson gson;
     /**
      * 采集数据线程 30s 将所有数据风封装到JSONArray里
      */
@@ -197,11 +194,17 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
     }
 
     private void init() {
-        positionAry_list = new ArrayList<JSONArray>();
-        postOBDDataArr = new ArrayList<JSONArray>();
+        positionAry_list = new ArrayList<>();
+        postOBDDataArr = new ArrayList<>();
         mhandler = new Handler();
         amapLocationHandler = new AmapLocationHandler();
         amapLocationHandler.init(this);
+        obe_id = DeviceIDUtil.getAndroidID(this);
+        sendMessage = SendMessage.getInstance(this);
+        gson = new Gson();
+        EventBus.getDefault().unregister(this);
+        EventBus.getDefault().register(this);
+
         initSensor();
         initConn();
 
@@ -221,8 +224,6 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
 
     private void initConn() {
         conn = Connection.getInstance(this);
-        conn.addStateChangeCallBack(this);
-        conn.addReceivedCallBack(this);
     }
 
     // 初始化传感器相关
@@ -263,7 +264,6 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
                 for (int i = 0; i < amapLocationHandler.getGpsDataListToSend().size(); i++) {
                     MyGPSData position = amapLocationHandler.getGpsDataListToSend().get(i);
                     if (position != null) {
-                        Gson gson = new Gson();
                         positionAry.put(i,
                                 new JSONObject(gson.toJson(position)));
                     }
@@ -279,29 +279,19 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
 
     // 发送GPS数据
     private void sendGpsData(JSONArray gpsData) {
-        gpsStr = new ExtraDataProcess().getUpLoadGpsData(gpsData, obe_id)
-                .toString();
-        Log.d(TAG, "------------sendGpsData:" + gpsStr);
-        conn.sendMessage(gpsStr, true);
+        sendMessage.sendGPSDatas(gpsData);
         positionAry_list.remove(0);
     }
 
     // 发送OBD数据
     private void sendOBDData(JSONArray obdData) {
-        obdStr = new ExtraDataProcess().getUpLoadOBDData(obdData, obe_id)
-                .toString();
-        Log.d(TAG, "------------sendGpsData:" + obdStr);
-        conn.sendMessage(obdStr, true);
+        sendMessage.sendOBDDatas(obdData);
         postOBDDataArr.remove(0);
     }
 
     // 发送熄火数据
     private void sendFlameOutData() {
-        Gson gson = new Gson();
-        fStr = gson.toJson(bleOBD.getFlamoutData());
-        if (!TextUtils.isEmpty(fStr) && !fStr.equals("null")) {
-            conn.sendMessage(fStr, true);
-            log.debug("sendFlameOutData:{}", fStr);
+        if(bleOBD.getFlamoutData()!=null){
             last_Location = amapLocationHandler.getLast_Location();
             if (last_Location != null) {
                 MyGPSData flameOutgps = new MyGPSData(last_Location.getLatitude(),
@@ -309,45 +299,22 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
                         last_Location.getAltitude(), last_Location.getBearing(),
                         TimeUtils.dateLongFormatString(last_Location.getTime(),
                                 TimeUtils.format1), last_Location.getAccuracy(), 0);
-                Gson gson2 = new Gson();
+
                 JSONArray positionAry = new JSONArray();
                 try {
-                    positionAry.put(new JSONObject(gson2.toJson(flameOutgps)));
-                    String flameOutgpsStr = new ExtraDataProcess().getUpLoadGpsData(positionAry, obe_id).toString();
-                    conn.sendMessage(flameOutgpsStr, true);
-                    log.debug("sendFlameOutGPSData:{}", flameOutgpsStr);
+                    positionAry.put(new JSONObject(gson.toJson(flameOutgps)));
+
+                    sendMessage.sendFlameOutData(bleOBD.getFlamoutData(), positionAry);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-        }
-    }
 
-
-    @Override
-    public void onSessionStateChange(int state) {
-        if (state == Connection.SESSION_OPEND) {
-            isOpen = true;
-        }
-    }
-
-    @Override
-    public void OnRecieveFromServerMsg(String method, String resultCode,
-                                       String resultDes) {
-        switch (method) {
-
-            case DRIVE_DATAS:
-                fStr = null;
-                break;
-            case OBD_DATA:
-                obdStr = null;
-                break;
-            case COORDINATES:
-                gpsStr = null;
-                break;
         }
 
+
     }
+
 
     /**
      * 驾驶行为事件发生时的通知
@@ -403,11 +370,9 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
             JSONArray jsArr = new JSONArray();
             for (int i = 0; i < bleOBD.getObdCollectionList().size(); i++) {
                 OBDData obdData = bleOBD.getObdCollectionList().get(i);
-                Gson obd = new Gson();
-
                 if (obdData != null) {
                     try {
-                        jsArr.put(new JSONObject(obd.toJson(obdData)));
+                        jsArr.put(new JSONObject(gson.toJson(obdData)));
                     } catch (JSONException e) {
 
                         log.error("putOBDData error ", e);
@@ -434,12 +399,14 @@ public class OBDDataService extends Service implements onSessionStateChangeCallB
         }, 4 * 60 * 60 * 1000);
     }
 
-
-    @Override
-    public void onCarStateChange(int state) {
-        carState = state;
-        if (state == 1)
+    public void onEventBackgroundThread(BleOBD.CarStatus event){
+        carState = event.getCarStatus();
+        if (carState == BleOBD.CarStatus.CAR_ONLINE)
             noticeFating();
+    }
+    public void onEventBackgroundThread(ConnectionEvent.SessionStateChange event){
+        if(event.getSessonState()==event.SESSION_OPEND)
+            isOpen = true;
     }
 
     // 传感器监听

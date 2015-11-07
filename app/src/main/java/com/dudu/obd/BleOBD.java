@@ -3,11 +3,11 @@ package com.dudu.obd;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
-import android.util.Log;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.utils.TimeUtils;
 import com.dudu.android.libble.BleConnectMain;
+import com.dudu.conn.ConnMethod;
 
 import org.scf4a.ConnSession;
 import org.scf4a.Event;
@@ -15,9 +15,7 @@ import org.scf4a.EventRead;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -37,9 +35,7 @@ public class BleOBD {
 
     private List<OBDData> obdCollectionList = new ArrayList<>(); // OBD 数据
 
-    private FlamoutData flamoutData ;
-
-    private LinkedList<CarStatusManager.CarStatusListener> carStatusListeners;
+    private FlamoutData flamoutData = null;
 
     private int speed = 0;
 
@@ -67,7 +63,6 @@ public class BleOBD {
         EventBus.getDefault().register(readL1);
         EventBus.getDefault().post(new Event.StartScanner());
         obdCollectionList = new ArrayList<OBDData>();
-        carStatusListeners = CarStatusManager.getInstance().getmCarStateListenerList();
         driveBehaviorHappendListener = DriveBehaviorHappend.getInstance().getListener();
     }
 
@@ -96,6 +91,12 @@ public class BleOBD {
             log.error("OBD Parse exception", e);
             e.printStackTrace();
         }
+    }
+
+    public void onEventBackgroundThread(Event.DisConnect event){
+
+        if(event.getType()== Event.ConnectType.UNKNOWN)
+          EventBus.getDefault().post(new Event.StartScanner());
     }
 
     private void parseOBDData(String result){
@@ -141,18 +142,11 @@ public class BleOBD {
         if (!isNotice_start) {
             isNotice_flamout = false;
             isNotice_start = true;
-            if (!carStatusListeners.isEmpty()) {
-                for (int i = 0; i < carStatusListeners.size(); i++) {
-                    carStatusListeners.get(i).onCarStateChange(1);
-                }
-            }
+           EventBus.getDefault().post(new CarStatus(CarStatus.CAR_ONLINE));
 
         }
 
-
-
     }
-
 
     private void parseTotalData(String result){
         ttData = result.split(",");
@@ -178,25 +172,22 @@ public class BleOBD {
         flamoutData = new FlamoutData();
         flamoutData.setFuels(Float.parseFloat(stData[6]));
         flamoutData.setMiles(Float.parseFloat(stData[3]));
-        flamoutData.setTimes(Integer.parseInt(stData[2]) *60);
+        flamoutData.setTimes(Integer.parseInt(stData[2]) * 60);
         flamoutData.setMaxrpm(Integer.parseInt(stData[8]));
         flamoutData.setMaxspd(Integer.parseInt(stData[7]));
         flamoutData.setCreateTime(TimeUtils.dateLongFormatString(
                 System.currentTimeMillis(), TimeUtils.format1));
-        flamoutData.setMethod("driveDatas");
-        flamoutData.setObeId("111");
+        flamoutData.setMethod(ConnMethod.METHOD_FLAMEOUTDATA);
+
         flamoutData.setPower(0);
 
 
         if (!isNotice_flamout) {
             isNotice_start = false;
-            if (!carStatusListeners.isEmpty()) {
-                isNotice_flamout = true;
-                for (int i = 0; i < carStatusListeners.size(); i++) {
-                    carStatusListeners.get(i).onCarStateChange(0);
-                }
-            }
+            isNotice_flamout = true;
+            EventBus.getDefault().post(new CarStatus(CarStatus.CAR_OFFLINE));
         }
+
     }
 
     public List<OBDData> getObdCollectionList(){
@@ -221,6 +212,18 @@ public class BleOBD {
         if (first || second || third || forth || five || six) {
             if(driveBehaviorHappendListener!=null)
                 driveBehaviorHappendListener.onDriveBehaviorHappend(DriveBehaviorHappend.TYPE_MISMATCH);
+        }
+    }
+
+    public static class CarStatus{
+        public static final int CAR_OFFLINE = 0;
+        public static final int CAR_ONLINE = 1;
+        private int carStatus;
+        public CarStatus(int carStatus){
+            this.carStatus = carStatus;
+        }
+        public int getCarStatus(){
+            return carStatus;
         }
     }
 }
