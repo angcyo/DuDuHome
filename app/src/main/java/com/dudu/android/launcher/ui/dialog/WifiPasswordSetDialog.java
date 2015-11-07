@@ -50,8 +50,8 @@ public class WifiPasswordSetDialog extends Dialog {
 
 		password1ET = (EditText) findViewById(R.id.password1ET);
 		password2ET = (EditText) findViewById(R.id.password2ET);
-		password1ET.setText(SharedPreferencesUtil.getPreferences(mContext, "wifi_key", "88888888"));
-		password2ET.setText(SharedPreferencesUtil.getPreferences(mContext, "wifi_key", "88888888"));
+		password1ET.setText(SharedPreferencesUtil.getPreferences(mContext, "wifi_password", "88888888"));
+		password2ET.setText(SharedPreferencesUtil.getPreferences(mContext, "wifi_password", "88888888"));
 
 		wifiPasswordSetBT = (Button) findViewById(R.id.wifiPasswordSetBT);
 		wifiPasswordSetBT.setOnClickListener(new View.OnClickListener() {
@@ -85,7 +85,7 @@ public class WifiPasswordSetDialog extends Dialog {
 		}
 
 		boolean isRight = WifiApAdmin.startWifiAp(mContext,
-				SharedPreferencesUtil.getPreferences(mContext, "wifi_ssid", "\"DuduHotSpot\""),
+				SharedPreferencesUtil.getPreferences(mContext, "wifi_ssid", "DuduHotSpot"),
 				password2ET.getText().toString(), mCallBack);
 
 		if (isRight) {

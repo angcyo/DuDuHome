@@ -39,13 +39,7 @@ public class WIFIChain extends SemanticChain {
         WifiSlots ws = we.getSlots();
         String wifiState = ws.getState();
         if (wifiState.equals("open")) {
-            WifiApAdmin.startWifiAp(mContext,
-                    SharedPreferencesUtil.getPreferences(
-                            mContext, "wifi_ssid",
-                            "\"DuduHotSpot\""),
-                    SharedPreferencesUtil.getPreferences(
-                            mContext, "wifi_key",
-                            "88888888"));
+            WifiApAdmin.startWifiAp(mContext);
             mVoiceManager.startSpeaking("热点已打开。", SemanticConstants.TTS_DO_NOTHING);
         } else if (wifiState.equals("close")) {
             WifiApAdmin.closeWifiAp(mContext);

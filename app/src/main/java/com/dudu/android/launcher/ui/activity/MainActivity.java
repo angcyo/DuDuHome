@@ -8,9 +8,9 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.amap.api.location.AMapLocalWeatherForecast;
 import com.amap.api.location.AMapLocalWeatherListener;
 import com.amap.api.location.AMapLocalWeatherLive;
@@ -32,7 +31,6 @@ import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
 import com.dudu.android.launcher.utils.FileUtils;
-import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Util;
@@ -41,7 +39,6 @@ import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.map.MapManager;
 import com.dudu.obd.OBDDataService;
 import com.dudu.voice.semantic.VoiceManager;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,6 +62,8 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     private LinearLayout mSelfCheckingView;
 
+    private static int TIME = 10000;
+
     private Timer timer;
 
     private RecordBindService mRecordService;
@@ -72,6 +71,8 @@ public class MainActivity extends BaseTitlebarActivity implements
     private ServiceConnection mServiceConnection;
 
     private Button mVoiceButton;
+
+    private WifiApAdmin mWifiApAdmin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,26 +85,33 @@ public class MainActivity extends BaseTitlebarActivity implements
         //检测蓝牙设配
         checkBlueTooth();
 
-//检查nodogsplash.conf文件
-        checkFile();
-
         requestWeatherInfo();
+        //延迟10S开启热点
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                startWifiAp();
+            }
+        }, TIME);
     }
-    private void checkFile() {
-        File file=new File(FileUtils.getExternalStorageDirectory()+File.separator+"nodogsplash","nodogsplash.conf");
+
+    private void startWifiAp() {
+        File directory = new File(FileUtils.getExternalStorageDirectory(), "nodogsplash");
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        File file = new File(directory, "nodogsplash.conf");
         if(file.exists()){
             //开启热点
-            WifiApAdmin.startWifiAp(this, "ll", "12345678");
-        }else {
-            File sdFile=new File(FileUtils.getExternalStorageDirectory(),"nodogsplash");
-            sdFile.mkdirs();
+            WifiApAdmin.startWifiAp(this);
+        } else {
             try {
                 file.createNewFile();
                 //如果不存在就创建然后复制assets下的文件到此文件
-                InputStream isAsset=getAssets().open("nodogsplash.conf");
+                InputStream isAsset = getAssets().open("nodogsplash.conf");
                 if (FileUtils.copyFileToSd(isAsset, file)){
                     //开启热点
-                    WifiApAdmin.startWifiAp(this,"ll","12345678");
+                    WifiApAdmin.startWifiAp(this);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -112,14 +120,15 @@ public class MainActivity extends BaseTitlebarActivity implements
     }
 
     private void checkBlueTooth() {
+
         //初始化蓝牙的适配器
-        BluetoothManager bluetoothManager=(BluetoothManager)getSystemService(Context.BLUETOOTH_SERVICE);
-        BluetoothAdapter bluetoothAdapter=bluetoothManager.getAdapter();
-        if (bluetoothAdapter!=null){
-            if(!bluetoothAdapter.isEnabled()){
-             //如果蓝牙没有开启的话，则开启蓝牙
+        BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+        BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
+        if (bluetoothAdapter != null) {
+            if (!bluetoothAdapter.isEnabled()) {
+                //如果蓝牙没有开启的话，则开启蓝牙
                 bluetoothAdapter.enable();
-         }
+            }
         }
     }
 
@@ -172,7 +181,7 @@ public class MainActivity extends BaseTitlebarActivity implements
         });
     }
 
-    private void initTaxiView(){
+    private void initTaxiView() {
         mVoiceButton = (Button) findViewById(R.id.voice_button);
         mVoiceButton.setOnClickListener(this);
     }
