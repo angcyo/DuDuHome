@@ -48,7 +48,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
 			mDefaultHandler.uncaughtException(thread, ex);
 		} else {
 			android.os.Process.killProcess(android.os.Process.myPid());
-			System.exit(10);
+            System.exit(10);
 		}
 	}
 
@@ -99,6 +99,6 @@ public class CrashHandler implements UncaughtExceptionHandler {
 		}
 
 		return mContext.openFileOutput(fileName, Context.MODE_PRIVATE);
-}
+	}
 
 }

@@ -3,11 +3,9 @@ package com.dudu.voice.semantic.chain;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.bean.CmdEntity;
 import com.dudu.android.launcher.bean.CmdSlots;
-import com.dudu.android.launcher.ui.activity.LocationActivity;
 import com.dudu.android.launcher.ui.activity.LocationMapActivity;
 import com.dudu.android.launcher.ui.activity.MainActivity;
 import com.dudu.android.launcher.ui.activity.NaviBackActivity;
@@ -43,9 +41,6 @@ public class CmdChain extends SemanticChain {
 
     @Override
     public boolean doSemantic(String json) {
-
-        FloatWindowUtil.removeFloatWindow();
-
         String semantic = JsonUtils.parseIatResult(json,
                 "semantic");
         CmdEntity cmdEntity = (CmdEntity) GsonUtil
@@ -62,7 +57,6 @@ public class CmdChain extends SemanticChain {
         }
 
         if (type.contains(Constants.NAVIGATION)) {
-
             handleNavigationCmd(option);
             return true;
         } else if (type.contains(Constants.LUXIANG)) {
@@ -89,14 +83,14 @@ public class CmdChain extends SemanticChain {
         switch (option) {
             case Constants.OPEN:
             case Constants.START:
-
                 Activity activity = ActivitiesManager.getInstance().getTopActivity();
                 if((activity instanceof LocationMapActivity)||
-                        (activity instanceof  NaviCustomActivity)||
-                        (activity instanceof  NaviCustomActivity)){
-
+                        (activity instanceof  NaviCustomActivity) ||
+                        (activity instanceof  NaviCustomActivity)) {
                     return;
                 }
+
+                FloatWindowUtil.removeFloatWindow();
                 Intent intent = new Intent();
                 if (MapManager.getInstance().isNavi()) {
                     intent.setClass(mApplication, NaviCustomActivity.class);
@@ -112,6 +106,7 @@ public class CmdChain extends SemanticChain {
                 break;
             case Constants.CLOSE:
             case Constants.EXIT:
+                FloatWindowUtil.removeFloatWindow();
                 ActivitiesManager.getInstance().closeTargetActivity(
                         NaviCustomActivity.class);
                 ActivitiesManager.getInstance().closeTargetActivity(
@@ -124,6 +119,7 @@ public class CmdChain extends SemanticChain {
     }
 
     private void handleVideoCmd(String option) {
+        FloatWindowUtil.removeFloatWindow();
         switch (option) {
             case Constants.OPEN:
             case Constants.START:
@@ -146,6 +142,7 @@ public class CmdChain extends SemanticChain {
     }
 
     private void handleOrderCmd() {
+        FloatWindowUtil.removeFloatWindow();
         Intent intent;
         PackageManager packageManager = mApplication.getPackageManager();
         intent = packageManager.getLaunchIntentForPackage("com.sdu.didi.gsui");
@@ -161,13 +158,13 @@ public class CmdChain extends SemanticChain {
     }
 
     private void handleBackCmd() {
+        FloatWindowUtil.removeFloatWindow();
         if (mApplication.isReceivingOrder()) {
             mApplication.setReceivingOrder(false);
             Intent intent = new Intent(mApplication, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mApplication.startActivity(intent);
         }
-
 
         Activity topActivity = ActivitiesManager.getInstance()
                 .getTopActivity();
@@ -182,6 +179,7 @@ public class CmdChain extends SemanticChain {
     }
 
     private void handleExitCmd() {
+        FloatWindowUtil.removeFloatWindow();
         SemanticProcessor.getProcessor().clearSemanticStack();
     }
 

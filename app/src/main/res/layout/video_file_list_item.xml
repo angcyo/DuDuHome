@@ -10,8 +10,7 @@
     <ImageView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1.5"
-        android:src="@drawable/video_icon" />
+        android:layout_weight="1.5" />
 
     <TextView
         android:id="@+id/view_file_list_item_data"

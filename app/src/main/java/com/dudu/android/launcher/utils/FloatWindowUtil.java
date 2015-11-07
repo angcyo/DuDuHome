@@ -1,12 +1,10 @@
 package com.dudu.android.launcher.utils;
 
 import java.util.List;
-
 import android.widget.AdapterView.OnItemClickListener;
-
 import com.dudu.android.launcher.bean.PoiResultInfo;
 import com.dudu.android.launcher.bean.StrategyMethod;
-import com.dudu.map.MapManager;
+
 
 public class FloatWindowUtil {
 
@@ -16,6 +14,7 @@ public class FloatWindowUtil {
 			FloatWindow.getInstance().getCreateFloatWindowCallBack().createFloatWindow();
 		}
 	}
+
 	// 消息显示
 	public static void showMessage(String message,String type){
 		if(FloatWindow.getInstance().getMessageShowCallBack()!=null){
@@ -35,6 +34,7 @@ public class FloatWindowUtil {
 		if(FloatWindow.getInstance().getAddressShowCallBack()!=null){
 			FloatWindow.getInstance().getAddressShowCallBack().showAddress(poiList);
 		}
+
 		if(FloatWindow.getInstance().getAddressListItemClickCallback()!=null){
 			FloatWindow.getInstance().getAddressListItemClickCallback().onAddressListItemClick(listener);
 		}

@@ -5,10 +5,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PersistableBundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -22,12 +25,15 @@ import com.dudu.android.launcher.db.DbHelper;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.ui.dialog.ConfirmCancelDialog;
 import com.dudu.android.launcher.ui.dialog.ConfirmDialog;
+import com.dudu.android.launcher.utils.cache.ImageCache;
 import com.dudu.android.launcher.utils.cache.ThumbsFetcher;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VideoListActivity extends BaseNoTitlebarAcitivity {
+public class VideoListActivity extends FragmentActivity {
+
+	private static final String IMAGE_CACHE_DIR = "thumbs";
 
 	private GridView mGridView;
 
@@ -40,27 +46,33 @@ public class VideoListActivity extends BaseNoTitlebarAcitivity {
 	private ThumbsFetcher mThumbsFetcher;
 
 	private View mEmptyView;
-	
-	@Override
-	public int initContentView() {
-		return R.layout.video_layout;
-	}
 
-	@Override
-	public void initView(Bundle savedInstanceState) {
-		mGridView = (GridView) findViewById(R.id.video_grid);
-		mGridView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-		mEmptyView = findViewById(R.id.empty_view);
-	}
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-	@Override
-	public void initListener() {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-	}
+        setContentView(R.layout.video_layout);
 
-	@Override
+        mGridView = (GridView) findViewById(R.id.video_grid);
+        mGridView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        mEmptyView = findViewById(R.id.empty_view);
+
+        initDatas();
+    }
+
 	public void initDatas() {
+		ImageCache.ImageCacheParams cacheParams =
+				new ImageCache.ImageCacheParams(this, IMAGE_CACHE_DIR);
+
+        cacheParams.setMemCacheSizePercent(0.25f);
+
+        cacheParams.diskCacheEnabled = false;
+
 		mThumbsFetcher = new ThumbsFetcher(VideoListActivity.this);
+
+        mThumbsFetcher.addImageCache(getSupportFragmentManager(), cacheParams);
 
 		mDbHelper = DbHelper.getDbHelper(VideoListActivity.this);
 

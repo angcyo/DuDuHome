@@ -6,7 +6,9 @@ import com.dudu.android.launcher.bean.PoiResultInfo;
 import com.dudu.android.launcher.bean.StrategyMethod;
 
 public class FloatWindow {
+
 	private static FloatWindow floatWindow;
+
 	private MessageShowCallBack messageShowCallBack;
 	private AddressShowCallBack addressShowCallBack;
 	private StrategyChooseCallBack strategyChooseCallBack;
@@ -15,10 +17,12 @@ public class FloatWindow {
 	private RemoveFloatWindowCallBack removeFloatWindowCallBack;
 	private CreateFloatWindowCallBack createFloatWindowCallBack;
 	private ChooseAddressPageCallBack chooseAddressPageCallBack;
+
 	public static final String MESSAGE_IN = "input";
 	public static final String MESSAGE_OUT = "output";
-	public static FloatWindow getInstance(){
-		if(floatWindow==null)
+
+	public static FloatWindow getInstance() {
+		if(floatWindow == null)
 			floatWindow = new FloatWindow();
 		return floatWindow;
 	}
@@ -31,6 +35,7 @@ public class FloatWindow {
 		 */
 		void showMessage(String message, String type);
 	}
+
 	public interface FloatVoiceChangeCallBack{
 		/**
 		 * 说话声音改变时的回调
@@ -38,6 +43,7 @@ public class FloatWindow {
 		 */
 		void onVoiceChange(int voice);
 	}
+
 	public interface AddressShowCallBack{
 
 		void showAddress(List<PoiResultInfo> poiList);
@@ -145,4 +151,5 @@ public class FloatWindow {
 	public void setChooseAddressPageCallBack(ChooseAddressPageCallBack chooseAddressPageCallBack) {
 		this.chooseAddressPageCallBack = chooseAddressPageCallBack;
 	}
+
 }
