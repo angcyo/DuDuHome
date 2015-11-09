@@ -3,6 +3,8 @@ package com.dudu.android.launcher.ui.activity;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.Util;
 
 import android.app.Activity;
@@ -74,6 +76,9 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 	private AMapNavi mAmapNavi;
 	private Handler mHandler;
 
+	private Logger log;
+
+	private String playText;
 	@Override
 	public int initContentView() {
 		return R.layout.activity_navicustom;
@@ -90,12 +95,14 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 		MapManager.getInstance().setNavi(true);
 		EventBus.getDefault().unregister(this);
 		EventBus.getDefault().register(this);
+		log = LoggerFactory.getLogger("lbs.navi");
 
 	}
 
 	public void onEventMainThread(AmapLocationChangeEvent event){
 
 	}
+
 
 	@Override
 	public void initListener() {
@@ -146,7 +153,6 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 		viewOptions.setTrafficLayerEnabled(true);
 		viewOptions.setTrafficLine(true);
 		viewOptions.setTrafficBarEnabled(true);
-//		viewOptions.setTrafficInfoUpdateEnabled(true);		//交通播报是否打开（只适用于驾车导航，需要联网）.
 		mAmapAMapNaviView.setViewOptions(viewOptions);
 		mAmapAMapNaviView.getMap().setTrafficEnabled(true);
 
@@ -163,8 +169,13 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
     public void trafficInfo(){
     	if(mAmapAMapNaviView!=null&&mAmapAMapNaviView.getViewOptions()!=null){
     		FloatWindowUtil.removeFloatWindow();
+			playText = "路况播报已打开";
+			if(mAmapAMapNaviView.getViewOptions().isTrafficInfoUpdateEnabled())
+				playText = "已经为您打开路况播报";
+			else
     		mAmapAMapNaviView.getViewOptions().setTrafficInfoUpdateEnabled(true);
-    		VoiceManager.getInstance().startSpeaking("路况播报已打开", SemanticConstants.TTS_DO_NOTHING);
+
+    		VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_DO_NOTHING);
     	}
     }
     // 关闭路况播报
@@ -203,19 +214,19 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 
 				@Override
 				public void onTrafficStatusUpdate() {
-					// TODO Auto-generated method stub
+
 
 				}
 
 				@Override
 				public void onStartNavi(int arg0) {
-					// TODO Auto-generated method stub
+
 
 				}
 
 				@Override
 				public void onReCalculateRouteForYaw() {
-			
+					log.debug("naviCustom 偏离路线");
 				}
 
 				@Override
@@ -230,14 +241,14 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 
 				@Override
 				public void onInitNaviSuccess() {
-					// TODO Auto-generated method stub
+
 
 				}
 
 				@Override
 				public void onInitNaviFailure() {
-					// TODO Auto-generated method stub
 
+					log.debug("naviCustom导航创建失败");
 				}
 
 				@Override
@@ -247,7 +258,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 
 				@Override
 				public void onEndEmulatorNavi() {
-					// TODO Auto-generated method stub
+
 
 				}
 
@@ -263,32 +274,32 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 
 				@Override
 				public void onArrivedWayPoint(int arg0) {
-					// TODO Auto-generated method stub
+
 
 				}
 
 				@Override
 				public void onArriveDestination() {
-					// TODO Auto-generated method stub
+
 
 				}
 
 				@Override
 				public void onGpsOpenStatus(boolean arg0) {
-					// TODO Auto-generated method stub
+
 
 				}
 
 				@Override
 				public void onNaviInfoUpdated(AMapNaviInfo info) {
-					// TODO Auto-generated method stub
+
 
 				}
 
 				@Override
 				public void onNaviInfoUpdate(NaviInfo arg0) {
 
-					// TODO Auto-generated method stub
+
 
 				}
 			};
@@ -413,6 +424,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 		super.onPause();
 	}
 
+
 	@Override
 	public void onDestroy() {
 		if(mAmapNavi!=null&&mAmapNaviListener!=null)
@@ -425,6 +437,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 
 	@Override
 	public void onLockMap(boolean arg0) {
+
 
 	}
 	

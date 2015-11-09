@@ -1,7 +1,7 @@
 package com.dudu.conn;
 
 /**
- * Created by pc on 2015/11/7.
+ * Created by lxh on 2015/11/7.
  */
 public class ConnMethod {
 
@@ -20,6 +20,8 @@ public class ConnMethod {
     public static final String METHOD_WIFICONTROL = "";                   // wifi 热点开关控制
 
     public static final String METHOD_WIFICONFIG = "";                    // wifi 配置
+
+    public static final String METHOD_ACTIVEDEVICE = "deviceLogin ";                  // 设备激活
 
 
 }

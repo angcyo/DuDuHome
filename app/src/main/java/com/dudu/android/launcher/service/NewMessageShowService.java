@@ -83,10 +83,12 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
     private boolean isShowAddress = false;
 
     private int pageIndex = 0;
-    public static final int VIEW_COUNT = 5;				// 每页显示5条
+
+    public static final int VIEW_COUNT = 4;				// 每页显示4条
+
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
@@ -231,7 +233,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
             if (messageList != null)
                 messageList.setVisibility(View.VISIBLE);
             if (list == null) {
-                list = new ArrayList<WindowMessageEntity>();
+                list = new ArrayList<>();
             }
             WindowMessageEntity wme = new WindowMessageEntity();
             wme.setContent(message);
@@ -270,25 +272,32 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
     @Override
     public void choosePage(int type,int page) {
 
-        if(type == ChoosePageChain.NEXT_PAGE) {
+        switch (type){
 
-            if (pageIndex >= 3) {
-                VoiceManager.getInstance().startSpeaking("已经是最后一页", SemanticConstants.TTS_DO_NOTHING, false);
-                return;
-            }
-            pageIndex++;
-        }else if(type == ChoosePageChain.LAST_PAGE){
-            if(pageIndex <= 0){
-                VoiceManager.getInstance().startSpeaking("已经是第一页", SemanticConstants.TTS_DO_NOTHING, false);
-                return;
-            }
-            pageIndex--;
-        }else{
-            if(page > 5|| page < 1){
-                VoiceManager.getInstance().startSpeaking("选择错误，请重新选择",SemanticConstants.TTS_DO_NOTHING,false);
-                return;
-            }
-            pageIndex = page;
+            case ChoosePageChain.NEXT_PAGE:
+                if (pageIndex > 5) {
+                    VoiceManager.getInstance().startSpeaking("已经是最后一页", SemanticConstants.TTS_DO_NOTHING, false);
+                    return;
+                }
+                pageIndex++;
+                break;
+            case ChoosePageChain.LAST_PAGE:
+                if(pageIndex <= 0){
+                    VoiceManager.getInstance().startSpeaking("已经是第一页", SemanticConstants.TTS_DO_NOTHING, false);
+                    return;
+                }
+                pageIndex--;
+                break;
+            case ChoosePageChain.CHOOSE_PAGE:
+                if(pageIndex > 5)
+                    return;
+                if(page > 5|| page < 1){
+                    VoiceManager.getInstance().stopUnderstanding();
+                    VoiceManager.getInstance().startSpeaking("选择错误，请重新选择",SemanticConstants.TTS_START_UNDERSTANDING,false);
+                    return;
+                }
+                pageIndex = page-1;
+                break;
         }
         addressList.setSelection(pageIndex * VIEW_COUNT);
     }

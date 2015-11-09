@@ -177,8 +177,6 @@ public class BleOBD {
         flamoutData.setMaxspd(Integer.parseInt(stData[7]));
         flamoutData.setCreateTime(TimeUtils.dateLongFormatString(
                 System.currentTimeMillis(), TimeUtils.format1));
-        flamoutData.setMethod(ConnMethod.METHOD_FLAMEOUTDATA);
-
         flamoutData.setPower(0);
 
 

@@ -192,7 +192,8 @@ public class AmapLocationHandler implements AMapLocationListener {
             }
 
         } else {
-            log.debug("gps未通过过滤locaion:{},{}",location.getLatitude(),location.getLongitude());
+            log.debug("gps未通过过滤locaion:{},{},{},{}",location.getLatitude(),location.getLongitude(),
+                    location.getSpeed(),location.getBearing());
         }
 
         // 更新preLocation

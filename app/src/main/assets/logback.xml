@@ -81,7 +81,7 @@
         <appender-ref ref="EMAIL" />
     </logger>
 
-    <logger name="lbs.gps" level="DEBUG">
+    <logger name="lbs" level="DEBUG">
         <appender-ref ref="FILE_GPS" />
     </logger>
 

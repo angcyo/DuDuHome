@@ -84,9 +84,8 @@ public class CmdChain extends SemanticChain {
             case Constants.OPEN:
             case Constants.START:
                 Activity activity = ActivitiesManager.getInstance().getTopActivity();
-                if((activity instanceof LocationMapActivity)||
-                        (activity instanceof  NaviCustomActivity) ||
-                        (activity instanceof  NaviCustomActivity)) {
+                if((activity instanceof LocationMapActivity)){
+                ((LocationMapActivity) activity).handlerOpenNavi();
                     return;
                 }
 

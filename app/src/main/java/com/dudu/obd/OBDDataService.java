@@ -172,11 +172,8 @@ public class OBDDataService extends Service implements
         navigationHandle.initNavigationHandle(this);
         DriveBehaviorHappend.getInstance().setListener(this);
         try {
-            if (conn != null && !isOpen) {
-                conn.closeConn();
-                conn.interrupt();
-                conn = null;
-                initConn();
+            if (conn != null && !isOpen &&!conn.isAlive()) {
+
                 conn.start();
             }
 

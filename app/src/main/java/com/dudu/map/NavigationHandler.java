@@ -19,6 +19,9 @@ import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,8 +61,10 @@ public class NavigationHandler {
     private Handler mHandler;
 
     private Class naviClass;
-    public NavigationHandler(){
 
+    private Logger log;
+    public NavigationHandler(){
+        log = LoggerFactory.getLogger("lbs.navi");
     }
 
     public void initNavigationHandle(Context context){
@@ -134,10 +139,13 @@ public class NavigationHandler {
 
                 @Override
                 public void onReCalculateRouteForYaw() {
+                    VoiceManager.getInstance().startSpeaking("您已偏离路线",SemanticConstants.TTS_DO_NOTHING,false);
                 }
 
                 @Override
                 public void onReCalculateRouteForTrafficJam() {
+
+
                 }
 
                 @Override
@@ -150,7 +158,7 @@ public class NavigationHandler {
 
                 @Override
                 public void onInitNaviFailure() {
-
+                    log.debug("导航创建失败");
                 }
 
                 @Override
@@ -159,8 +167,6 @@ public class NavigationHandler {
                     FloatWindowUtil.removeFloatWindow();
                     VoiceManager.getInstance().clearMisUnderstandCount();
                     VoiceManager.getInstance().startSpeaking(arg1, SemanticConstants.TTS_DO_NOTHING, false);
-
-
                 }
 
                 @Override
@@ -248,6 +254,7 @@ public class NavigationHandler {
         }
 
     }
+
 
     public void destoryAmapNavi(){
 

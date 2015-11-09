@@ -3,7 +3,6 @@ package com.dudu.android.launcher.ui.activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
-import android.location.Location;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,9 +26,7 @@ import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
-import com.amap.api.maps.model.CircleOptions;
 import com.amap.api.maps.model.LatLng;
-import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.maps.overlay.PoiOverlay;
@@ -57,12 +54,13 @@ import com.dudu.android.launcher.ui.view.CleanableCompletaTextView;
 import com.dudu.android.launcher.utils.CommonAddressUtil;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.Coordinate;
+import com.dudu.android.launcher.utils.DeviceIDUtil;
 import com.dudu.android.launcher.utils.FloatWindow;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.JourneyTool;
-import com.dudu.android.launcher.utils.LcStringUtil;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
+import com.dudu.conn.SendMessage;
 import com.dudu.map.AmapLocationChangeEvent;
 import com.dudu.map.MapManager;
 import com.dudu.map.Navigation;
@@ -70,15 +68,13 @@ import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
 import com.dudu.voice.semantic.chain.ChoiseChain;
 import com.dudu.voice.semantic.chain.ChoosePageChain;
-import com.dudu.voice.semantic.chain.CommonAddressChain;
+import com.iflytek.cloud.Setting;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
-import ch.qos.logback.core.util.LocationUtil;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -174,6 +170,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progDialog.setIndeterminate(false);
         progDialog.setCancelable(false);
+
     }
 
     @Override
@@ -351,7 +348,8 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     }
                     VoiceManager.getInstance().startSpeaking(playText,
                             SemanticConstants.TTS_START_WAKEUP);
-                    removeFloatWindow(10000);
+                    removeFloatWindow(12000);
+                    toNaivActivity();
                 }
 
                 break;
@@ -465,7 +463,8 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 }
                 VoiceManager.getInstance().startSpeaking(playText,
                         SemanticConstants.TTS_START_WAKEUP);
-                removeFloatWindow(5000);
+                removeFloatWindow(12000);
+                toNaivActivity();
                 return;
             }
             FloatWindowUtil.removeFloatWindow();
@@ -662,6 +661,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         if (isManual) {
             showAddressDialog();
         } else {
+            removeCallback();
             final String playText = "请选择列表中的地址";
             mVoiceManager.startSpeaking(
                     playText, SemanticConstants.TTS_START_UNDERSTANDING, false);
@@ -730,12 +730,12 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 } else {
 
                     if (!isAddressManual&&position > poiResultList.size()) {
+                        mVoiceManager.stopUnderstanding();
                         String playText = "选择错误，请重新选择";
-                        VoiceManager.getInstance().startSpeaking(playText,
+                        mVoiceManager.startSpeaking(playText,
                                 SemanticConstants.TTS_START_UNDERSTANDING, false);
                         return;
                     }
-
                     showStrategyMethod();
 
                 }
@@ -745,8 +745,9 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
             e.printStackTrace();
             if (!isManual) {
                 if (position > poiItems.size()) {
+                    mVoiceManager.stopUnderstanding();
                     String playText = "选择错误，请重新选择";
-                    VoiceManager.getInstance().startSpeaking(playText,
+                    mVoiceManager.startSpeaking(playText,
                             SemanticConstants.TTS_START_UNDERSTANDING, false);
                 }
             }
@@ -755,6 +756,8 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     }
 
     private void showStrategyMethod(){
+        mVoiceManager.stopUnderstanding();
+        removeCallback();
         chooseType = 2;
         String playText = "请选择路线优先策略。";
         mVoiceManager.startSpeaking(playText,
@@ -769,18 +772,13 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                         startNavigation(position);
                     }
                 });
-//        mhandler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                mVoiceManager.startUnderstanding();
-//            }
-//        },3000);
 
     }
 
     // 选择路径规划策略
     private void chooseDriveMode(int position) {
         if (position > mStrategyMethods.size()) {
+            mVoiceManager.stopUnderstanding();
             String playText = "选择错误，请重新选择";
             VoiceManager.getInstance().startSpeaking(playText,
                     SemanticConstants.TTS_START_UNDERSTANDING, false);
@@ -937,6 +935,13 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     }
 
     @Override
+    public void onPause() {
+
+        mapManager.setSearchType(0);
+        super.onPause();
+    }
+
+    @Override
     protected void onDestroy() {
         MapManager.getInstance().setSearchType(0);
         if (mapView != null) {
@@ -951,7 +956,27 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
             addressDialog.dismiss();
         if (strategyDialog != null && strategyDialog.isShowing())
             strategyDialog.dismiss();
+        removeCallback();
         poiSearch = null;
         super.onDestroy();
+    }
+
+    public void removeCallback(){
+
+        if(mhandler!=null&&removeWindowRunnable!=null){
+            mhandler.removeCallbacks(removeWindowRunnable);
+        }
+    }
+
+    public void toNaivActivity(){
+        mhandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(mapManager.isNavi()||mapManager.isNaviBack())
+                    finish();
+            }
+        },12000);
+
+
     }
 }

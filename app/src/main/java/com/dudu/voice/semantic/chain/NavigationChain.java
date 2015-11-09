@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.ui.activity.NaviCustomActivity;
@@ -43,6 +44,7 @@ public class NavigationChain extends SemanticChain {
     @Override
     public boolean doSemantic(String json) {
         isNavi = MapManager.getInstance().isNavi();
+        Log.d("lxh","navi:"+json);
 
         if(isNavi){
             mContext = ActivitiesManager

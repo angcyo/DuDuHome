@@ -28,7 +28,7 @@ public class RouteSearchPoiDialog extends Dialog implements
 	protected OnListItemClick mOnClickListener;
 	private Button back_button;
 	private ListView listView;
-    public static final int VIEW_COUNT = 5;				// 每页显示5条
+    public static final int VIEW_COUNT = 4;				// 每页显示5条
 	private int pageIndex = 0;				// 当前页的索引
 
 

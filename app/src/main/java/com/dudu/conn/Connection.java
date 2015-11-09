@@ -26,8 +26,8 @@ import de.greenrobot.event.EventBus;
 
 public class Connection extends Thread {
     private String TAG = "DUDU_CONNETION";
-    	private String host = "192.168.1.177";
-//    private String host = "119.29.65.127";
+//    	private String host = "192.168.1.177";
+    private String host = "119.29.65.127";
     private int port = 8888;
     private IoConnector connector = null;
     private IoSession session = null;
@@ -103,7 +103,7 @@ public class Connection extends Thread {
                 if (!isSessionOpen) {
                     startConn();
                     try {
-                        Thread.sleep(3000);
+                        Thread.sleep(5000);
                     }catch (InterruptedException e){
 
                     }

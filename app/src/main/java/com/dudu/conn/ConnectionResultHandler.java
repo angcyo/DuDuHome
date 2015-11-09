@@ -5,7 +5,7 @@ import org.json.JSONObject;
 import de.greenrobot.event.EventBus;
 
 /**
- * Created by pc on 2015/11/7.
+ * Created by lxh on 2015/11/7.
  */
 public class ConnectionResultHandler {
 

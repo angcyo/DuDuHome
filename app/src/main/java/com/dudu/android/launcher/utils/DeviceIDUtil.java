@@ -17,14 +17,30 @@ public class DeviceIDUtil {
      */
     public static String getAndroidID(Context context){
 
-        final TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        final String tmDevice, tmSerial, androidId;
-        tmDevice = "" + tm.getDeviceId();
-        tmSerial = "" + tm.getSimSerialNumber();
-        androidId = "" + android.provider.Settings.Secure.getString(context.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
-        UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
-        String uniqueId = deviceUuid.toString();
-        return  uniqueId;
+       String androidId = ""+android.provider.Settings.Secure.getString(context.getContentResolver(),
+               android.provider.Settings.Secure.ANDROID_ID);
+        return  androidId;
     }
 
+
+    /**
+     * SIM 卡的序列号
+     * @param context
+     * @return
+     */
+    public static String getSimSerialNumber(Context context){
+        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        return tm.getSimSerialNumber();
+
+    }
+
+    /**
+     * IMEI
+     * @param context
+     * @return
+     */
+    public static String getIMEI(Context context){
+        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        return tm.getDeviceId();
+    }
 }

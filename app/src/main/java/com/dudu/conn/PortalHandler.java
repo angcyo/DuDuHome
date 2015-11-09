@@ -1,7 +1,7 @@
 package com.dudu.conn;
 
 /**
- * Created by pc on 2015/11/7.
+ * Created by lxh on 2015/11/7.
  */
 public class PortalHandler {
 
