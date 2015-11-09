@@ -13,6 +13,7 @@ import android.util.Log;
 import com.amap.api.location.AMapLocation;
 import com.dudu.android.launcher.utils.DeviceIDUtil;
 import com.dudu.android.launcher.utils.TimeUtils;
+import com.dudu.conn.ActiveDevice;
 import com.dudu.conn.Connection;
 import com.dudu.conn.ConnectionEvent;
 import com.dudu.conn.SendMessage;
@@ -23,6 +24,7 @@ import com.google.gson.Gson;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.scf4a.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -168,6 +170,7 @@ public class OBDDataService extends Service implements
         log = LoggerFactory.getLogger("odb.service");
         bleOBD = new BleOBD();
         bleOBD.initOBD();
+        scanBle();
         navigationHandle = new NavigationHandler();
         navigationHandle.initNavigationHandle(this);
         DriveBehaviorHappend.getInstance().setListener(this);
@@ -217,6 +220,7 @@ public class OBDDataService extends Service implements
         if (!dataSendThread.isAlive()) {
             dataSendThread.start();
         }
+
     }
 
     private void initConn() {
@@ -250,6 +254,7 @@ public class OBDDataService extends Service implements
         isAlive = false;
         conn.closeConn();
         navigationHandle.destoryAmapNavi();
+        amapLocationHandler.stopLocation();
     }
 
 
@@ -482,5 +487,33 @@ public class OBDDataService extends Service implements
             }
             mGyrList.clear();
         }
+    }
+
+    private void activeDevice(){
+
+        mhandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(ActiveDevice.getInstance(OBDDataService.this).getActiveFlag()==ActiveDevice.ACTIVE_OK){
+
+
+                }else {
+                    sendMessage.sendActiveDeviceData();
+                }
+
+            }
+        },20*1000);
+
+    }
+
+    //扫描蓝牙设备
+    private void scanBle(){
+        mhandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mhandler.postDelayed(this,20*1000);
+                EventBus.getDefault().post(new Event.StartScanner());
+            }
+        },60*1000);
     }
 }

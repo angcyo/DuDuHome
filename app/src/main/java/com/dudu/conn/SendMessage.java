@@ -30,7 +30,7 @@ public class SendMessage {
 
     private static final String METHOD = "method";
 
-    private static final String VERSION_CODE = "";
+    private static final String VERSION_CODE = "launcher.version";
 
     private JSONObject sendJson;
 
@@ -58,6 +58,13 @@ public class SendMessage {
         obeId = DeviceIDUtil.getIMEI(context);
     }
 
+    public void sendData(String data){
+
+//        if(ActiveDevice.getInstance(mContext).getActiveFlag()==ActiveDevice.ACTIVE_OK){
+            conn.sendMessage(sendJson.toString(), true);
+//        }
+    }
+
     /**
      * 发送gps 数据
      * @param gpsDatajson
@@ -71,13 +78,16 @@ public class SendMessage {
             sendJson.put(OBEID,obeId);
             sendJson.put("lals", gpsDatajson);
             sendJson.put(VERSION_CODE, versionCode);
-            conn.sendMessage(sendJson.toString(), true);
+            sendData(sendJson.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         return conn.isAlive();
     }
+
+
+
 
     /**
      * 发送obd数据
@@ -89,10 +99,10 @@ public class SendMessage {
         sendJson = new JSONObject();
         try {
             sendJson.put(METHOD, ConnMethod.METHOD_OBDDATA);
-            sendJson.put(OBEID,obeId );
+            sendJson.put(OBEID, obeId);
             sendJson.put("obds", obdDatajson);
-            conn.sendMessage(sendJson.toString(), true);
             sendJson.put(VERSION_CODE, versionCode);
+            sendData(sendJson.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -109,12 +119,12 @@ public class SendMessage {
     public boolean sendFlameOutData(FlamoutData flameoutData,JSONArray gpsDatas){
         flameoutData.setObeId(obeId);
         flameoutData.setMethod(ConnMethod.METHOD_FLAMEOUTDATA);
-        conn.sendMessage(gson.toJson(flameoutData),true);
+        sendData(gson.toJson(flameoutData));
         sendGPSDatas(gpsDatas);
         return conn.isAlive();
     }
 
-    public boolean sendActiveDeviceData(String data){
+    public boolean sendActiveDeviceData(){
 
         activemap = new HashMap<>();
         activemap.put("ro.board.platform","msm8916");
@@ -128,16 +138,14 @@ public class SendMessage {
         activemap.put(METHOD, ConnMethod.METHOD_ACTIVEDEVICE);
         putActiveVersion();
         JSONObject jsonObject = new JSONObject(activemap);
-        conn.sendMessage(jsonObject.toString(), true);
+        conn.sendMessage(jsonObject.toString(),true);
         return conn.isAlive();
 
     }
 
     private void  getVersionName() {
         try {
-            // 获取packagemanager的实例
             PackageManager packageManager = mContext.getPackageManager();
-            // getPackageName()是你当前类的包名，0代表是获取版本信息
             PackageInfo packInfo = packageManager.getPackageInfo(mContext.getPackageName(), 0);
             versionCode = packInfo.versionName;
 
@@ -146,19 +154,19 @@ public class SendMessage {
         }
     }
     private void putActiveVersion(){
-        int obeType = 0;
+        String obeType = "";
 
         if(versionCode.contains("T"))
-            obeType = 1;
+            obeType = "T1";
         if(versionCode.contains("D"))
-            obeType = 2;
+            obeType = "D1";
         if(versionCode.contains("I"))
-            obeType = 3;
+            obeType = "I1";
         if(versionCode.contains("P"))
-            obeType = 4;
+            obeType = "P1";
         if(versionCode.contains("E"))
-            obeType = 5;
+            obeType = "E1";
 
-        activemap.put("obeType",obeType+"");
+        activemap.put("obeType",obeType);
     }
 }

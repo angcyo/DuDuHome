@@ -533,7 +533,6 @@ public class FileUtils {
      *@params assetFile :被复制文件的输入流
      * @param sdFile :目标文件
      * */
-
     public static Boolean copyFileToSd(InputStream assetFile,File sdFile) {
         boolean flags=false;
         try {
@@ -552,5 +551,36 @@ public class FileUtils {
             e.printStackTrace();
         }
         return flags;
+    }
+
+    /**
+     * 文件写入
+     */
+    public static boolean writeFile(String to, String value) {
+        boolean result = false;
+
+        FileOutputStream out = null;
+
+        try {
+            out = new FileOutputStream(to);
+            byte[] buffer = value.getBytes();
+            out.write(buffer, 0, value.length());
+            out.flush();
+            result = true;
+        } catch (FileNotFoundException e) {
+            log.debug("writeFile", e);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                log.debug("writeFile.close", e);
+            }
+        }
+        return result;
+
     }
 }

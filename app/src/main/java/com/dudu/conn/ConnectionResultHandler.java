@@ -1,5 +1,9 @@
 package com.dudu.conn;
 
+import android.content.Context;
+
+import com.dudu.android.launcher.LauncherApplication;
+
 import org.json.JSONObject;
 
 import de.greenrobot.event.EventBus;
@@ -9,10 +13,10 @@ import de.greenrobot.event.EventBus;
  */
 public class ConnectionResultHandler {
 
-
+    private Context mContext;
 
     public ConnectionResultHandler(){
-
+        mContext = LauncherApplication.getContext().getApplicationContext();
     }
 
     public void init(){
@@ -42,6 +46,10 @@ public class ConnectionResultHandler {
                         break;
                     case ConnMethod.METHOD_NAVI:
                         break;
+                    case ConnMethod.METHOD_ACTIVEDEVICE:
+                        ActiveDevice.getInstance(mContext).handlerActiveDeviceResult(jsonResult);
+                        break;
+
                 }
             }
 

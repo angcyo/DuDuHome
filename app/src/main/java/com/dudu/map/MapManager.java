@@ -26,6 +26,7 @@ public class MapManager {
     public static final int SEARCH_PLACE_LOCATION = 5;  // 搜索某地的位置(如我现在的位置，XXX地的位置)
     public static final int SEARCH_NEAREST = 6;         // 搜索最近的XXX
 
+    public static final int ADDRESS_VIEW_COUNT = 4;				// 每页显示4条
 
     public static final String HAS_KEYWORD = "HAS_KEYWORD";
 

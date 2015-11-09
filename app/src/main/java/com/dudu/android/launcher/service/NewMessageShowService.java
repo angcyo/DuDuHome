@@ -84,8 +84,6 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
     private int pageIndex = 0;
 
-    public static final int VIEW_COUNT = 4;				// 每页显示4条
-
     @Override
     public IBinder onBind(Intent intent) {
 
@@ -299,7 +297,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
                 pageIndex = page-1;
                 break;
         }
-        addressList.setSelection(pageIndex * VIEW_COUNT);
+        addressList.setSelection(pageIndex * MapManager.ADDRESS_VIEW_COUNT);
     }
 
 

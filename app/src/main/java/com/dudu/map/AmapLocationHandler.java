@@ -14,6 +14,7 @@ import com.amap.api.maps.LocationSource;
 import com.dudu.android.launcher.ui.activity.LocationMapActivity;
 import com.dudu.android.launcher.ui.activity.NaviCustomActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
+import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.LocationFilter;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.TimeUtils;
@@ -63,6 +64,7 @@ public class AmapLocationHandler implements AMapLocationListener {
     }
 
     public void init(Context context){
+        FileUtils.writeFile("/sys/class/gps_vreg/gps_vreg/gps_enable", "1");
         mLocationManagerProxy = LocationManagerProxy.getInstance(context);
         mLocationManagerProxy.requestLocationData(
                 LocationProviderProxy.AMapNetwork, 1000, 10, this);
@@ -235,5 +237,14 @@ public class AmapLocationHandler implements AMapLocationListener {
 
     public List<MyGPSData> getGpsDataListToSend(){
         return gpsDataListToSend;
+    }
+
+    public void stopLocation() {
+        if (mLocationManagerProxy != null) {
+            FileUtils.writeFile("/sys/class/gps_vreg/gps_vreg/gps_enable", "0");
+            mLocationManagerProxy.removeUpdates(this);
+            mLocationManagerProxy.destroy();
+        }
+        mLocationManagerProxy = null;
     }
 }

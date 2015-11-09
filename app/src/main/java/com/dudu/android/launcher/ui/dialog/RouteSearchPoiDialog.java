@@ -14,6 +14,7 @@ import android.widget.ListView;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.bean.PoiResultInfo;
 import com.dudu.android.launcher.ui.adapter.RouteSearchAdapter;
+import com.dudu.map.MapManager;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
 
@@ -28,7 +29,6 @@ public class RouteSearchPoiDialog extends Dialog implements
 	protected OnListItemClick mOnClickListener;
 	private Button back_button;
 	private ListView listView;
-    public static final int VIEW_COUNT = 4;				// 每页显示5条
 	private int pageIndex = 0;				// 当前页的索引
 
 
@@ -103,7 +103,7 @@ public class RouteSearchPoiDialog extends Dialog implements
 		}
 
 		pageIndex++;
-		listView.setSelection(pageIndex * VIEW_COUNT);
+		listView.setSelection(pageIndex * MapManager.ADDRESS_VIEW_COUNT);
 	}
 
 	public void lastPage() {
@@ -113,15 +113,17 @@ public class RouteSearchPoiDialog extends Dialog implements
 		}
 
 		pageIndex--;
-		listView.setSelection(pageIndex*VIEW_COUNT);
+		listView.setSelection(pageIndex*MapManager.ADDRESS_VIEW_COUNT);
 	}
 
 	public void choosePage(int page){
+		if(pageIndex > 5)
+			return;
 		if(page > 5|| page < 1){
 			VoiceManager.getInstance().startSpeaking("选择错误，请重新选择",SemanticConstants.TTS_DO_NOTHING,false);
 			return;
 		}
-		pageIndex = page;
-		listView.setSelection(pageIndex*VIEW_COUNT);
+		pageIndex = page-1;
+		listView.setSelection(pageIndex*MapManager.ADDRESS_VIEW_COUNT);
 	}
 }

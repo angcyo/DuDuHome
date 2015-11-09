@@ -21,7 +21,7 @@ public class ConnMethod {
 
     public static final String METHOD_WIFICONFIG = "";                    // wifi 配置
 
-    public static final String METHOD_ACTIVEDEVICE = "deviceLogin ";                  // 设备激活
+    public static final String METHOD_ACTIVEDEVICE = "deviceLogin";                  // 设备激活
 
 
 }
