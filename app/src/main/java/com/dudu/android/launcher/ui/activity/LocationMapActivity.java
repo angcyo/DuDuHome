@@ -758,7 +758,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         chooseType = 2;
         String playText = "请选择路线优先策略。";
         mVoiceManager.startSpeaking(playText,
-                SemanticConstants.TTS_DO_NOTHING, false);
+                SemanticConstants.TTS_START_UNDERSTANDING, false);
         FloatWindowUtil.showStrategy(mStrategyMethods,
                 new AdapterView.OnItemClickListener() {
 
@@ -766,16 +766,15 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     public void onItemClick(
                             AdapterView<?> arg0, View view,
                             int position, long arg3) {
-
                         startNavigation(position);
                     }
                 });
-        mhandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mVoiceManager.startUnderstanding();
-            }
-        },3000);
+//        mhandler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                mVoiceManager.startUnderstanding();
+//            }
+//        },3000);
 
     }
 
@@ -792,7 +791,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     }
 
-    public void startChooseResult(int size,int type) {
+    public void startChooseResult(int size, int type) {
 
         if(type == ChoiseChain.TYPE_NORMAL){
 

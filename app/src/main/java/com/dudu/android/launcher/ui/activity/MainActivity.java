@@ -252,7 +252,7 @@ public class MainActivity extends BaseTitlebarActivity implements
      */
     private void getDate() {
         SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "yyyy年MM月dd日   EEEE", Locale.getDefault());
+                "yyyy年MM月dd日 EEEE", Locale.getDefault());
         mDateTextView.setText(dateFormat.format(new Date()));
     }
 

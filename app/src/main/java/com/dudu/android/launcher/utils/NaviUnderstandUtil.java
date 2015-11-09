@@ -123,7 +123,7 @@ public class NaviUnderstandUtil {
 	
 	private static void noticeInvalid(Context context){
 		VoiceManager.getInstance().startSpeaking(
-				ToastUtils.getRandomString(context),
+				Constants.UNDERSTAND_MISUNDERSTAND,
 				SemanticConstants.TTS_START_UNDERSTANDING);
 	}
 	

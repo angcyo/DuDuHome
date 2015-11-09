@@ -272,7 +272,6 @@ public class DbHelper extends SQLiteOpenHelper {
                 if (file.exists()) {
                     video.setFile(file);
                 } else {
-                    deleteVideo(name);
                     continue;
                 }
 

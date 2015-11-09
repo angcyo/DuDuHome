@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/alert_lock_video"
+        android:text="@string/video_lock_alert"
         android:layout_marginTop="90dp"
         android:textColor="@color/black"
         android:textStyle="italic"

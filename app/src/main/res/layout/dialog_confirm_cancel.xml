@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/delete_video"
+        android:text="@string/video_delete_alert"
         android:layout_marginTop="90dp"
         android:textColor="@color/black"
         android:textStyle="italic"

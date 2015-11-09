@@ -24,7 +24,9 @@ import java.text.DecimalFormat;
  * @author 赵圣琪
  */
 public class FileUtils {
+
     private static Logger log = LoggerFactory.getLogger("util.file");
+
     private static String T_FLASH_PATH = "/storage/sdcard1";
 
     /**
@@ -42,14 +44,26 @@ public class FileUtils {
     }
 
 
+    public static boolean isTFlashCardExists() {
+        return new File(T_FLASH_PATH, "Android").exists();
+    }
+
+    public static double getTFlashCardSpace() {
+        File dir;
+        if (isTFlashCardExists()) {
+            dir = new File(T_FLASH_PATH);
+            return dir.getTotalSpace() * 0.8;
+        }
+
+        return 0;
+    }
+
     /**
      * 获取临时目录
      */
     public static File getStorageDir() {
         File dir;
-        boolean tFlashCardExist = new File(T_FLASH_PATH, "Android").exists();
-        log.debug("sdCardExist:{}", tFlashCardExist);
-        if (tFlashCardExist) {
+        if (isTFlashCardExists()) {
             dir = new File(T_FLASH_PATH, getMainDirName());
         } else {
             dir = new File(Environment.getExternalStorageDirectory(), getMainDirName());
@@ -163,7 +177,7 @@ public class FileUtils {
         return null;
     }
 
-    public static String fileByte2Mb(float size) {
+    public static String fileByte2Mb(double size) {
         double mbSize = size / 1024 / 1024;
         DecimalFormat df = new DecimalFormat("#.##");
         return df.format(mbSize);
