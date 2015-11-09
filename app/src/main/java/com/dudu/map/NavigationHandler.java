@@ -139,7 +139,8 @@ public class NavigationHandler {
 
                 @Override
                 public void onReCalculateRouteForYaw() {
-                    VoiceManager.getInstance().startSpeaking("您已偏离路线",SemanticConstants.TTS_DO_NOTHING,false);
+                    mVoiceManager.stopUnderstanding();
+                    mVoiceManager.startSpeaking("您已偏离路线", SemanticConstants.TTS_DO_NOTHING,false);
                 }
 
                 @Override
@@ -165,8 +166,9 @@ public class NavigationHandler {
                 public void onGetNavigationText(int arg0, String arg1) {
 
                     FloatWindowUtil.removeFloatWindow();
-                    VoiceManager.getInstance().clearMisUnderstandCount();
-                    VoiceManager.getInstance().startSpeaking(arg1, SemanticConstants.TTS_DO_NOTHING, false);
+                    mVoiceManager.clearMisUnderstandCount();
+                    mVoiceManager.stopUnderstanding();
+                    mVoiceManager.startSpeaking(arg1, SemanticConstants.TTS_DO_NOTHING, false);
                 }
 
                 @Override
@@ -210,8 +212,8 @@ public class NavigationHandler {
                 public void onCalculateRouteFailure(int arg0) {
 
                     String playText = "路径规划出错,请检查网络";
-                    VoiceManager.getInstance().clearMisUnderstandCount();
-                    VoiceManager.getInstance().startSpeaking(playText);
+                    mVoiceManager.clearMisUnderstandCount();
+                    mVoiceManager.startSpeaking(playText);
                     removeWindow();
 
 

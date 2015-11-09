@@ -89,7 +89,7 @@ public class MainActivity extends BaseTitlebarActivity implements
         //延迟10S开启热点
         new Handler().postDelayed(new Runnable() {
             public void run() {
-                startWifiAp();
+//                startWifiAp();
             }
         }, TIME);
     }

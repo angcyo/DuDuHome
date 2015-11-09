@@ -13,7 +13,6 @@ import android.util.Log;
 import com.amap.api.location.AMapLocation;
 import com.dudu.android.launcher.utils.DeviceIDUtil;
 import com.dudu.android.launcher.utils.TimeUtils;
-import com.dudu.conn.ActiveDevice;
 import com.dudu.conn.Connection;
 import com.dudu.conn.ConnectionEvent;
 import com.dudu.conn.SendMessage;
@@ -38,7 +37,7 @@ import de.greenrobot.event.EventBus;
  * 采集OBD数据,GPS数据
  */
 public class OBDDataService extends Service implements
-        DriveBehaviorHappend.DriveBehaviorHappendListener{
+        DriveBehaviorHappend.DriveBehaviorHappendListener {
     public final static int SENSOR_SLOW = 0; // 传感器频率为20HZ左右(或20HZ以下)
     public final static int SENSOR_NORMAL = 1; // 传感器频率为 40HZ左右
     public final static int SENSOR_FASTER = 2; // 传感器频率为60HZ左右
@@ -85,7 +84,7 @@ public class OBDDataService extends Service implements
 
     private SendMessage sendMessage;
 
-    private  Gson gson;
+    private Gson gson;
     /**
      * 采集数据线程 30s 将所有数据风封装到JSONArray里
      */
@@ -175,7 +174,7 @@ public class OBDDataService extends Service implements
         navigationHandle.initNavigationHandle(this);
         DriveBehaviorHappend.getInstance().setListener(this);
         try {
-            if (conn != null && !isOpen &&!conn.isAlive()) {
+            if (conn != null && !isOpen && !conn.isAlive()) {
 
                 conn.start();
             }
@@ -183,6 +182,7 @@ public class OBDDataService extends Service implements
         } catch (Exception e) {
             e.printStackTrace();
         }
+        activeDevice();
     }
 
     @Override
@@ -293,7 +293,7 @@ public class OBDDataService extends Service implements
 
     // 发送熄火数据
     private void sendFlameOutData() {
-        if(bleOBD.getFlamoutData()!=null){
+        if (bleOBD.getFlamoutData() != null) {
             last_Location = amapLocationHandler.getLast_Location();
             if (last_Location != null) {
                 MyGPSData flameOutgps = new MyGPSData(last_Location.getLatitude(),
@@ -401,13 +401,14 @@ public class OBDDataService extends Service implements
         }, 4 * 60 * 60 * 1000);
     }
 
-    public void onEventBackgroundThread(BleOBD.CarStatus event){
+    public void onEventBackgroundThread(BleOBD.CarStatus event) {
         carState = event.getCarStatus();
         if (carState == BleOBD.CarStatus.CAR_ONLINE)
             noticeFating();
     }
-    public void onEventBackgroundThread(ConnectionEvent.SessionStateChange event){
-        if(event.getSessonState()==event.SESSION_OPEND)
+
+    public void onEventBackgroundThread(ConnectionEvent.SessionStateChange event) {
+        if (event.getSessonState() == event.SESSION_OPEND)
             isOpen = true;
     }
 
@@ -489,31 +490,31 @@ public class OBDDataService extends Service implements
         }
     }
 
-    private void activeDevice(){
+    private void activeDevice() {
 
         mhandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(ActiveDevice.getInstance(OBDDataService.this).getActiveFlag()==ActiveDevice.ACTIVE_OK){
-
-
-                }else {
-                    sendMessage.sendActiveDeviceData();
-                }
+//                if(ActiveDevice.getInstance(OBDDataService.this).getActiveFlag()==ActiveDevice.ACTIVE_OK){
+//
+//
+//                }else {
+                sendMessage.sendActiveDeviceData();
+//                }
 
             }
-        },20*1000);
+        }, 20 * 1000);
 
     }
 
     //扫描蓝牙设备
-    private void scanBle(){
+    private void scanBle() {
         mhandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mhandler.postDelayed(this,20*1000);
+                mhandler.postDelayed(this, 20 * 1000);
                 EventBus.getDefault().post(new Event.StartScanner());
             }
-        },60*1000);
+        }, 60 * 1000);
     }
 }

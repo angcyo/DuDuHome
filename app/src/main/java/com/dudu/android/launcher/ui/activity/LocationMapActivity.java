@@ -663,9 +663,9 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         } else {
             removeCallback();
             final String playText = "请选择列表中的地址";
+            mVoiceManager.clearMisUnderstandCount();
             mVoiceManager.startSpeaking(
                     playText, SemanticConstants.TTS_START_UNDERSTANDING, false);
-
             FloatWindowUtil.showAddress(poiResultList,
                     new AdapterView.OnItemClickListener() {
 
@@ -757,6 +757,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     private void showStrategyMethod(){
         mVoiceManager.stopUnderstanding();
+        mVoiceManager.clearMisUnderstandCount();
         removeCallback();
         chooseType = 2;
         String playText = "请选择路线优先策略。";

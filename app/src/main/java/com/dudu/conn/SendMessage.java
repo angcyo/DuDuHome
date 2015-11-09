@@ -5,7 +5,9 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
+import com.dudu.android.launcher.utils.DESPlus;
 import com.dudu.android.launcher.utils.DeviceIDUtil;
+import com.dudu.android.launcher.utils.Encrypt;
 import com.dudu.obd.FlamoutData;
 import com.google.gson.Gson;
 import com.iflytek.cloud.Setting;
@@ -16,6 +18,10 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.crypto.Cipher;
+
+import ch.qos.logback.core.android.SystemPropertiesProxy;
 
 /**
  * Created by lxh on 2015/11/7.
@@ -61,7 +67,11 @@ public class SendMessage {
     public void sendData(String data){
 
 //        if(ActiveDevice.getInstance(mContext).getActiveFlag()==ActiveDevice.ACTIVE_OK){
-            conn.sendMessage(sendJson.toString(), true);
+        try {
+            conn.sendMessage(Encrypt.AESEncrypt(sendJson.toString(),Encrypt.vi), true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 //        }
     }
 
@@ -126,11 +136,12 @@ public class SendMessage {
 
     public boolean sendActiveDeviceData(){
 
+        SystemPropertiesProxy sps = SystemPropertiesProxy.getInstance();
         activemap = new HashMap<>();
-        activemap.put("ro.board.platform","msm8916");
-        activemap.put("ro.build.fingerprint","qcom/msm8916_32/msm8916_32:4.4.4/KTU84P/eng.duxiaodong.20151105:user/test-keys");
-        activemap.put("ro.product.manufacturer","DuDuSmartTech");
-        activemap.put("ro.product.model","T-ONE");
+        activemap.put("ro.board.platform",sps.get("ro.board.platform","UNKNOWN"));
+        activemap.put("ro.build.fingerprint",sps.get("ro.build.fingerprint","UNKNOWN"));
+        activemap.put("ro.product.manufacturer",sps.get("ro.product.manufacturer","UNKNOWN"));
+        activemap.put("ro.product.model",sps.get("ro.product.model","UNKNOWN"));
         activemap.put("ro.serialno", DeviceIDUtil.getAndroidID(mContext));
         activemap.put("sim.seralno",DeviceIDUtil.getSimSerialNumber(mContext));
         activemap.put("launcher.version", versionCode);
@@ -138,9 +149,14 @@ public class SendMessage {
         activemap.put(METHOD, ConnMethod.METHOD_ACTIVEDEVICE);
         putActiveVersion();
         JSONObject jsonObject = new JSONObject(activemap);
-        conn.sendMessage(jsonObject.toString(),true);
-        return conn.isAlive();
+        try {
+            String msg = Encrypt.AESEncrypt(jsonObject.toString(),Encrypt.vi);
+            conn.sendMessage(msg);
+        } catch (Exception e) {
 
+            e.printStackTrace();
+        }
+        return conn.isAlive();
     }
 
     private void  getVersionName() {
@@ -154,7 +170,7 @@ public class SendMessage {
         }
     }
     private void putActiveVersion(){
-        String obeType = "";
+        String obeType = "T1";
 
         if(versionCode.contains("T"))
             obeType = "T1";
@@ -166,7 +182,6 @@ public class SendMessage {
             obeType = "P1";
         if(versionCode.contains("E"))
             obeType = "E1";
-
         activemap.put("obeType",obeType);
     }
 }
