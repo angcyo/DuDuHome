@@ -2,11 +2,14 @@ package com.dudu.android.launcher.utils;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
+import android.widget.Toast;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -493,5 +496,61 @@ public class FileUtils {
             // Log.e(TAG, "delete file no exists " + file.getAbsolutePath());
         }
     }
+    /**
+     * @param context :上下文
+     * @param trafficControl  控制
+     * @param downloadLimit 下载流量限制
+     * @param uploadLimit 上传流量限制
+     * */
+    public static boolean refreshFlowLimit(Context context,boolean trafficControl,int downloadLimit,int uploadLimit) {
+        boolean flag = false;
+        File file = new File(getExternalStorageDirectory()+File.separator+"nodogsplash", "nodogsplash.conf");
+        if (file.exists()) {
+            try {
+                FileOutputStream out = new FileOutputStream(file, false);
+                //获得assets目录下nodogsplash.conf的内容
+                String content=readFile(context,"nodogsplash.conf","UTF_8");
+                String control="";
+                if(trafficControl){
+                    control="yes";
+                }else {
+                    control="no";
+                }
+                String result= content+"\n"+"\n"+"TrafficControl "+control+"\n"+"\n"
+                        +"DownloadLimit "+downloadLimit+"\n"+"\n"+
+                       "UploadLimit "+uploadLimit;
+                out.write(result.getBytes());
+                out.close();
+                flag=true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return flag;
+    }
+    /**
+     * 复制文件
+     *@params assetFile :被复制文件的输入流
+     * @param sdFile :目标文件
+     * */
 
+    public static Boolean copyFileToSd(InputStream assetFile,File sdFile) {
+        boolean flags=false;
+        try {
+            FileOutputStream fos = new FileOutputStream(sdFile);
+            byte[] buffer = new byte[1024];
+            int count ;
+            while ((count = assetFile.read(buffer)) > 0) {
+                fos.write(buffer, 0, count);
+            }
+            flags=true;
+            fos.close();
+            assetFile.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return flags;
+    }
 }

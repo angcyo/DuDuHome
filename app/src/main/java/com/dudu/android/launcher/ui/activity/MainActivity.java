@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,21 +31,25 @@ import com.dudu.android.launcher.service.NewMessageShowService;
 import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
+import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Util;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
+import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.map.MapManager;
 import com.dudu.obd.OBDDataService;
 import com.dudu.voice.semantic.VoiceManager;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
-
 
 public class MainActivity extends BaseTitlebarActivity implements
         OnClickListener, AMapLocalWeatherListener {
@@ -79,7 +84,31 @@ public class MainActivity extends BaseTitlebarActivity implements
         //检测蓝牙设配
         checkBlueTooth();
 
+//检查nodogsplash.conf文件
+        checkFile();
+
         requestWeatherInfo();
+    }
+    private void checkFile() {
+        File file=new File(FileUtils.getExternalStorageDirectory()+File.separator+"nodogsplash","nodogsplash.conf");
+        if(file.exists()){
+            //开启热点
+            WifiApAdmin.startWifiAp(this, "ll", "12345678");
+        }else {
+            File sdFile=new File(FileUtils.getExternalStorageDirectory(),"nodogsplash");
+            sdFile.mkdirs();
+            try {
+                file.createNewFile();
+                //如果不存在就创建然后复制assets下的文件到此文件
+                InputStream isAsset=getAssets().open("nodogsplash.conf");
+                if (FileUtils.copyFileToSd(isAsset, file)){
+                    //开启热点
+                    WifiApAdmin.startWifiAp(this,"ll","12345678");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void checkBlueTooth() {
