@@ -3,24 +3,15 @@ package com.dudu.conn;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.util.Log;
-
-import com.dudu.android.launcher.utils.DESPlus;
 import com.dudu.android.launcher.utils.DeviceIDUtil;
 import com.dudu.android.launcher.utils.Encrypt;
 import com.dudu.obd.FlamoutData;
 import com.google.gson.Gson;
-import com.iflytek.cloud.Setting;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.crypto.Cipher;
-
 import ch.qos.logback.core.android.SystemPropertiesProxy;
 
 /**

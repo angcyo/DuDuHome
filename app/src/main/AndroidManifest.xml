@@ -32,7 +32,6 @@
     <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.CHANGE_NEWWORK_STATE" />
-    <uses-permission android:name="android.permission.BAIDU_LOCATION_SERVICE" />
 
     <uses-feature
         android:name="android.hardware.camera"

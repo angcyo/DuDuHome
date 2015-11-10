@@ -13,6 +13,10 @@ import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.utils.Constants;
+import com.dudu.android.launcher.utils.FileUtils;
+import com.dudu.android.launcher.utils.ToastUtils;
+
+import java.io.File;
 
 public class VideoActivity extends BaseNoTitlebarAcitivity {
 
@@ -29,6 +33,14 @@ public class VideoActivity extends BaseNoTitlebarAcitivity {
 			}
 		}
 	};
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		if (!FileUtils.isTFlashCardExists()) {
+			ToastUtils.showToast(R.string.video_sdcard_removed_alert);
+		}
+	}
 
 	@Override
 	protected void onResume() {

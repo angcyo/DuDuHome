@@ -13,6 +13,7 @@ import android.view.Window;
 import android.widget.TextView;
 
 import com.dudu.android.launcher.R;
+import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.NetworkUtils;
 
 import org.slf4j.Logger;
@@ -20,13 +21,9 @@ import org.slf4j.LoggerFactory;
 
 public abstract class BaseTitlebarActivity extends BaseActivity {
 
-    private Logger log;
+    public static final String ACTION_CONNECTIVITY_CHANGE = "android.net.conn.CONNECTIVITY_CHANGE";
 
-    private BroadcastReceiver receiver;
-
-    private TelephonyManager mTelephoneManager;
-
-    private PhoneStateListener mPhoneStateListener;
+    private SignalReceiver mGsmReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,22 +31,16 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,
                 R.layout.activity_custom_title);
-        log = LoggerFactory.getLogger("net.conn");
 
-        initTitleBar();
-
-        receiver = new BroadcastReceiver() {
-            public void onReceive(Context context, Intent intent) {
-                initTitleBar();
-            }
-        };
-
-        registerReceiver(receiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+        mGsmReceiver = new SignalReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_CONNECTIVITY_CHANGE);
+        registerReceiver(mGsmReceiver, intentFilter);
     }
 
     @Override
     protected void onDestroy() {
-        unregisterReceiver(receiver);
+        unregisterReceiver(mGsmReceiver);
         super.onDestroy();
     }
 
@@ -60,19 +51,12 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
         textView.setText(type);
     }
 
-    private void initPhoneStateListener() {
-        mPhoneStateListener = new PhoneStateListener() {
+    private class SignalReceiver extends  BroadcastReceiver {
 
-            @Override
-            public void onCellLocationChanged(CellLocation location) {
-                super.onCellLocationChanged(location);
-            }
-
-            @Override
-            public void onSignalStrengthsChanged(SignalStrength signalStrength) {
-                super.onSignalStrengthsChanged(signalStrength);
-            }
-        };
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            initTitleBar();
+        }
     }
 
 }
