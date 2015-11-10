@@ -49,31 +49,25 @@ public class PersistentStorage {
     public boolean addTail(String jsonStrData) {
         if (alldatas != null)
             alldatas.add(jsonStrData);
-        String alldataString = "";
-        JSONArray jsonArray = new JSONArray(alldatas);
 
-        if (jsonArray != null) {
-            alldataString = jsonArray.toString();
-            if (!alldataString.equals("[]")) {
-                mPreferences.edit().putString(JSONSTR, alldataString).commit();
+            if (!gson.toJson(alldatas).equals("[]")) {
+                mPreferences.edit().putString(JSONSTR, gson.toJson(alldatas)).commit();
             } else {
                 mPreferences.edit().putString(JSONSTR, "").commit();
             }
-        }
+
         return true;
     }
 
     public boolean deleteHeader() {
         getAll();
+        String str = "";
         if (alldatas != null && alldatas.size() > 0) {
             alldatas.remove(0);
-            JSONArray jsonArray2 = new JSONArray(alldatas);
-            if (!jsonArray2.toString().equals("[]")) {
-                mPreferences.edit().putString(JSONSTR, jsonArray2.toString())
-                        .commit();
-            } else {
-                mPreferences.edit().putString(JSONSTR, "").commit();
+            if(alldatas.size()>0){
+                str = gson.toJson(alldatas);
             }
+            mPreferences.edit().putString(JSONSTR,str).commit();
         } else {
             return false;
         }

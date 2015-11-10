@@ -15,6 +15,7 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
@@ -132,7 +133,12 @@ public class Connection extends Thread {
      * @param msg
      */
     public void sendMessage(String msg){
-        session.write(msg);
+        try {
+            if(!TextUtils.isEmpty(msg)&&session!=null)
+                session.write(msg);
+        }catch (Exception e){
+
+        }
     }
 
     // 连接后检查是否有缓存数据，如果有，则发送
@@ -250,5 +256,7 @@ public class Connection extends Thread {
         }
     }
 
-
+    public Logger getlog(){
+        return log;
+    }
 }

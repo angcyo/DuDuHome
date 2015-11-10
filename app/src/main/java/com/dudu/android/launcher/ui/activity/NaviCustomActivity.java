@@ -92,9 +92,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 		mAmapAMapNaviView.setAMapNaviViewListener(this);
 		setAmapNaviViewOptions();
 		back_button = (Button) findViewById(R.id.back_button);
-		MapManager.getInstance().setNavi(true);
-		EventBus.getDefault().unregister(this);
-		EventBus.getDefault().register(this);
+
 		log = LoggerFactory.getLogger("lbs.navi");
 
 	}
@@ -387,6 +385,9 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 	public void onResume() {
 		super.onResume();
 		setAmapNaviViewOptions();
+		MapManager.getInstance().setNavi(true);
+		EventBus.getDefault().unregister(this);
+		EventBus.getDefault().register(this);
 		AMapNavi.getInstance(this).setAMapNaviListener(getAMapNaviListener());
 		Bundle bundle = getIntent().getExtras();
 		processBundle(bundle);
@@ -429,6 +430,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 	public void onDestroy() {
 		if(mAmapNavi!=null&&mAmapNaviListener!=null)
 			mAmapNavi.removeAMapNaviListener(mAmapNaviListener);
+		EventBus.getDefault().unregister(this);
 		AMapNavi.getInstance(this).stopNavi();
 		MapManager.getInstance().setNavi(false);
 		mAmapAMapNaviView.onDestroy();

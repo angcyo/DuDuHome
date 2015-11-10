@@ -23,9 +23,12 @@ import com.dudu.obd.MyGPSData;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.qos.logback.core.util.LocationUtil;
 import de.greenrobot.event.EventBus;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 /**
  * Created by pc on 2015/11/3.
  */
@@ -58,12 +61,13 @@ public class AmapLocationHandler implements AMapLocationListener {
     private Logger log;
 
     private Activity topActivity;
-    public AmapLocationHandler (){
+
+    public AmapLocationHandler() {
 
         log = LoggerFactory.getLogger("lbs.gps");
     }
 
-    public void init(Context context){
+    public void init(Context context) {
         FileUtils.writeFile("/sys/class/gps_vreg/gps_vreg/gps_enable", "1");
         mLocationManagerProxy = LocationManagerProxy.getInstance(context);
         mLocationManagerProxy.requestLocationData(
@@ -83,11 +87,12 @@ public class AmapLocationHandler implements AMapLocationListener {
         // 保存当前定位点
         LocationUtils.getInstance(mContext).setCurrentLocation(
                 location.getLatitude(), location.getLongitude());
-        topActivity = ActivitiesManager.getInstance().getTopActivity();
 
-        if((topActivity instanceof LocationMapActivity)||
-                (topActivity instanceof NaviCustomActivity)||
-                (topActivity instanceof  NaviCustomActivity)){
+
+        topActivity = ActivitiesManager.getInstance().getTopActivity();
+        if ((topActivity instanceof LocationMapActivity) ||
+                (topActivity instanceof NaviCustomActivity) ||
+                (topActivity instanceof NaviCustomActivity)) {
 
             EventBus.getDefault().post(new AmapLocationChangeEvent(location));
         }
@@ -96,8 +101,13 @@ public class AmapLocationHandler implements AMapLocationListener {
         if (location.hasSpeed() && location.getSpeed() > 0)
             location.setSpeed(location.getSpeed() * 36 / 10);
         if (isFirstLoc) {
-            last_Location = location;
-            isFirstLoc = false;
+            Bundle locBundle = location.getExtras();
+            if (locBundle != null) {
+
+                LocationUtils.getInstance(mContext).setCurrentCitycode(locBundle.getString("citycode"));
+                last_Location = location;
+                isFirstLoc = false;
+            }
         }
         // 第一阶段过滤
         if (LocationFilter.checkStageOne(location.getLatitude(),
@@ -194,8 +204,8 @@ public class AmapLocationHandler implements AMapLocationListener {
             }
 
         } else {
-            log.debug("gps未通过过滤locaion:{},{},{},{}",location.getLatitude(),location.getLongitude(),
-                    location.getSpeed(),location.getBearing());
+            log.debug("gps未通过过滤locaion:{},{},{},{}", location.getLatitude(), location.getLongitude(),
+                    location.getSpeed(), location.getBearing());
         }
 
         // 更新preLocation
@@ -226,16 +236,16 @@ public class AmapLocationHandler implements AMapLocationListener {
     }
 
 
-    public AMapLocation getLast_Location (){
+    public AMapLocation getLast_Location() {
 
-        return  last_Location;
+        return last_Location;
     }
 
-    public AMapLocation getCur_Location(){
-        return  cur_Location;
+    public AMapLocation getCur_Location() {
+        return cur_Location;
     }
 
-    public List<MyGPSData> getGpsDataListToSend(){
+    public List<MyGPSData> getGpsDataListToSend() {
         return gpsDataListToSend;
     }
 

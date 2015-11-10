@@ -5,5 +5,6 @@ package com.dudu.voice.semantic;
  */
 public enum SemanticType {
     NORMAL,
-    CAR_CHECKING
+    CAR_CHECKING,
+    NAVIGATION
 }

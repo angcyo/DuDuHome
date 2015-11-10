@@ -17,6 +17,7 @@ public class LocationUtils {
 	public static final String NAVISTART_LON = "NAVISTART_LON";
 	public static final String NAVIEND_LAT = "NAVIEND_LAT";
 	public static final String NAVIEND_LON = "NAVIEND_LON";
+	public static final String CURRENT_CITYCODE = "CURRENT_CITYCODE";
 	
 	public static LocationUtils getInstance(Context context){
 		if(mCurrentLocation==null)
@@ -124,5 +125,21 @@ public class LocationUtils {
 		double longitude = Double.parseDouble(locationPreferences.getString(NAVIEND_LON, "0"));
 		double[] latlon = {latitude,longitude};
 		return latlon;
+	}
+
+	/**
+	 * 获取当前定位的cityCode
+	 * @return
+	 */
+	public String getCurrentCityCode(){
+		if(locationPreferences==null)
+			locationPreferences =  mContext.getSharedPreferences(LOCATION_SPF, Context.MODE_PRIVATE);
+		return locationPreferences.getString(CURRENT_CITYCODE,"");
+	}
+
+	public void setCurrentCitycode(String citycode){
+		if(locationPreferences==null)
+			locationPreferences =  mContext.getSharedPreferences(LOCATION_SPF, Context.MODE_PRIVATE);
+		locationPreferences.edit().putString(CURRENT_CITYCODE,citycode).commit();
 	}
 }

@@ -134,13 +134,14 @@ public class NavigationHandler {
 
                 @Override
                 public void onStartNavi(int arg0) {
-                    System.out.print("onStartNavi");
+
                 }
 
                 @Override
                 public void onReCalculateRouteForYaw() {
                     mVoiceManager.stopUnderstanding();
                     mVoiceManager.startSpeaking("您已偏离路线", SemanticConstants.TTS_DO_NOTHING,false);
+                    log.debug("偏离路线");
                 }
 
                 @Override

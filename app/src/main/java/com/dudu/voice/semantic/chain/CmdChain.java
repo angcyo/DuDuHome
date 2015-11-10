@@ -3,6 +3,8 @@ package com.dudu.voice.semantic.chain;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.util.Log;
+
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.bean.CmdEntity;
 import com.dudu.android.launcher.bean.CmdSlots;
@@ -14,12 +16,14 @@ import com.dudu.android.launcher.ui.activity.OBDCheckingActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
+import com.dudu.android.launcher.utils.FloatWindow;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.GsonUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.map.MapManager;
 import com.dudu.voice.semantic.SemanticConstants;
+import com.dudu.voice.semantic.SemanticType;
 import com.dudu.voice.semantic.engine.SemanticProcessor;
 
 /**
@@ -29,9 +33,11 @@ public class CmdChain extends SemanticChain {
 
     private LauncherApplication mApplication;
 
+    private MapManager mapManager;
     public CmdChain() {
         super();
         mApplication = LauncherApplication.getContext();
+        mapManager = MapManager.getInstance();
     }
 
     @Override
@@ -57,8 +63,7 @@ public class CmdChain extends SemanticChain {
         }
 
         if (type.contains(Constants.NAVIGATION)) {
-            handleNavigationCmd(option);
-            return true;
+            return handleNavigationCmd(option);
         } else if (type.contains(Constants.LUXIANG)) {
             handleVideoCmd(option);
             return true;
@@ -79,16 +84,22 @@ public class CmdChain extends SemanticChain {
         return false;
     }
 
-    private void handleNavigationCmd(String option) {
+    private boolean handleNavigationCmd(String option) {
         switch (option) {
             case Constants.OPEN:
             case Constants.START:
+                Log.d("lxh","==========打开导航"+mapManager.getSearchType());
                 Activity activity = ActivitiesManager.getInstance().getTopActivity();
                 if((activity instanceof LocationMapActivity)){
-                ((LocationMapActivity) activity).handlerOpenNavi();
-                    return;
+                    int type = mapManager.getSearchType();
+                    if(type==MapManager.SEARCH_NAVI||type==MapManager.SEARCH_DEFAULT){
+                        mapManager.setSearchType(MapManager.SEARCH_NAVI);
+                        ((LocationMapActivity) activity).handlerOpenNavi();
+                        return true;
+                    }else {
+                        return false;
+                    }
                 }
-
                 FloatWindowUtil.removeFloatWindow();
                 Intent intent = new Intent();
                 if (MapManager.getInstance().isNavi()) {
@@ -100,7 +111,8 @@ public class CmdChain extends SemanticChain {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     mApplication.startActivity(intent);
                 } else {
-                    MapManager.getInstance().mapControl(null, null, MapManager.SEARCH_NAVI);
+                    SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NAVIGATION);
+                    mapManager.mapControl(null, null, MapManager.SEARCH_NAVI);
                 }
                 break;
             case Constants.CLOSE:
@@ -114,7 +126,7 @@ public class CmdChain extends SemanticChain {
                         NaviBackActivity.class);
                 break;
         }
-
+        return  true;
     }
 
     private void handleVideoCmd(String option) {

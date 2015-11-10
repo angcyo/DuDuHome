@@ -7,11 +7,14 @@ import com.dudu.android.launcher.utils.DeviceIDUtil;
 import com.dudu.android.launcher.utils.Encrypt;
 import com.dudu.obd.FlamoutData;
 import com.google.gson.Gson;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import ch.qos.logback.core.android.SystemPropertiesProxy;
 
 /**
@@ -59,6 +62,7 @@ public class SendMessage {
 
 //        if(ActiveDevice.getInstance(mContext).getActiveFlag()==ActiveDevice.ACTIVE_OK){
         try {
+            conn.getlog().debug("sendData:{}",data);
             conn.sendMessage(Encrypt.AESEncrypt(sendJson.toString(),Encrypt.vi), true);
         } catch (Exception e) {
             e.printStackTrace();

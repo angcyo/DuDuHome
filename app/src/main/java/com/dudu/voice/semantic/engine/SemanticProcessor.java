@@ -7,6 +7,7 @@ import com.dudu.voice.semantic.SemanticType;
 import com.dudu.voice.semantic.VoiceManager;
 import com.dudu.voice.semantic.chain.CarCheckingDefault;
 import com.dudu.voice.semantic.chain.DefaultChain;
+import com.dudu.voice.semantic.chain.NavigationDefaultChain;
 import com.dudu.voice.semantic.chain.SemanticChain;
 import java.util.HashMap;
 import java.util.Stack;
@@ -135,6 +136,13 @@ public class SemanticProcessor {
 
                 mDefaultChain = new CarCheckingDefault();
                 break;
+            case NAVIGATION:
+                VoiceManager.getInstance().setShowMessageWindow(true);
+
+                addNavigationChains();
+
+                mDefaultChain = new NavigationDefaultChain();
+                break;
         }
     }
 
@@ -165,5 +173,18 @@ public class SemanticProcessor {
         mChainMap.put(SemanticConstants.SERVICE_CAR_CHECKING, mChainGenerator.getCarCheckingChain());
         mChainMap.put(SemanticConstants.SERVICE_CHOISE, mChainGenerator.getCarCheckingChoiseChain());
     }
+
+    private void addNavigationChains() {
+        mChainMap.put(SemanticConstants.SERVICE_CMD, mChainGenerator.generateCmdChain());
+        mChainMap.put(SemanticConstants.SERVICE_MAP, mChainGenerator.getMapSearchChain());
+        mChainMap.put(SemanticConstants.SERVICE_NEARBY, mChainGenerator.getMapSearchChain());
+        mChainMap.put(SemanticConstants.SERVICE_RESTAURANT, mChainGenerator.getMapSearchChain());
+        mChainMap.put(SemanticConstants.SERVICE_HOTEL, mChainGenerator.getMapSearchChain());
+        mChainMap.put(SemanticConstants.SERVICE_POI, mChainGenerator.getPoiChain());
+        mChainMap.put(SemanticConstants.SERVICE_COMMONADDRESS, mChainGenerator.getCommonAddressChain());
+        mChainMap.put(SemanticConstants.SERVICE_CAR_CHECKING, mChainGenerator.getCarCheckingChain());
+        mChainMap.put(SemanticConstants.SERVICE_WIFI, mChainGenerator.getWIFIChain());
+    }
+
 
 }

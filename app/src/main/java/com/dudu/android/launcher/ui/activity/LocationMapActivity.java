@@ -65,9 +65,11 @@ import com.dudu.map.AmapLocationChangeEvent;
 import com.dudu.map.MapManager;
 import com.dudu.map.Navigation;
 import com.dudu.voice.semantic.SemanticConstants;
+import com.dudu.voice.semantic.SemanticType;
 import com.dudu.voice.semantic.VoiceManager;
 import com.dudu.voice.semantic.chain.ChoiseChain;
 import com.dudu.voice.semantic.chain.ChoosePageChain;
+import com.dudu.voice.semantic.engine.SemanticProcessor;
 import com.iflytek.cloud.Setting;
 
 import java.io.Serializable;
@@ -75,6 +77,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import ch.qos.logback.core.util.LocationUtil;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -176,8 +179,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     @Override
     public void initListener() {
 
-        EventBus.getDefault().unregister(this);
-        EventBus.getDefault().register(this);
         search_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -249,6 +250,17 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EventBus.getDefault().unregister(this);
+        EventBus.getDefault().register(this);
+        if(latLng!= null){
+            handlerOpenNavi();
+        }
+
+    }
+
     private void getMapEntity(Serializable data) {
         if (data instanceof MapEntity) {
             startLocationInit((MapEntity) data);
@@ -258,6 +270,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     }
 
     private void setUpMap() {
+        cityCode = LocationUtils.getInstance(this).getCurrentCityCode();
         double[] curPoint = LocationUtils.getInstance(this).getCurrentLocation();
         latLng = new LatLng(curPoint[0],curPoint[1]);
         MyLocationStyle myLocationStyle = new MyLocationStyle();
@@ -297,7 +310,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
             if (isFirstLocaion) {
                 isFirstLocaion = false;
-                handlerOpenNavi();
             }
         }else{
 
@@ -315,7 +327,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         if (keyWord != null) {
             this.searchKeyWord = keyWord;
         }
-
         search();
 
     }
@@ -349,7 +360,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     VoiceManager.getInstance().startSpeaking(playText,
                             SemanticConstants.TTS_START_WAKEUP);
                     removeFloatWindow(12000);
-                    toNaivActivity();
+                    toNaivActivity(1200);
                 }
 
                 break;
@@ -384,7 +395,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     }
                 }, 200);
                 break;
-
         }
 
     }
@@ -453,7 +463,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     private void search() {
         Log.d(TAG,"searchKeyWord ： "+ searchKeyWord);
-
+        SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
         if (!TextUtils.isEmpty(searchKeyWord)) {
 
             if (Constants.CURRENT_POI.equals(searchKeyWord)) {
@@ -464,28 +474,36 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 VoiceManager.getInstance().startSpeaking(playText,
                         SemanticConstants.TTS_START_WAKEUP);
                 removeFloatWindow(12000);
-                toNaivActivity();
+                toNaivActivity(1200);
                 return;
             }
-            FloatWindowUtil.removeFloatWindow();
-            showProgressDialog();// 显示进度框
-            query = new PoiSearch.Query(searchKeyWord, "", cityCode);// 第一个参数表示搜索字符串，第二个参数表示poi搜索类型，第三个参数表示poi搜索区域（空字符串代表全国）
-            query.setPageSize(20);// 设置每页最多返回多少条poi item
-            query.setPageNum(0);// 设置查第一页
-            poiSearch = new PoiSearch(this, query);
-            if (mapManager.getSearchType() == MapManager.SEARCH_NEARBY) {
-                poiSearch.setBound(new PoiSearch.SearchBound(new LatLonPoint(cur_location.getLatitude(), cur_location.getLongitude()), 2000));
+            if(!TextUtils.isEmpty(cityCode)){
+                FloatWindowUtil.removeFloatWindow();
+                showProgressDialog();// 显示进度框
+                query = new PoiSearch.Query(searchKeyWord, "", cityCode);// 第一个参数表示搜索字符串，第二个参数表示poi搜索类型，第三个参数表示poi搜索区域（空字符串代表全国）
+                query.setPageSize(20);// 设置每页最多返回多少条poi item
+                query.setPageNum(0);// 设置查第一页
+                poiSearch = new PoiSearch(this, query);
+                if (mapManager.getSearchType() == MapManager.SEARCH_NEARBY) {
+                    poiSearch.setBound(new PoiSearch.SearchBound(new LatLonPoint(cur_location.getLatitude(), cur_location.getLongitude()), 2000));
+                }
+                poiSearch.setOnPoiSearchListener(onPoiSearchListener);
+                poiSearch.searchPOIAsyn();
+            }else{
+
+                mVoiceManager.startSpeaking("当前定位失败,请稍后再试！",SemanticConstants.TTS_DO_NOTHING,true);
+                removeFloatWindow(5000);
+                toNaivActivity(5000);
             }
-            poiSearch.setOnPoiSearchListener(onPoiSearchListener);
-            poiSearch.searchPOIAsyn();
+
         } else {
 
             String playText = "您好，关键字有误，请重新输入";
             if (isManual) {
                 Toast.makeText(this, playText, Toast.LENGTH_SHORT).show();
             } else {
-                VoiceManager.getInstance().startSpeaking(playText,
-                        SemanticConstants.TTS_START_UNDERSTANDING, false);
+               mVoiceManager.startSpeaking(playText,
+                       SemanticConstants.TTS_START_UNDERSTANDING, false);
             }
         }
 
@@ -582,15 +600,14 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                                 .getSearchSuggestionCitys();// 当搜索不到poiitem数据时，会返回含有搜索关键字的城市信息
                         aMap.clear();// 清理之前的图标
                         if (poiItems != null && poiItems.size() > 0) {
-
+                            setPoiList();
                             handlerPoiResult();
                         } else {
-
                             VoiceManager.getInstance().stopUnderstanding();
                             VoiceManager.getInstance().startSpeaking(
                                     getString(R.string.no_result),
                                     SemanticConstants.TTS_DO_NOTHING);
-                            removeFloatWindow(3000);
+                            removeFloatWindow(5000);
                         }
                     } else {
 
@@ -632,7 +649,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     };
 
     private void handlerPoiResult() {
-        setPoiList();
+
         if(mapManager.getSearchType()==MapManager.SEARCH_PLACE_LOCATION){
 
             String playText = "您好，"+ searchKeyWord +"的位置为：" + poiResultList.get(0).getAddressDetial();
@@ -647,12 +664,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
             return;
         }
         chooseType = 1;
-
-        aMap.moveCamera(CameraUpdateFactory.zoomTo(17));
-        aMap.addMarker(new MarkerOptions()
-                .position(new LatLng(cur_location.getLatitude(), cur_location.getLongitude()))
-                .icon(BitmapDescriptorFactory
-                        .fromResource(R.drawable.location_marker)));
+        aMap.moveCamera(CameraUpdateFactory.zoomTo(15));
         poiOverlay = new PoiOverlay(aMap, poiItems);
         poiOverlay.removeFromMap();
         poiOverlay.addToMap();
@@ -663,6 +675,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         } else {
             removeCallback();
             final String playText = "请选择列表中的地址";
+            Log.d(TAG,"=========poiresult:" + poiResultList.size());
             mVoiceManager.clearMisUnderstandCount();
             mVoiceManager.startSpeaking(
                     playText, SemanticConstants.TTS_START_UNDERSTANDING, false);
@@ -674,7 +687,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                                 AdapterView<?> arg0,
                                 View arg1,
                                 int position, long arg3) {
-
                             isAddressManual = true;
                             mVoiceManager.stopUnderstanding();
                             chooseAddress(position);
@@ -854,10 +866,10 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     private void setPoiList() {
 
-        if (cur_location != null && !poiItems.isEmpty()) {
+        if (latLng != null && !poiItems.isEmpty()) {
             // 先将高德坐标转换为真实坐标，再将真实坐标转换为百度坐标，调用百度的获取距离的工具类来计算距离
             double[] startPoints_gaode = Coordinate.chinatowg(
-                    cur_location.getLongitude(), cur_location.getLatitude());
+                    latLng.latitude, latLng.longitude);
             poiResultList.clear();
             for (int i = 0; i < poiItems.size(); i++) {
                 PoiResultInfo poiResultInfo = new PoiResultInfo();
@@ -937,7 +949,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     @Override
     public void onPause() {
-
+        EventBus.getDefault().unregister(this);
         mapManager.setSearchType(0);
         super.onPause();
     }
@@ -969,14 +981,14 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         }
     }
 
-    public void toNaivActivity(){
+    public void toNaivActivity(int t){
         mhandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 if(mapManager.isNavi()||mapManager.isNaviBack())
                     finish();
             }
-        },12000);
+        },t);
 
 
     }
