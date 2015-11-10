@@ -31,8 +31,10 @@ import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.map.AmapLocationChangeEvent;
+import com.dudu.map.AmapLocationHandler;
 import com.dudu.map.MapManager;
 import com.dudu.map.Navigation;
+import com.dudu.map.NavigationHandler;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
@@ -73,12 +75,16 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 	}
 
 	private Button back_button;
-	private AMapNavi mAmapNavi;
+//	private AMapNavi mAmapNavi;
 	private Handler mHandler;
 
 	private Logger log;
 
 	private String playText;
+
+//	private AmapLocationHandler amapLocationHandler;
+	private NavigationHandler navigationHandle;
+
 	@Override
 	public int initContentView() {
 		return R.layout.activity_navicustom;
@@ -87,6 +93,11 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 
 	@Override
 	public void initView(Bundle savedInstanceState) {
+
+//		amapLocationHandler = new AmapLocationHandler();
+//		amapLocationHandler.init(this);
+
+
 		mAmapAMapNaviView = (AMapNaviView) findViewById(R.id.customnavimap);
 		mAmapAMapNaviView.onCreate(savedInstanceState);
 		mAmapAMapNaviView.setAMapNaviViewListener(this);
@@ -125,10 +136,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 
 	@Override
 	public void initDatas() {
-		mAmapNavi = AMapNavi.getInstance(getApplicationContext());
-		// 实时导航方式进行导航
-		mAmapNavi.startNavi(AMapNavi.GPSNaviMode);
-		mAmapNavi.startGPS();
+		initNavi();
 		mHandler = new Handler();
 	}
 
@@ -385,10 +393,12 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 	public void onResume() {
 		super.onResume();
 		setAmapNaviViewOptions();
+		navigationHandle.initNaviListener();
 		MapManager.getInstance().setNavi(true);
+
 		EventBus.getDefault().unregister(this);
 		EventBus.getDefault().register(this);
-		AMapNavi.getInstance(this).setAMapNaviListener(getAMapNaviListener());
+
 		Bundle bundle = getIntent().getExtras();
 		processBundle(bundle);
 		if(bundle!=null){
@@ -428,12 +438,10 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 
 	@Override
 	public void onDestroy() {
-		if(mAmapNavi!=null&&mAmapNaviListener!=null)
-			mAmapNavi.removeAMapNaviListener(mAmapNaviListener);
 		EventBus.getDefault().unregister(this);
-		AMapNavi.getInstance(this).stopNavi();
 		MapManager.getInstance().setNavi(false);
 		mAmapAMapNaviView.onDestroy();
+		navigationHandle.destoryAmapNavi();
 		super.onDestroy();
 	}
 
@@ -442,5 +450,21 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 
 
 	}
-	
+	@Override
+	public boolean onNaviBackClick() {
+		return false;
+	}
+
+
+	private void initNavi(){
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+
+				navigationHandle = new NavigationHandler();
+				navigationHandle.initNavigationHandle(NaviCustomActivity.this);
+
+			}
+		}).start();
+	}
 }

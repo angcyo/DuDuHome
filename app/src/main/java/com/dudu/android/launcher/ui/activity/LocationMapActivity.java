@@ -58,14 +58,21 @@ import com.dudu.android.launcher.utils.JourneyTool;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.map.AmapLocationChangeEvent;
+import com.dudu.map.AmapLocationHandler;
 import com.dudu.map.MapManager;
 import com.dudu.map.Navigation;
+import com.dudu.map.NavigationHandler;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.SemanticType;
 import com.dudu.voice.semantic.VoiceManager;
 import com.dudu.voice.semantic.chain.ChoiseChain;
 import com.dudu.voice.semantic.chain.ChoosePageChain;
 import com.dudu.voice.semantic.engine.SemanticProcessor;
+import com.iflytek.cloud.Setting;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -121,8 +128,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     private MapManager mapManager;
 
-    private boolean isFirstLocaion = true;
-
     private VoiceManager mVoiceManager;
 
     private boolean isAddCommonAddress = false;
@@ -130,6 +135,10 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     private String naviAddress;
 
     private Bundle bundle;
+
+    private NavigationHandler navigationHandle;
+
+    private Logger log;
 
     private Runnable removeWindowRunnable = new Runnable() {
 
@@ -147,6 +156,11 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     @Override
     public void initView(Bundle savedInstanceState) {
+
+        log = LoggerFactory.getLogger("lbs.map");
+
+        navigationHandle = new NavigationHandler();
+        navigationHandle.initNavigationHandle(this);
 
         mapView = (MapView) findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);// 此方法必须重写
@@ -246,6 +260,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         super.onResume();
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
+        navigationHandle.initNaviListener();
         if(latLng!= null){
             handlerOpenNavi();
         }
@@ -288,7 +303,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
         cur_location = event.getAMapLocation();
         if (cur_location != null) {
-
+            latLng = new LatLng(cur_location.getLatitude(),cur_location.getLongitude());
             if (listener!=null){
                 listener.onLocationChanged(cur_location);// 显示系统小蓝点
             }
@@ -299,9 +314,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 cur_locationDesc = locBundle.getString("desc");
             }
 
-            if (isFirstLocaion) {
-                isFirstLocaion = false;
-            }
         }else{
 
             ToastUtils.showTip("获取定位失败，请检查网络");
@@ -330,6 +342,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 if (!Constants.CURRENT_POI.equals(searchKeyWord)) {
 
                     if (!isManual) {
+                        SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NAVIGATION);
                         mhandler.postDelayed(new Runnable() {
 
                             @Override
@@ -610,6 +623,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     }
                     break;
                 case 27:
+                    log.debug("搜索失败,请检查网络连接");
                     VoiceManager.getInstance().stopUnderstanding();
                     FloatWindowUtil.showMessage(getString(R.string.error_network),
                             FloatWindow.MESSAGE_IN);
@@ -622,6 +636,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     removeFloatWindow(5000);
                     break;
                 default:
+                    log.debug("未知错误，请稍后重试!错误码为:{}",code);
                     VoiceManager.getInstance().stopUnderstanding();
                     FloatWindowUtil.showMessage(getString(R.string.error_other) + code,
                             FloatWindow.MESSAGE_IN);
@@ -858,9 +873,9 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     private void setPoiList() {
 
         if (latLng != null && !poiItems.isEmpty()) {
-            // 先将高德坐标转换为真实坐标，再将真实坐标转换为百度坐标，调用百度的获取距离的工具类来计算距离
+            // 高德坐标转换为真实坐标
             double[] startPoints_gaode = Coordinate.chinatowg(
-                    latLng.latitude, latLng.longitude);
+                   latLng.longitude,latLng.latitude);
             poiResultList.clear();
             for (int i = 0; i < poiItems.size(); i++) {
                 PoiResultInfo poiResultInfo = new PoiResultInfo();
@@ -962,6 +977,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
             strategyDialog.dismiss();
         removeCallback();
         poiSearch = null;
+        navigationHandle.destoryAmapNavi();
         super.onDestroy();
     }
 

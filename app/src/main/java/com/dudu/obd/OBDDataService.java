@@ -71,7 +71,7 @@ public class OBDDataService extends Service implements
     private Logger log;
 
     private BleOBD bleOBD;
-    private NavigationHandler navigationHandle;
+
     private AmapLocationHandler amapLocationHandler;
 
     private AMapLocation last_Location;// 前一个位置点
@@ -166,8 +166,6 @@ public class OBDDataService extends Service implements
         bleOBD = new BleOBD();
         bleOBD.initOBD();
         scanBle();
-        navigationHandle = new NavigationHandler();
-        navigationHandle.initNavigationHandle(this);
         DriveBehaviorHappend.getInstance().setListener(this);
         try {
             if (conn != null && !isOpen && !conn.isAlive()) {
@@ -181,6 +179,8 @@ public class OBDDataService extends Service implements
         activeDevice();
     }
 
+
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -188,6 +188,7 @@ public class OBDDataService extends Service implements
         init();
 
     }
+
 
     private void init() {
         positionAry_list = new ArrayList<>();
@@ -249,7 +250,6 @@ public class OBDDataService extends Service implements
         super.onDestroy();
         isAlive = false;
         conn.closeConn();
-        navigationHandle.destoryAmapNavi();
         amapLocationHandler.stopLocation();
     }
 

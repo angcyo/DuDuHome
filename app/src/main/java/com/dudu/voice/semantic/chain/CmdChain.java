@@ -113,7 +113,7 @@ public class CmdChain extends SemanticChain {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     mApplication.startActivity(intent);
                 } else {
-                    SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NAVIGATION);
+
                     mapManager.mapControl(null, null, MapManager.SEARCH_NAVI);
                 }
                 break;

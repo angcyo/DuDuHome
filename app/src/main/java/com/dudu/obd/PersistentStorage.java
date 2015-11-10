@@ -49,7 +49,6 @@ public class PersistentStorage {
     public boolean addTail(String jsonStrData) {
         if (alldatas != null)
             alldatas.add(jsonStrData);
-
             if (!gson.toJson(alldatas).equals("[]")) {
                 mPreferences.edit().putString(JSONSTR, gson.toJson(alldatas)).commit();
             } else {

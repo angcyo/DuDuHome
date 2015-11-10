@@ -36,6 +36,7 @@ import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Util;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
+import com.dudu.map.AmapLocationHandler;
 import com.dudu.map.MapManager;
 import com.dudu.obd.OBDDataService;
 import com.dudu.voice.semantic.VoiceManager;
@@ -71,6 +72,9 @@ public class MainActivity extends BaseTitlebarActivity implements
     private ServiceConnection mServiceConnection;
 
     private Button mVoiceButton;
+
+    private WifiApAdmin mWifiApAdmin;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

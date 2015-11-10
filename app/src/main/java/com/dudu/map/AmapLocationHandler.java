@@ -40,8 +40,6 @@ public class AmapLocationHandler implements AMapLocationListener {
 
     private LocationManagerProxy mLocationManagerProxy;
 
-//    private OnLocationChangedListener mListener;
-
     private int GPSdataTime = 0;// 第几个GPS点
 
     private AMapLocation last_Location;// 前一个位置点
@@ -69,9 +67,10 @@ public class AmapLocationHandler implements AMapLocationListener {
 
     public void init(Context context) {
         FileUtils.writeFile("/sys/class/gps_vreg/gps_vreg/gps_enable", "1");
+        mContext = context;
         mLocationManagerProxy = LocationManagerProxy.getInstance(context);
         mLocationManagerProxy.requestLocationData(
-                LocationProviderProxy.AMapNetwork, 1000, 10, this);
+                LocationProviderProxy.AMapNetwork, 2000, 10, this);
         gpsDataListToSend = new ArrayList<>();
         unAvalableList = new ArrayList<>();
     }
@@ -87,7 +86,6 @@ public class AmapLocationHandler implements AMapLocationListener {
         // 保存当前定位点
         LocationUtils.getInstance(mContext).setCurrentLocation(
                 location.getLatitude(), location.getLongitude());
-
 
         topActivity = ActivitiesManager.getInstance().getTopActivity();
         if ((topActivity instanceof LocationMapActivity) ||
@@ -109,6 +107,16 @@ public class AmapLocationHandler implements AMapLocationListener {
                 isFirstLoc = false;
             }
         }
+
+        handlerGPS(location);
+        // 更新preLocation
+        last_Location = location;
+
+        cur_Location = location;
+
+    }
+
+    private void handlerGPS(AMapLocation location){
         // 第一阶段过滤
         if (LocationFilter.checkStageOne(location.getLatitude(),
                 location.getLongitude(), location.getAccuracy(),
@@ -207,12 +215,6 @@ public class AmapLocationHandler implements AMapLocationListener {
             log.debug("gps未通过过滤locaion:{},{},{},{}", location.getLatitude(), location.getLongitude(),
                     location.getSpeed(), location.getBearing());
         }
-
-        // 更新preLocation
-        last_Location = location;
-
-        cur_Location = location;
-
     }
 
     @Override

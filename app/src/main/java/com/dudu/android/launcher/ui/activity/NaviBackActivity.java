@@ -1,7 +1,5 @@
 package com.dudu.android.launcher.ui.activity;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -25,8 +23,10 @@ import com.amap.api.navi.model.NaviInfo;
 import com.amap.api.navi.model.NaviLatLng;
 import com.dudu.android.launcher.R;
 import com.dudu.map.AmapLocationChangeEvent;
+import com.dudu.map.AmapLocationHandler;
 import com.dudu.map.MapManager;
 import com.dudu.map.Navigation;
+import com.dudu.map.NavigationHandler;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
@@ -35,7 +35,7 @@ import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.NaviSettingUtil;
-import com.dudu.android.launcher.utils.ToastUtils;
+
 
 import de.greenrobot.event.EventBus;
 
@@ -53,13 +53,13 @@ AMapNaviViewListener{
 	private boolean mScreenFlag = NaviSettingUtil.YES_MODE;// 默认是屏幕常亮
 	// 导航界面风格
 	private int mThemeStle;
-	// 导航监听
-	private AMapNaviListener mAmapNaviListener;
 
 	private Button back_button;
-	private AMapNavi mAmapNavi;
+
 	private Handler mHandler;
 	private boolean needBack;
+
+	private NavigationHandler navigationHandle;
 
 	@Override
 	public int initContentView() {
@@ -68,6 +68,7 @@ AMapNaviViewListener{
 
 	@Override
 	public void initView(Bundle savedInstanceState) {
+
 		mAmapAMapNaviView = (AMapNaviView) findViewById(R.id.customnavimap);
 		mAmapAMapNaviView.onCreate(savedInstanceState);
 		mAmapAMapNaviView.setAMapNaviViewListener(this);
@@ -95,7 +96,6 @@ AMapNaviViewListener{
 						startActivity(new Intent(NaviBackActivity.this,MainActivity.class));
 					}
 				} catch (Exception e) {
-					// TODO: handle exception
 					e.printStackTrace();
 					startActivity(new Intent(NaviBackActivity.this,MainActivity.class));
 				}
@@ -106,10 +106,8 @@ AMapNaviViewListener{
 
 	@Override
 	public void initDatas() {
-		mAmapNavi = AMapNavi.getInstance(getApplicationContext());
-		mAmapNavi.startGPS();
-		mAmapNavi.startNavi(AMapNavi.GPSNaviMode);
 		mHandler = new Handler();
+		initNavi();
 	}
 
 	/**
@@ -131,7 +129,6 @@ AMapNaviViewListener{
 		viewOptions.setTrafficLayerEnabled(true);
 		viewOptions.setTrafficLine(true);
 		viewOptions.setTrafficBarEnabled(true);
-//		viewOptions.setTrafficInfoUpdateEnabled(true);		//交通播报是否打开（只适用于驾车导航，需要联网）.
 		mAmapAMapNaviView.setViewOptions(viewOptions);
 		mAmapAMapNaviView.getMap().setTrafficEnabled(true);
 
@@ -181,94 +178,7 @@ AMapNaviViewListener{
     	}
     }
     
-	private AMapNaviListener getAMapNaviListener() {
-		if (mAmapNaviListener == null) {
 
-			mAmapNaviListener = new AMapNaviListener() {
-
-				@Override
-				public void onTrafficStatusUpdate() {
-
-				}
-
-				@Override
-				public void onStartNavi(int arg0) {
-
-				}
-
-				@Override
-				public void onReCalculateRouteForYaw() {
-			
-				}
-
-				@Override
-				public void onReCalculateRouteForTrafficJam() {
-
-				}
-
-				@Override
-				public void onLocationChange(AMapNaviLocation location) {
-
-				}
-
-				@Override
-				public void onInitNaviSuccess() {
-
-				}
-
-				@Override
-				public void onInitNaviFailure() {
-
-				}
-
-				@Override
-				public void onGetNavigationText(int arg0, String arg1) {
-
-				}
-
-				@Override
-				public void onEndEmulatorNavi() {
-
-				}
-
-				@Override
-				public void onCalculateRouteSuccess() {
-
-				}
-
-				@Override
-				public void onCalculateRouteFailure(int arg0) {
-
-				}
-
-				@Override
-				public void onArrivedWayPoint(int arg0) {
-
-				}
-
-				@Override
-				public void onArriveDestination() {
-
-				}
-
-				@Override
-				public void onGpsOpenStatus(boolean arg0) {
-
-				}
-
-				@Override
-				public void onNaviInfoUpdated(AMapNaviInfo info) {
-
-				}
-
-				@Override
-				public void onNaviInfoUpdate(NaviInfo arg0) {
-
-				}
-			};
-		}
-		return mAmapNaviListener;
-	}
 
 	/**
 	 * 导航界面返回按钮监听
@@ -352,7 +262,8 @@ AMapNaviViewListener{
 	public void onResume() {
 		super.onResume();
 		setAmapNaviViewOptions();
-		AMapNavi.getInstance(this).setAMapNaviListener(getAMapNaviListener());
+		navigationHandle.initNaviListener();
+
 		Bundle bundle = getIntent().getExtras();
 		processBundle(bundle);
 		if(bundle!=null){
@@ -393,9 +304,7 @@ AMapNaviViewListener{
 
 	@Override
 	public void onDestroy() {
-		AMapNavi.getInstance(this)
-		.removeAMapNaviListener(getAMapNaviListener());
-		AMapNavi.getInstance(this).stopNavi();
+		navigationHandle.destoryAmapNavi();
 		MapManager.getInstance().setNaviBack(false);
 		mAmapAMapNaviView.onDestroy();
 		super.onDestroy();
@@ -406,4 +315,21 @@ AMapNaviViewListener{
 
 	}
 
+
+	@Override
+	public boolean onNaviBackClick() {
+		return false;
+	}
+
+	private void initNavi(){
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+
+				navigationHandle = new NavigationHandler();
+				navigationHandle.initNavigationHandle(NaviBackActivity.this);
+
+			}
+		}).start();
+	}
 }

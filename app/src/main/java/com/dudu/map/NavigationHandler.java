@@ -58,7 +58,7 @@ public class NavigationHandler {
 
     private VoiceManager mVoiceManager = VoiceManager.getInstance();
 
-    private Handler mHandler;
+
 
     private Class naviClass;
 
@@ -72,10 +72,8 @@ public class NavigationHandler {
         mContext = context;
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
-        mAmapNavi = AMapNavi.getInstance(context);// 初始化导航引擎
-        mAmapNavi.setAMapNaviListener(getAMapNaviListener());
-        mAmapNavi.startGPS();
-        mHandler = new Handler();
+        mAmapNavi = AMapNavi.getInstance(context);
+
     }
 
 
@@ -140,7 +138,7 @@ public class NavigationHandler {
                 @Override
                 public void onReCalculateRouteForYaw() {
                     mVoiceManager.stopUnderstanding();
-                    mVoiceManager.startSpeaking("您已偏离路线", SemanticConstants.TTS_DO_NOTHING,false);
+                    mVoiceManager.startSpeaking("您已偏离路线", SemanticConstants.TTS_DO_NOTHING, false);
                     log.debug("偏离路线");
                 }
 
@@ -215,8 +213,7 @@ public class NavigationHandler {
                     String playText = "路径规划出错,请检查网络";
                     mVoiceManager.clearMisUnderstandCount();
                     mVoiceManager.startSpeaking(playText);
-                    removeWindow();
-
+                    FloatWindowUtil.removeFloatWindow();
 
                 }
 
@@ -244,24 +241,24 @@ public class NavigationHandler {
         return mAmapNaviListener;
     }
 
-    private void  removeWindow(){
 
-        if(mHandler!=null){
-
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    FloatWindowUtil.removeFloatWindow();
-                }
-            },2000);
-        }
-
-    }
 
 
     public void destoryAmapNavi(){
 
         mAmapNavi.removeAMapNaviListener(mAmapNaviListener);
+        mAmapNavi.stopNavi();
         mAmapNavi.destroy();
+
+    }
+
+    public void removeListener(){
+        mAmapNavi.removeAMapNaviListener(mAmapNaviListener);
+    }
+
+    public void initNaviListener(){
+        mAmapNavi.setAMapNaviListener(getAMapNaviListener());
+        mAmapNavi.startNavi(AMapNavi.GPSNaviMode);
+        mAmapNavi.startGPS();
     }
 }

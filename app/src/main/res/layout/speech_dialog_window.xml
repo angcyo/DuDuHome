@@ -16,6 +16,8 @@
          android:layout_height="fill_parent"
          android:id="@+id/show_addressListView"
          android:visibility="gone"
+         android:divider="@android:color/white"
+         android:dividerHeight="1dip"
          android:layout_marginLeft="200dp"/>
      <ListView
         android:id="@+id/message_listview"
