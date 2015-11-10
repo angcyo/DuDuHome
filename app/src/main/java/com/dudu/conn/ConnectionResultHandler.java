@@ -25,8 +25,6 @@ public class ConnectionResultHandler {
     }
 
     public void onEventBackgroundThread(ConnectionEvent.ReceivedMessage event){
-
-
         try {
             JSONObject jsonResult = new JSONObject(event.getResultJson());
 
@@ -40,7 +38,7 @@ public class ConnectionResultHandler {
                 switch (method){
 
                     case ConnMethod.METHOD_PORTALUPDATE:
-                        new PortalHandler().handlerUpdate(method,jsonResult.getString("url"),jsonResult.getString("group"));
+                      new PortalHandler().handlerUpdate(mContext,method,jsonResult.getString("url"),jsonResult.getString("group"));
                         break;
                     case ConnMethod.METHOD_TAKEPHOTO:
                         break;

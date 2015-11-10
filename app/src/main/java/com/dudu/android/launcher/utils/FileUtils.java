@@ -5,9 +5,12 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -17,9 +20,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.text.DecimalFormat;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
+
+import java.util.zip.ZipOutputStream;
 
 /**
  * 文件操作工具类
@@ -31,6 +41,8 @@ public class FileUtils {
     private static Logger log = LoggerFactory.getLogger("util.file");
 
     private static String T_FLASH_PATH = "/storage/sdcard1";
+
+    private static final int BUFF_SIZE = 1024 * 1024; // 1M Byte
 
     /**
      * 获取录像存储目录
@@ -583,4 +595,113 @@ public class FileUtils {
         return result;
 
     }
+    /**
+     * @param zipFile 需要解压的文件
+     * 将解压文件到解压到/sdcard/nodogsplash/目录下
+     * */
+   public static void upZipFile(ZipFile zipFile)
+            throws ZipException, IOException {
+        File desDir = new File(getExternalStorageDirectory(),"nodogsplash");
+        if (!desDir.exists()) {
+            desDir.mkdirs();
+        }
+        for (Enumeration<?> entries = zipFile.entries(); entries.hasMoreElements();) {
+            ZipEntry entry = ((ZipEntry) entries.nextElement());
+            InputStream in = zipFile.getInputStream(entry);
+            String str = desDir.getPath();
+            // str = new String(str.getBytes("8859_1"), "GB2312");
+            File desFile = new File(str, java.net.URLEncoder.encode(
+                    entry.getName(), "UTF-8"));
+            if (!desFile.exists()) {
+                File fileParentDir = desFile.getParentFile();
+                if (!fileParentDir.exists()) {
+                    fileParentDir.mkdirs();
+                }
+            }
+            OutputStream out = new FileOutputStream(desFile);
+            byte buffer[] = new byte[1024 * 1024];
+            int realLength = in.read(buffer);
+            while (realLength != -1) {
+                out.write(buffer, 0, realLength);
+                realLength = in.read(buffer);
+            }
+            out.close();
+            in.close();
+
+        }
+    }
+    /**
+     *
+     * */
+   public void upZipFile(File zipFile, String folderPath) throws ZipException, IOException
+       {
+            File desDir = new File(folderPath);
+            if(!desDir.exists())
+                   {
+                        desDir.mkdirs();
+                   }
+
+               ZipFile zf = new ZipFile(zipFile);
+                 for (Enumeration<?> entries = zf.entries(); entries.hasMoreElements();)
+                   {
+                    ZipEntry entry = ((ZipEntry)entries.nextElement());
+                       InputStream in = zf.getInputStream(entry);
+                       String str = folderPath + File.separator + entry.getName();
+                       str = new String(str.getBytes("8859_1"), "GB2312");
+                        File desFile = new File(str);
+                       if (!desFile.exists())
+                         {
+                                File fileParentDir = desFile.getParentFile();
+                                if (!fileParentDir.exists())
+                                    {
+                                        fileParentDir.mkdirs();
+                                 }
+                                    desFile.createNewFile();
+                            }
+                       OutputStream out = new FileOutputStream(desFile);
+                       byte buffer[] = new byte[1024];
+                      int realLength;
+                       while ((realLength = in.read(buffer)) > 0)
+                            {
+                              out.write(buffer, 0, realLength);
+                       }
+                        in.close();
+                       out.close();
+                     }
+           }
+
+    /**
+     * 压缩文件
+     *
+     * @param resFile 需要压缩的文件（夹）
+     * @param zipout 压缩的目的文件
+     * @param rootpath 压缩的文件路径
+     * @throws FileNotFoundException 找不到文件时抛出
+     * @throws IOException 当压缩过程出错时抛出
+     */
+   public static void zipFile(File resFile, ZipOutputStream zipout, String rootpath)
+            throws FileNotFoundException, IOException {
+        rootpath = rootpath + (rootpath.trim().length() == 0 ? "" : File.separator)
+                + resFile.getName();
+        rootpath = new String(rootpath.getBytes("8859_1"), "GB2312");
+        if (resFile.isDirectory()) {
+            File[] fileList = resFile.listFiles();
+            for (File file : fileList) {
+                zipFile(file, zipout, rootpath);
+            }
+        } else {
+            byte buffer[] = new byte[BUFF_SIZE];
+            BufferedInputStream in = new BufferedInputStream(new FileInputStream(resFile),
+                    BUFF_SIZE);
+            zipout.putNextEntry(new ZipEntry(rootpath));
+            int realLength;
+            while ((realLength = in.read(buffer)) != -1) {
+                zipout.write(buffer, 0, realLength);
+            }
+            in.close();
+            zipout.flush();
+            zipout.closeEntry();
+        }
+    }
+
 }
