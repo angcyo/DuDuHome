@@ -105,7 +105,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     private PoiSearch poiSearch;// POI搜索
     private PoiOverlay poiOverlay = null;
     private String cur_locationDesc = "";
-    private String cityCode = "";
+    private String cityCode = "0755";
     private List<PoiItem> poiItems = null;
     private List<PoiResultInfo> poiResultList = new ArrayList<PoiResultInfo>();
     private int chooseType;
@@ -136,9 +136,9 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     private Bundle bundle;
 
-    private NavigationHandler navigationHandle;
-
     private Logger log;
+
+    private static final int REMOVEWINDOW_TIME = 15*1000;
 
     private Runnable removeWindowRunnable = new Runnable() {
 
@@ -158,9 +158,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     public void initView(Bundle savedInstanceState) {
 
         log = LoggerFactory.getLogger("lbs.map");
-
-        navigationHandle = new NavigationHandler();
-        navigationHandle.initNavigationHandle(this);
 
         mapView = (MapView) findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);// 此方法必须重写
@@ -260,7 +257,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         super.onResume();
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
-        navigationHandle.initNaviListener();
         if(latLng!= null){
             handlerOpenNavi();
         }
@@ -363,8 +359,8 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     }
                     VoiceManager.getInstance().startSpeaking(playText,
                             SemanticConstants.TTS_START_WAKEUP);
-                    removeFloatWindow(12000);
-                    toNaivActivity(1200);
+                    removeFloatWindow(REMOVEWINDOW_TIME);
+                    toNaivActivity(REMOVEWINDOW_TIME);
                 }
 
                 break;
@@ -477,8 +473,8 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 }
                 VoiceManager.getInstance().startSpeaking(playText,
                         SemanticConstants.TTS_START_WAKEUP);
-                removeFloatWindow(12000);
-                toNaivActivity(1200);
+                removeFloatWindow(REMOVEWINDOW_TIME);
+                toNaivActivity(REMOVEWINDOW_TIME);
                 return;
             }
             if(!TextUtils.isEmpty(cityCode)){
@@ -489,15 +485,15 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 query.setPageNum(0);// 设置查第一页
                 poiSearch = new PoiSearch(this, query);
                 if (mapManager.getSearchType() == MapManager.SEARCH_NEARBY) {
-                    poiSearch.setBound(new PoiSearch.SearchBound(new LatLonPoint(cur_location.getLatitude(), cur_location.getLongitude()), 2000));
+                    poiSearch.setBound(new PoiSearch.SearchBound(new LatLonPoint(latLng.latitude, latLng.longitude), 2000));
                 }
                 poiSearch.setOnPoiSearchListener(onPoiSearchListener);
                 poiSearch.searchPOIAsyn();
             }else{
 
                 mVoiceManager.startSpeaking("当前定位失败,请稍后再试！",SemanticConstants.TTS_DO_NOTHING,true);
-                removeFloatWindow(5000);
-                toNaivActivity(5000);
+                removeFloatWindow(REMOVEWINDOW_TIME);
+                toNaivActivity(REMOVEWINDOW_TIME);
             }
 
         } else {
@@ -611,7 +607,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                             VoiceManager.getInstance().startSpeaking(
                                     getString(R.string.no_result),
                                     SemanticConstants.TTS_DO_NOTHING);
-                            removeFloatWindow(5000);
+                            removeFloatWindow(REMOVEWINDOW_TIME);
                         }
                     } else {
 
@@ -619,7 +615,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                         VoiceManager.getInstance().startSpeaking(
                                 getString(R.string.no_result),
                                 SemanticConstants.TTS_DO_NOTHING);
-                        removeFloatWindow(5000);
+                        removeFloatWindow(REMOVEWINDOW_TIME);
                     }
                     break;
                 case 27:
@@ -627,20 +623,20 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     VoiceManager.getInstance().stopUnderstanding();
                     FloatWindowUtil.showMessage(getString(R.string.error_network),
                             FloatWindow.MESSAGE_IN);
-                    removeFloatWindow(5000);
+                    removeFloatWindow(REMOVEWINDOW_TIME);
                     break;
                 case 32:
                     VoiceManager.getInstance().stopUnderstanding();
                     FloatWindowUtil.showMessage(getString(R.string.error_key),
                             FloatWindow.MESSAGE_IN);
-                    removeFloatWindow(5000);
+                    removeFloatWindow(REMOVEWINDOW_TIME);
                     break;
                 default:
                     log.debug("未知错误，请稍后重试!错误码为:{}",code);
                     VoiceManager.getInstance().stopUnderstanding();
                     FloatWindowUtil.showMessage(getString(R.string.error_other) + code,
                             FloatWindow.MESSAGE_IN);
-                    removeFloatWindow(5000);
+                    removeFloatWindow(REMOVEWINDOW_TIME);
 
                     break;
 
@@ -660,7 +656,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
             String playText = "您好，"+ searchKeyWord +"的位置为：" + poiResultList.get(0).getAddressDetial();
             mVoiceManager.startSpeaking(playText, SemanticConstants.TTS_DO_NOTHING, true);
-            removeFloatWindow(10000);
+            removeFloatWindow(REMOVEWINDOW_TIME);
             return;
         }
         if(mapManager.getSearchType()==MapManager.SEARCH_NEAREST) {
@@ -730,7 +726,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                             this, point.getLatitude(), point.getLongitude());
                     VoiceManager.getInstance().startSpeaking("添加" + startpoiItem.getAddressTitle() + "为" + addType + "地址成功！",
                             SemanticConstants.TTS_DO_NOTHING, true);
-                    removeFloatWindow(10000);
+                    removeFloatWindow(REMOVEWINDOW_TIME);
                     return;
                 }
                 if (isManual) {
@@ -909,6 +905,8 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
             progDialog.show();
         }
         double[] destination = {mEndPoint.getLatitude(), mEndPoint.getLongitude()};
+        mapManager.setNavi(false);
+        mapManager.setNaviBack(false  );
         EventBus.getDefault().post(new Navigation(destination, Navigation.NAVI_NORMAL, driveMode));
     }
 
@@ -977,7 +975,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
             strategyDialog.dismiss();
         removeCallback();
         poiSearch = null;
-        navigationHandle.destoryAmapNavi();
         super.onDestroy();
     }
 

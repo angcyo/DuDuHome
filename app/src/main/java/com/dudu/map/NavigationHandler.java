@@ -46,7 +46,6 @@ public class NavigationHandler {
 
     private final static int CALCULATESUCCESS = 2;// 启动路径计算成功状态
 
-    private AMapNavi mAmapNavi;
 
     private int naviType = 0;
 
@@ -58,27 +57,24 @@ public class NavigationHandler {
 
     private VoiceManager mVoiceManager = VoiceManager.getInstance();
 
-
-
     private Class naviClass;
 
     private Logger log;
+
     public NavigationHandler(){
         log = LoggerFactory.getLogger("lbs.navi");
     }
 
     public void initNavigationHandle(Context context){
-
         mContext = context;
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
-        mAmapNavi = AMapNavi.getInstance(context);
-
+        initNaviListener();
     }
 
 
-    public void onEventBackgroundThread(Navigation event){
 
+    public void onEventBackgroundThread(Navigation event){
         naviType = event.getType();
         driveMode = event.getDriveMode();
         destination = event.getDestination();
@@ -109,7 +105,7 @@ public class NavigationHandler {
             mEndPoints.add(mEndPoint);
             mStartPoints.clear();
             mStartPoints.add(naviLatLng);
-            if (mAmapNavi.calculateDriveRoute(mStartPoints, mEndPoints, null,
+            if (AMapNavi.getInstance(mContext).calculateDriveRoute(mStartPoints, mEndPoints, null,
                     driveMode)) {
                 code = CALCULATESUCCESS;
             } else {
@@ -120,49 +116,53 @@ public class NavigationHandler {
         return code;
     }
 
+    private int step = 0;
     private AMapNaviListener getAMapNaviListener() {
         if (mAmapNaviListener == null) {
+
 
             mAmapNaviListener = new AMapNaviListener() {
 
                 @Override
                 public void onTrafficStatusUpdate() {
-
+                    log.debug("[{}] 路况更新", step++);
                 }
 
                 @Override
                 public void onStartNavi(int arg0) {
-
+                    log.debug("[{}] 启动导航后", step++);
                 }
 
                 @Override
                 public void onReCalculateRouteForYaw() {
                     mVoiceManager.stopUnderstanding();
                     mVoiceManager.startSpeaking("您已偏离路线", SemanticConstants.TTS_DO_NOTHING, false);
-                    log.debug("偏离路线");
+                    log.debug("[{}] 步行或驾车导航时,出现偏航后需要重新计算路径", step++);
                 }
 
                 @Override
                 public void onReCalculateRouteForTrafficJam() {
-
-
+                    log.debug("[{}] 驾车导航时，如果前方遇到拥堵时需要重新计算路径", step++);
                 }
 
                 @Override
                 public void onLocationChange(AMapNaviLocation location) {
+                    log.debug("[{}] GPS位置有更新", step++);
                 }
 
                 @Override
                 public void onInitNaviSuccess() {
+                    log.debug("[{}] 导航创建成功", step++);
                 }
 
                 @Override
                 public void onInitNaviFailure() {
-                    log.debug("导航创建失败");
+                    log.debug("[{}] 导航创建失败", step++);
                 }
 
                 @Override
                 public void onGetNavigationText(int arg0, String arg1) {
+                    log.debug("[{}] 导航播报信息", step++);
 
                     FloatWindowUtil.removeFloatWindow();
                     mVoiceManager.clearMisUnderstandCount();
@@ -172,10 +172,18 @@ public class NavigationHandler {
 
                 @Override
                 public void onEndEmulatorNavi() {
+                    log.debug("[{}] 模拟导航停止", step++);
                 }
 
                 @Override
                 public void onCalculateRouteSuccess() {
+                    log.debug("[{}] 步行或者驾车路径规划成功", step++);
+
+                    if(MapManager.getInstance().isNavi()||MapManager.getInstance().isNaviBack()){
+                        log.debug("[{}] 导航过程中路线规划成功", step++);
+                        return;
+                    }
+
 
                     MapManager.getInstance().setSearchType(0);
                     switch (naviType){
@@ -189,26 +197,27 @@ public class NavigationHandler {
                         case Navigation.NAVI_BACK:
                             naviClass = NaviBackActivity.class;
                             break;
+
                     }
 
                     LocationUtils.getInstance(mContext).setNaviStartPoint
                             (mStartPoints.get(0).getLatitude(), mStartPoints.get(0).getLongitude());
 
                     LocationUtils.getInstance(mContext).setNaviStartPoint
-                                (mEndPoint.getLatitude(), mEndPoint.getLongitude());
+                            (mEndPoint.getLatitude(), mEndPoint.getLongitude());
 
                     ActivitiesManager.getInstance().closeTargetActivity(
-                                NaviCustomActivity.class);
+                            NaviCustomActivity.class);
                     Activity topActivity = ActivitiesManager.getInstance().getTopActivity();
                     Intent standIntent = new Intent(topActivity,naviClass);
                     standIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     topActivity.startActivity(standIntent);
                     topActivity.finish();
-
                 }
 
                 @Override
                 public void onCalculateRouteFailure(int arg0) {
+                    log.debug("[{}] 步行或者驾车路径规划失败", step++);
 
                     String playText = "路径规划出错,请检查网络";
                     mVoiceManager.clearMisUnderstandCount();
@@ -219,46 +228,42 @@ public class NavigationHandler {
 
                 @Override
                 public void onArrivedWayPoint(int arg0) {
+                    log.debug("[{}] 驾车路径导航到达某个途经点", step++);
                 }
 
                 @Override
                 public void onArriveDestination() {
+                    log.debug("[{}] 到达目的地后", step++);
                 }
 
                 @Override
                 public void onGpsOpenStatus(boolean arg0) {
+                    log.debug("[{}] 用户手机GPS设置是否开启：{}", step++, arg0);
                 }
 
                 @Override
                 public void onNaviInfoUpdated(AMapNaviInfo arg0) {
+                    log.debug("[{}] 导航引导信息", step++);
                 }
 
                 @Override
                 public void onNaviInfoUpdate(NaviInfo arg0) {
+                    log.debug("[{}] 当驾车或者步行实时导航或者模拟导航有位置变化时", step++);
                 }
             };
         }
         return mAmapNaviListener;
     }
 
-
-
-
     public void destoryAmapNavi(){
-
-        mAmapNavi.removeAMapNaviListener(mAmapNaviListener);
-        mAmapNavi.stopNavi();
-        mAmapNavi.destroy();
-
-    }
-
-    public void removeListener(){
-        mAmapNavi.removeAMapNaviListener(mAmapNaviListener);
+        AMapNavi.getInstance(mContext).stopNavi();
+        AMapNavi.getInstance(mContext).destroy();
+        AMapNavi.getInstance(mContext).removeAMapNaviListener(mAmapNaviListener);
     }
 
     public void initNaviListener(){
-        mAmapNavi.setAMapNaviListener(getAMapNaviListener());
-        mAmapNavi.startNavi(AMapNavi.GPSNaviMode);
-        mAmapNavi.startGPS();
+        AMapNavi.getInstance(mContext).setAMapNaviListener(getAMapNaviListener());
+        AMapNavi.getInstance(mContext).startGPS();
+//        AMapNavi.getInstance(mContext).startNavi(AMapNavi.GPSNaviMode);
     }
 }

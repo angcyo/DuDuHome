@@ -72,7 +72,7 @@ public class SimpleHudActivity extends BaseNoTitlebarAcitivity implements
 
 			code = bundle.getInt(Util.ACTIVITYINDEX, -1);
 			if (code == Util.SIMPLEHUDNAVIE) {
-				AMapNavi.getInstance(this).startNavi(AMapNavi.EmulatorNaviMode);
+				AMapNavi.getInstance(this).startNavi(AMapNavi.GPSNaviMode);
 			}
 
 		}

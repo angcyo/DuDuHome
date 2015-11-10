@@ -82,7 +82,7 @@ public class MainActivity extends BaseTitlebarActivity implements
 
         startFloatMessageShowService();
 
-//        startOBDService();
+        startOBDService();
 
         //检测蓝牙设配
         checkBlueTooth();
@@ -114,7 +114,7 @@ public class MainActivity extends BaseTitlebarActivity implements
                 InputStream isAsset = getAssets().open("nodogsplash.conf");
                 if (FileUtils.copyFileToSd(isAsset, file)){
                     //开启热点
-                    WifiApAdmin.startWifiAp(this);
+//                    WifiApAdmin.startWifiAp(this);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -373,6 +373,7 @@ public class MainActivity extends BaseTitlebarActivity implements
             mWeatherImage.setImageResource(WeatherIconsUtils
                     .getWeatherIcon(WeatherIconsUtils.getWeatherType(weather)));
             LocationUtils.getInstance(this).setCurrentCity(aMapLocalWeatherLive.getCity());
+            LocationUtils.getInstance(this).setCurrentCitycode(aMapLocalWeatherLive.getCityCode());
         } else {
             Toast.makeText(this, R.string.get_weather_info_failed,
                     Toast.LENGTH_SHORT).show();

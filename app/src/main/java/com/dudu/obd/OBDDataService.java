@@ -81,6 +81,8 @@ public class OBDDataService extends Service implements
     private SendMessage sendMessage;
 
     private Gson gson;
+
+    private  NavigationHandler navigationHandler;
     /**
      * 采集数据线程 30s 将所有数据风封装到JSONArray里
      */
@@ -163,6 +165,7 @@ public class OBDDataService extends Service implements
 
     private void startCommand() {
         log = LoggerFactory.getLogger("odb.service");
+        log.debug("odbservice startCommand");
         bleOBD = new BleOBD();
         bleOBD.initOBD();
         scanBle();
@@ -177,6 +180,7 @@ public class OBDDataService extends Service implements
             e.printStackTrace();
         }
         activeDevice();
+
     }
 
 
@@ -196,6 +200,7 @@ public class OBDDataService extends Service implements
         mhandler = new Handler();
         amapLocationHandler = new AmapLocationHandler();
         amapLocationHandler.init(this);
+
         obe_id = DeviceIDUtil.getAndroidID(this);
         sendMessage = SendMessage.getInstance(this);
         gson = new Gson();
@@ -217,6 +222,9 @@ public class OBDDataService extends Service implements
         if (!dataSendThread.isAlive()) {
             dataSendThread.start();
         }
+        navigationHandler = new NavigationHandler();
+        navigationHandler.initNavigationHandle(this);
+
 
     }
 

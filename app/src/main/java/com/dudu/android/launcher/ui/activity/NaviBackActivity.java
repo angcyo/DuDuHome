@@ -59,7 +59,7 @@ AMapNaviViewListener{
 	private Handler mHandler;
 	private boolean needBack;
 
-	private NavigationHandler navigationHandle;
+
 
 	@Override
 	public int initContentView() {
@@ -107,7 +107,7 @@ AMapNaviViewListener{
 	@Override
 	public void initDatas() {
 		mHandler = new Handler();
-		initNavi();
+
 	}
 
 	/**
@@ -262,7 +262,6 @@ AMapNaviViewListener{
 	public void onResume() {
 		super.onResume();
 		setAmapNaviViewOptions();
-		navigationHandle.initNaviListener();
 
 		Bundle bundle = getIntent().getExtras();
 		processBundle(bundle);
@@ -304,7 +303,7 @@ AMapNaviViewListener{
 
 	@Override
 	public void onDestroy() {
-		navigationHandle.destoryAmapNavi();
+
 		MapManager.getInstance().setNaviBack(false);
 		mAmapAMapNaviView.onDestroy();
 		super.onDestroy();
@@ -321,15 +320,5 @@ AMapNaviViewListener{
 		return false;
 	}
 
-	private void initNavi(){
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
 
-				navigationHandle = new NavigationHandler();
-				navigationHandle.initNavigationHandle(NaviBackActivity.this);
-
-			}
-		}).start();
-	}
 }
