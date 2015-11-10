@@ -2,12 +2,10 @@ package com.dudu.android.launcher;
 
 import android.app.Application;
 import android.content.Intent;
-
 import com.dudu.android.launcher.exception.CrashHandler;
 import com.dudu.android.launcher.service.NewMessageShowService;
 import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.Util;
 import com.dudu.voice.semantic.VoiceManager;
 import com.iflytek.cloud.Setting;
 import com.iflytek.cloud.SpeechConstant;
@@ -44,10 +42,6 @@ public class LauncherApplication extends Application {
 		crashHandler.init(getApplicationContext());
 
 		startFloatMessageService();
-
-        if (Util.isTaxiVersion()) {
-//		    NetworkUtils.startWifiAp();
-        }
 	}
 
 	public static LauncherApplication getContext() {

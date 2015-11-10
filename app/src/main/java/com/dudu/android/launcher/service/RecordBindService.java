@@ -295,7 +295,9 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
             mediaRecorder.setVideoEncodingBitRate(2 * 1024 * 1024);
         else
             mediaRecorder.setVideoEncodingBitRate(profile.videoBitRate);
+
         mediaRecorder.setVideoFrameRate(30);
+
         mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
 
         videoName = dateFormat.format(new Date()) + ".mp4";

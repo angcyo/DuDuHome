@@ -44,8 +44,6 @@ public class NavigationChain extends SemanticChain {
     @Override
     public boolean doSemantic(String json) {
         isNavi = MapManager.getInstance().isNavi();
-        Log.d("lxh","navi:"+json);
-
         if(isNavi){
             mContext = ActivitiesManager
                     .getInstance().getTopActivity();

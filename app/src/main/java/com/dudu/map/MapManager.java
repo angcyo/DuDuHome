@@ -112,17 +112,13 @@ public class MapManager {
 
     public void mapControl(Serializable data,
                            String poiKeyWord, int type) {
-
 		Activity topActivity = ActivitiesManager.getInstance().getTopActivity();
 
         setSearchType(type);
 
 		if (topActivity != null && topActivity instanceof LocationMapActivity) {
-
-			((LocationMapActivity) topActivity).handlerSarch(data,poiKeyWord);
-
+			((LocationMapActivity) topActivity).handlerSearch(data, poiKeyWord);
 		} else {
-
 			Bundle bundle = new Bundle();
 			bundle.putSerializable(Constants.PARAM_MAP_DATA, data);
 			if (!TextUtils.isEmpty(poiKeyWord)) {

@@ -34,6 +34,7 @@ public class CmdChain extends SemanticChain {
     private LauncherApplication mApplication;
 
     private MapManager mapManager;
+
     public CmdChain() {
         super();
         mApplication = LauncherApplication.getContext();
@@ -88,18 +89,19 @@ public class CmdChain extends SemanticChain {
         switch (option) {
             case Constants.OPEN:
             case Constants.START:
-                Log.d("lxh","==========打开导航"+mapManager.getSearchType());
+                Log.d("lxh", "==========打开导航" + mapManager.getSearchType());
                 Activity activity = ActivitiesManager.getInstance().getTopActivity();
-                if((activity instanceof LocationMapActivity)){
+                if ((activity instanceof LocationMapActivity)) {
                     int type = mapManager.getSearchType();
-                    if(type==MapManager.SEARCH_NAVI||type==MapManager.SEARCH_DEFAULT){
+                    if (type == MapManager.SEARCH_NAVI || type == MapManager.SEARCH_DEFAULT) {
                         mapManager.setSearchType(MapManager.SEARCH_NAVI);
                         ((LocationMapActivity) activity).handlerOpenNavi();
                         return true;
-                    }else {
+                    } else {
                         return false;
                     }
                 }
+
                 FloatWindowUtil.removeFloatWindow();
                 Intent intent = new Intent();
                 if (MapManager.getInstance().isNavi()) {
@@ -126,7 +128,7 @@ public class CmdChain extends SemanticChain {
                         NaviBackActivity.class);
                 break;
         }
-        return  true;
+        return true;
     }
 
     private void handleVideoCmd(String option) {
@@ -180,7 +182,7 @@ public class CmdChain extends SemanticChain {
         Activity topActivity = ActivitiesManager.getInstance()
                 .getTopActivity();
         if (topActivity != null && !(topActivity instanceof MainActivity)) {
-            if (topActivity instanceof  OBDCheckingActivity) {
+            if (topActivity instanceof OBDCheckingActivity) {
                 mVoiceManager.setShowMessageWindow(true);
             }
 

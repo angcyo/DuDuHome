@@ -24,7 +24,7 @@ public class BaikeChain extends SemanticChain {
 
         mapManager = MapManager.getInstance();
 
-        if(mapManager.isSearch()){
+        if (mapManager.isSearch()) {
 
             mapManager.setSearch(false);
 
@@ -33,7 +33,7 @@ public class BaikeChain extends SemanticChain {
             Activity activity = ActivitiesManager
                     .getInstance().getTopActivity();
             if(activity instanceof LocationMapActivity){
-                ((LocationMapActivity) activity).handlerSarch(null, message);
+                ((LocationMapActivity) activity).handlerSearch(null, message);
             }
         } else {
             String answer = JsonUtils.parseIatResult(json, "answer");

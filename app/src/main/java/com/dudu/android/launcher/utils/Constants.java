@@ -53,7 +53,7 @@ public class Constants {
 	public static final String SLEEPY = "困了";
 
 
-	public static final String WAKEUP_WORDS = "您好。";
+	public static final String WAKEUP_WORDS = "您好";
 	public static final String WAKEUP_NETWORK_UNAVAILABLE = "网络状态关闭，请检查网络";
 	
 	public static final String UNDERSTAND_EXIT = "嘟嘟累了，稍后与你再见";

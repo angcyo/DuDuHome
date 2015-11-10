@@ -9,7 +9,6 @@ import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
-
 import com.amap.api.location.AMapLocation;
 import com.dudu.android.launcher.utils.DeviceIDUtil;
 import com.dudu.android.launcher.utils.TimeUtils;
@@ -19,18 +18,15 @@ import com.dudu.conn.SendMessage;
 import com.dudu.map.AmapLocationHandler;
 import com.dudu.map.NavigationHandler;
 import com.google.gson.Gson;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.scf4a.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import de.greenrobot.event.EventBus;
 
 /**

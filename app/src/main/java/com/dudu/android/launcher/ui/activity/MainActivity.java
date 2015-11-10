@@ -72,20 +72,19 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     private Button mVoiceButton;
 
-    private WifiApAdmin mWifiApAdmin;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         startFloatMessageShowService();
 
-        startOBDService();
+//        startOBDService();
 
         //检测蓝牙设配
         checkBlueTooth();
 
         requestWeatherInfo();
+
         //延迟10S开启热点
         new Handler().postDelayed(new Runnable() {
             public void run() {
@@ -120,7 +119,6 @@ public class MainActivity extends BaseTitlebarActivity implements
     }
 
     private void checkBlueTooth() {
-
         //初始化蓝牙的适配器
         BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();

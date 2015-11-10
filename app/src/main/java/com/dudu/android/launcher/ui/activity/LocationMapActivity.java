@@ -19,7 +19,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.amap.api.location.AMapLocation;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
@@ -27,7 +26,6 @@ import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.LatLng;
-import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.maps.overlay.PoiOverlay;
 import com.amap.api.navi.AMapNavi;
@@ -54,13 +52,11 @@ import com.dudu.android.launcher.ui.view.CleanableCompletaTextView;
 import com.dudu.android.launcher.utils.CommonAddressUtil;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.Coordinate;
-import com.dudu.android.launcher.utils.DeviceIDUtil;
 import com.dudu.android.launcher.utils.FloatWindow;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.JourneyTool;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
-import com.dudu.conn.SendMessage;
 import com.dudu.map.AmapLocationChangeEvent;
 import com.dudu.map.MapManager;
 import com.dudu.map.Navigation;
@@ -70,14 +66,10 @@ import com.dudu.voice.semantic.VoiceManager;
 import com.dudu.voice.semantic.chain.ChoiseChain;
 import com.dudu.voice.semantic.chain.ChoosePageChain;
 import com.dudu.voice.semantic.engine.SemanticProcessor;
-import com.iflytek.cloud.Setting;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import ch.qos.logback.core.util.LocationUtil;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -178,7 +170,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     @Override
     public void initListener() {
-
         search_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -319,7 +310,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     }
 
 
-    public void handlerSarch(Serializable data, String keyWord) {
+    public void handlerSearch(Serializable data, String keyWord) {
 
         if (data != null) {
             getMapEntity(data);
