@@ -6,6 +6,7 @@ import com.dudu.android.launcher.exception.CrashHandler;
 import com.dudu.android.launcher.service.NewMessageShowService;
 import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.utils.Constants;
+import com.dudu.android.launcher.utils.NetworkUtils;
 import com.dudu.voice.semantic.VoiceManager;
 import com.iflytek.cloud.Setting;
 import com.iflytek.cloud.SpeechConstant;
@@ -42,6 +43,9 @@ public class LauncherApplication extends Application {
 		crashHandler.init(getApplicationContext());
 
 		startFloatMessageService();
+
+		//将htdocs压缩包解压
+		NetworkUtils.writePortalConfig(this);
 	}
 
 	public static LauncherApplication getContext() {
