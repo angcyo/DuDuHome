@@ -60,6 +60,7 @@ public class Constants {
 	public static final String UNDERSTAND_MISUNDERSTAND = "嘟嘟无法识别，请重说";
 	public static final String UNDERSTAND_NO_INPUT = "没有检测到语音输入";
 	public static final String UNDERSTAND_NETWORK_PROBLEM = "当前网络较差，请稍后再试";
+	public static final String UNDERSTAND_CHOISE_INPUT_TIPS = "您可以说第几个或者上一页、下一页";
 
 	public static final String ONE1 = "1";
 	public static final String ONE = "一";

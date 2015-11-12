@@ -7,6 +7,7 @@ import com.dudu.voice.semantic.SemanticType;
 import com.dudu.voice.semantic.VoiceManager;
 import com.dudu.voice.semantic.chain.CarCheckingDefault;
 import com.dudu.voice.semantic.chain.DefaultChain;
+import com.dudu.voice.semantic.chain.MapChoiseDefalutChain;
 import com.dudu.voice.semantic.chain.NavigationDefaultChain;
 import com.dudu.voice.semantic.chain.SemanticChain;
 import java.util.HashMap;
@@ -142,6 +143,12 @@ public class SemanticProcessor {
 
                 mDefaultChain = new NavigationDefaultChain();
                 break;
+            case MAP_CHOISE:
+
+                addMapChoiseChains();
+
+                mDefaultChain = new MapChoiseDefalutChain();
+                break;
         }
     }
 
@@ -174,13 +181,24 @@ public class SemanticProcessor {
 
     private void addNavigationChains() {
         mChainMap.put(SemanticConstants.SERVICE_CMD, mChainGenerator.generateCmdChain());
+        mChainMap.put(SemanticConstants.SERVICE_VOICE, mChainGenerator.generateVoiceChain());
         mChainMap.put(SemanticConstants.SERVICE_MAP, mChainGenerator.getMapSearchChain());
         mChainMap.put(SemanticConstants.SERVICE_NEARBY, mChainGenerator.getMapSearchChain());
         mChainMap.put(SemanticConstants.SERVICE_RESTAURANT, mChainGenerator.getMapSearchChain());
         mChainMap.put(SemanticConstants.SERVICE_HOTEL, mChainGenerator.getMapSearchChain());
         mChainMap.put(SemanticConstants.SERVICE_POI, mChainGenerator.getPoiChain());
-        mChainMap.put(SemanticConstants.SERVICE_COMMONADDRESS, mChainGenerator.getCommonAddressChain());
     }
 
+    private void addMapChoiseChains() {
+        mChainMap.put(SemanticConstants.SERVICE_CMD, mChainGenerator.generateCmdChain());
+        mChainMap.put(SemanticConstants.SERVICE_VOICE, mChainGenerator.generateVoiceChain());
+        mChainMap.put(SemanticConstants.SERVICE_MAP, mChainGenerator.getMapSearchChain());
+        mChainMap.put(SemanticConstants.SERVICE_NEARBY, mChainGenerator.getMapSearchChain());
+        mChainMap.put(SemanticConstants.SERVICE_RESTAURANT, mChainGenerator.getMapSearchChain());
+        mChainMap.put(SemanticConstants.SERVICE_HOTEL, mChainGenerator.getMapSearchChain());
+        mChainMap.put(SemanticConstants.SERVICE_POI, mChainGenerator.getPoiChain());
+        mChainMap.put(SemanticConstants.SERVICE_CHOISE, mChainGenerator.getChoiseChain());
+        mChainMap.put(SemanticConstants.SERVICE_CHOOSEPAGE, mChainGenerator.getChoosePageChain());
+    }
 
 }

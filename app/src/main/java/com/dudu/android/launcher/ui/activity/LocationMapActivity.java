@@ -460,7 +460,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     private void search() {
         Log.d(TAG,"searchKeyWord ： "+ searchKeyWord);
-        SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
+        SemanticProcessor.getProcessor().switchSemanticType(SemanticType.MAP_CHOISE);
         if (!TextUtils.isEmpty(searchKeyWord)) {
 
             if (Constants.CURRENT_POI.equals(searchKeyWord)) {
@@ -889,6 +889,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     // 开始导航
     private void startNavigation(int driveMode) {
+        SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
         mapManager.setSearchType(0);
         FloatWindowUtil.removeFloatWindow();
         mVoiceManager.stopUnderstanding();

@@ -37,9 +37,11 @@ import com.dudu.android.launcher.utils.FloatWindow.RemoveFloatWindowCallBack;
 import com.dudu.android.launcher.utils.FloatWindow.StrategyChooseCallBack;
 import com.dudu.map.MapManager;
 import com.dudu.voice.semantic.SemanticConstants;
+import com.dudu.voice.semantic.SemanticType;
 import com.dudu.voice.semantic.VoiceManager;
 import com.dudu.voice.semantic.chain.ChoiseChain;
 import com.dudu.voice.semantic.chain.ChoosePageChain;
+import com.dudu.voice.semantic.engine.SemanticProcessor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -148,6 +150,8 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
                 VoiceManager.getInstance().stopUnderstanding();
 
                 VoiceManager.getInstance().removeFloatCallback();
+
+                SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
             }
         });
     }
