@@ -78,7 +78,6 @@ public class SemanticProcessor {
         mDefaultChain.doSemantic(text);
     }
 
-
     private boolean isChainExists(Rsphead head) {
         if (mCurChain == null) {
             mCurChain = mChainMap.get(head.getService());
@@ -182,8 +181,6 @@ public class SemanticProcessor {
         mChainMap.put(SemanticConstants.SERVICE_HOTEL, mChainGenerator.getMapSearchChain());
         mChainMap.put(SemanticConstants.SERVICE_POI, mChainGenerator.getPoiChain());
         mChainMap.put(SemanticConstants.SERVICE_COMMONADDRESS, mChainGenerator.getCommonAddressChain());
-        mChainMap.put(SemanticConstants.SERVICE_CAR_CHECKING, mChainGenerator.getCarCheckingChain());
-        mChainMap.put(SemanticConstants.SERVICE_WIFI, mChainGenerator.getWIFIChain());
     }
 
 

@@ -142,6 +142,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         if (mAmapAMapNaviView == null) {
             return;
         }
+
         AMapNaviViewOptions viewOptions = new AMapNaviViewOptions();
         viewOptions.setSettingMenuEnabled(true);// 设置导航setting可用
         viewOptions.setNaviNight(mDayNightFlag);// 设置导航是否为黑夜模式

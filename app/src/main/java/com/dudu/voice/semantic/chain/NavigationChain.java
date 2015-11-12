@@ -52,7 +52,7 @@ public class NavigationChain extends SemanticChain {
            if(!TextUtils.isEmpty(actionType)){
                    switch (actionType) {
                        case Constants.OPEN:
-                           hanleOpenAction();
+                           handleOpenAction();
                            break;
                        case Constants.NAVI_LISTEN:
                            handleListen();
@@ -66,7 +66,7 @@ public class NavigationChain extends SemanticChain {
                            break;
                    }
 
-           }else{
+           } else {
 
                switch (optionType) {
                    case Constants.NAVI_PREVIEW:
@@ -90,7 +90,7 @@ public class NavigationChain extends SemanticChain {
         return false;
     }
 
-    private void hanleOpenAction(){
+    private void handleOpenAction(){
         switch (optionType) {
             case Constants.NAVI_PREVIEW:
                 openPriview();

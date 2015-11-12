@@ -160,7 +160,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         log = LoggerFactory.getLogger("lbs.map");
 
         mapView = (MapView) findViewById(R.id.map);
-        mapView.onCreate(savedInstanceState);// 此方法必须重写
+        mapView.onCreate(savedInstanceState);
 
         endLocationLL = (LinearLayout) findViewById(R.id.endLocationLL);
         search_edit = (CleanableCompletaTextView) findViewById(R.id.search_edit);
@@ -257,7 +257,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         super.onResume();
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
-        if(latLng!= null){
+        if(latLng != null){
             handlerOpenNavi();
         }
 
@@ -317,7 +317,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     }
 
-
     public void handlerSearch(Serializable data, String keyWord) {
 
         if (data != null) {
@@ -331,7 +330,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     }
 
     public void handlerOpenNavi() {
-
         switch (mapManager.getSearchType()) {
 
             case MapManager.SEARCH_NAVI:
@@ -651,7 +649,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     };
 
     private void handlerPoiResult() {
-
         if(mapManager.getSearchType()==MapManager.SEARCH_PLACE_LOCATION){
 
             String playText = "您好，"+ searchKeyWord +"的位置为：" + poiResultList.get(0).getAddressDetial();
@@ -677,7 +674,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         } else {
             removeCallback();
             final String playText = "请选择列表中的地址";
-            Log.d(TAG,"=========poiresult:" + poiResultList.size());
             mVoiceManager.clearMisUnderstandCount();
             mVoiceManager.startSpeaking(
                     playText, SemanticConstants.TTS_START_UNDERSTANDING, false);
@@ -694,8 +690,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                             chooseAddress(position);
                         }
                     });
-
-
         }
 
     }

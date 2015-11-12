@@ -1,21 +1,14 @@
 package com.dudu.map;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-
-import com.dudu.android.launcher.bean.MapEntity;
-import com.dudu.android.launcher.ui.activity.LocationActivity;
 import com.dudu.android.launcher.ui.activity.LocationMapActivity;
-import com.dudu.android.launcher.ui.activity.NaviBackActivity;
-import com.dudu.android.launcher.ui.activity.NaviCustomActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
-
 import java.io.Serializable;
-import java.util.List;
+
 
 public class MapManager {
 

@@ -402,11 +402,11 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         @Override
         protected Void doInBackground(Void... params) {
             if (prepareMediaRecorder()) {
-
+                mediaRecorder.start();
+                isRecording = true;
             } else {
                 releaseMediaRecorder();
-            }                mediaRecorder.start();
-            isRecording = true;
+            }
 
             return null;
         }

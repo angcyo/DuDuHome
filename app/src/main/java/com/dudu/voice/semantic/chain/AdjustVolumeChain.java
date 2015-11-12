@@ -47,8 +47,6 @@ public class AdjustVolumeChain extends SemanticChain {
     @Override
     public boolean doSemantic(String json) {
 
-        mVoiceManager.startUnderstanding();
-
         String semantic = JsonUtils.parseIatResult(json,
                 "semantic");
 
@@ -60,6 +58,7 @@ public class AdjustVolumeChain extends SemanticChain {
         String state = slots.getState();
 
         if (state.equals("+")) {
+
             turnUpVolume();
             mState = VolumeState.ADJUST;
         } else if (state.equals("-")) {
@@ -82,6 +81,7 @@ public class AdjustVolumeChain extends SemanticChain {
                 return false;
         }
 
+        mVoiceManager.startUnderstanding();
         return true;
     }
 
@@ -119,6 +119,8 @@ public class AdjustVolumeChain extends SemanticChain {
         if (mCurVolume != 0) {
             return false;
         }
+
+        mVoiceManager.startUnderstanding();
 
         mAudioManager.setStreamVolume(
                 AudioManager.STREAM_MUSIC,

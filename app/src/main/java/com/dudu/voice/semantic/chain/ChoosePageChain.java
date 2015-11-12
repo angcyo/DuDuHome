@@ -1,15 +1,11 @@
 package com.dudu.voice.semantic.chain;
 
 import android.app.Activity;
-
-import com.dudu.android.launcher.ui.activity.LocationActivity;
 import com.dudu.android.launcher.ui.activity.LocationMapActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.voice.semantic.SemanticConstants;
-
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -45,14 +41,15 @@ public class ChoosePageChain extends SemanticChain {
     @Override
     public boolean doSemantic(String json) {
         Activity activity = ActivitiesManager.getInstance().getTopActivity();
-        if(activity!=null && activity instanceof LocationMapActivity){
+        if(activity != null && activity instanceof LocationMapActivity){
             getPageType(json);
-            if(type!=0){
+            if(type != 0){
                 mVoiceManager.startUnderstanding();
                 ((LocationMapActivity) activity).choosePage(type);
                 return  true;
             }
         }
+
         return false;
     }
 
@@ -81,6 +78,6 @@ public class ChoosePageChain extends SemanticChain {
             LogUtils.e("ChoosePageChain", e.getMessage());
         }
 
-        return  type;
+        return type;
     }
 }
