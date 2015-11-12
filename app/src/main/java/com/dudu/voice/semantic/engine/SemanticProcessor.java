@@ -52,6 +52,8 @@ public class SemanticProcessor {
     }
 
     public void processSemantic(final String text) {
+        VoiceManager.getInstance().clearMisUnderstandCount();
+
         Rsphead head = JsonUtils.getRsphead(text);
         if (head.getRc() == 0 && isChainExists(head)) {
             String service = head.getService();
@@ -72,8 +74,6 @@ public class SemanticProcessor {
 
             return;
         }
-
-        VoiceManager.getInstance().clearMisUnderstandCount();
 
         mDefaultChain.doSemantic(text);
     }

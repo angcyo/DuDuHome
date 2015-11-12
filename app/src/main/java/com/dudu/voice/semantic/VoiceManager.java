@@ -394,6 +394,8 @@ public class VoiceManager {
                 if (!TextUtils.isEmpty(text)) {
                     String message = JsonUtils.parseIatResult(text, "text");
 
+                    LogUtils.v("ChoosePageChain", text);
+
                     if (mShowMessageWindow) {
                         FloatWindowUtil.showMessage(message, FloatWindow.MESSAGE_OUT);
                     }

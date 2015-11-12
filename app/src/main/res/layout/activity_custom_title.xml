@@ -13,7 +13,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="20dp"
         android:gravity="center_vertical"
-        android:text="4G"
+        android:text="@string/network_no_signal"
         android:textColor="@color/white"
         android:textSize="9sp" />
 

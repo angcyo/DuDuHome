@@ -190,7 +190,6 @@ public class OBDDataService extends Service implements
         super.onCreate();
         Log.i(TAG, "OBDDataService create");
         init();
-
     }
 
 

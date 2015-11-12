@@ -33,6 +33,8 @@ public class ChoosePageChain extends SemanticChain {
 
     public static final String LAST_TWO = "上页";
 
+    public static final String LAST_THREE = "上夜";
+
     private int type = 0;
 
     @Override
@@ -42,11 +44,11 @@ public class ChoosePageChain extends SemanticChain {
 
     @Override
     public boolean doSemantic(String json) {
-        mVoiceManager.startUnderstanding();
         Activity activity = ActivitiesManager.getInstance().getTopActivity();
         if(activity!=null && activity instanceof LocationMapActivity){
             getPageType(json);
             if(type!=0){
+                mVoiceManager.startUnderstanding();
                 ((LocationMapActivity) activity).choosePage(type);
                 return  true;
             }
@@ -68,6 +70,7 @@ public class ChoosePageChain extends SemanticChain {
                       break;
                     case LAST:
                     case LAST_TWO:
+                    case LAST_THREE:
                         type = LAST_PAGE;
                        break;
                 }

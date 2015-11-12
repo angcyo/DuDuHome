@@ -34,6 +34,7 @@ import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -269,6 +270,13 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         p.setPictureSize(1280, 720);
         camera.setParameters(p);
 
+//        try {
+//            camera.setPreviewDisplay(surfaceHolder);
+//            camera.startPreview();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setOnErrorListener(new OnErrorListener() {
 
@@ -394,11 +402,11 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         @Override
         protected Void doInBackground(Void... params) {
             if (prepareMediaRecorder()) {
-                mediaRecorder.start();
-                isRecording = true;
+
             } else {
                 releaseMediaRecorder();
-            }
+            }                mediaRecorder.start();
+            isRecording = true;
 
             return null;
         }

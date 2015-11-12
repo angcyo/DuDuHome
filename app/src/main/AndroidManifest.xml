@@ -49,6 +49,7 @@
 
     <application
         android:name=".LauncherApplication"
+        android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -60,16 +61,14 @@
         	正式key 476a2032389d1d702025e4183c74a51d
         	小慧key 8daa43bc94833f1d449658d6fef0cbf2
         -->
-
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="476a2032389d1d702025e4183c74a51d" />
 
         <activity
             android:name=".ui.activity.MainActivity"
-            android:largeHeap="true"
             android:screenOrientation="landscape"
-            android:supportsRtl="true"
+            android:launchMode="singleTask"
             android:theme="@style/AppBaseTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -87,16 +86,13 @@
 
         <activity
             android:name=".ui.activity.NaviCustomActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape"
-            android:theme="@style/AppBaseTheme" />
+            android:launchMode="singleInstance"
+            android:screenOrientation="landscape" />
 
         <activity
             android:name=".ui.activity.NaviBackActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape"
-            android:theme="@style/AppBaseTheme" />
-
+            android:launchMode="singleInstance"
+            android:screenOrientation="landscape" />
 
         <activity
             android:name=".ui.activity.video.VideoActivity"

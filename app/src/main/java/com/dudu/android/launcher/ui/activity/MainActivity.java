@@ -36,7 +36,6 @@ import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Util;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
-import com.dudu.map.AmapLocationHandler;
 import com.dudu.map.MapManager;
 import com.dudu.obd.OBDDataService;
 import com.dudu.voice.semantic.VoiceManager;
@@ -73,9 +72,6 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     private Button mVoiceButton;
 
-    private WifiApAdmin mWifiApAdmin;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,7 +88,7 @@ public class MainActivity extends BaseTitlebarActivity implements
         //延迟10S开启热点
         new Handler().postDelayed(new Runnable() {
             public void run() {
-//                startWifiAp();
+                startWifiAp();
             }
         }, TIME);
     }
@@ -110,11 +106,10 @@ public class MainActivity extends BaseTitlebarActivity implements
         } else {
             try {
                 file.createNewFile();
-                //如果不存在就创建然后复制assets下的文件到此文件
                 InputStream isAsset = getAssets().open("nodogsplash.conf");
                 if (FileUtils.copyFileToSd(isAsset, file)){
                     //开启热点
-//                    WifiApAdmin.startWifiAp(this);
+                    WifiApAdmin.startWifiAp(this);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
