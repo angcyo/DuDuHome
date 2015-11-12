@@ -89,7 +89,7 @@ public class CmdChain extends SemanticChain {
         switch (option) {
             case Constants.OPEN:
             case Constants.START:
-                Log.d("lxh", "==========打开导航" + mapManager.getSearchType());
+
                 Activity activity = ActivitiesManager.getInstance().getTopActivity();
                 if ((activity instanceof LocationMapActivity)) {
                     int type = mapManager.getSearchType();

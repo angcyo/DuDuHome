@@ -1,6 +1,7 @@
 package com.dudu.voice.semantic.chain;
 
 import android.app.Activity;
+import android.util.Log;
 import com.dudu.android.launcher.ui.activity.LocationMapActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.ChoiseUtil;
@@ -34,9 +35,11 @@ public class ChoiseChain extends SemanticChain {
 
     @Override
     public boolean doSemantic(String json) {
+
+        Log.d("lxh", "--------json:" + json);
+
         String semantic = JsonUtils.parseIatResult(json,
                 "semantic");
-
         choiseSize = ChoiseUtil.getChoiseSize(JsonUtils
                 .parseIatResultChoiseSize(semantic));
         chooseType = JsonUtils.getChooseType(semantic);
@@ -46,10 +49,10 @@ public class ChoiseChain extends SemanticChain {
             type = TYPE_NORMAL;
 
         Activity topActivity = ActivitiesManager.getInstance().getTopActivity();
+
         if (topActivity != null && (topActivity instanceof LocationMapActivity) &&
                 MapManager.getInstance().isShowAddress()) {
             mVoiceManager.startUnderstanding();
-
             ((LocationMapActivity) topActivity)
                     .startChooseResult(choiseSize, type);
             return true;

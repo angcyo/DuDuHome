@@ -155,7 +155,6 @@ public class SemanticProcessor {
         mChainMap.put(SemanticConstants.SERVICE_NAVI, mChainGenerator.getNavigationChain());
         mChainMap.put(SemanticConstants.SERVICE_WEATHER, mChainGenerator.getWeatherChain());
         mChainMap.put(SemanticConstants.SERVICE_CHOISE, mChainGenerator.getChoiseChain());
-        mChainMap.put(SemanticConstants.SERVICE_BAIKE, mChainGenerator.getBaikeChain());
         mChainMap.put(SemanticConstants.SERVICE_CHAT, mChainGenerator.getChatChain());
         mChainMap.put(SemanticConstants.SERVICE_OPENQA, mChainGenerator.getOpenQaChain());
         mChainMap.put(SemanticConstants.SERVICE_CHOOSEPAGE, mChainGenerator.getChoosePageChain());

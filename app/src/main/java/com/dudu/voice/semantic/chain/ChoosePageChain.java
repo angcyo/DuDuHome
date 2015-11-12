@@ -40,10 +40,13 @@ public class ChoosePageChain extends SemanticChain {
 
     @Override
     public boolean doSemantic(String json) {
+
         Activity activity = ActivitiesManager.getInstance().getTopActivity();
         if(activity != null && activity instanceof LocationMapActivity){
             getPageType(json);
-            if(type != 0){
+
+            getPageType(json);
+            if(type!=0){
                 mVoiceManager.startUnderstanding();
                 ((LocationMapActivity) activity).choosePage(type);
                 return  true;

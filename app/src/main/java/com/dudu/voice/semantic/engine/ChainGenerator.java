@@ -1,16 +1,15 @@
 package com.dudu.voice.semantic.engine;
 
 import com.dudu.voice.semantic.chain.AdjustVolumeChain;
-import com.dudu.voice.semantic.chain.BaikeChain;
 import com.dudu.voice.semantic.chain.CarCheckingChain;
 import com.dudu.voice.semantic.chain.CarCheckingChoiseChain;
 import com.dudu.voice.semantic.chain.CarCheckingWhetherChain;
 import com.dudu.voice.semantic.chain.ChatChain;
 import com.dudu.voice.semantic.chain.ChoiseChain;
 import com.dudu.voice.semantic.chain.ChoosePageChain;
+import com.dudu.voice.semantic.chain.CmdChain;
 import com.dudu.voice.semantic.chain.CommonAddressChain;
 import com.dudu.voice.semantic.chain.MapSearchChain;
-import com.dudu.voice.semantic.chain.CmdChain;
 import com.dudu.voice.semantic.chain.NavigationChain;
 import com.dudu.voice.semantic.chain.OpenQaChain;
 import com.dudu.voice.semantic.chain.PoiChain;
@@ -54,11 +53,6 @@ public class ChainGenerator {
     public ChoiseChain getChoiseChain(){
         ChoiseChain chain = new ChoiseChain();
         chain.addChildChain(chain);
-        return chain;
-    }
-
-    public BaikeChain getBaikeChain(){
-        BaikeChain chain = new BaikeChain();
         return chain;
     }
 

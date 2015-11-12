@@ -299,6 +299,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
         cur_location = event.getAMapLocation();
         if (cur_location != null) {
+
             latLng = new LatLng(cur_location.getLatitude(),cur_location.getLongitude());
             if (listener!=null){
                 listener.onLocationChanged(cur_location);// 显示系统小蓝点
@@ -341,7 +342,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
                             @Override
                             public void run() {
-                                mapManager.setSearch(true);
                                 String playText = "您好，请说出您想去的地方或者关键字";
                                 VoiceManager.getInstance().startSpeaking(
                                         playText, SemanticConstants.TTS_START_UNDERSTANDING);
@@ -386,7 +386,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
                     @Override
                     public void run() {
-                        mapManager.setSearch(true);
                         String playText = "您好，请说出您要添加的地址";
                         VoiceManager.getInstance().startSpeaking(
                                 playText, SemanticConstants.TTS_START_UNDERSTANDING);
@@ -591,7 +590,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 case 0:
                     if (poiResult != null && poiResult.getQuery() != null) {
 
-                        mapManager.setSearch(false);
                         // 取得搜索到的poiitems有多少页
                         poiItems = poiResult.getPois();// 取得第一页的poiitem数据，页数从数字0开始
                         List<SuggestionCity> suggestionCities = poiResult
@@ -900,7 +898,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         }
         double[] destination = {mEndPoint.getLatitude(), mEndPoint.getLongitude()};
         mapManager.setNavi(false);
-        mapManager.setNaviBack(false  );
+        mapManager.setNaviBack(false);
         EventBus.getDefault().post(new Navigation(destination, Navigation.NAVI_NORMAL, driveMode));
     }
 

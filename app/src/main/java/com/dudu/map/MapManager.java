@@ -9,7 +9,6 @@ import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
 import java.io.Serializable;
 
-
 public class MapManager {
 
     public static final int SEARCH_POI = 1;             // poi地点搜索（我要去XXX，导航到XXX）
@@ -35,8 +34,6 @@ public class MapManager {
     private boolean isNavi = false;                     //  是否正在导航
 
     private boolean isNaviBack = false;                  // 是否正在导航返程中
-
-    private boolean isSearch = false;                   // 是否为语音“打开导航后”的搜索
 
     private int searchType = 0;
 
@@ -87,13 +84,6 @@ public class MapManager {
         this.searchType = searchType;
     }
 
-    public boolean isSearch() {
-        return isSearch;
-    }
-
-    public void setSearch(boolean isSearch) {
-        this.isSearch = isSearch;
-    }
 
     public static MapManager getInstance() {
         if (mInstance == null) {
