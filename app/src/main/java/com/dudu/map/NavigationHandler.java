@@ -36,9 +36,9 @@ public class NavigationHandler {
 
     private AMapNaviListener mAmapNaviListener;
 
-    private List<NaviLatLng> mStartPoints = new ArrayList<NaviLatLng>();
+    private List<NaviLatLng> mStartPoints = new ArrayList<>();
 
-    private List<NaviLatLng> mEndPoints = new ArrayList<NaviLatLng>();
+    private List<NaviLatLng> mEndPoints = new ArrayList<>();
 
     private NaviLatLng mEndPoint;
 

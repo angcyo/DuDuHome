@@ -947,6 +947,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     @Override
     public void onPause() {
         EventBus.getDefault().unregister(this);
+        SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
         mapManager.setSearchType(0);
         super.onPause();
     }

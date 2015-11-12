@@ -35,6 +35,7 @@ public class MapManager {
 
     private boolean isNaviBack = false;                  // 是否正在导航返程中
 
+
     private int searchType = 0;
 
     private String commonAddressType;
@@ -98,7 +99,6 @@ public class MapManager {
 		Activity topActivity = ActivitiesManager.getInstance().getTopActivity();
 
         setSearchType(type);
-
 		if (topActivity != null && topActivity instanceof LocationMapActivity) {
 			((LocationMapActivity) topActivity).handlerSearch(data, poiKeyWord);
 		} else {
