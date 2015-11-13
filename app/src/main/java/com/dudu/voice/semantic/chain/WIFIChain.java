@@ -47,7 +47,7 @@ public class WIFIChain extends SemanticChain {
             mVoiceManager.startSpeaking("热点已打开。", SemanticConstants.TTS_DO_NOTHING);
         } else if (wifiState.equals("close")) {
             WifiApAdmin.closeWifiAp(mContext);
-           mVoiceManager.startSpeaking("热点已关闭。", SemanticConstants.TTS_DO_NOTHING);
+            mVoiceManager.startSpeaking("热点已关闭。", SemanticConstants.TTS_DO_NOTHING);
         }
 
         FloatWindowUtil.removeFloatWindow();

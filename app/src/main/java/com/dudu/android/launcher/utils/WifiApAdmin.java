@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+
 import android.content.Context;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
@@ -43,7 +44,7 @@ public class WifiApAdmin {
         }
 
         File file = new File(dir, WIFI_CONF_NAME);
-        if(!file.exists()){
+        if (!file.exists()) {
             try {
                 file.createNewFile();
 
@@ -114,7 +115,7 @@ public class WifiApAdmin {
                     WifiConfiguration.class, boolean.class);
             WifiConfiguration netConfig = new WifiConfiguration();
             netConfig.SSID = ssid;
-            if (DEFAULT_PASSWORD.isEmpty()) {
+            if (password.isEmpty()) {
                 netConfig.allowedAuthAlgorithms.clear();
                 netConfig.allowedGroupCiphers.clear();
                 netConfig.allowedKeyManagement.clear();
@@ -149,33 +150,19 @@ public class WifiApAdmin {
         return false;
     }
 
-    public static boolean closeWifiAp(Context context) {
+    public static void closeWifiAp(Context context) {
         if (isWifiApEnabled(context)) {
             mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            Method setWifiApEnabled;
             try {
-                Method method = mWifiManager.getClass().getMethod(
-                        "getWifiApConfiguration");
-                method.setAccessible(true);
-
-                WifiConfiguration config = (WifiConfiguration) method
-                        .invoke(mWifiManager);
-
-                Method method2 = mWifiManager.getClass().getMethod(
-                        "setWifiApEnabled", WifiConfiguration.class,
-                        boolean.class);
-
-                boolean isClosed = (Boolean) method2.invoke(mWifiManager, config, false);
-                if (isClosed) {
-                    SharedPreferencesUtil.putBooleanValue(context, KEY_WIFI_AP_STATE, false);
-                }
-
-                return isClosed;
+                setWifiApEnabled = mWifiManager.getClass().getMethod(
+                        "setWifiApEnabled", WifiConfiguration.class, boolean.class);
+                setWifiApEnabled.invoke(mWifiManager, null, false);
+                SharedPreferencesUtil.putBooleanValue(context, KEY_WIFI_AP_STATE, false);
             } catch (Exception e) {
                 LogUtils.e(TAG, e.getMessage() + "");
             }
         }
-
-        return false;
     }
 
     public static boolean isWifiApEnabled(Context context) {
