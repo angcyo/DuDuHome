@@ -3,6 +3,7 @@ package com.dudu.map;
 import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -86,7 +87,7 @@ public class AmapLocationHandler implements AMapLocationListener {
         // 保存当前定位点
         LocationUtils.getInstance(mContext).setCurrentLocation(
                 location.getLatitude(), location.getLongitude());
-        Log.d("lxh","定位类型："+location.getProvider());
+        
         topActivity = ActivitiesManager.getInstance().getTopActivity();
         if ((topActivity instanceof LocationMapActivity) ||
                 (topActivity instanceof NaviCustomActivity) ||

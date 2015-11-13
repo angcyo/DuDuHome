@@ -66,7 +66,11 @@ public class Connection extends Thread {
         connector.setHandler(new MinaClientHandler());
         ConnectFuture future = connector.connect(new InetSocketAddress(host, port));// 创建连接
         future.awaitUninterruptibly(); // 等待连接创建完成
-        session = future.getSession(); // 获得session
+        try{
+            session = future.getSession();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     // 网络状态正常

@@ -34,6 +34,10 @@ import com.amap.api.navi.model.NaviLatLng;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.core.SuggestionCity;
+import com.amap.api.services.geocoder.GeocodeResult;
+import com.amap.api.services.geocoder.GeocodeSearch;
+import com.amap.api.services.geocoder.RegeocodeQuery;
+import com.amap.api.services.geocoder.RegeocodeResult;
 import com.amap.api.services.poisearch.PoiItemDetail;
 import com.amap.api.services.poisearch.PoiResult;
 import com.amap.api.services.poisearch.PoiSearch;
@@ -57,19 +61,15 @@ import com.dudu.android.launcher.utils.FloatWindow;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.JourneyTool;
 import com.dudu.android.launcher.utils.LocationUtils;
-import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.map.AmapLocationChangeEvent;
-import com.dudu.map.AmapLocationHandler;
 import com.dudu.map.MapManager;
 import com.dudu.map.Navigation;
-import com.dudu.map.NavigationHandler;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.SemanticType;
 import com.dudu.voice.semantic.VoiceManager;
 import com.dudu.voice.semantic.chain.ChoiseChain;
 import com.dudu.voice.semantic.chain.ChoosePageChain;
 import com.dudu.voice.semantic.engine.SemanticProcessor;
-import com.iflytek.cloud.Setting;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,7 +84,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by pc on 2015/11/3.
  */
-public class LocationMapActivity extends BaseNoTitlebarAcitivity implements LocationSource {
+public class LocationMapActivity extends BaseNoTitlebarAcitivity implements LocationSource,GeocodeSearch.OnGeocodeSearchListener {
 
     private static final String TAG = "LocationMapActivity";
     private LinearLayout endLocationLL;
@@ -107,7 +107,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     private PoiSearch poiSearch;// POI搜索
     private PoiOverlay poiOverlay = null;
     private String cur_locationDesc = "";
-    private String cityCode = "0755";
+    private String cityCode = "";
     private List<PoiItem> poiItems = null;
     private List<PoiResultInfo> poiResultList = new ArrayList<PoiResultInfo>();
     private int chooseType;
@@ -116,7 +116,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     private AMapLocation cur_location;
     private NaviLatLng mEndPoint = new NaviLatLng();
-    private LatLng latLng;
 
     private boolean isManual = false;
 
@@ -141,6 +140,16 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     private Logger log;
 
     private static final int REMOVEWINDOW_TIME = 15 * 1000;
+
+    private Bundle locBundle;
+
+    private String locProvider;
+
+    private GeocodeSearch geocoderSearch;
+
+    private LatLonPoint latLonPoint;
+
+    private boolean isGetCurdesc = false;
 
     private Runnable removeWindowRunnable = new Runnable() {
 
@@ -259,10 +268,10 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         super.onResume();
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
-        if (latLng != null) {
+
+        if (latLonPoint != null) {
             handlerOpenNavi();
         }
-
     }
 
     private void getMapEntity(Serializable data) {
@@ -276,7 +285,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     private void setUpMap() {
         cityCode = LocationUtils.getInstance(this).getCurrentCityCode();
         double[] curPoint = LocationUtils.getInstance(this).getCurrentLocation();
-        latLng = new LatLng(curPoint[0], curPoint[1]);
+        latLonPoint = new LatLonPoint(curPoint[0], curPoint[1]);
         MyLocationStyle myLocationStyle = new MyLocationStyle();
         myLocationStyle.myLocationIcon(BitmapDescriptorFactory
                 .fromResource(R.drawable.location_marker));// 设置小蓝点的图标
@@ -291,9 +300,12 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         aMap.setMyLocationEnabled(true);// 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
         //设置定位的类型为定位模式 ，可以由定位、跟随或地图根据面向方向旋转几种
         aMap.setMyLocationType(AMap.LOCATION_TYPE_LOCATE);
-        aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+        aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(curPoint[0],curPoint[1]), 15));
         // 初始语音播报资源
         setVolumeControlStream(AudioManager.STREAM_MUSIC);// 设置声音控制
+
+        geocoderSearch = new GeocodeSearch(this);
+        geocoderSearch.setOnGeocodeSearchListener(this);
 
     }
 
@@ -302,22 +314,37 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         cur_location = event.getAMapLocation();
         if (cur_location != null) {
 
-            latLng = new LatLng(cur_location.getLatitude(), cur_location.getLongitude());
+            latLonPoint = new LatLonPoint(cur_location.getLatitude(), cur_location.getLongitude());
+
             if (listener != null) {
                 listener.onLocationChanged(cur_location);// 显示系统小蓝点
             }
-
-            Bundle locBundle = cur_location.getExtras();
-            if (locBundle != null) {
-                cityCode = locBundle.getString("citycode");
-                cur_locationDesc = locBundle.getString("desc");
-            }
-
-        } else {
-
-            ToastUtils.showTip("获取定位失败，请检查网络");
+            locBundle = cur_location.getExtras();
+            locProvider = cur_location.getProvider();
         }
 
+    }
+
+    public void getCur_locationDesc() {
+        Log.d("lxh","获取位置111");
+        if (locProvider!=null&&locProvider.equals("lbs")) {
+
+            cur_locationDesc = locBundle.getString("desc");
+            String playText = "您好，您现在在" + cur_locationDesc;
+            mVoiceManager.startSpeaking(playText,SemanticConstants.TTS_DO_NOTHING,true);
+            toNaivActivity(REMOVEWINDOW_TIME);
+        }
+        else{
+            isGetCurdesc = true;
+        }
+    }
+
+    public String getCityCode() {
+
+        if (locProvider!=null&&locProvider.equals("lbs")) {
+            cityCode = locBundle.getString("citycode");
+        }
+        return cityCode;
     }
 
     public void handlerSearch(Serializable data, String keyWord) {
@@ -333,6 +360,9 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     }
 
     public void handlerOpenNavi() {
+        RegeocodeQuery query = new RegeocodeQuery(latLonPoint, 200,
+                GeocodeSearch.AMAP);
+        geocoderSearch.getFromLocationAsyn(query);
         switch (mapManager.getSearchType()) {
 
             case MapManager.SEARCH_NAVI:
@@ -353,14 +383,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     }
 
                 } else {
-                    String playText = "您好，您现在在" + cur_locationDesc;
-                    if (TextUtils.isEmpty(cur_locationDesc)) {
-                        playText = "暂时无法获取到您的详细位置，请稍后再试";
-                    }
-                    VoiceManager.getInstance().startSpeaking(playText,
-                            SemanticConstants.TTS_START_WAKEUP);
-                    removeFloatWindow(REMOVEWINDOW_TIME);
-                    toNaivActivity(REMOVEWINDOW_TIME);
+                    getCur_locationDesc();
                 }
 
                 break;
@@ -464,37 +487,21 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         Log.d(TAG, "searchKeyWord ： " + searchKeyWord);
         SemanticProcessor.getProcessor().switchSemanticType(SemanticType.MAP_CHOISE);
         if (!TextUtils.isEmpty(searchKeyWord)) {
-
             if (Constants.CURRENT_POI.equals(searchKeyWord)) {
-                String playText = "您好，您现在在" + cur_locationDesc;
-                if (TextUtils.isEmpty(cur_locationDesc)) {
-                    playText = "暂时无法获取到您的详细位置，请稍后再试";
-                }
-                VoiceManager.getInstance().startSpeaking(playText,
-                        SemanticConstants.TTS_START_WAKEUP);
-                removeFloatWindow(REMOVEWINDOW_TIME);
-                toNaivActivity(REMOVEWINDOW_TIME);
+                getCur_locationDesc();
                 return;
             }
-            if (!TextUtils.isEmpty(cityCode)) {
-                FloatWindowUtil.removeFloatWindow();
-                showProgressDialog();// 显示进度框
-                query = new PoiSearch.Query(searchKeyWord, "", cityCode);// 第一个参数表示搜索字符串，第二个参数表示poi搜索类型，第三个参数表示poi搜索区域（空字符串代表全国）
-                query.setPageSize(20);// 设置每页最多返回多少条poi item
-                query.setPageNum(0);// 设置查第一页
-                poiSearch = new PoiSearch(this, query);
-                if (mapManager.getSearchType() == MapManager.SEARCH_NEARBY) {
-                    poiSearch.setBound(new PoiSearch.SearchBound(new LatLonPoint(latLng.latitude, latLng.longitude), 2000));
-                }
-                poiSearch.setOnPoiSearchListener(onPoiSearchListener);
-                poiSearch.searchPOIAsyn();
-            } else {
-
-                mVoiceManager.startSpeaking("当前定位失败,请稍后再试！", SemanticConstants.TTS_DO_NOTHING, true);
-                removeFloatWindow(REMOVEWINDOW_TIME);
-                toNaivActivity(REMOVEWINDOW_TIME);
+            FloatWindowUtil.removeFloatWindow();
+            showProgressDialog();// 显示进度框
+            query = new PoiSearch.Query(searchKeyWord, "", getCityCode());
+            query.setPageSize(20);// 设置每页最多返回多少条poi item
+            query.setPageNum(0);// 设置查第一页
+            poiSearch = new PoiSearch(this, query);
+            if (mapManager.getSearchType() == MapManager.SEARCH_NEARBY) {
+                poiSearch.setBound(new PoiSearch.SearchBound(new LatLonPoint(latLonPoint.getLatitude(), latLonPoint.getLongitude()), 2000));
             }
-
+            poiSearch.setOnPoiSearchListener(onPoiSearchListener);
+            poiSearch.searchPOIAsyn();
         } else {
 
             String playText = "您好，关键字有误，请重新输入";
@@ -860,11 +867,9 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     }
 
     private void setPoiList() {
-
-        if (latLng != null && !poiItems.isEmpty()) {
+        if (latLonPoint != null && !poiItems.isEmpty()) {
             // 高德坐标转换为真实坐标
-            double[] startPoints_gaode = Coordinate.chinatowg(
-                    latLng.longitude, latLng.latitude);
+            double[] startPoints_gaode = Coordinate.chinatowg( latLonPoint.getLongitude(), latLonPoint.getLatitude());
             poiResultList.clear();
             for (int i = 0; i < poiItems.size(); i++) {
                 PoiResultInfo poiResultInfo = new PoiResultInfo();
@@ -938,6 +943,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     @Override
     public void activate(OnLocationChangedListener onLocationChangedListener) {
         listener = onLocationChangedListener;
+
     }
 
     @Override
@@ -983,6 +989,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     }
 
     public void toNaivActivity(int t) {
+        removeFloatWindow(t);
         mhandler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -991,6 +998,30 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
             }
         }, t);
 
+    }
+
+    @Override
+    public void onRegeocodeSearched(RegeocodeResult result, int rCode) {
+
+        if (rCode == 0) {
+            if (result != null && result.getRegeocodeAddress() != null
+                    &&!TextUtils.isEmpty(result.getRegeocodeAddress().getFormatAddress())) {
+                cityCode = result.getRegeocodeAddress().getCity();
+                cur_locationDesc = "您好，您现在在"+result.getRegeocodeAddress().getFormatAddress()
+                        + "附近";
+                if(isGetCurdesc){
+                    mVoiceManager.startSpeaking(cur_locationDesc, SemanticConstants.TTS_DO_NOTHING,true);
+                    toNaivActivity(REMOVEWINDOW_TIME);
+                }
+
+            }
+        }
+    }
+
+    @Override
+    public void onGeocodeSearched(GeocodeResult geocodeResult, int i) {
 
     }
+
+
 }

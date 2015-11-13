@@ -17,8 +17,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.functions.Action1;
 
 public class BleOBD {
     private BluetoothGatt mBluetoothGatt;
@@ -95,8 +98,16 @@ public class BleOBD {
 
     public void onEventBackgroundThread(Event.DisConnect event){
 
-        if(event.getType()== Event.ConnectType.UNKNOWN)
-          EventBus.getDefault().post(new Event.StartScanner());
+        if(event.getType()!= Event.ConnectType.BLE){
+            Observable.timer(10, TimeUnit.SECONDS)
+                    .subscribe(new Action1<Long>() {
+                        @Override
+                        public void call(Long aLong) {
+                            EventBus.getDefault().post(new Event.StartScanner());
+                        }
+                    });
+        }
+
     }
 
     private void parseOBDData(String result){
@@ -163,7 +174,7 @@ public class BleOBD {
             if(driveBehaviorHappendListener!=null)
                 driveBehaviorHappendListener.onDriveBehaviorHappend(DriveBehaviorHappend.TYPE_HARDBRAK);
         }
-
+       break_spd = b_spd;
     }
 
     private void parseFlamoutData(String result){

@@ -477,6 +477,7 @@ public class VoiceManager {
                     case SemanticConstants.TTS_START_UNDERSTANDING:
                         if (mMisunderstandCount >= MISUNDERSTAND_REPEAT_COUNT) {
                             FloatWindowUtil.removeFloatWindow();
+                            SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
                             return;
                         }
 

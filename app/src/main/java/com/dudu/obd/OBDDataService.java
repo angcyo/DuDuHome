@@ -159,31 +159,9 @@ public class OBDDataService extends Service implements
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        startCommand();
+
         return START_STICKY;
     }
-
-    private void startCommand() {
-        log = LoggerFactory.getLogger("odb.service");
-        log.debug("odbservice startCommand");
-        bleOBD = new BleOBD();
-        bleOBD.initOBD();
-        scanBle();
-        DriveBehaviorHappend.getInstance().setListener(this);
-        try {
-            if (conn != null && !isOpen && !conn.isAlive()) {
-
-                conn.start();
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        activeDevice();
-
-    }
-
-
 
     @Override
     public void onCreate() {
@@ -208,6 +186,28 @@ public class OBDDataService extends Service implements
 
         initSensor();
         initConn();
+
+        log = LoggerFactory.getLogger("odb.service");
+        log.debug("odbservice startCommand");
+        bleOBD = new BleOBD();
+        bleOBD.initOBD();
+//        scanBle();
+        DriveBehaviorHappend.getInstance().setListener(this);
+        try {
+            if (conn != null && !isOpen && !conn.isAlive()) {
+                mhandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        conn.start();
+                    }
+                },10*1000);
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        activeDevice();
 
         if (dataCollectionThread == null) {
             dataCollectionThread = new Thread();
