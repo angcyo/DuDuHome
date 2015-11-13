@@ -87,7 +87,7 @@
         <activity
             android:name=".ui.activity.NaviCustomActivity"
             android:launchMode="singleInstance"
-            android:theme="@style/noAnimTheme"
+            android:theme="@style/Theme.TitleBar"
             android:screenOrientation="landscape" />
 
         <activity

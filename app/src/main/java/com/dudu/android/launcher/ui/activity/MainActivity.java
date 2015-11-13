@@ -32,6 +32,7 @@ import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
 import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.LocationUtils;
+import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Util;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
@@ -88,33 +89,9 @@ public class MainActivity extends BaseTitlebarActivity implements
         //延迟10S开启热点
         new Handler().postDelayed(new Runnable() {
             public void run() {
-                startWifiAp();
+                WifiApAdmin.initWifiApState(MainActivity.this);
             }
         }, TIME);
-    }
-
-    private void startWifiAp() {
-        File directory = new File(FileUtils.getExternalStorageDirectory(), "nodogsplash");
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
-
-        File file = new File(directory, "nodogsplash.conf");
-        if(file.exists()){
-            //开启热点
-            WifiApAdmin.startWifiAp(this);
-        } else {
-            try {
-                file.createNewFile();
-                InputStream isAsset = getAssets().open("nodogsplash.conf");
-                if (FileUtils.copyFileToSd(isAsset, file)){
-                    //开启热点
-                    WifiApAdmin.startWifiAp(this);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     private void checkBlueTooth() {

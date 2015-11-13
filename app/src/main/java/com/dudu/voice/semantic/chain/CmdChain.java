@@ -194,6 +194,7 @@ public class CmdChain extends SemanticChain {
     private void handleExitCmd() {
         FloatWindowUtil.removeFloatWindow();
         SemanticProcessor.getProcessor().clearSemanticStack();
+        SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
     }
 
 }

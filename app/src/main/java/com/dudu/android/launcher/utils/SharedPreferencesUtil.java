@@ -1,47 +1,60 @@
 package com.dudu.android.launcher.utils;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
-@SuppressLint("CommitPrefEdits")
+/**
+ * SharedPreferences工具类
+ */
 public class SharedPreferencesUtil {
 
+    public static SharedPreferences getDefaultSharedPreferences(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context);
+    }
 
+    public static SharedPreferences getSharedPreferences(Context context, String name) {
+        return context.getSharedPreferences(name, Context.MODE_PRIVATE);
+    }
 
-	/**
-	 * 保存缓存信息
-	 * 
-	 * @param mContext
-	 */
-	public static void savePreferences(Context mContext, String name,
-			String value) {
-		SharedPreferences.Editor editor = mContext.getSharedPreferences(
-				"dudu_reader", Activity.MODE_PRIVATE).edit();
-		editor.putString(name, value);
-		editor.commit();
-	}
+    public static void putStringValue(Context context, String name, String key, String value) {
+        SharedPreferences.Editor editor = getSharedPreferences(context, name).edit();
+        editor.putString(key, value);
+        editor.commit();
+    }
 
-	/**
-	 * 获取缓存信息
-	 * 
-	 * @param mContext
-	 * @return
-	 */
-	public static String getPreferences(Context mContext, String name,
-			String defaultValue) {
-		SharedPreferences sharedPreferences = mContext.getSharedPreferences(
-				"dudu_reader", Activity.MODE_PRIVATE);
-		return sharedPreferences.getString(name, defaultValue);
-	}
+    public static void putStringValue(Context context, String key, String value) {
+        SharedPreferences.Editor editor = getDefaultSharedPreferences(context).edit();
+        editor.putString(key, value);
+        editor.commit();
+    }
 
-	/**
-	 * 获取缓存信息
-	 * 
-	 * @param mContext
-	 */
-	public static String getPreferences(Context mContext, String name) {
-		return getPreferences(mContext, name, "-1");
-	}
+    public static String getStringValue(Context context, String key, String defValue) {
+        return  getDefaultSharedPreferences(context).getString(key, defValue);
+    }
+
+    public static String getStringValue(Context context, String name, String key, String defValue) {
+        return getSharedPreferences(context, name).getString(key, defValue);
+    }
+
+    public static void putBooleanValue(Context context, String name, String key, boolean value) {
+        SharedPreferences.Editor editor = getSharedPreferences(context, name).edit();
+        editor.putBoolean(key, value);
+        editor.commit();
+    }
+
+    public static void putBooleanValue(Context context, String key, boolean value) {
+        SharedPreferences.Editor editor = getDefaultSharedPreferences(context).edit();
+        editor.putBoolean(key, value);
+        editor.commit();
+    }
+
+    public static boolean getBooleanValue(Context context, String key, boolean defValue) {
+        return  getDefaultSharedPreferences(context).getBoolean(key, defValue);
+    }
+
+    public static boolean getBooleanValue(Context context, String name, String key, boolean defValue) {
+        return getSharedPreferences(context, name).getBoolean(key, defValue);
+    }
+
 }

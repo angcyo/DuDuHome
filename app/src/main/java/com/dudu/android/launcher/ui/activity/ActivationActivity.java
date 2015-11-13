@@ -47,7 +47,7 @@ public class ActivationActivity extends BaseTitlebarActivity {
 
             @Override
             public void onSwitchChanged(SlideSwitch obj, int status) {
-                startOrCloseWifiAp();
+                toggleWifiAp();
             }
         });
 
@@ -72,8 +72,7 @@ public class ActivationActivity extends BaseTitlebarActivity {
         slideSwitch.setStatus(WifiApAdmin.isWifiApEnabled(ActivationActivity.this));
     }
 
-    private void startOrCloseWifiAp() {
-
+    private void toggleWifiAp() {
         if (WifiApAdmin.isWifiApEnabled(ActivationActivity.this)) {
             WifiApAdmin.closeWifiAp(ActivationActivity.this);
         } else {
@@ -84,7 +83,7 @@ public class ActivationActivity extends BaseTitlebarActivity {
     private void showWifiSettingDialog() {
         if (passwordSetDialog == null) {
             passwordSetDialog = WifiPasswordSetDialog.createDialog(
-                    ActivationActivity.this, wifiStateCallBack);
+                    ActivationActivity.this, mWifiStateCallBack);
             passwordSetDialog.setCanceledOnTouchOutside(true);
             Window dialogWindow = passwordSetDialog.getWindow();
             dialogWindow.setGravity(Gravity.CENTER);
@@ -93,7 +92,7 @@ public class ActivationActivity extends BaseTitlebarActivity {
         passwordSetDialog.show();
     }
 
-    WifiApAdmin.WifiSettingStateCallback wifiStateCallBack = new WifiApAdmin.WifiSettingStateCallback() {
+    WifiApAdmin.WifiSettingStateCallback mWifiStateCallBack = new WifiApAdmin.WifiSettingStateCallback() {
 
         @Override
         public void onWifiStateChanged(boolean open) {

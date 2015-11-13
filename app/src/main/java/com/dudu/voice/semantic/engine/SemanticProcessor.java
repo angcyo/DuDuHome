@@ -169,6 +169,7 @@ public class SemanticProcessor {
         mChainMap.put(SemanticConstants.SERVICE_COMMONADDRESS, mChainGenerator.getCommonAddressChain());
         mChainMap.put(SemanticConstants.SERVICE_CAR_CHECKING, mChainGenerator.getCarCheckingChain());
         mChainMap.put(SemanticConstants.SERVICE_WIFI, mChainGenerator.getWIFIChain());
+        mChainMap.put(SemanticConstants.SERVICE_BAIKE, mChainGenerator.getBaikeChain());
     }
 
     private void addCarCheckingChains() {

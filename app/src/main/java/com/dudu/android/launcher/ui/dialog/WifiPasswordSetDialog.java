@@ -50,8 +50,7 @@ public class WifiPasswordSetDialog extends Dialog {
 
 		password1ET = (EditText) findViewById(R.id.password1ET);
 		password2ET = (EditText) findViewById(R.id.password2ET);
-		password1ET.setText(SharedPreferencesUtil.getPreferences(mContext, "wifi_password", "88888888"));
-		password2ET.setText(SharedPreferencesUtil.getPreferences(mContext, "wifi_password", "88888888"));
+
 
 		wifiPasswordSetBT = (Button) findViewById(R.id.wifiPasswordSetBT);
 		wifiPasswordSetBT.setOnClickListener(new View.OnClickListener() {
@@ -84,11 +83,7 @@ public class WifiPasswordSetDialog extends Dialog {
 			return;
 		}
 
-		boolean isRight = WifiApAdmin.startWifiAp(mContext,
-				SharedPreferencesUtil.getPreferences(mContext, "wifi_ssid", "DuduHotSpot"),
-				password2ET.getText().toString(), mCallBack);
-
-		if (isRight) {
+		if (WifiApAdmin.setWifiApPassword(mContext, password2ET.getText().toString())) {
 			ToastUtils.showTip("设置密码成功");
 			this.dismiss();
 		} else {

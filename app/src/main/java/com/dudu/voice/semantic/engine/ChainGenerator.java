@@ -1,6 +1,7 @@
 package com.dudu.voice.semantic.engine;
 
 import com.dudu.voice.semantic.chain.AdjustVolumeChain;
+import com.dudu.voice.semantic.chain.BaikeChain;
 import com.dudu.voice.semantic.chain.CarCheckingChain;
 import com.dudu.voice.semantic.chain.CarCheckingChoiseChain;
 import com.dudu.voice.semantic.chain.CarCheckingWhetherChain;
@@ -103,6 +104,11 @@ public class ChainGenerator {
 
     public CarCheckingWhetherChain getCarCheckingChoiseChain() {
         CarCheckingWhetherChain chain = new CarCheckingWhetherChain();
+        return chain;
+    }
+
+    public BaikeChain getBaikeChain() {
+        BaikeChain chain = new BaikeChain();
         return chain;
     }
 

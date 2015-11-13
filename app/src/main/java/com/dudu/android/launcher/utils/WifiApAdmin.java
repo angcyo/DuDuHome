@@ -1,82 +1,92 @@
 package com.dudu.android.launcher.utils;
 
-import java.lang.reflect.InvocationTargetException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import android.content.Context;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
-import android.util.Log;
+
 
 public class WifiApAdmin {
 
     public static final String TAG = "WifiApAdmin";
 
-    private static final int WIFI_AP_STATE_ENABLED = 3;
-    private static final int WIFI_AP_STATE_FAILED = 4;
-    private static String mSSID = "DuduHotSpot";
-    private static String mPasswd = "88888888";
-    private static final String WIFISSID = "wifi_ssid";
-    private static final String WIFIPASSWORD = "wifi_password";
+    public static final String KEY_WIFI_AP_STATE = "wifi_ap_state";
+    public static final String KEY_WIFI_AP_SSID = "wifi_ssid";
+    public static final String KEY_WIFI_AP_PASSWORD = "wifi_password";
+
+    public static final String DEFAULT_SSID = "DuduHotSpot";
+    public static final String DEFAULT_PASSWORD = "88888888";
+
+    private static final String WIFI_CONF_DIRECTORY = "nodogsplash";
+    private static final String WIFI_CONF_NAME = "nodogsplash.conf";
 
     private static WifiManager mWifiManager = null;
-
-    private Context mContext = null;
-
-    private WifiApAdmin(Context context) {
-        mContext = context;
-        mWifiManager = (WifiManager) mContext
-                .getSystemService(Context.WIFI_SERVICE);
-
-    }
-
-    private static WifiSettingStateCallback mWifiCallBack;
 
     /**
      * 设置WIFI热点密码
      *
      * @param password
      */
-    public static boolean setWifiSharedKey(Context context, String password) {
-        mPasswd = password;
-        return startWifiAp(context, "", password,null);
+    public static boolean setWifiApPassword(Context context, String password) {
+        SharedPreferencesUtil.putStringValue(context, KEY_WIFI_AP_PASSWORD, password);
+        return startWifiAp(context, SharedPreferencesUtil.getStringValue(context,
+                KEY_WIFI_AP_SSID, DEFAULT_SSID), password, null);
     }
 
-    /**
-     * 设置WIFI热点名称
-     *
-     * @param ssid
-     */
-    public static boolean setWifiSSID(Context context, String ssid) {
-        mSSID = ssid;
-        return startWifiAp(context, ssid, WIFIPASSWORD, null);
-    }
-
-    public static boolean startWifiAp(final Context context) {
-        String ssid = SharedPreferencesUtil.getPreferences(context,WIFISSID,"DuDuSpot");
-        String password = SharedPreferencesUtil.getPreferences(context,WIFIPASSWORD,"88888888");
-        if (Util.isTaxiVersion()) {
-            SharedPreferencesUtil.savePreferences(context, WIFISSID, mSSID);
-            SharedPreferencesUtil.savePreferences(context, WIFIPASSWORD, "");
-        } else {
-            SharedPreferencesUtil.savePreferences(context, WIFISSID, mSSID);
-            SharedPreferencesUtil.savePreferences(context, WIFIPASSWORD, password);
+    private static boolean checkWifiConfigFile(Context context) {
+        File dir = new File(FileUtils.getExternalStorageDirectory(), WIFI_CONF_DIRECTORY);
+        if (!dir.exists()) {
+            dir.mkdirs();
         }
-        return startWifiAp(context,ssid,password,null);
+
+        File file = new File(dir, WIFI_CONF_NAME);
+        if(!file.exists()){
+            try {
+                file.createNewFile();
+
+                InputStream isAsset = context.getAssets().open(WIFI_CONF_NAME);
+
+                FileUtils.copyFileToSd(isAsset, file);
+            } catch (IOException e) {
+                LogUtils.e(TAG, e.getMessage() + "");
+                return false;
+            }
+        }
+
+        return true;
     }
 
-    /**
-     * @param context
-     * @param ssid
-     * @param passwd
-     * @return
-     */
-    public static boolean startWifiAp(final Context context, String ssid,
-                                      String passwd, WifiSettingStateCallback callback) {
+    public static boolean initWifiApState(Context context) {
+        if (!checkWifiConfigFile(context)) {
+            return false;
+        }
+
+        String ssid = SharedPreferencesUtil.getStringValue(context, KEY_WIFI_AP_SSID, DEFAULT_SSID);
+        String password = SharedPreferencesUtil.getStringValue(context, KEY_WIFI_AP_PASSWORD, DEFAULT_PASSWORD);
+        if (Util.isTaxiVersion()) {
+            startWifiAp(context, DEFAULT_SSID, "", null);
+        } else {
+            if (SharedPreferencesUtil.getBooleanValue(context, KEY_WIFI_AP_STATE, false)) {
+                startWifiAp(context, ssid, password, null);
+            }
+        }
+
+        return startWifiAp(context, ssid, password, null);
+    }
+
+    public static boolean startWifiAp(Context context) {
+        String ssid = SharedPreferencesUtil.getStringValue(context, KEY_WIFI_AP_SSID, DEFAULT_SSID);
+        String password = SharedPreferencesUtil.getStringValue(context, KEY_WIFI_AP_PASSWORD, DEFAULT_PASSWORD);
+        return startWifiAp(context, ssid, password, null);
+    }
+
+    public static boolean startWifiAp(Context context, String ssid,
+                                      String password, WifiSettingStateCallback callback) {
         mWifiManager = (WifiManager) context
                 .getSystemService(Context.WIFI_SERVICE);
-
-        mSSID = ssid;
-        mPasswd = passwd;
 
         closeWifiAp(context);
 
@@ -84,52 +94,27 @@ public class WifiApAdmin {
             mWifiManager.setWifiEnabled(false);
         }
 
-        if (!doStratWifiAp(context))
+        if (!startWifiAp(ssid, password)) {
             return false;
+        }
 
-        // 保存wifi热点SSID和password
-        SharedPreferencesUtil.savePreferences(context, WIFISSID, ssid);
-        SharedPreferencesUtil.savePreferences(context, WIFIPASSWORD, passwd);
+        SharedPreferencesUtil.putBooleanValue(context, KEY_WIFI_AP_STATE, true);
 
-        MyTimerCheck timerCheck = new MyTimerCheck() {
-
-            @Override
-            public void doTimerCheckWork() {
-
-                if (isWifiApEnabled(context)) {
-                    Log.v(TAG, "Wifi enabled success!");
-                    this.exit();
-                } else {
-                    Log.v(TAG, "Wifi enabled failed!");
-                }
-            }
-
-            @Override
-            public void doTimeOutWork() {
-                this.exit();
-            }
-        };
-
-        timerCheck.start(15, 1000);
         if (callback != null) {
-            mWifiCallBack = callback;
-            mWifiCallBack.onWifiStateChanged(true);
+            callback.onWifiStateChanged(true);
         }
 
         return true;
     }
 
-    private static boolean doStratWifiAp(final Context context) {
-        Method method1 = null;
-        mSSID = SharedPreferencesUtil.getPreferences(context, WIFISSID, "DuduHotSpot");
-        mPasswd = SharedPreferencesUtil.getPreferences(context, WIFIPASSWORD, "88888888");
+    private static boolean startWifiAp(String ssid, String password) {
+        Method method;
         try {
-            method1 = mWifiManager.getClass().getMethod("setWifiApEnabled",
+            method = mWifiManager.getClass().getMethod("setWifiApEnabled",
                     WifiConfiguration.class, boolean.class);
             WifiConfiguration netConfig = new WifiConfiguration();
-            netConfig.SSID = mSSID;
-
-            if (mPasswd.isEmpty()) {
+            netConfig.SSID = ssid;
+            if (DEFAULT_PASSWORD.isEmpty()) {
                 netConfig.allowedAuthAlgorithms.clear();
                 netConfig.allowedGroupCiphers.clear();
                 netConfig.allowedKeyManagement.clear();
@@ -139,7 +124,7 @@ public class WifiApAdmin {
                 netConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
                 netConfig.wepTxKeyIndex = 0;
             } else {
-                netConfig.preSharedKey = mPasswd;
+                netConfig.preSharedKey = password;
                 netConfig.allowedAuthAlgorithms
                         .set(WifiConfiguration.AuthAlgorithm.OPEN);
                 netConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
@@ -155,31 +140,18 @@ public class WifiApAdmin {
                 netConfig.allowedGroupCiphers
                         .set(WifiConfiguration.GroupCipher.TKIP);
             }
-            return (Boolean) method1.invoke(mWifiManager, netConfig, true);
 
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            return (Boolean) method.invoke(mWifiManager, netConfig, true);
+        } catch (Exception e) {
+            LogUtils.e(TAG, e.getMessage() + "");
         }
+
         return false;
     }
 
     public static boolean closeWifiAp(Context context) {
-
         if (isWifiApEnabled(context)) {
-            System.out.println("------close wifiAp");
-            if (mWifiManager == null) {
-                mWifiManager = (WifiManager) context
-                        .getSystemService(Context.WIFI_SERVICE);
-            }
-
+            mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
             try {
                 Method method = mWifiManager.getClass().getMethod(
                         "getWifiApConfiguration");
@@ -191,17 +163,18 @@ public class WifiApAdmin {
                 Method method2 = mWifiManager.getClass().getMethod(
                         "setWifiApEnabled", WifiConfiguration.class,
                         boolean.class);
-                return (Boolean) method2.invoke(mWifiManager, config, false);
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
+
+                boolean isClosed = (Boolean) method2.invoke(mWifiManager, config, false);
+                if (isClosed) {
+                    SharedPreferencesUtil.putBooleanValue(context, KEY_WIFI_AP_STATE, false);
+                }
+
+                return isClosed;
+            } catch (Exception e) {
+                LogUtils.e(TAG, e.getMessage() + "");
             }
         }
+
         return false;
     }
 
@@ -215,49 +188,11 @@ public class WifiApAdmin {
                     .getMethod("isWifiApEnabled");
             method.setAccessible(true);
             return (Boolean) method.invoke(mWifiManager);
-
-        } catch (NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtils.e(TAG, e.getMessage() + "");
         }
 
         return false;
-    }
-
-    /**
-     * WIFI热点是否处于打开
-     *
-     * @return
-     */
-    public static boolean isWifiApOpen(Context context) {
-        if (mWifiManager == null) {
-            mWifiManager = (WifiManager) context
-                    .getSystemService(Context.WIFI_SERVICE);
-        }
-        try {
-            Method method = mWifiManager.getClass().getMethod("getWifiApState");
-            int state = (Integer) method.invoke(mWifiManager);
-            return state == WIFI_AP_STATE_ENABLED;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public static int getWifiApState(Context context, WifiManager wifiManager) {
-        if (wifiManager == null) {
-            wifiManager = (WifiManager) context
-                    .getSystemService(Context.WIFI_SERVICE);
-        }
-        try {
-            Method method = wifiManager.getClass().getMethod("getWifiApState");
-            int i = (Integer) method.invoke(wifiManager);
-            System.out.println("-------------wifi state:" + i);
-            return i;
-        } catch (Exception e) {
-            return WIFI_AP_STATE_FAILED;
-        }
     }
 
     /**

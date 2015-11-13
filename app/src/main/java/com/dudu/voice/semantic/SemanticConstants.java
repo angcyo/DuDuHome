@@ -9,8 +9,6 @@ public class SemanticConstants {
 
     public static final String SERVICE_OPENQA = "openQA";
 
-    public static final String SERVICE_FAQ = "faq";
-
     public static final String SERVICE_BAIKE = "baike";
     /**
      * 地图
