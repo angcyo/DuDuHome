@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.amap.api.location.AMapLocation;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
@@ -77,6 +78,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import de.greenrobot.event.EventBus;
 
 /**
@@ -138,7 +140,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     private Logger log;
 
-    private static final int REMOVEWINDOW_TIME = 15*1000;
+    private static final int REMOVEWINDOW_TIME = 15 * 1000;
 
     private Runnable removeWindowRunnable = new Runnable() {
 
@@ -257,7 +259,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         super.onResume();
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
-        if(latLng != null){
+        if (latLng != null) {
             handlerOpenNavi();
         }
 
@@ -274,7 +276,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     private void setUpMap() {
         cityCode = LocationUtils.getInstance(this).getCurrentCityCode();
         double[] curPoint = LocationUtils.getInstance(this).getCurrentLocation();
-        latLng = new LatLng(curPoint[0],curPoint[1]);
+        latLng = new LatLng(curPoint[0], curPoint[1]);
         MyLocationStyle myLocationStyle = new MyLocationStyle();
         myLocationStyle.myLocationIcon(BitmapDescriptorFactory
                 .fromResource(R.drawable.location_marker));// 设置小蓝点的图标
@@ -289,7 +291,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         aMap.setMyLocationEnabled(true);// 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
         //设置定位的类型为定位模式 ，可以由定位、跟随或地图根据面向方向旋转几种
         aMap.setMyLocationType(AMap.LOCATION_TYPE_LOCATE);
-        aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
+        aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
         // 初始语音播报资源
         setVolumeControlStream(AudioManager.STREAM_MUSIC);// 设置声音控制
 
@@ -300,8 +302,8 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         cur_location = event.getAMapLocation();
         if (cur_location != null) {
 
-            latLng = new LatLng(cur_location.getLatitude(),cur_location.getLongitude());
-            if (listener!=null){
+            latLng = new LatLng(cur_location.getLatitude(), cur_location.getLongitude());
+            if (listener != null) {
                 listener.onLocationChanged(cur_location);// 显示系统小蓝点
             }
 
@@ -311,7 +313,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 cur_locationDesc = locBundle.getString("desc");
             }
 
-        }else{
+        } else {
 
             ToastUtils.showTip("获取定位失败，请检查网络");
         }
@@ -421,32 +423,32 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         MapSlots slots = mapEntity.getSlots();
         MapSlotsLoc location = slots.getEndLoc();
         if (location != null) {
-            if(!TextUtils.isEmpty(location.getPoi())){
+            if (!TextUtils.isEmpty(location.getPoi())) {
                 searchKeyWord = location.getPoi();
 
-            }else{
-                if(!TextUtils.isEmpty(location.getAreaAddr())){
+            } else {
+                if (!TextUtils.isEmpty(location.getAreaAddr())) {
                     searchKeyWord = location.getAreaAddr();
-                }else{
-                    if(!TextUtils.isEmpty(location.getCity())){
+                } else {
+                    if (!TextUtils.isEmpty(location.getCity())) {
                         searchKeyWord = location.getCity();
                     }
                 }
 
             }
 
-        }else{
+        } else {
 
             MapLocation mapLocation = slots.getLocation();
-            if(mapLocation!=null){
-                if(!TextUtils.isEmpty(mapLocation.getPoi())){
+            if (mapLocation != null) {
+                if (!TextUtils.isEmpty(mapLocation.getPoi())) {
                     searchKeyWord = mapLocation.getPoi();
-                }else{
+                } else {
 
-                    if(!TextUtils.isEmpty(mapLocation.getAreaAddr())){
+                    if (!TextUtils.isEmpty(mapLocation.getAreaAddr())) {
                         searchKeyWord = mapLocation.getAreaAddr();
-                    }else{
-                        if(!TextUtils.isEmpty(mapLocation.getCity())){
+                    } else {
+                        if (!TextUtils.isEmpty(mapLocation.getCity())) {
                             searchKeyWord = mapLocation.getCity();
                         }
                     }
@@ -459,7 +461,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     }
 
     private void search() {
-        Log.d(TAG,"searchKeyWord ： "+ searchKeyWord);
+        Log.d(TAG, "searchKeyWord ： " + searchKeyWord);
         SemanticProcessor.getProcessor().switchSemanticType(SemanticType.MAP_CHOISE);
         if (!TextUtils.isEmpty(searchKeyWord)) {
 
@@ -474,7 +476,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 toNaivActivity(REMOVEWINDOW_TIME);
                 return;
             }
-            if(!TextUtils.isEmpty(cityCode)){
+            if (!TextUtils.isEmpty(cityCode)) {
                 FloatWindowUtil.removeFloatWindow();
                 showProgressDialog();// 显示进度框
                 query = new PoiSearch.Query(searchKeyWord, "", cityCode);// 第一个参数表示搜索字符串，第二个参数表示poi搜索类型，第三个参数表示poi搜索区域（空字符串代表全国）
@@ -486,9 +488,9 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 }
                 poiSearch.setOnPoiSearchListener(onPoiSearchListener);
                 poiSearch.searchPOIAsyn();
-            }else{
+            } else {
 
-                mVoiceManager.startSpeaking("当前定位失败,请稍后再试！",SemanticConstants.TTS_DO_NOTHING,true);
+                mVoiceManager.startSpeaking("当前定位失败,请稍后再试！", SemanticConstants.TTS_DO_NOTHING, true);
                 removeFloatWindow(REMOVEWINDOW_TIME);
                 toNaivActivity(REMOVEWINDOW_TIME);
             }
@@ -499,8 +501,8 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
             if (isManual) {
                 Toast.makeText(this, playText, Toast.LENGTH_SHORT).show();
             } else {
-               mVoiceManager.startSpeaking(playText,
-                       SemanticConstants.TTS_START_UNDERSTANDING, false);
+                mVoiceManager.startSpeaking(playText,
+                        SemanticConstants.TTS_START_UNDERSTANDING, false);
             }
         }
 
@@ -628,7 +630,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     removeFloatWindow(REMOVEWINDOW_TIME);
                     break;
                 default:
-                    log.debug("未知错误，请稍后重试!错误码为:{}",code);
+                    log.debug("未知错误，请稍后重试!错误码为:{}", code);
                     VoiceManager.getInstance().stopUnderstanding();
                     FloatWindowUtil.showMessage(getString(R.string.error_other) + code,
                             FloatWindow.MESSAGE_IN);
@@ -647,16 +649,16 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     };
 
     private void handlerPoiResult() {
-        if(mapManager.getSearchType()==MapManager.SEARCH_PLACE_LOCATION){
+        if (mapManager.getSearchType() == MapManager.SEARCH_PLACE_LOCATION) {
 
-            String playText = "您好，"+ searchKeyWord +"的位置为：" + poiResultList.get(0).getAddressDetial();
+            String playText = "您好，" + searchKeyWord + "的位置为：" + poiResultList.get(0).getAddressDetial();
             mVoiceManager.startSpeaking(playText, SemanticConstants.TTS_DO_NOTHING, true);
             removeFloatWindow(REMOVEWINDOW_TIME);
             return;
         }
-        if(mapManager.getSearchType()==MapManager.SEARCH_NEAREST) {
+        if (mapManager.getSearchType() == MapManager.SEARCH_NEAREST) {
             PoiResultInfo startpoiItem = poiResultList.get(0);
-            mEndPoint = new NaviLatLng(startpoiItem.getLatitude(),startpoiItem.getLongitude());
+            mEndPoint = new NaviLatLng(startpoiItem.getLatitude(), startpoiItem.getLongitude());
             showStrategyMethod();
             return;
         }
@@ -735,7 +737,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     showStrategyDialog(points);
                 } else {
 
-                    if (!isAddressManual&&position > poiResultList.size()) {
+                    if (!isAddressManual && position > poiResultList.size()) {
                         mVoiceManager.stopUnderstanding();
                         String playText = "选择错误，请重新选择";
                         mVoiceManager.startSpeaking(playText,
@@ -761,7 +763,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     }
 
-    private void showStrategyMethod(){
+    private void showStrategyMethod() {
         mVoiceManager.stopUnderstanding();
         mVoiceManager.clearMisUnderstandCount();
         removeCallback();
@@ -798,24 +800,23 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     public void startChooseResult(int size, int type) {
 
-        if(type == ChoiseChain.TYPE_NORMAL){
+        if (type == ChoiseChain.TYPE_NORMAL) {
 
             if (chooseType == 1) {
                 chooseAddress(size);
             } else {
                 chooseDriveMode(size);
             }
-        }else{
+        } else {
 
-            if(isManual){
+            if (isManual) {
                 addressDialog.choosePage(size);
-            }else{
-                FloatWindowUtil.chooseAddressPage(ChoosePageChain.CHOOSE_PAGE,size);
+            } else {
+                FloatWindowUtil.chooseAddressPage(ChoosePageChain.CHOOSE_PAGE, size);
             }
         }
 
     }
-
 
 
     /**
@@ -863,7 +864,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         if (latLng != null && !poiItems.isEmpty()) {
             // 高德坐标转换为真实坐标
             double[] startPoints_gaode = Coordinate.chinatowg(
-                   latLng.longitude,latLng.latitude);
+                    latLng.longitude, latLng.latitude);
             poiResultList.clear();
             for (int i = 0; i < poiItems.size(); i++) {
                 PoiResultInfo poiResultInfo = new PoiResultInfo();
@@ -893,7 +894,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         mapManager.setSearchType(0);
         FloatWindowUtil.removeFloatWindow();
         mVoiceManager.stopUnderstanding();
-        if(progDialog!=null){
+        if (progDialog != null) {
             progDialog.setMessage("路径规划中...");
             progDialog.show();
         }
@@ -919,7 +920,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     addressDialog.nextPage();
             } else {
 
-                FloatWindowUtil.chooseAddressPage(ChoosePageChain.NEXT_PAGE,0);
+                FloatWindowUtil.chooseAddressPage(ChoosePageChain.NEXT_PAGE, 0);
             }
 
         } else {
@@ -928,7 +929,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     addressDialog.lastPage();
             } else {
 
-                FloatWindowUtil.chooseAddressPage(ChoosePageChain.LAST_PAGE,0);
+                FloatWindowUtil.chooseAddressPage(ChoosePageChain.LAST_PAGE, 0);
             }
 
         }
@@ -970,23 +971,25 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         removeCallback();
         poiSearch = null;
         super.onDestroy();
+
+        SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
     }
 
-    public void removeCallback(){
+    public void removeCallback() {
 
-        if(mhandler!=null&&removeWindowRunnable!=null){
+        if (mhandler != null && removeWindowRunnable != null) {
             mhandler.removeCallbacks(removeWindowRunnable);
         }
     }
 
-    public void toNaivActivity(int t){
+    public void toNaivActivity(int t) {
         mhandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(mapManager.isNavi()||mapManager.isNaviBack())
+                if (mapManager.isNavi() || mapManager.isNaviBack())
                     finish();
             }
-        },t);
+        }, t);
 
 
     }

@@ -35,9 +35,6 @@ public class ChoiseChain extends SemanticChain {
 
     @Override
     public boolean doSemantic(String json) {
-
-        Log.d("lxh", "--------json:" + json);
-
         String semantic = JsonUtils.parseIatResult(json,
                 "semantic");
         choiseSize = ChoiseUtil.getChoiseSize(JsonUtils

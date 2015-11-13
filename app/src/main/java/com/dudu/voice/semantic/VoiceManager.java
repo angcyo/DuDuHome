@@ -40,7 +40,7 @@ public class VoiceManager {
 
     private static final String TAG = "VoiceManager";
 
-    private static final int MISUNDERSTAND_REPEAT_COUNT = 4;
+    private static final int MISUNDERSTAND_REPEAT_COUNT = 2;
 
     private static VoiceManager mInstance;
 
@@ -240,10 +240,10 @@ public class VoiceManager {
         mSpeechUnderstander.setParameter(SpeechConstant.ACCENT, "mandarin");
 
         // 设置语音前端点 前端点检测；静音超时时间，即用户多长时间不说话则当做超时处理；
-        mSpeechUnderstander.setParameter(SpeechConstant.VAD_BOS, "4000");
+        mSpeechUnderstander.setParameter(SpeechConstant.VAD_BOS, "8000");
 
         // 设置语音后端点 后断点检测；后端点静音检测时间，即用户停止说话多长时间内即认为不再输入， 自动停止录音
-        mSpeechUnderstander.setParameter(SpeechConstant.VAD_EOS, "1000");
+        mSpeechUnderstander.setParameter(SpeechConstant.VAD_EOS, "2000");
 
         // 设置标点符号
         mSpeechUnderstander.setParameter(SpeechConstant.ASR_PTT, "1");
@@ -414,11 +414,7 @@ public class VoiceManager {
             mMisunderstandCount++;
 
             if (speechError.getErrorCode() == 10118) {
-                if (mMisunderstandCount == 2 || mMisunderstandCount >= 4) {
-                    startSpeaking(Constants.UNDERSTAND_NO_INPUT, SemanticConstants.TTS_START_UNDERSTANDING);
-                } else {
-                    startUnderstanding();
-                }
+                startSpeaking(Constants.UNDERSTAND_NO_INPUT, SemanticConstants.TTS_START_UNDERSTANDING);
             } else if (speechError.getErrorCode() == 10114) {
                 startSpeaking(Constants.UNDERSTAND_NETWORK_PROBLEM, SemanticConstants.TTS_START_UNDERSTANDING);
             } else {
