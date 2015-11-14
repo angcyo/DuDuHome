@@ -77,6 +77,7 @@ public class BleOBD {
 
 
     public void onEventMainThread(Event.BLEInit event) {
+        log.debug("ble BLEInit");
         mBluetoothGatt = event.getBluetoothGatt();
         mWriteChara = event.getWriteChara();
 
@@ -97,7 +98,7 @@ public class BleOBD {
     }
 
     public void onEventBackgroundThread(Event.DisConnect event){
-
+        log.debug("ble DisConnect");
         if(event.getType()!= Event.ConnectType.BLE){
             Observable.timer(10, TimeUnit.SECONDS)
                     .subscribe(new Action1<Long>() {

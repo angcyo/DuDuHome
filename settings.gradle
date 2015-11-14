@@ -1,1 +1,1 @@
-include ':app', ':libble', ':scf4a'
+include ':app', ':libble', ':scf4a', ':navi'

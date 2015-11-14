@@ -2,6 +2,7 @@ package com.dudu.android.launcher.ui.activity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -139,7 +140,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     private Logger log;
 
-    private static final int REMOVEWINDOW_TIME = 15 * 1000;
+    private static final int REMOVEWINDOW_TIME = 8 * 1000;
 
     private Bundle locBundle;
 
@@ -993,8 +994,13 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         mhandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (mapManager.isNavi() || mapManager.isNaviBack())
+                if (mapManager.isNavi() || mapManager.isNaviBack()){
+
+                    startActivity(new Intent(LocationMapActivity.this,NaviCustomActivity.class));
                     finish();
+                }
+
+
             }
         }, t);
 
@@ -1013,7 +1019,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     mVoiceManager.startSpeaking(cur_locationDesc, SemanticConstants.TTS_DO_NOTHING,true);
                     toNaivActivity(REMOVEWINDOW_TIME);
                 }
-
+                isGetCurdesc = false;
             }
         }
     }
