@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -20,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.amap.api.location.AMapLocalWeatherForecast;
 import com.amap.api.location.AMapLocalWeatherListener;
 import com.amap.api.location.AMapLocalWeatherLive;
@@ -30,9 +30,8 @@ import com.dudu.android.launcher.service.NewMessageShowService;
 import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
-import com.dudu.android.launcher.utils.FileUtils;
+import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.LocationUtils;
-import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Util;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
@@ -40,31 +39,33 @@ import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.map.MapManager;
 import com.dudu.obd.OBDDataService;
 import com.dudu.voice.semantic.VoiceManager;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechUtility;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+
+import ch.qos.logback.core.android.SystemPropertiesProxy;
+import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.functions.Action1;
 
 public class MainActivity extends BaseTitlebarActivity implements
         OnClickListener, AMapLocalWeatherListener {
 
     private Button mVideoButton, mNavigationButton,
             mDiDiButton, mWlanButton;
-
     private LocationManagerProxy mLocationManagerProxy;
-
     private TextView mDateTextView, mWeatherView, mTemperatureView;
-
     private ImageView mWeatherImage;
-
     private LinearLayout mSelfCheckingView;
-
-    private static int TIME = 10000;
-
     private Timer timer;
 
     private RecordBindService mRecordService;
@@ -73,34 +74,110 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     private Button mVoiceButton;
 
+    private Logger log_init;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        log_init = LoggerFactory.getLogger("init.start");
         super.onCreate(savedInstanceState);
+
+        EventBus.getDefault().register(this);
 
         startFloatMessageShowService();
 
-        startOBDService();
+        getDate();
 
-        //检测蓝牙设配
-        checkBlueTooth();
+        initVideoService();
 
-        requestWeatherInfo();
+        initWeatherInfo();
 
-        //延迟10S开启热点
-        new Handler().postDelayed(new Runnable() {
-            public void run() {
-                WifiApAdmin.initWifiApState(MainActivity.this);
-            }
-        }, TIME);
+        //添加生产测试判断
+        log_init.debug("checkBTFT after 5s");
+        Observable.timer(5, TimeUnit.SECONDS)
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(final Long aLong) {
+                        EventBus.getDefault().post(new LocalEvent.CheckBtFt());
+                    }
+                });
     }
 
-    private void checkBlueTooth() {
+    public void onEventMainThread(LocalEvent.CheckBtFt event) {
+        log_init.debug("start checkBTFT");
+        checkBTFT();
+    }
+
+    private void checkBTFT() {
+        SystemPropertiesProxy sps = SystemPropertiesProxy.getInstance();
+        boolean need_bt = !"1".equals(sps.get("persist.sys.bt", "0"));
+        boolean need_ft = !"1".equals(sps.get("persist.sys.ft", "0"));
+        Intent intent;
+        PackageManager packageManager = getPackageManager();
+        intent = packageManager.getLaunchIntentForPackage("com.qualcomm.factory");
+        log_init.debug("bt:{}, ft:{}, app:{}", !need_bt, !need_ft, intent != null);
+        if ((need_bt || need_ft) && intent != null) {
+            //close wifi ap for ft test
+            WifiApAdmin.closeWifiAp(this);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
+                        | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+        } else {
+            initAfterFT();
+        }
+    }
+
+    private void initAfterFT() {
+        log_init.debug("initAfterFT");
+        // 设置使用v5+
+        StringBuffer param = new StringBuffer();
+        param.append("appid=" + Constants.XUFEIID);
+        param.append(",");
+        param.append(SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC);
+
+        SpeechUtility.createUtility(this, param.toString());
+
+        VoiceManager.getInstance().startWakeup();
+
+        //延迟10S开启其他服务
+        Observable.timer(10, TimeUnit.SECONDS)
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(final Long aLong) {
+                        EventBus.getDefault().post(new LocalEvent.InitAfter10s());
+                    }
+                });
+    }
+
+    public void onEventMainThread(LocalEvent.InitAfter10s event) {
+        initAfter10s();
+    }
+
+    private void initAfter10s() {
+        log_init.debug("initAfter10s");
+
+        WifiApAdmin.initWifiApState(this);
+
+        openBlueTooth();
+
+        startOBDService();
+    }
+
+    private void startOBDService() {
+        log_init.debug("startOBDService");
+        Intent i = new Intent(this, OBDDataService.class);
+        startService(i);
+    }
+
+    private void openBlueTooth() {
         //初始化蓝牙的适配器
         BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
+
         if (bluetoothAdapter != null) {
             if (!bluetoothAdapter.isEnabled()) {
                 //如果蓝牙没有开启的话，则开启蓝牙
+                log_init.debug("bluetoothAdapter.enable");
                 bluetoothAdapter.enable();
             }
         }
@@ -167,18 +244,12 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     @Override
     public void initDatas() {
-        startFloatMessageShowService();
-
-        getDate();
-
-        initVideoService();
-
-        initWeatherInfo();
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+
         if (timer != null) {
             timer.cancel();
         }
@@ -187,6 +258,7 @@ public class MainActivity extends BaseTitlebarActivity implements
             unbindService(mServiceConnection);
         }
 
+        super.onDestroy();
     }
 
     @Override
@@ -314,8 +386,11 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     private void requestWeatherInfo() {
         if (mLocationManagerProxy != null) {
+            log_init.debug("requestWeatherInfo");
             mLocationManagerProxy.requestWeatherUpdates(
                     LocationManagerProxy.WEATHER_TYPE_LIVE, MainActivity.this);
+        } else {
+            log_init.debug("requestWeatherInfo mLocationManagerProxy=null");
         }
     }
 
@@ -354,12 +429,17 @@ public class MainActivity extends BaseTitlebarActivity implements
     }
 
     private void startFloatMessageShowService() {
+        log_init.debug("startFloatMessageShowService");
         Intent i = new Intent(MainActivity.this, NewMessageShowService.class);
         startService(i);
     }
 
-    private void startOBDService() {
-        Intent i = new Intent(MainActivity.this, OBDDataService.class);
-        startService(i);
+    private static class LocalEvent {
+
+        public static class CheckBtFt {
+        }
+
+        public static class InitAfter10s {
+        }
     }
 }

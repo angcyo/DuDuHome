@@ -65,17 +65,17 @@ public class WifiApAdmin {
             return false;
         }
 
-        String ssid = SharedPreferencesUtil.getStringValue(context, KEY_WIFI_AP_SSID, DEFAULT_SSID);
-        String password = SharedPreferencesUtil.getStringValue(context, KEY_WIFI_AP_PASSWORD, DEFAULT_PASSWORD);
         if (Util.isTaxiVersion()) {
             startWifiAp(context, DEFAULT_SSID, "", null);
         } else {
             if (SharedPreferencesUtil.getBooleanValue(context, KEY_WIFI_AP_STATE, false)) {
+                String ssid = SharedPreferencesUtil.getStringValue(context, KEY_WIFI_AP_SSID, DEFAULT_SSID);
+                String password = SharedPreferencesUtil.getStringValue(context, KEY_WIFI_AP_PASSWORD, DEFAULT_PASSWORD);
                 startWifiAp(context, ssid, password, null);
             }
         }
 
-        return startWifiAp(context, ssid, password, null);
+        return true;
     }
 
     public static boolean startWifiAp(Context context) {

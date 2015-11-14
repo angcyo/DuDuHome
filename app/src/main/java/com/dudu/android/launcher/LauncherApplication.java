@@ -2,75 +2,62 @@ package com.dudu.android.launcher;
 
 import android.app.Application;
 import android.content.Intent;
+
 import com.dudu.android.launcher.exception.CrashHandler;
 import com.dudu.android.launcher.service.NewMessageShowService;
 import com.dudu.android.launcher.service.RecordBindService;
-import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.NetworkUtils;
-import com.dudu.voice.semantic.VoiceManager;
 import com.iflytek.cloud.Setting;
-import com.iflytek.cloud.SpeechConstant;
-import com.iflytek.cloud.SpeechUtility;
 
 public class LauncherApplication extends Application {
 
-	public static LauncherApplication mApplication;
+    public static LauncherApplication mApplication;
 
-	private boolean mReceivingOrder = false;
+    private boolean mReceivingOrder = false;
 
-	private RecordBindService mRecordService;
+    private RecordBindService mRecordService;
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		mApplication = this;
+    public static LauncherApplication getContext() {
+        return mApplication;
+    }
 
-		// 设置使用v5+
-		StringBuffer param = new StringBuffer();
-		param.append("appid=" + Constants.XUFEIID);
-		param.append(",");
-		param.append(SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC);
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mApplication = this;
 
-		SpeechUtility.createUtility(LauncherApplication.this, param.toString());
+        Setting.showLogcat(false);
 
-		VoiceManager.getInstance().startWakeup();
+        CrashHandler crashHandler = CrashHandler.getInstance();
 
-		Setting.showLogcat(false);
+        // 注册crashHandler
+        crashHandler.init(getApplicationContext());
 
-		CrashHandler crashHandler = CrashHandler.getInstance();
+        startFloatMessageService();
 
-		// 注册crashHandler
-		crashHandler.init(getApplicationContext());
+        //将htdocs压缩包解压
+        NetworkUtils.writePortalConfig(this);
+    }
 
-		startFloatMessageService();
+    private void startFloatMessageService() {
+        Intent intent = new Intent(LauncherApplication.this, NewMessageShowService.class);
+        startService(intent);
+    }
 
-		//将htdocs压缩包解压
-		NetworkUtils.writePortalConfig(this);
-	}
+    public RecordBindService getRecordService() {
+        return mRecordService;
+    }
 
-	public static LauncherApplication getContext() {
-		return mApplication;
-	}
+    public void setRecordService(RecordBindService service) {
+        mRecordService = service;
+    }
 
-	private void startFloatMessageService() {
-		Intent intent = new Intent(LauncherApplication.this, NewMessageShowService.class);
-		startService(intent);
-	}
+    public boolean isReceivingOrder() {
+        return mReceivingOrder;
+    }
 
-	public RecordBindService getRecordService() {
-		return mRecordService;
-	}
-
-	public boolean isReceivingOrder() {
-		return mReceivingOrder;
-	}
-
-	public void setReceivingOrder(boolean receivingOrder) {
+    public void setReceivingOrder(boolean receivingOrder) {
         mReceivingOrder = receivingOrder;
-	}
-
-	public void setRecordService(RecordBindService service) {
-		mRecordService = service;
-	}
+    }
 
 }
