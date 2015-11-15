@@ -166,7 +166,7 @@ public class OBDDataService extends Service implements
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.i(TAG, "OBDDataService create");
+        log = LoggerFactory.getLogger("odb.service");
         init();
     }
 
@@ -187,7 +187,6 @@ public class OBDDataService extends Service implements
         initSensor();
         initConn();
 
-        log = LoggerFactory.getLogger("odb.service");
         log.debug("odbservice startCommand");
         bleOBD = new BleOBD();
         bleOBD.initOBD();
@@ -223,16 +222,16 @@ public class OBDDataService extends Service implements
         }
         navigationHandler = new NavigationHandler();
         navigationHandler.initNavigationHandle(this);
-
-
     }
 
     private void initConn() {
+        log.debug("initConn");
         conn = Connection.getInstance(this);
     }
 
     // 初始化传感器相关
     private void initSensor() {
+        log.debug("initSensor");
 
         myRunnable = new MySensorRunnable();
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -263,6 +262,7 @@ public class OBDDataService extends Service implements
 
     // 将gps数据转换为JSON 格式
     private void putGpsDataToJSON() {
+        log.debug("putGpsDataToJSON");
         JSONArray positionAry = new JSONArray();
         try {
             if (!amapLocationHandler.getGpsDataListToSend().isEmpty()) {
@@ -284,18 +284,21 @@ public class OBDDataService extends Service implements
 
     // 发送GPS数据
     private void sendGpsData(JSONArray gpsData) {
+        log.debug("sendGpsData");
         sendMessage.sendGPSDatas(gpsData);
         positionAry_list.remove(0);
     }
 
     // 发送OBD数据
     private void sendOBDData(JSONArray obdData) {
+        log.debug("sendOBDData");
         sendMessage.sendOBDDatas(obdData);
         postOBDDataArr.remove(0);
     }
 
     // 发送熄火数据
     private void sendFlameOutData() {
+        log.debug("sendFlameOutData");
         if (bleOBD.getFlamoutData() != null) {
             last_Location = amapLocationHandler.getLast_Location();
             if (last_Location != null) {
@@ -356,6 +359,7 @@ public class OBDDataService extends Service implements
      * @param type
      */
     private void putEventGPS(int type) {
+        log.debug("putEventGPS:{}", type);
         cur_Location = amapLocationHandler.getCur_Location();
         if (cur_Location != null) {
             MyGPSData event = new MyGPSData(cur_Location.getLatitude(),
@@ -370,6 +374,7 @@ public class OBDDataService extends Service implements
 
     // 将OBD数据存放在JSONArray中
     private void putOBDData() {
+        log.debug("putOBDData");
 
         if (bleOBD != null && !bleOBD.getObdCollectionList().isEmpty()) {
             JSONArray jsArr = new JSONArray();
@@ -406,11 +411,13 @@ public class OBDDataService extends Service implements
 
     public void onEventBackgroundThread(BleOBD.CarStatus event) {
         carState = event.getCarStatus();
+        log.debug("onEvent CarStatus:{}", carState);
         if (carState == BleOBD.CarStatus.CAR_ONLINE)
             noticeFating();
     }
 
     public void onEventBackgroundThread(ConnectionEvent.SessionStateChange event) {
+        log.debug("ConnectionEvent.SessionStateChange");
         if (event.getSessonState() == event.SESSION_OPEND)
             isOpen = true;
     }

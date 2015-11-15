@@ -79,11 +79,12 @@ public class NavigationHandler {
         driveMode = event.getDriveMode();
         destination = event.getDestination();
         naviAddress = event.getNaviAddress();
+        log.debug("Navigation event:naviType:{}, driveMode:{},destination:{},naviAddress:{}", naviType, driveMode, destination, naviAddress);
         handleNavigation();
-
     }
 
     private void handleNavigation(){
+        log.debug("handleNavigation");
 
         mEndPoint = new NaviLatLng(destination[0], destination[1]);
         int driverIndex = calculateDriverRoute();
@@ -94,6 +95,7 @@ public class NavigationHandler {
     }
 
     private int calculateDriverRoute() {
+        log.debug("calculateDriverRoute");
 
         int code = CALCULATEERROR;
         double[] cur_Location = LocationUtils.getInstance(mContext).getCurrentLocation();
@@ -112,7 +114,7 @@ public class NavigationHandler {
                 code = CALCULATEERROR;
             }
         }
-        System.out.print("路线计算：" + code);
+        log.debug("路线计算:{}", code);
         return code;
     }
 
@@ -262,6 +264,7 @@ public class NavigationHandler {
     }
 
     public void initNaviListener(){
+        log.debug("initNaviListener");
         AMapNavi.getInstance(mContext).setAMapNaviListener(getAMapNaviListener());
         AMapNavi.getInstance(mContext).startGPS();
 //        AMapNavi.getInstance(mContext).startNavi(AMapNavi.GPSNaviMode);

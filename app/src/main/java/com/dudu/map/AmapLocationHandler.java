@@ -83,6 +83,7 @@ public class AmapLocationHandler implements AMapLocationListener {
             GPSdataTime++;
             return;
         }
+        log.trace("onLocationChanged");
 
         // 保存当前定位点
         LocationUtils.getInstance(mContext).setCurrentLocation(
