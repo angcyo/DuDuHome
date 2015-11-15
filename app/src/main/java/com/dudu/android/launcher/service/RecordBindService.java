@@ -263,9 +263,6 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     private boolean prepareMediaRecorder() {
         camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
         Camera.Parameters p = camera.getParameters();
-        final List<Size> listSize = p.getSupportedPreviewSizes();
-        Size mPreviewSize = listSize.get(2);
-        p.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
         p.setPreviewFormat(PixelFormat.YCbCr_420_SP);
         p.setPictureSize(1280, 720);
         camera.setParameters(p);
