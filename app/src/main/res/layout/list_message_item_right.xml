@@ -56,7 +56,7 @@
             android:background="@drawable/message_text_background02"
             android:text="1111"
             android:textColor="@color/black"
-            android:textSize="12sp" />
+            android:textSize="14sp" />
     </RelativeLayout>
 
 </LinearLayout>

@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,6 +31,7 @@ import com.dudu.android.launcher.service.NewMessageShowService;
 import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
+import com.dudu.android.launcher.ui.dialog.BluetoothAlertDialog;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
@@ -118,10 +120,10 @@ public class MainActivity extends BaseTitlebarActivity implements
         if ((need_bt || need_ft) && intent != null) {
             //close wifi ap for ft test
             WifiApAdmin.closeWifiAp(this);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                        | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
-                        | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                    | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
+                    | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
         } else {
             initAfterFT();
         }
@@ -424,7 +426,10 @@ public class MainActivity extends BaseTitlebarActivity implements
         } else {
             Toast.makeText(this, R.string.get_weather_info_failed,
                     Toast.LENGTH_SHORT).show();
+           mWeatherView.setGravity(Gravity.CENTER);
             mWeatherView.setText(R.string.unkown_weather_info);
+
+
         }
     }
 

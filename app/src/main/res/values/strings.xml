@@ -70,6 +70,8 @@
     <string name="video_cache_space_full_alert">存储空间已满，请手动释放存储空间!</string>
     <string name="video_delete_alert">确定删除此视频？</string>
     <string name="video_lock_alert">本视频已锁定.</string>
+    <string name="OBD_not_connect">OBD模块未正确连接</string>
+    <string name="OBD_use_connect">请连接后使用</string>
 
     <string-array name="action_menu_list_select">
         <item>选择</item>

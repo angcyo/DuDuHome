@@ -20,7 +20,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
-                android:textSize="40sp" />
+                android:textSize="45sp" />
 
             <TextView
                 android:id="@+id/date_text"
@@ -30,43 +30,48 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="9dp"
                 android:textColor="@android:color/white"
-                android:textSize="8sp" />
-
-            <ImageView
-                android:id="@+id/weather_image"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:textSize="10sp" />
+            <LinearLayout
+                android:layout_width="90dp"
+                android:layout_height="70dp"
+                android:gravity="center"
+                android:layout_toRightOf="@id/digital_clock"
                 android:layout_alignTop="@id/digital_clock"
                 android:layout_marginLeft="20dp"
-                android:layout_toRightOf="@id/digital_clock"
-                android:src="@drawable/weather_cloudy" />
+                android:id="@+id/image_linear"
+                >
+            <ImageView
+                android:id="@+id/weather_image"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@drawable/weather_cloudy"/>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/weather_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@id/date_text"
-                android:layout_marginRight="6dp"
+                android:layout_alignLeft="@id/image_linear"
                 android:layout_toLeftOf="@+id/temperature_text"
                 android:ellipsize="marquee"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                android:gravity="center"
                 android:maxWidth="50dp"
                 android:minWidth="30dp"
                 android:singleLine="true"
                 android:text="@string/fetching_weather"
                 android:textColor="@android:color/white"
-                android:textSize="8sp" />
+                android:textSize="10sp" />
 
             <TextView
                 android:id="@+id/temperature_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignRight="@id/weather_image"
+                android:layout_alignRight="@id/image_linear"
                 android:layout_alignTop="@id/weather_text"
                 android:textColor="@android:color/white"
-                android:textSize="8sp" />
+                android:textSize="10sp" />
         </RelativeLayout>
 
         <Button

@@ -39,7 +39,13 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+    }
 }
+
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])

@@ -11,10 +11,12 @@ import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.media.MediaRecorder.OnErrorListener;
+import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -25,7 +27,6 @@ import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.Button;
 import android.widget.ImageButton;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -45,7 +46,6 @@ import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.conn.ConnectionEvent;
 import com.dudu.http.MultipartRequest;
 import com.dudu.http.MultipartRequestParams;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -64,6 +64,8 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     private static final String TAG = "RecordBindService";
 
     private static final int VIDEO_INTERVAL = 10 * 60 * 1000;
+
+    private static final int DISAPPEAR_INTERVAL = 3000;
 
     private WindowManager windowManager;
 
@@ -109,6 +111,15 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
     private RequestQueue queue;
 
+    //Back键定时消失的handler
+    private Handler mBackDisappearHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            backButton.setVisibility(backButton.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+            localVideo.setVisibility(localVideo.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+        }
+    };
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return START_STICKY;
@@ -132,6 +143,15 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
         videoView = LayoutInflater.from(this).inflate(R.layout.video_main, null, false);
         surfaceView = (SurfaceView) videoView.findViewById(R.id.surfaceView);
+        surfaceView.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                stopBackDisappearHandler();
+                startBackDisappearHandler();
+            }
+        });
+
         backButton = (Button) videoView.findViewById(R.id.back_button);
         backButton.setOnClickListener(new OnClickListener() {
 
@@ -181,7 +201,23 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         registerReceiver(mTFlashCardReceiver, intentFilter);
     }
 
+    private void startBackDisappearHandler() {
+        backButton.setVisibility(View.VISIBLE);
+        localVideo.setVisibility(View.VISIBLE);
+        mBackDisappearHandler.sendEmptyMessageDelayed(0,DISAPPEAR_INTERVAL);
+    }
+
+    private void stopBackDisappearHandler() {
+        mBackDisappearHandler.removeMessages(0);
+    }
+
     public void updatePreviewSize(int width, int height) {
+        if (width == 854 && height == 480) {
+           startBackDisappearHandler();
+        } else if (width == 1 && height == 1) {
+            stopBackDisappearHandler();
+        }
+
         layoutParams.width = width;
         layoutParams.height = height;
         windowManager.updateViewLayout(videoView, layoutParams);
