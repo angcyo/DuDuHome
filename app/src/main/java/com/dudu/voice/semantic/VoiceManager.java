@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.text.TextUtils;
-
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FloatWindow;
@@ -74,6 +73,8 @@ public class VoiceManager {
 
     private boolean mShowMessageWindow = true;
 
+    private Logger log;
+
     private Runnable mRemoveFloatWindow = new Runnable() {
         @Override
         public void run() {
@@ -104,6 +105,8 @@ public class VoiceManager {
         setTtsParameter();
 
         mHandler = new Handler();
+
+        log = LoggerFactory.getLogger("voice.manager");
     }
 
     public void clearMisUnderstandCount() {
@@ -415,10 +418,13 @@ public class VoiceManager {
 
             if (speechError.getErrorCode() == 10118) {
                 startSpeaking(Constants.UNDERSTAND_NO_INPUT, SemanticConstants.TTS_START_UNDERSTANDING);
+                log.warn("没有检测到语音输入");
             } else if (speechError.getErrorCode() == 10114) {
                 startSpeaking(Constants.UNDERSTAND_NETWORK_PROBLEM, SemanticConstants.TTS_START_UNDERSTANDING);
+                log.warn("语义理解网络超时");
             } else {
                 startSpeaking(Constants.UNDERSTAND_MISUNDERSTAND, SemanticConstants.TTS_START_UNDERSTANDING);
+                log.warn("语义理解其他错误，错误码：{}", speechError.getErrorCode());
             }
         }
 

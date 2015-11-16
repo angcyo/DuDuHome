@@ -3,8 +3,6 @@ package com.dudu.voice.semantic.chain;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.util.Log;
-
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.bean.CmdEntity;
 import com.dudu.android.launcher.bean.CmdSlots;
@@ -16,7 +14,6 @@ import com.dudu.android.launcher.ui.activity.OBDCheckingActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.FloatWindow;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.GsonUtil;
 import com.dudu.android.launcher.utils.JsonUtils;

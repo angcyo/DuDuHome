@@ -10,11 +10,13 @@ import com.dudu.voice.semantic.chain.ChoiseChain;
 import com.dudu.voice.semantic.chain.ChoosePageChain;
 import com.dudu.voice.semantic.chain.CmdChain;
 import com.dudu.voice.semantic.chain.CommonAddressChain;
+import com.dudu.voice.semantic.chain.DatetimeChain;
+import com.dudu.voice.semantic.chain.DuDuChain;
 import com.dudu.voice.semantic.chain.MapSearchChain;
 import com.dudu.voice.semantic.chain.NavigationChain;
 import com.dudu.voice.semantic.chain.OpenQaChain;
 import com.dudu.voice.semantic.chain.PoiChain;
-import com.dudu.voice.semantic.chain.WIFIChain;
+import com.dudu.voice.semantic.chain.WifiChain;
 import com.dudu.voice.semantic.chain.WeatherChain;
 import com.dudu.voice.semantic.chain.WhetherChain;
 
@@ -85,8 +87,8 @@ public class ChainGenerator {
         return chain;
     }
 
-    public WIFIChain getWIFIChain(){
-        WIFIChain chain = new WIFIChain();
+    public WifiChain getWIFIChain(){
+        WifiChain chain = new WifiChain();
         return  chain;
     }
 
@@ -109,6 +111,16 @@ public class ChainGenerator {
 
     public BaikeChain getBaikeChain() {
         BaikeChain chain = new BaikeChain();
+        return chain;
+    }
+
+    public DatetimeChain getDatetimeChain() {
+        DatetimeChain chain = new DatetimeChain();
+        return chain;
+    }
+
+    public DuDuChain getDuDuChain() {
+        DuDuChain chain = new DuDuChain();
         return chain;
     }
 

@@ -1,5 +1,7 @@
 package com.dudu.voice.semantic.engine;
 
+import android.util.Log;
+
 import com.dudu.android.launcher.bean.Rsphead;
 import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.voice.semantic.SemanticConstants;
@@ -10,6 +12,10 @@ import com.dudu.voice.semantic.chain.DefaultChain;
 import com.dudu.voice.semantic.chain.MapChoiseDefalutChain;
 import com.dudu.voice.semantic.chain.NavigationDefaultChain;
 import com.dudu.voice.semantic.chain.SemanticChain;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -17,6 +23,8 @@ import java.util.Stack;
  * 语义处理引擎
  */
 public class SemanticProcessor {
+
+    private Logger log;
 
     private static SemanticProcessor mInstance = null;
 
@@ -45,6 +53,9 @@ public class SemanticProcessor {
      * 加入业务处理链条
      */
     private SemanticProcessor() {
+
+        log = LoggerFactory.getLogger("voice.manager");
+
         mChainGenerator = new ChainGenerator();
 
         mDefaultChain = new DefaultChain();
@@ -55,27 +66,42 @@ public class SemanticProcessor {
     public void processSemantic(final String text) {
         VoiceManager.getInstance().clearMisUnderstandCount();
 
+        log.debug("语音识别返回: ", text);
         Rsphead head = JsonUtils.getRsphead(text);
         if (head.getRc() == 0 && isChainExists(head)) {
+
             String service = head.getService();
+
             if (mCurChain.matchSemantic(service)) {
+                log.debug("用户输入与当前语义链匹配，开始处理语义...");
+
                 doSemantic(text);
             } else {
-                // 将当前的操作链入栈
+                log.debug("将当前操作链入栈...");
+
                 pushSemanticStack(mCurChain);
 
                 mCurChain = mChainMap.get(service);
                 if (mCurChain != null) {
+                    log.debug("匹配到其它的语义链，开始处理语义...");
+
                     doSemantic(text);
                 } else {
+                    log.debug("没有匹配到其它语义链，使用默认语义链处理...");
+
                     mDefaultChain.doSemantic(text);
+
+                    log.debug("栈顶语义链出栈...");
+
                     mCurChain = popSemanticStack();
+
                 }
             }
 
             return;
         }
 
+        log.debug("没有匹配到相关语义处理链，使用默认语义链处理...");
         mDefaultChain.doSemantic(text);
     }
 
@@ -88,16 +114,20 @@ public class SemanticProcessor {
     }
 
     private void doSemantic(String text) {
-        // 执行当前语义
+
         if (!mCurChain.doSemantic(text)) {
+            log.debug("当前链处理语义失败, 使用默认语义链处理...");
+
             mDefaultChain.doSemantic(text);
         }
 
         // 如果有孩子，则设置孩子为当前语义
         SemanticChain child = mCurChain.getNextChild();
         if (child != null) {
+            log.debug("当前语义链孩子不为空，并设置为当前链...");
             mCurChain = child;
         } else {
+            log.debug("当前语义链孩子为空，栈顶语义链设置为当前链...");
             mCurChain = !mSemanticStack.isEmpty() ? mSemanticStack.pop() : null;
         }
     }
@@ -123,6 +153,8 @@ public class SemanticProcessor {
 
         switch (type) {
             case NORMAL:
+                log.debug("设置当前语义类型为正常...");
+
                 VoiceManager.getInstance().setShowMessageWindow(true);
 
                 addNormalChains();
@@ -130,6 +162,8 @@ public class SemanticProcessor {
                 mDefaultChain = new DefaultChain();
                 break;
             case CAR_CHECKING:
+                log.debug("设置当前语义类型为车辆自检...");
+
                 VoiceManager.getInstance().setShowMessageWindow(false);
 
                 addCarCheckingChains();
@@ -137,6 +171,8 @@ public class SemanticProcessor {
                 mDefaultChain = new CarCheckingDefault();
                 break;
             case NAVIGATION:
+                log.debug("设置当前语义类型为导航...");
+
                 VoiceManager.getInstance().setShowMessageWindow(true);
 
                 addNavigationChains();
@@ -144,6 +180,7 @@ public class SemanticProcessor {
                 mDefaultChain = new NavigationDefaultChain();
                 break;
             case MAP_CHOISE:
+                log.debug("设置当前语义类型为地址选择...");
 
                 addMapChoiseChains();
 
@@ -170,6 +207,8 @@ public class SemanticProcessor {
         mChainMap.put(SemanticConstants.SERVICE_CAR_CHECKING, mChainGenerator.getCarCheckingChain());
         mChainMap.put(SemanticConstants.SERVICE_WIFI, mChainGenerator.getWIFIChain());
         mChainMap.put(SemanticConstants.SERVICE_BAIKE, mChainGenerator.getBaikeChain());
+        mChainMap.put(SemanticConstants.SERVICE_DEATETIME, mChainGenerator.getDatetimeChain());
+        mChainMap.put(SemanticConstants.SERVICE_DUDU, mChainGenerator.getDuDuChain());
     }
 
     private void addCarCheckingChains() {

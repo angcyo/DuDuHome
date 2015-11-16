@@ -39,17 +39,7 @@ public class SemanticConstants {
      */
     public static final String SERVICE_CHOISE = "choise";
 
-    /**
-     * 自定义语义 添加常用
-     */
-    public static final String SERVICE_ADDFINAL = "addfinal";
-
-    /**
-     * 自定义语义 删除
-     */
-    public static final String SERVICE_DELETE = "delete";
-
-    public static final String SERVICE_APP = "app";
+    public static final String SERVICE_DEATETIME = "datetime";
 
     /**
      * "天气(weather)"主要用于天气情况查询的语义解析
@@ -65,6 +55,8 @@ public class SemanticConstants {
     public static final String SERVICE_POI = "poi";
 
     public static final String SERVICE_CAR_CHECKING = "car_checking";
+
+    public static final String SERVICE_DUDU = "dudu";
 
 
     /**

@@ -267,13 +267,6 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         p.setPictureSize(1280, 720);
         camera.setParameters(p);
 
-//        try {
-//            camera.setPreviewDisplay(surfaceHolder);
-//            camera.startPreview();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setOnErrorListener(new OnErrorListener() {
 
