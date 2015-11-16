@@ -1,6 +1,8 @@
 package com.dudu.obd;
 
 import android.app.Service;
+import android.app.admin.DevicePolicyManager;
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -8,10 +10,12 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.util.Log;
 import com.amap.api.location.AMapLocation;
 import com.dudu.android.launcher.utils.DeviceIDUtil;
 import com.dudu.android.launcher.utils.TimeUtils;
+import com.dudu.conn.ActiveDevice;
 import com.dudu.conn.Connection;
 import com.dudu.conn.ConnectionEvent;
 import com.dudu.conn.SendMessage;
@@ -82,7 +86,6 @@ public class OBDDataService extends Service implements
 
     private Gson gson;
 
-    private  NavigationHandler navigationHandler;
     /**
      * 采集数据线程 30s 将所有数据风封装到JSONArray里
      */
@@ -220,8 +223,6 @@ public class OBDDataService extends Service implements
         if (!dataSendThread.isAlive()) {
             dataSendThread.start();
         }
-        navigationHandler = new NavigationHandler();
-        navigationHandler.initNavigationHandle(this);
     }
 
     private void initConn() {
@@ -298,8 +299,9 @@ public class OBDDataService extends Service implements
 
     // 发送熄火数据
     private void sendFlameOutData() {
-        log.debug("sendFlameOutData");
+
         if (bleOBD.getFlamoutData() != null) {
+            log.debug("sendFlameOutData");
             last_Location = amapLocationHandler.getLast_Location();
             if (last_Location != null) {
                 MyGPSData flameOutgps = new MyGPSData(last_Location.getLatitude(),
@@ -412,8 +414,14 @@ public class OBDDataService extends Service implements
     public void onEventBackgroundThread(BleOBD.CarStatus event) {
         carState = event.getCarStatus();
         log.debug("onEvent CarStatus:{}", carState);
-        if (carState == BleOBD.CarStatus.CAR_ONLINE)
+        if (carState == BleOBD.CarStatus.CAR_ONLINE){
             noticeFating();
+        }else{
+
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            PowerManager.WakeLock wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "TAG");
+            wakeLock.release();
+        }
     }
 
     public void onEventBackgroundThread(ConnectionEvent.SessionStateChange event) {
@@ -505,12 +513,11 @@ public class OBDDataService extends Service implements
         mhandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-//                if(ActiveDevice.getInstance(OBDDataService.this).getActiveFlag()==ActiveDevice.ACTIVE_OK){
-//
-//
-//                }else {
-                sendMessage.sendActiveDeviceData();
-//                }
+                if(ActiveDevice.getInstance(OBDDataService.this).getActiveFlag()== ActiveDevice.ACTIVE_OK){
+
+                }else {
+                     sendMessage.sendActiveDeviceData();
+                }
 
             }
         }, 20 * 1000);
@@ -527,4 +534,7 @@ public class OBDDataService extends Service implements
             }
         }, 60 * 1000);
     }
+
+
+
 }

@@ -1,18 +1,17 @@
 package com.dudu.android.launcher.ui.activity;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.helpers.Util;
-
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PowerManager;
+import android.os.SystemClock;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -26,25 +25,23 @@ import com.amap.api.navi.AMapNaviViewOptions;
 import com.amap.api.navi.model.AMapNaviInfo;
 import com.amap.api.navi.model.AMapNaviLocation;
 import com.amap.api.navi.model.NaviInfo;
-import com.amap.api.navi.model.NaviLatLng;
-import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
-import com.dudu.android.launcher.utils.LogUtils;
-import com.dudu.android.launcher.utils.cache.Utils;
-import com.dudu.map.AmapLocationChangeEvent;
-import com.dudu.map.AmapLocationHandler;
-import com.dudu.map.MapManager;
-import com.dudu.map.Navigation;
-import com.dudu.map.NavigationHandler;
-import com.dudu.voice.semantic.SemanticConstants;
-import com.dudu.voice.semantic.VoiceManager;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.LocationUtils;
+import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.NaviSettingUtil;
-import com.dudu.android.launcher.utils.ToastUtils;
+import com.dudu.map.AmapLocationChangeEvent;
+import com.dudu.map.MapManager;
+import com.dudu.map.Navigation;
+import com.dudu.map.NavigationHandler;
+import com.dudu.voice.semantic.SemanticConstants;
+import com.dudu.voice.semantic.VoiceManager;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.greenrobot.event.EventBus;
 
@@ -126,6 +123,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
                     startActivity(new Intent(NaviCustomActivity.this, MainActivity.class));
                     finish();
                 }
+
             }
         });
     }
@@ -155,6 +153,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         viewOptions.setTrafficLayerEnabled(true);
         viewOptions.setTrafficLine(true);
         viewOptions.setTrafficBarEnabled(true);
+        viewOptions.setLeaderLineEnabled(Color.RED);
         mAmapAMapNaviView.setViewOptions(viewOptions);
         mAmapAMapNaviView.getMap().setTrafficEnabled(true);
 
@@ -384,7 +383,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         return super.onKeyDown(keyCode, event);
     }
 
-    // ------------------------------生命周期方法---------------------------
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -397,7 +396,6 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         setAmapNaviViewOptions();
         AMapNavi.getInstance(this).startGPS();
         AMapNavi.getInstance(this).startNavi(AMapNavi.GPSNaviMode);
-//        AMapNavi.getInstance(this).setAMapNaviListener(getAMapNaviListener());
         MapManager.getInstance().setNavi(true);
         Bundle bundle = getIntent().getExtras();
         processBundle(bundle);
@@ -440,9 +438,8 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         MapManager.getInstance().setNavi(false);
+        NavigationHandler.getInstance(getApplicationContext()).destoryAmapNavi();
         mAmapAMapNaviView.onDestroy();
-//        AMapNavi.getInstance(this).removeAMapNaviListener(mAmapNaviListener);
-        AMapNavi.getInstance(this).stopNavi();
         super.onDestroy();
     }
 
@@ -457,4 +454,10 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         return false;
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        return super.onTouchEvent(event);
+
+    }
 }

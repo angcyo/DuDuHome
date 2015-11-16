@@ -4,9 +4,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.GpsStatus;
+import android.location.LocationManager;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PowerManager;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -65,6 +69,7 @@ import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.map.AmapLocationChangeEvent;
 import com.dudu.map.MapManager;
 import com.dudu.map.Navigation;
+import com.dudu.map.NavigationHandler;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.SemanticType;
 import com.dudu.voice.semantic.VoiceManager;
@@ -189,6 +194,8 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         progDialog.setIndeterminate(false);
         progDialog.setCancelable(false);
 
+
+
     }
 
     @Override
@@ -207,6 +214,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
             @Override
             public void onClick(View v) {
                 finish();
+
             }
         });
 
@@ -896,6 +904,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     // 开始导航
     private void startNavigation(int driveMode) {
+        NavigationHandler.getInstance(getApplicationContext()).initNavigationHandle();
         SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
         mapManager.setSearchType(0);
         FloatWindowUtil.removeFloatWindow();

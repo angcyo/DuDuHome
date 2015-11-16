@@ -61,18 +61,26 @@ public class NavigationHandler {
 
     private Logger log;
 
-    public NavigationHandler(){
+    private static NavigationHandler navigationHandler;
+
+    public static NavigationHandler getInstance(Context context){
+        if(navigationHandler==null){
+            navigationHandler = new NavigationHandler(context);
+        }
+        return  navigationHandler;
+    }
+
+    public NavigationHandler(Context context){
+        mContext = context;
         log = LoggerFactory.getLogger("lbs.navi");
     }
 
-    public void initNavigationHandle(Context context){
-        mContext = context;
+    public void initNavigationHandle(){
+
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
         initNaviListener();
     }
-
-
 
     public void onEventBackgroundThread(Navigation event){
         naviType = event.getType();
@@ -258,15 +266,16 @@ public class NavigationHandler {
     }
 
     public void destoryAmapNavi(){
+
+        AMapNavi.getInstance(mContext).removeAMapNaviListener(mAmapNaviListener);
         AMapNavi.getInstance(mContext).stopNavi();
         AMapNavi.getInstance(mContext).destroy();
-        AMapNavi.getInstance(mContext).removeAMapNaviListener(mAmapNaviListener);
+        navigationHandler = null;
     }
 
     public void initNaviListener(){
         log.debug("initNaviListener");
         AMapNavi.getInstance(mContext).setAMapNaviListener(getAMapNaviListener());
         AMapNavi.getInstance(mContext).startGPS();
-//        AMapNavi.getInstance(mContext).startNavi(AMapNavi.GPSNaviMode);
     }
 }

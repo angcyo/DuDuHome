@@ -1,9 +1,15 @@
 package com.dudu.map;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.GpsSatellite;
+import android.location.GpsStatus;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -22,6 +28,7 @@ import com.dudu.android.launcher.utils.TimeUtils;
 import com.dudu.obd.MyGPSData;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import ch.qos.logback.core.util.LocationUtil;
@@ -30,10 +37,12 @@ import de.greenrobot.event.EventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static android.support.v4.content.PermissionChecker.checkSelfPermission;
+
 /**
  * Created by pc on 2015/11/3.
  */
-public class AmapLocationHandler implements AMapLocationListener {
+public class AmapLocationHandler implements AMapLocationListener{
 
     private static final String TAG = "AmapLocationHandler";
 
@@ -61,6 +70,8 @@ public class AmapLocationHandler implements AMapLocationListener {
 
     private Activity topActivity;
 
+    private LocationManager locationManager;
+
     public AmapLocationHandler() {
 
         log = LoggerFactory.getLogger("lbs.gps");
@@ -74,6 +85,13 @@ public class AmapLocationHandler implements AMapLocationListener {
                 LocationProviderProxy.AMapNetwork, 2000, 10, this);
         gpsDataListToSend = new ArrayList<>();
         unAvalableList = new ArrayList<>();
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        // 监听状态
+        if (checkSelfPermission(context,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        locationManager.addGpsStatusListener(getGpsStatuslistener);
+
     }
 
     @Override
@@ -261,4 +279,39 @@ public class AmapLocationHandler implements AMapLocationListener {
         }
         mLocationManagerProxy = null;
     }
+
+    // 状态监听
+    GpsStatus.Listener getGpsStatuslistener = new GpsStatus.Listener() {
+        public void onGpsStatusChanged(int event) {
+            switch (event) {
+                // 第一次定位
+                case GpsStatus.GPS_EVENT_FIRST_FIX:
+                    log.debug("第一次定位");
+                    break;
+                // 卫星状态改变
+                case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
+                    GpsStatus gpsStatus = locationManager.getGpsStatus(null);
+                    int maxSatellites = gpsStatus.getMaxSatellites();
+                    Iterator<GpsSatellite> iters = gpsStatus.getSatellites()
+                            .iterator();
+                    int count = 0;
+                    while (iters.hasNext() && count <= maxSatellites) {
+
+                        count++;
+                    }
+                    log.debug("搜索到{}颗卫星",count);
+
+                    break;
+                // 定位启动
+                case GpsStatus.GPS_EVENT_STARTED:
+                    log.debug("定位启动");
+                    break;
+                // 定位结束
+                case GpsStatus.GPS_EVENT_STOPPED:
+                    log.debug("定位结束");
+                    break;
+            }
+        };
+    };
+
 }
