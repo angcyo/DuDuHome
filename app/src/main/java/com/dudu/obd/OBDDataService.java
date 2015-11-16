@@ -418,9 +418,6 @@ public class OBDDataService extends Service implements
             noticeFating();
         }else{
 
-            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            PowerManager.WakeLock wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "TAG");
-            wakeLock.release();
         }
     }
 
