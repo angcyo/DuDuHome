@@ -269,7 +269,7 @@ public class NavigationHandler {
     }
 
     public void destoryAmapNavi(){
-
+        log.debug("destoryAmapNavi");
         AMapNavi.getInstance(mContext).removeAMapNaviListener(mAmapNaviListener);
         AMapNavi.getInstance(mContext).stopNavi();
         AMapNavi.getInstance(mContext).destroy();
