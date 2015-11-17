@@ -7,42 +7,37 @@ import android.content.pm.PackageManager;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.LocationProvider;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
 import com.amap.api.location.LocationProviderProxy;
-import com.amap.api.maps.LocationSource;
+import com.dudu.android.hideapi.SystemPropertiesProxy;
 import com.dudu.android.launcher.ui.activity.LocationMapActivity;
 import com.dudu.android.launcher.ui.activity.NaviCustomActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
-import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.LocationFilter;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.TimeUtils;
 import com.dudu.obd.MyGPSData;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import ch.qos.logback.core.util.LocationUtil;
 import de.greenrobot.event.EventBus;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static android.support.v4.content.PermissionChecker.checkSelfPermission;
 
 /**
  * Created by pc on 2015/11/3.
  */
-public class AmapLocationHandler implements AMapLocationListener{
+public class AmapLocationHandler implements AMapLocationListener {
 
     private static final String TAG = "AmapLocationHandler";
 
@@ -71,6 +66,41 @@ public class AmapLocationHandler implements AMapLocationListener{
     private Activity topActivity;
 
     private LocationManager locationManager;
+    // 状态监听
+    GpsStatus.Listener getGpsStatuslistener = new GpsStatus.Listener() {
+        public void onGpsStatusChanged(int event) {
+            switch (event) {
+                // 第一次定位
+                case GpsStatus.GPS_EVENT_FIRST_FIX:
+                    log.debug("第一次定位");
+                    break;
+                // 卫星状态改变
+                case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
+                    GpsStatus gpsStatus = locationManager.getGpsStatus(null);
+                    int maxSatellites = gpsStatus.getMaxSatellites();
+                    Iterator<GpsSatellite> iters = gpsStatus.getSatellites()
+                            .iterator();
+                    int count = 0;
+                    while (iters.hasNext() && count <= maxSatellites) {
+
+                        count++;
+                    }
+                    log.debug("搜索到{}颗卫星", count);
+
+                    break;
+                // 定位启动
+                case GpsStatus.GPS_EVENT_STARTED:
+                    log.debug("定位启动");
+                    break;
+                // 定位结束
+                case GpsStatus.GPS_EVENT_STOPPED:
+                    log.debug("定位结束");
+                    break;
+            }
+        }
+
+        ;
+    };
 
     public AmapLocationHandler() {
 
@@ -78,7 +108,8 @@ public class AmapLocationHandler implements AMapLocationListener{
     }
 
     public void init(Context context) {
-        FileUtils.writeFile("/sys/class/gps_vreg/gps_vreg/gps_enable", "1");
+        SystemPropertiesProxy.getInstance().set("persist.sys.gps", "start");
+
         mContext = context;
         mLocationManagerProxy = LocationManagerProxy.getInstance(context);
         mLocationManagerProxy.requestLocationData(
@@ -87,7 +118,7 @@ public class AmapLocationHandler implements AMapLocationListener{
         unAvalableList = new ArrayList<>();
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         // 监听状态
-        if (checkSelfPermission(context,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         locationManager.addGpsStatusListener(getGpsStatuslistener);
@@ -106,7 +137,7 @@ public class AmapLocationHandler implements AMapLocationListener{
         // 保存当前定位点
         LocationUtils.getInstance(mContext).setCurrentLocation(
                 location.getLatitude(), location.getLongitude());
-        
+
         topActivity = ActivitiesManager.getInstance().getTopActivity();
         if ((topActivity instanceof LocationMapActivity) ||
                 (topActivity instanceof NaviCustomActivity) ||
@@ -136,7 +167,7 @@ public class AmapLocationHandler implements AMapLocationListener{
 
     }
 
-    private void handlerGPS(AMapLocation location){
+    private void handlerGPS(AMapLocation location) {
         // 第一阶段过滤
         if (LocationFilter.checkStageOne(location.getLatitude(),
                 location.getLongitude(), location.getAccuracy(),
@@ -257,7 +288,6 @@ public class AmapLocationHandler implements AMapLocationListener{
 
     }
 
-
     public AMapLocation getLast_Location() {
 
         return last_Location;
@@ -273,45 +303,11 @@ public class AmapLocationHandler implements AMapLocationListener{
 
     public void stopLocation() {
         if (mLocationManagerProxy != null) {
-            FileUtils.writeFile("/sys/class/gps_vreg/gps_vreg/gps_enable", "0");
+            SystemPropertiesProxy.getInstance().set("persist.sys.gps", "stop");
             mLocationManagerProxy.removeUpdates(this);
             mLocationManagerProxy.destroy();
         }
         mLocationManagerProxy = null;
     }
-
-    // 状态监听
-    GpsStatus.Listener getGpsStatuslistener = new GpsStatus.Listener() {
-        public void onGpsStatusChanged(int event) {
-            switch (event) {
-                // 第一次定位
-                case GpsStatus.GPS_EVENT_FIRST_FIX:
-                    log.debug("第一次定位");
-                    break;
-                // 卫星状态改变
-                case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
-                    GpsStatus gpsStatus = locationManager.getGpsStatus(null);
-                    int maxSatellites = gpsStatus.getMaxSatellites();
-                    Iterator<GpsSatellite> iters = gpsStatus.getSatellites()
-                            .iterator();
-                    int count = 0;
-                    while (iters.hasNext() && count <= maxSatellites) {
-
-                        count++;
-                    }
-                    log.debug("搜索到{}颗卫星",count);
-
-                    break;
-                // 定位启动
-                case GpsStatus.GPS_EVENT_STARTED:
-                    log.debug("定位启动");
-                    break;
-                // 定位结束
-                case GpsStatus.GPS_EVENT_STOPPED:
-                    log.debug("定位结束");
-                    break;
-            }
-        };
-    };
 
 }

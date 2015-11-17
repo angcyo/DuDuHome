@@ -58,6 +58,7 @@ public class BleOBD {
     }
 
     public void initOBD() {
+        log.debug("initOBD");
         ConnSession.getInstance();
         BleConnectMain.getInstance().init(LauncherApplication.getContext());
         EventBus.getDefault().unregister(this);

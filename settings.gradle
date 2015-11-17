@@ -1,1 +1,1 @@
-include ':app', ':libble', ':scf4a', ':navi'
+include ':app', ':libble', ':scf4a', ':navi', ':hideapi'
