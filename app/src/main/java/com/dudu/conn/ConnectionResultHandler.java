@@ -41,6 +41,7 @@ public class ConnectionResultHandler {
                       new PortalHandler().handlerUpdate(mContext,method,jsonResult.getString("url"),jsonResult.getString("group"));
                         break;
                     case ConnMethod.METHOD_TAKEPHOTO:
+                        EventBus.getDefault().post(new ConnectionEvent.TakePhoto(jsonResult.getString("openid")));
                         break;
                     case ConnMethod.METHOD_NAVI:
                         break;

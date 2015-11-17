@@ -25,22 +25,39 @@ import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.Button;
 import android.widget.ImageButton;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.bean.VideoEntity;
 import com.dudu.android.launcher.db.DbHelper;
 import com.dudu.android.launcher.ui.activity.video.VideoListActivity;
 import com.dudu.android.launcher.utils.Constants;
+import com.dudu.android.launcher.utils.DensityUtil;
+import com.dudu.android.launcher.utils.DeviceIDUtil;
+import com.dudu.android.launcher.utils.FileNameUtil;
 import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
+import com.dudu.conn.ConnectionEvent;
+import com.dudu.http.MultipartRequest;
+import com.dudu.http.MultipartRequestParams;
+
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import de.greenrobot.event.EventBus;
 
 public class RecordBindService extends Service implements SurfaceHolder.Callback {
 
@@ -87,6 +104,10 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     private float mVideoCacheMaxSize;
 
     private TFlashCardReceiver mTFlashCardReceiver;
+
+    private static String HTTP_URL_IMG = "http://192.168.124.177:8081/weixin/picUpload";
+
+    private RequestQueue queue;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -146,6 +167,10 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         mTFlashCardReceiver = new TFlashCardReceiver();
 
         registerTFlashCardReceiver();
+
+        queue = Volley.newRequestQueue(this);
+        EventBus.getDefault().unregister(this);
+        EventBus.getDefault().register(this);
     }
 
     private void registerTFlashCardReceiver() {
@@ -423,4 +448,40 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         }
     }
 
+
+    public void onEventBackgroundThread(final ConnectionEvent.TakePhoto takePhoto) {
+
+
+        if (camera != null) {
+            camera.autoFocus(null);
+            camera.takePicture(null, null, new Camera.PictureCallback() {
+                @Override
+                public void onPictureTaken(byte[] data, Camera camera) {
+                    if (data != null) {
+                        InputStream inputStream = new ByteArrayInputStream(data);
+                        MultipartRequestParams multiPartParams = new MultipartRequestParams();
+                        multiPartParams.put("upload_img", inputStream, FileNameUtil.randomString(7) + ".jpg");
+                        multiPartParams.put("obeId", DeviceIDUtil.getIMEI(getApplicationContext()));
+                        multiPartParams.put("openid", takePhoto.getOpenId());
+                        MultipartRequest multipartRequest = new MultipartRequest
+                                (Request.Method.POST, multiPartParams, HTTP_URL_IMG, new Response.Listener<String>() {
+
+                                    @Override
+                                    public void onResponse(String response) {
+
+                                    }
+                                }, new Response.ErrorListener() {
+
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                    }
+                                });
+                        queue.add(multipartRequest);
+                    }
+
+                }
+
+            });
+        }
+    }
 }

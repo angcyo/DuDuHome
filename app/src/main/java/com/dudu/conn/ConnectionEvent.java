@@ -52,5 +52,14 @@ public class ConnectionEvent {
         }
     }
 
+   public static class TakePhoto{
 
+       String openId;
+       public TakePhoto(String openId){
+           this.openId = openId;
+       }
+       public String getOpenId(){
+           return openId;
+       }
+   }
 }
