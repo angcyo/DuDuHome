@@ -226,7 +226,7 @@ public class BleOBD {
         }
     }
 
-    public static class CarStatus{
+    public static class CarStatus {
         public static final int CAR_OFFLINE = 0;
         public static final int CAR_ONLINE = 1;
         private int carStatus;

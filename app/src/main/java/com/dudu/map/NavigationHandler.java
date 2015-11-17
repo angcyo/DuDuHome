@@ -55,7 +55,7 @@ public class NavigationHandler {
 
     private String naviAddress;
 
-    private VoiceManager mVoiceManager = VoiceManager.getInstance();
+    private VoiceManager mVoiceManager;
 
     private Class naviClass;
 
@@ -80,6 +80,9 @@ public class NavigationHandler {
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
         initNaviListener();
+
+        mVoiceManager = VoiceManager.getInstance();
+
     }
 
     public void onEventBackgroundThread(Navigation event){

@@ -1,9 +1,7 @@
 package com.dudu.android.launcher.ui.activity.video;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.LinkedList;
-
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
@@ -26,18 +24,20 @@ import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
-
-import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
+import com.dudu.android.launcher.bean.VideoEntity;
+import com.dudu.android.launcher.db.DbHelper;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.ui.view.VideoView;
+import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FileUtils;
+import com.dudu.android.launcher.utils.ToastUtils;
 
 public class VideoPlayActivity extends BaseNoTitlebarAcitivity implements OnClickListener {
 
 	private final static int MESSAGE_PROGRESS_CHANGED = 0;
 
-	private LinkedList<MovieInfo> mPlayList = new LinkedList<MovieInfo>();
+	private LinkedList<VideoEntity> mPlayList = new LinkedList<>();
 
 	private VideoView mVideoView;
 
@@ -64,6 +64,8 @@ public class VideoPlayActivity extends BaseNoTitlebarAcitivity implements OnClic
 	private boolean mPaused = false;
 
 	private Button mPauseButton;
+
+    private int position;
 
 	private Handler mHandler = new Handler() {
 
@@ -171,39 +173,39 @@ public class VideoPlayActivity extends BaseNoTitlebarAcitivity implements OnClic
 
 		mVideoView.setOnPreparedListener(new OnPreparedListener() {
 
-			@Override
-			public void onPrepared(MediaPlayer mp) {
-				showController();
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                showController();
 
-				int duration = mVideoView.getDuration();
+                int duration = mVideoView.getDuration();
 
-				mSeekBar.setMax(duration);
+                mSeekBar.setMax(duration);
 
-				duration /= 1000;
+                duration /= 1000;
 
-				int minutes = duration / 60;
-				int hours = duration / 60;
-				int seconds = duration % 60;
+                int minutes = duration / 60;
+                int hours = minutes / 60;
+                int seconds = duration % 60;
 
-				minutes %= 60;
-				mTotalDuration.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+                minutes %= 60;
+                mTotalDuration.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
 
-				mVideoView.start();
+                mVideoView.start();
 
-				mHandler.sendEmptyMessage(MESSAGE_PROGRESS_CHANGED);
-			}
-		});
+                mHandler.sendEmptyMessage(MESSAGE_PROGRESS_CHANGED);
+            }
+        });
 
 		mVideoView.setOnCompletionListener(new OnCompletionListener() {
 
-			@Override
-			public void onCompletion(MediaPlayer mp) {
-				mVideoView.seekTo(0);
-				mVideoView.pause();
-				mPauseButton.setVisibility(View.VISIBLE);
-				mPaused = true;
-			}
-		});
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mVideoView.seekTo(0);
+                mVideoView.pause();
+                mPauseButton.setVisibility(View.VISIBLE);
+                mPaused = true;
+            }
+        });
 	}
 
 	@Override
@@ -215,6 +217,8 @@ public class VideoPlayActivity extends BaseNoTitlebarAcitivity implements OnClic
 			mVideoView.stopPlayback();
 			mVideoView.setVideoURI(uri);
 		}
+
+        position = getIntent().getIntExtra(Constants.EXTRA_VIDEO_POSITION, 0);
 
 		getVideoFile(mPlayList, new File(path));
 
@@ -230,9 +234,19 @@ public class VideoPlayActivity extends BaseNoTitlebarAcitivity implements OnClic
 	@Override
 	public void onClick(View v) {
 		if (v.getId() == R.id.previous_button) {
-
+            if (position > 0) {
+                position--;
+                mVideoView.setVideoURI(Uri.fromFile(mPlayList.get(position).getFile()));
+            } else {
+                ToastUtils.showToast(R.string.video_start_alert);
+            }
 		} else if (v.getId() == R.id.next_button) {
-
+            if (position < mPlayList.size() - 1) {
+                position++;
+                mVideoView.setVideoURI(Uri.fromFile(mPlayList.get(position).getFile()));
+            } else {
+                ToastUtils.showToast(R.string.video_end_alert);
+            }
 		} else if (v.getId() == R.id.pause_button) {
 			if (mPaused) {
 				mVideoView.start();
@@ -242,35 +256,38 @@ public class VideoPlayActivity extends BaseNoTitlebarAcitivity implements OnClic
 		}
 	}
 
-	private void getVideoFile(final LinkedList<MovieInfo> list, File file) {
-		file.listFiles(new FileFilter() {
+	private void getVideoFile(final LinkedList<VideoEntity> list, File file) {
+//		file.listFiles(new FileFilter() {
+//
+//			@Override
+//			public boolean accept(File file) {
+//				String name = file.getName();
+//				int index = name.indexOf('.');
+//				if (index != -1) {
+//					name = name.substring(index);
+//					if (name.equalsIgnoreCase(".mp4") || name.equalsIgnoreCase(".3gp")) {
+//						MovieInfo movie = new MovieInfo();
+//						movie.displayName = file.getName();
+//						movie.path = file.getAbsolutePath();
+//						list.add(movie);
+//						return true;
+//					}
+//				} else if (file.isDirectory()) {
+//					getVideoFile(list, file);
+//				}
+//
+//				return false;
+//			}
+//		});
 
-			@Override
-			public boolean accept(File file) {
-				String name = file.getName();
-				int index = name.indexOf('.');
-				if (index != -1) {
-					name = name.substring(index);
-					if (name.equalsIgnoreCase(".mp4") || name.equalsIgnoreCase(".3gp")) {
-						MovieInfo movie = new MovieInfo();
-						movie.displayName = file.getName();
-						movie.path = file.getAbsolutePath();
-						list.add(movie);
-						return true;
-					}
-				} else if (file.isDirectory()) {
-					getVideoFile(list, file);
-				}
-
-				return false;
-			}
-		});
+        DbHelper dbHelper = DbHelper.getDbHelper(VideoPlayActivity.this);
+        list.addAll(dbHelper.getAllVideos());
 	}
 
-	static class MovieInfo {
-		String displayName;
-		String path;
-	}
+//	static class MovieInfo {
+//		String displayName;
+//		String path;
+//	}
 
 	private void getScreenSize() {
 		DisplayMetrics dm = new DisplayMetrics();

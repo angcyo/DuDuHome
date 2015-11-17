@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
-import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.media.MediaRecorder.OnErrorListener;
@@ -37,7 +36,6 @@ import com.dudu.android.launcher.bean.VideoEntity;
 import com.dudu.android.launcher.db.DbHelper;
 import com.dudu.android.launcher.ui.activity.video.VideoListActivity;
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.DensityUtil;
 import com.dudu.android.launcher.utils.DeviceIDUtil;
 import com.dudu.android.launcher.utils.FileNameUtil;
 import com.dudu.android.launcher.utils.FileUtils;
@@ -47,16 +45,14 @@ import com.dudu.conn.ConnectionEvent;
 import com.dudu.http.MultipartRequest;
 import com.dudu.http.MultipartRequestParams;
 import java.io.ByteArrayInputStream;
+import com.dudu.obd.BleOBD;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import de.greenrobot.event.EventBus;
 
 public class RecordBindService extends Service implements SurfaceHolder.Callback {
@@ -484,7 +480,6 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         }
     }
 
-
     public void onEventBackgroundThread(final ConnectionEvent.TakePhoto takePhoto) {
 
 
@@ -520,4 +515,13 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
             });
         }
     }
+
+    public void onEventBackgroundThread(BleOBD.CarStatus event) {
+        if (event.getCarStatus() == BleOBD.CarStatus.CAR_OFFLINE) {
+            ToastUtils.showToast("车辆熄火");
+        }  else if (event.getCarStatus() == BleOBD.CarStatus.CAR_ONLINE) {
+            ToastUtils.showToast("车辆点火");
+        }
+    }
+
 }

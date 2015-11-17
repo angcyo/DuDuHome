@@ -38,6 +38,7 @@ public class ThumbsFetcher extends ImageWorker {
 //            return getVideoThumbnail(path);
             return getVideoThumbnail(path, 300, 300);
         }
+
         return null;
     }
 

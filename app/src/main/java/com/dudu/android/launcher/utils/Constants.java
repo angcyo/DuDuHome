@@ -1,7 +1,5 @@
 package com.dudu.android.launcher.utils;
 
-import java.util.UUID;
-
 public class Constants {
 
 	public static final String FLOW_UPDATE_BROADCAST = "broadcast_flow_update";
@@ -9,39 +7,20 @@ public class Constants {
 	public static final String VIDEO_PREVIEW_BROADCAST = "broadcast_video_preview";
 
 	public static final boolean DEBUG = true;
-	public static boolean IS_SHOW_MESSAGE = true;
-	public static final UUID UUIDS = UUID.fromString(UUID.randomUUID().toString());
 	public static final String XUFEIID = "55bda6e9";
 
 
 	public static final String NAVIGATION = "导航";
-	public static final String MUSIC = "音乐";
-	public static final String REDIO = "收音机";
-	public static final String BLUETOOTH = "蓝牙";
-	public static final String VIDEO = "视频";
-	public static final String WIFIB = "WIFI";
-	public static final String WIFI = "wifi";
-	public static final String HOTSPOT = "热点";
-	public static final String MESSAGE_SHOW = "消息显示";
 	public static final String SPEECH = "语音";
-	public static final String TRAFFIC = "流量";
 	public static final String LUXIANG = "录像";
-	public static final String SHEXIANG = "摄像";
-	public static final String JIEDAN = "接单";
-	public static final String CLZJ = "车辆";
 
-	public static final String EXECUTE = "执行";
-	public static final String REALTIME = "实时";
 	public static final String EXIT = "退出";
 	public static final String OPEN = "打开";
 	public static final String START = "开始";
 	public static final String CLOSE = "关闭";
 	public static final String END = "结束";
 	public static final String BACK = "返回";
-	public static final String YES = "是";
-	public static final String NO = "否";
 	public static final String JIE = "单";
-	public static final String ZIJIAN = "自检";
 
     public static final String REFUEL = "加油";
 	public static final String GAS_STATION = "加油站";
@@ -107,8 +86,6 @@ public class Constants {
 
 	// 代表我的位置
 	public static final String CURRENT_POI = "CURRENT_POI";
-	// 地址不够详细
-	public static final String LOC_BASIC = "LOC_BASIC";
 
 	public static final int NO_VALUE_FLAG = -999;// 无
 	public static final int SUNNY = 0;// 晴
@@ -149,6 +126,8 @@ public class Constants {
 	public static final String NAVI_LOOK = "查看";
 
     public static final int VERSION_TYPE_TAXI = 1;
-	public static final int VERSION_TYPE_CAR = 2;
+
+    // Activity传递参数的常量
+    public static final String EXTRA_VIDEO_POSITION = "video_position";
 
 }

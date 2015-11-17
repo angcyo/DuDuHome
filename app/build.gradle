@@ -39,6 +39,7 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/NOTICE'

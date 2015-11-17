@@ -72,6 +72,9 @@
     <string name="video_lock_alert">本视频已锁定.</string>
     <string name="OBD_not_connect">OBD模块未正确连接</string>
     <string name="OBD_use_connect">请连接后使用</string>
+    <string name="video_end_alert">已经是最后一个视频！</string>
+    <string name="video_start_alert">已经是第一个视频！</string>
+
 
     <string-array name="action_menu_list_select">
         <item>选择</item>

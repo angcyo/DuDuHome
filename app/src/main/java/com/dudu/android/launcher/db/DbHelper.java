@@ -4,6 +4,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -244,6 +245,47 @@ public class DbHelper extends SQLiteOpenHelper {
         }
 
         return null;
+    }
+
+    public LinkedList<VideoEntity> getAllVideos() {
+        db = getWritableDatabase();
+        LinkedList<VideoEntity> videos = new LinkedList<>();
+        Cursor c = db.query(VIDEO_TABLE_NAME, null, null, null, null, null,
+                VIDEO_COLUMN_CREATE_TIME + " desc");
+        if (c != null) {
+            while (c.moveToNext()) {
+                VideoEntity video = new VideoEntity();
+                String name = c.getString(c
+                        .getColumnIndexOrThrow(VIDEO_COLUMN_NAME));
+                int status = c.getInt(c
+                        .getColumnIndexOrThrow(VIDEO_COLUMN_STATUS));
+                String path = c.getString(c
+                        .getColumnIndexOrThrow(VIDEO_COLUMN_PATH));
+                String size = c.getString(c
+                        .getColumnIndexOrThrow(VIDEO_COLUMN_SIZE));
+                String createTime = c.getString(c
+                        .getColumnIndexOrThrow(VIDEO_COLUMN_CREATE_TIME));
+
+                video.setName(name);
+                video.setStatus(status);
+                File file = new File(path, name);
+                if (file.exists()) {
+                    video.setFile(file);
+                } else {
+                    continue;
+                }
+
+                video.setFile(file);
+                video.setPath(path);
+                video.setSize(size);
+                video.setCreateTime(createTime);
+                videos.add(video);
+            }
+
+            c.close();
+        }
+
+        return videos;
     }
 
     public List<VideoEntity> getVideos(int first, int max) {

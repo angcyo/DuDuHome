@@ -27,6 +27,7 @@ import com.dudu.android.launcher.db.DbHelper;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.ui.dialog.ConfirmCancelDialog;
 import com.dudu.android.launcher.ui.dialog.ConfirmDialog;
+import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.cache.ImageCache;
 import com.dudu.android.launcher.utils.cache.ThumbsFetcher;
@@ -55,7 +56,6 @@ public class VideoListActivity extends FragmentActivity {
 
     private int mCurrentPage = 0;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,7 +83,7 @@ public class VideoListActivity extends FragmentActivity {
 
         mThumbsFetcher.addImageCache(getSupportFragmentManager(), cacheParams);
 
-        mDbHelper = DbHelper.getDbHelper(VideoListActivity.this);
+        mDbHelper = DbHelper.getDbHelper();
 
         mVideoData = new ArrayList<>();
 
@@ -280,6 +280,7 @@ public class VideoListActivity extends FragmentActivity {
                     Intent intent = new Intent(VideoListActivity.this,
                             VideoPlayActivity.class);
                     intent.setData(Uri.fromFile(video.getFile()));
+                    intent.putExtra(Constants.EXTRA_VIDEO_POSITION, position);
                     startActivity(intent);
                 }
             });
