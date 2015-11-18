@@ -96,6 +96,22 @@
         </rollingPolicy>
     </appender>
 
+    <appender name="FILE_INIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/log_init.today.txt</file>
+        <encoder>
+            <pattern>%date [%thread] %-5level %logger{36} [%file:%line] - %msg%n</pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/log_init.%d.txt</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <logger name="init" level="DEBUG">
+        <appender-ref ref="FILE_INIT"/>
+    </logger>
+
     <logger name="ble" level="DEBUG">
         <appender-ref ref="FILE_BLE"/>
     </logger>
@@ -112,7 +128,7 @@
         <appender-ref ref="FILE_GPS"/>
     </logger>
 
-    <logger name="voice.manager" level="DEBUG">
+    <logger name="voice" level="DEBUG">
         <appender-ref ref="FILE_VOICE"/>
     </logger>
 

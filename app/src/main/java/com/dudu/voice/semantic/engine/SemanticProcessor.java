@@ -1,7 +1,5 @@
 package com.dudu.voice.semantic.engine;
 
-import android.util.Log;
-
 import com.dudu.android.launcher.bean.Rsphead;
 import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.voice.semantic.SemanticConstants;
@@ -54,7 +52,7 @@ public class SemanticProcessor {
      */
     private SemanticProcessor() {
 
-        log = LoggerFactory.getLogger("voice.manager");
+        log = LoggerFactory.getLogger("voice.semantic");
 
         mChainGenerator = new ChainGenerator();
 

@@ -5,12 +5,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.text.TextUtils;
+
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FloatWindow;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
-import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.NetworkUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.voice.semantic.engine.SemanticProcessor;
@@ -36,9 +36,6 @@ import org.slf4j.LoggerFactory;
  * Created by 赵圣琪 on 2015/10/27.
  */
 public class VoiceManager {
-
-    private static final String TAG = "VoiceManager";
-
     private static final int MISUNDERSTAND_REPEAT_COUNT = 2;
 
     private static VoiceManager mInstance;
@@ -62,8 +59,6 @@ public class VoiceManager {
      */
     private VoiceWakeuper mWakeuper = null;
 
-    private int ret = 0;
-
     /**
      * 听不懂的次数，限制为3次
      */
@@ -74,6 +69,7 @@ public class VoiceManager {
     private boolean mShowMessageWindow = true;
 
     private Logger log;
+    private int log_step;
 
     private Runnable mRemoveFloatWindow = new Runnable() {
         @Override
@@ -96,17 +92,19 @@ public class VoiceManager {
 
     private VoiceManager() {
         mContext = LauncherApplication.mApplication;
+        log = LoggerFactory.getLogger("voice.manager");
+        log_step = 0;
+        log.debug("[voice][{}]new Instance", log_step++);
 
         registerWakeuper();
 
+        log.debug("[voice][{}]set SpeechUnderstander Listener", log_step++);
         mSpeechUnderstander = SpeechUnderstander.createUnderstander(mContext,
                 mSpeechUnderstanderListener);
 
         setTtsParameter();
 
         mHandler = new Handler();
-
-        log = LoggerFactory.getLogger("voice.manager");
     }
 
     public void clearMisUnderstandCount() {
@@ -121,6 +119,7 @@ public class VoiceManager {
      * 开始启动唤醒服务
      */
     public void startWakeup() {
+        log.debug("[voice][{}]开始启动唤醒服务", log_step++);
         mWakeuper = VoiceWakeuper.getWakeuper();
         if (mWakeuper != null) {
             mWakeuper.setParameter(SpeechConstant.IVW_THRESHOLD, "0:"
@@ -132,6 +131,7 @@ public class VoiceManager {
     }
 
     public void stopWakeup() {
+        log.debug("[voice][{}]停止唤醒服务", log_step++);
         mWakeuper = VoiceWakeuper.getWakeuper();
         if (mWakeuper != null) {
             mWakeuper.stopListening();
@@ -139,6 +139,7 @@ public class VoiceManager {
     }
 
     private void registerWakeuper() {
+        log.debug("[voice][{}]register Wakeup er", log_step++);
         StringBuffer params = new StringBuffer();
         String resPath = ResourceUtil.generateResourcePath(mContext,
                 ResourceUtil.RESOURCE_TYPE.assets, "ivw/55bda6e9.jet");
@@ -149,8 +150,10 @@ public class VoiceManager {
         boolean ret = SpeechUtility.getUtility().setParameter(
                 ResourceUtil.ENGINE_START, params.toString());
 
+        log.debug("[voice][{}]启动本地引擎结果{}！", log_step++, ret);
+
         if (!ret) {
-            LogUtils.d(TAG, "启动本地引擎失败！");
+            //TODO
         }
 
         mWakeuper = VoiceWakeuper.createWakeuper(mContext, null);
@@ -162,11 +165,12 @@ public class VoiceManager {
     private WakeuperListener mWakeuperListener = new WakeuperListener() {
 
         public void onResult(WakeuperResult result) {
+            log.debug("[voice][{}]语音唤醒监听器:{}", log_step++, result.getResultString());
             startVoiceService();
         }
 
         public void onError(SpeechError error) {
-            LogUtils.e(TAG, "error: " + error.getErrorCode());
+            log.debug("[voice][{}]语音唤醒监听器, error:{}", log_step++, error.getErrorCode());
             if (error.getErrorCode() == 20006) {
                 ToastUtils.showToast("录音失败，请查看是否有其他进程正在占用麦克风");
             }
@@ -185,6 +189,7 @@ public class VoiceManager {
     };
 
     public void startVoiceService() {
+        log.debug("[voice][{}]startVoiceService", log_step++);
         mMisunderstandCount = 0;
 
         if (!NetworkUtils.isNetworkConnected(mContext)) {
@@ -204,6 +209,7 @@ public class VoiceManager {
      * 开始语义理解
      */
     public void startUnderstanding() {
+        log.debug("[voice][{}]开始语义理解", log_step++);
 
         stopWakeup();
 
@@ -212,10 +218,8 @@ public class VoiceManager {
         if (mSpeechUnderstander.isUnderstanding()) {
             mSpeechUnderstander.stopUnderstanding();
         } else {
-            ret = mSpeechUnderstander.startUnderstanding(mRecognizerListener);
-            if (ret != 0) {
-                LogUtils.e(TAG, "---------语义理解失败, 错误码: " + ret);
-            }
+            final int ret = mSpeechUnderstander.startUnderstanding(mRecognizerListener);
+            log.debug("[voice][{}]开始语义理解结果:{}", log_step++, ret);
         }
     }
 
@@ -223,6 +227,7 @@ public class VoiceManager {
      * 停止语义理解
      */
     public void stopUnderstanding() {
+        log.debug("[voice][{}]停止语义理解", log_step++);
 
         mSpeechUnderstander.cancel();
 
@@ -233,6 +238,7 @@ public class VoiceManager {
      * 设置语义理解相关参数
      */
     private void setUnderstanderParams() {
+        log.debug("[voice][{}]设置语义理解相关参数", log_step++);
         mSpeechUnderstander.setParameter(SpeechConstant.RESULT_TYPE, "json");
 
         // 设置语言
@@ -264,6 +270,7 @@ public class VoiceManager {
      * 语音合成参数设置
      */
     private void setTtsParameter() {
+        log.debug("[voice][{}]语音合成参数设置", log_step++);
         mSpeechSynthesizer = SpeechSynthesizer.createSynthesizer(mContext,
                 mTtsInitListener);
 
@@ -310,44 +317,16 @@ public class VoiceManager {
     private InitListener mTtsInitListener = new InitListener() {
         @Override
         public void onInit(int code) {
-            LogUtils.d(TAG, "mTtsInitListener init() code = " + code);
-            if (code == ErrorCode.SUCCESS) {
-
-            }
+            log.debug("[voice][{}]语音合成初始化监听:{}", log_step++, code);
         }
     };
 
     public void startSpeaking(String playText) {
-
-        if (mShowMessageWindow) {
-            FloatWindowUtil.showMessage(playText, FloatWindow.MESSAGE_IN);
-        }
-
-        int code = mSpeechSynthesizer.startSpeaking(playText, null);
-
-        if (code != ErrorCode.SUCCESS) {
-            LogUtils.d(TAG, "语音合成失败,错误码: " + code);
-        }
+        startSpeaking(playText, SemanticConstants.TTS_DO_NOTHING, true);
     }
 
     public void startSpeaking(String playText, int type) {
-
-        if (mMisunderstandCount >= MISUNDERSTAND_REPEAT_COUNT) {
-            playText = Constants.UNDERSTAND_EXIT;
-        }
-
-        if (mShowMessageWindow) {
-            FloatWindowUtil.showMessage(playText, FloatWindow.MESSAGE_IN);
-        }
-
-        mSynthesizerType = type;
-
-        int code = mSpeechSynthesizer.startSpeaking(playText,
-                mSynthesizerListener);
-
-        if (code != ErrorCode.SUCCESS) {
-            LogUtils.d(TAG, "语音合成失败,错误码: " + code);
-        }
+        startSpeaking(playText, type, true);
     }
 
     public void startSpeaking(String playText, int type, boolean showMessage) {
@@ -355,18 +334,15 @@ public class VoiceManager {
             playText = Constants.UNDERSTAND_EXIT;
         }
 
+        mSynthesizerType = type;
+
         if (mShowMessageWindow && showMessage) {
             FloatWindowUtil.showMessage(playText, FloatWindow.MESSAGE_IN);
         }
 
-        mSynthesizerType = type;
+        int code = mSpeechSynthesizer.startSpeaking(playText, mSynthesizerListener);
 
-        int code = mSpeechSynthesizer.startSpeaking(playText,
-                mSynthesizerListener);
-
-        if (code != ErrorCode.SUCCESS) {
-            LogUtils.d(TAG, "语音合成失败,错误码: " + code);
-        }
+        log.debug("[voice][{}]语音合成结果:{}", log_step++, code);
     }
 
 
@@ -389,15 +365,15 @@ public class VoiceManager {
 
         @Override
         public void onResult(UnderstanderResult result) {
+            log.debug("[voice][{}]语义理解结果:{}", log_step++, result != null);
 
             stopUnderstanding();
 
             if (null != result) {
                 String text = result.getResultString();
+                log.trace("[voice][{}]语义理解结果:{}", log_step++, text);
                 if (!TextUtils.isEmpty(text)) {
                     String message = JsonUtils.parseIatResult(text, "text");
-
-                    LogUtils.v("ChoosePageChain", text);
 
                     if (mShowMessageWindow) {
                         FloatWindowUtil.showMessage(message, FloatWindow.MESSAGE_OUT);
@@ -410,7 +386,7 @@ public class VoiceManager {
 
         @Override
         public void onError(SpeechError speechError) {
-            LogUtils.e(TAG, "speech error: " + speechError.getErrorCode());
+            log.warn("[voice][{}]语义理解失败", log_step++);
 
             stopUnderstanding();
 
@@ -418,13 +394,13 @@ public class VoiceManager {
 
             if (speechError.getErrorCode() == 10118) {
                 startSpeaking(Constants.UNDERSTAND_NO_INPUT, SemanticConstants.TTS_START_UNDERSTANDING);
-                log.warn("没有检测到语音输入");
+                log.warn("[voice][{}]语义理解失败:没有检测到语音输入", log_step++);
             } else if (speechError.getErrorCode() == 10114) {
                 startSpeaking(Constants.UNDERSTAND_NETWORK_PROBLEM, SemanticConstants.TTS_START_UNDERSTANDING);
-                log.warn("语义理解网络超时");
+                log.warn("[voice][{}]语义理解失败:语义理解网络超时", log_step++);
             } else {
                 startSpeaking(Constants.UNDERSTAND_MISUNDERSTAND, SemanticConstants.TTS_START_UNDERSTANDING);
-                log.warn("语义理解其他错误，错误码：{}", speechError.getErrorCode());
+                log.warn("[voice][{}]语义理解其他错误:{}", log_step++, speechError.getErrorCode());
             }
         }
 
@@ -440,9 +416,9 @@ public class VoiceManager {
     private InitListener mSpeechUnderstanderListener = new InitListener() {
         @Override
         public void onInit(int code) {
-            LogUtils.d(TAG, "speechUnderstanderListener init() code = " + code);
+            log.debug("[voice][{}]InitListener:{}", log_step++, code);
             if (code != ErrorCode.SUCCESS) {
-
+                //TODO
             }
         }
     };
@@ -476,6 +452,7 @@ public class VoiceManager {
         @Override
         public void onCompleted(SpeechError speechError) {
             if (speechError == null) {
+                log.debug("[voice][{}]语音合成完成,下一步:{},连续出错次数:{}", log_step++, mSynthesizerType, mMisunderstandCount);
                 switch (mSynthesizerType) {
                     case SemanticConstants.TTS_START_WAKEUP:
                         startWakeup();
@@ -490,6 +467,8 @@ public class VoiceManager {
                         startUnderstanding();
                         break;
                 }
+            } else {
+                log.debug("[voice][{}]语音合成结果:{}", log_step++, speechError.getErrorDescription());
             }
         }
 
