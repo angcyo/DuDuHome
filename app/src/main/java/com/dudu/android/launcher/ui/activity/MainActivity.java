@@ -31,7 +31,6 @@ import com.dudu.android.launcher.service.NewMessageShowService;
 import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
-import com.dudu.android.launcher.ui.dialog.BluetoothAlertDialog;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
@@ -79,11 +78,15 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     private Logger log_init;
 
+    private int log_step;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         log_init = LoggerFactory.getLogger("init.start");
+        log_step = 0;
         super.onCreate(savedInstanceState);
 
+        log_init.debug("[main][{}]register EventBus", log_step++);
         EventBus.getDefault().register(this);
 
         startFloatMessageShowService();
@@ -95,7 +98,7 @@ public class MainActivity extends BaseTitlebarActivity implements
         initWeatherInfo();
 
         //添加生产测试判断
-        log_init.debug("checkBTFT after 5s");
+        log_init.debug("[main][{}]checkBTFT after 5s", log_step++);
         Observable.timer(5, TimeUnit.SECONDS)
                 .subscribe(new Action1<Long>() {
                     @Override
@@ -106,7 +109,7 @@ public class MainActivity extends BaseTitlebarActivity implements
     }
 
     public void onEventMainThread(LocalEvent.CheckBtFt event) {
-        log_init.debug("start checkBTFT");
+        log_init.debug("[main][{}]start checkBTFT", log_step++);
         checkBTFT();
     }
 
@@ -117,7 +120,7 @@ public class MainActivity extends BaseTitlebarActivity implements
         Intent intent;
         PackageManager packageManager = getPackageManager();
         intent = packageManager.getLaunchIntentForPackage("com.qualcomm.factory");
-        log_init.debug("bt:{}, ft:{}, app:{}", !need_bt, !need_ft, intent != null);
+        log_init.debug("[main][{}] bt:{}, ft:{}, app:{}", log_step++, !need_bt, !need_ft, intent != null);
         if ((need_bt || need_ft) && intent != null) {
             //close wifi ap for ft test
             WifiApAdmin.closeWifiAp(this);
@@ -131,15 +134,17 @@ public class MainActivity extends BaseTitlebarActivity implements
     }
 
     private void initAfterFT() {
-        log_init.debug("initAfterFT");
+        log_init.debug("[main][{}]initAfterFT", log_step++);
         // 设置使用v5+
         StringBuffer param = new StringBuffer();
         param.append("appid=" + Constants.XUFEIID);
         param.append(",");
         param.append(SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC);
 
+        log_init.debug("[main][{}]SpeechUtility createUtility", log_step++);
         SpeechUtility.createUtility(this, param.toString());
 
+        log_init.debug("[main][{}]VoiceWakeuper startWakeup", log_step++);
         VoiceManager.getInstance().startWakeup();
 
         //延迟10S开启其他服务
@@ -348,6 +353,7 @@ public class MainActivity extends BaseTitlebarActivity implements
      * 实例化录像服务
      */
     private void initVideoService() {
+        log_init.debug("[main][{}]initVideoService", log_step++);
         mServiceConnection = new ServiceConnection() {
 
             @Override
@@ -389,12 +395,10 @@ public class MainActivity extends BaseTitlebarActivity implements
     }
 
     private void requestWeatherInfo() {
+        log_init.debug("[main][{}]requestWeatherInfo, lmp={}", log_step++, mLocationManagerProxy);
         if (mLocationManagerProxy != null) {
-            log_init.debug("requestWeatherInfo");
             mLocationManagerProxy.requestWeatherUpdates(
                     LocationManagerProxy.WEATHER_TYPE_LIVE, MainActivity.this);
-        } else {
-            log_init.debug("requestWeatherInfo mLocationManagerProxy=null");
         }
     }
 
@@ -428,7 +432,7 @@ public class MainActivity extends BaseTitlebarActivity implements
         } else {
             Toast.makeText(this, R.string.get_weather_info_failed,
                     Toast.LENGTH_SHORT).show();
-           mWeatherView.setGravity(Gravity.CENTER);
+            mWeatherView.setGravity(Gravity.CENTER);
             mWeatherView.setText(R.string.unkown_weather_info);
 
 
@@ -436,7 +440,7 @@ public class MainActivity extends BaseTitlebarActivity implements
     }
 
     private void startFloatMessageShowService() {
-        log_init.debug("startFloatMessageShowService");
+        log_init.debug("[main][{}]startFloatMessageShowService", log_step++);
         Intent i = new Intent(MainActivity.this, NewMessageShowService.class);
         startService(i);
     }

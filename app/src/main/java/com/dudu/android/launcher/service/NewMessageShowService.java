@@ -43,6 +43,9 @@ import com.dudu.voice.semantic.chain.ChoiseChain;
 import com.dudu.voice.semantic.chain.ChoosePageChain;
 import com.dudu.voice.semantic.engine.SemanticProcessor;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,6 +89,9 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
     private int pageIndex = 0;
 
+    private Logger log_init;
+    private Logger log;
+
     @Override
     public IBinder onBind(Intent intent) {
 
@@ -94,6 +100,9 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        log_init = LoggerFactory.getLogger("init.ui.float");
+        log = LoggerFactory.getLogger("ui.floatmsg");
+        log_init.debug("onStartCommand");
         init();
         return super.onStartCommand(intent, flags, startId);
     }
@@ -163,6 +172,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
     @Override
     public void onDestroy() {
+        log_init.debug("onDestroy");
         if (floatWindowLayout != null && windowManager != null) {
             windowManager.removeView(floatWindowLayout);
             floatWindowLayout = null;

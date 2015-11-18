@@ -28,7 +28,7 @@ public class BleScanner {
 
     public BleScanner() {
         this.mName = "AutoBot";
-        log = LoggerFactory.getLogger(BleScanner.class);
+        log = LoggerFactory.getLogger("ble.scan");
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mScanCallback = new ScanCallback() {
