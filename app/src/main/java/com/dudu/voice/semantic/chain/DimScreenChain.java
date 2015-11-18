@@ -1,7 +1,7 @@
 package com.dudu.voice.semantic.chain;
 
 import com.dudu.android.launcher.LauncherApplication;
-import com.dudu.android.launcher.utils.WakeLockUtils;
+
 import com.dudu.voice.semantic.SemanticConstants;
 
 /**
@@ -16,7 +16,6 @@ public class DimScreenChain extends SemanticChain  {
 
     @Override
     public boolean doSemantic(String json) {
-        WakeLockUtils.dimScreen(LauncherApplication.getContext());
         return true;
     }
 

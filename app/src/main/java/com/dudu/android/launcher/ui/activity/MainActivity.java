@@ -433,7 +433,6 @@ public class MainActivity extends BaseTitlebarActivity implements
             } else {
                 lps.addRule(RelativeLayout.CENTER_HORIZONTAL);
             }
-
             mWeatherView.setText(weather);
             mWeatherImage.setImageResource(WeatherIconsUtils
                     .getWeatherIcon(WeatherIconsUtils.getWeatherType(weather)));

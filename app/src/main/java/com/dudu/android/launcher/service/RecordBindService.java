@@ -10,7 +10,6 @@ import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.media.MediaRecorder.OnErrorListener;
-import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Handler;
@@ -24,8 +23,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -44,8 +46,11 @@ import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.conn.ConnectionEvent;
 import com.dudu.http.MultipartRequest;
 import com.dudu.http.MultipartRequestParams;
+
 import java.io.ByteArrayInputStream;
+
 import com.dudu.obd.BleOBD;
+
 import java.io.File;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -53,6 +58,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import de.greenrobot.event.EventBus;
 
 public class RecordBindService extends Service implements SurfaceHolder.Callback {
@@ -111,8 +117,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     private Handler mBackDisappearHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            backButton.setVisibility(backButton.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-            localVideo.setVisibility(localVideo.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+            toggleAnimation();
         }
     };
 
@@ -143,6 +148,8 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
             @Override
             public void onClick(View v) {
+                toggleAnimation();
+
                 stopBackDisappearHandler();
                 startBackDisappearHandler();
             }
@@ -198,9 +205,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     }
 
     private void startBackDisappearHandler() {
-        backButton.setVisibility(View.VISIBLE);
-        localVideo.setVisibility(View.VISIBLE);
-        mBackDisappearHandler.sendEmptyMessageDelayed(0,DISAPPEAR_INTERVAL);
+        mBackDisappearHandler.sendEmptyMessageDelayed(0, DISAPPEAR_INTERVAL);
     }
 
     private void stopBackDisappearHandler() {
@@ -209,7 +214,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
     public void updatePreviewSize(int width, int height) {
         if (width == 854 && height == 480) {
-           startBackDisappearHandler();
+            startBackDisappearHandler();
         } else if (width == 1 && height == 1) {
             stopBackDisappearHandler();
         }
@@ -519,9 +524,34 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     public void onEventBackgroundThread(BleOBD.CarStatus event) {
         if (event.getCarStatus() == BleOBD.CarStatus.CAR_OFFLINE) {
             ToastUtils.showToast("车辆熄火");
-        }  else if (event.getCarStatus() == BleOBD.CarStatus.CAR_ONLINE) {
+        } else if (event.getCarStatus() == BleOBD.CarStatus.CAR_ONLINE) {
             ToastUtils.showToast("车辆点火");
         }
     }
 
+    private void toggleAnimation() {
+        startAnimation(backButton, backButton.getVisibility() == View.VISIBLE ? R.anim.back_key_disappear : R.anim.back_key_appear);
+        startAnimation(localVideo, localVideo.getVisibility() == View.VISIBLE ? R.anim.camera_image_disappear : R.anim.camera_image_apear);
+    }
+
+    private void startAnimation(final View view, int animId) {
+        Animation anim = AnimationUtils.loadAnimation(RecordBindService.this, animId);
+        anim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                view.setVisibility(view.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        view.startAnimation(anim);
+    }
 }
