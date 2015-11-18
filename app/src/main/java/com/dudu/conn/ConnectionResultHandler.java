@@ -48,6 +48,9 @@ public class ConnectionResultHandler {
                     case ConnMethod.METHOD_ACTIVEDEVICE:
                         ActiveDevice.getInstance(mContext).handlerActiveDeviceResult(jsonResult);
                         break;
+                    case ConnMethod.METHOD_LOGBANC:
+                        new SendLogs().logsSend(mContext, jsonResult.getString("url"));
+                        break;
 
                 }
             }

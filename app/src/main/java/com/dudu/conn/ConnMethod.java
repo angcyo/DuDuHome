@@ -23,5 +23,7 @@ public class ConnMethod {
 
     public static final String METHOD_ACTIVEDEVICE = "deviceLogin";                  // 设备激活
 
+    public static final String METHOD_LOGBANC = "logs";                  // 上传logs
+
 
 }

@@ -659,4 +659,97 @@ public class FileUtils {
             e.printStackTrace();
         }
     }
+    /**
+     * 压缩一个文件
+     *
+     * @param srcFilePath 需要压缩文件的路径
+     * @param zipFilePath 压缩后文件的路径
+     * @throws IOException 当解压缩过程出错时抛出
+     */
+    public static void zipFolder(String srcFilePath, String zipFilePath) throws Exception {
+        // 创建Zip包
+        ZipOutputStream outZip = new ZipOutputStream(new FileOutputStream(zipFilePath));
+        // 打开要输出的文件
+        File file = new File(srcFilePath);
+        // 压缩
+        zipFiles(file.getParent() + File.separator, file.getName(), outZip);
+        // 完成,关闭
+        outZip.finish();
+        outZip.close();
+    }
+
+    private static void zipFiles(String folderPath, String filePath, java.util.zip.ZipOutputStream zipOut)
+            throws Exception {
+        if (zipOut == null) {
+            return;
+        }
+        java.io.File file = new java.io.File(folderPath + filePath);
+        // 判断是不是文件
+        if (file.isFile()) {
+            java.util.zip.ZipEntry zipEntry = new java.util.zip.ZipEntry(filePath);
+            java.io.FileInputStream inputStream = new java.io.FileInputStream(file);
+            zipOut.putNextEntry(zipEntry);
+            int len;
+            byte[] buffer = new byte[100000];
+            while ((len = inputStream.read(buffer)) != -1) {
+                zipOut.write(buffer, 0, len);
+            }
+            inputStream.close();
+            zipOut.closeEntry();
+        } else {
+            // 文件夹的方式,获取文件夹下的子文件
+            String fileList[] = file.list();
+            // 如果没有子文件, 则添加进去即可
+            if (fileList.length <= 0) {
+                java.util.zip.ZipEntry zipEntry = new java.util.zip.ZipEntry(filePath + java.io.File.separator);
+                zipOut.putNextEntry(zipEntry);
+                zipOut.closeEntry();
+            }
+            // 如果有子文件, 遍历子文件
+            for (int i = 0; i < fileList.length; i++) {
+                zipFiles(folderPath, filePath + java.io.File.separator + fileList[i], zipOut);
+            }
+        }
+    }
+
+    /**
+     * 复制整个文件夹内容
+     *
+     * @param oldPath String 原文件路径
+     * @param newPath String 复制后路径
+     * @return boolean
+     */
+    public static void copyFolder(String oldPath, String newPath) {
+        try {
+            (new File(newPath)).mkdirs(); //如果文件夹不存在 则建立新文件夹
+            File a = new File(oldPath);
+            String[] file = a.list();
+            File temp = null;
+            for (int i = 0; i < file.length; i++) {
+                if (oldPath.endsWith(File.separator)) {
+                    temp = new File(oldPath + file[i]);
+                } else {
+                    temp = new File(oldPath + File.separator + file[i]);
+                }
+                if (temp.isFile()) {
+                    FileInputStream input = new FileInputStream(temp);
+                    FileOutputStream output = new FileOutputStream(newPath + "/" +
+                            (temp.getName()).toString());
+                    byte[] b = new byte[1024 * 5];
+                    int len;
+                    while ((len = input.read(b)) != -1) {
+                        output.write(b, 0, len);
+                    }
+                    output.flush();
+                    output.close();
+                    input.close();
+                }
+                if (temp.isDirectory()) {//如果是子文件夹
+                    copyFolder(oldPath + "/" + file[i], newPath + "/" + file[i]);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
