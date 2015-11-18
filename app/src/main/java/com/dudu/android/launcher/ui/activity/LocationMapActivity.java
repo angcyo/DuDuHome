@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.LocationManager;
 import android.media.AudioManager;
@@ -83,6 +84,7 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -157,6 +159,9 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     private boolean isGetCurdesc = false;
 
+    private int satellite = 0;
+
+    private View view_Satellite;
     private Runnable removeWindowRunnable = new Runnable() {
 
         @Override
@@ -194,7 +199,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         progDialog.setIndeterminate(false);
         progDialog.setCancelable(false);
 
-
+        view_Satellite = findViewById(R.id.view_Satellite);
 
     }
 
@@ -335,7 +340,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     }
 
     public void getCur_locationDesc() {
-        Log.d("lxh","获取位置111");
+
         if (locProvider!=null&&locProvider.equals("lbs")) {
 
             cur_locationDesc = locBundle.getString("desc");
@@ -1039,4 +1044,18 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     }
 
 
+    public void onEventMainThread(GpsStatus gpsStatus){
+        int maxSatellites = gpsStatus.getMaxSatellites();
+        Iterator<GpsSatellite> iters = gpsStatus.getSatellites()
+                .iterator();
+        satellite = 0;
+        while (iters.hasNext() && satellite <= maxSatellites) {
+            satellite++;
+        }
+        if(satellite > 0 &&(locProvider!=null&&!locProvider.equals("lbs"))){
+            view_Satellite.setBackgroundColor(Color.GREEN);
+        }
+        log.debug("搜索到{}颗卫星", satellite);
+
+    }
 }

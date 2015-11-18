@@ -187,7 +187,7 @@ public class OBDDataService extends Service implements
 
         log.debug("odbservice startCommand");
         bleOBD = new BleOBD();
-        bleOBD.initOBD();
+        bleOBD.initOBD(this);
 //        scanBle();
         DriveBehaviorHappend.getInstance().setListener(this);
         try {

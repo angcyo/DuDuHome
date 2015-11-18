@@ -3,11 +3,14 @@ package com.dudu.obd;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.content.Context;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.dudu.android.launcher.LauncherApplication;
+import com.dudu.android.launcher.ui.dialog.BluetoothAlertDialog;
 import com.dudu.android.launcher.utils.TimeUtils;
 import com.dudu.android.libble.BleConnectMain;
-import com.dudu.conn.ConnMethod;
 
 import org.scf4a.ConnSession;
 import org.scf4a.Event;
@@ -52,12 +55,14 @@ public class BleOBD {
 
     private int acc_spd, break_spd;
 
+    private Context mContext;
+    BluetoothAlertDialog bluetoothDialog;
     public BleOBD() {
         readL1 = new PrefixReadL1();
         log = LoggerFactory.getLogger("ble.odb");
     }
 
-    public void initOBD() {
+    public void initOBD(Context context) {
         log.debug("initOBD");
         ConnSession.getInstance();
         BleConnectMain.getInstance().init(LauncherApplication.getContext());
@@ -68,6 +73,7 @@ public class BleOBD {
         EventBus.getDefault().post(new Event.StartScanner());
         obdCollectionList = new ArrayList<OBDData>();
         driveBehaviorHappendListener = DriveBehaviorHappend.getInstance().getListener();
+        mContext = context;
     }
 
     public void onEventMainThread(Event.BackScanResult event) {
@@ -101,6 +107,7 @@ public class BleOBD {
     public void onEventBackgroundThread(Event.DisConnect event){
         log.debug("ble DisConnect");
         if(event.getType()!= Event.ConnectType.BLE){
+            showDialog();
             Observable.timer(10, TimeUnit.SECONDS)
                     .subscribe(new Action1<Long>() {
                         @Override
@@ -108,6 +115,16 @@ public class BleOBD {
                             EventBus.getDefault().post(new Event.StartScanner());
                         }
                     });
+        }
+
+    }
+    
+    public void onEventBackgroundThread(Event.BTConnected event){
+
+        log.debug("ble BTConnected");
+        if(bluetoothDialog!=null){
+            bluetoothDialog.dismiss();
+            bluetoothDialog = null;
         }
 
     }
@@ -237,4 +254,19 @@ public class BleOBD {
             return carStatus;
         }
     }
+
+    private void showDialog(){
+         bluetoothDialog = new BluetoothAlertDialog(mContext);
+        Window dialogWindow = bluetoothDialog.getWindow();
+        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+        lp.x = 10; // 新位置X坐标
+        lp.y = 0; // 新位置Y坐标
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.alpha = 0.8f; // 透明度
+        dialogWindow.setAttributes(lp);
+        bluetoothDialog.show();
+    }
+
+
 }

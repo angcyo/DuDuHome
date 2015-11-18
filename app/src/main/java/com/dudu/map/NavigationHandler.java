@@ -176,11 +176,9 @@ public class NavigationHandler {
                 @Override
                 public void onGetNavigationText(int arg0, String arg1) {
                     log.debug("[{}] 导航播报信息", step++);
-
-                    FloatWindowUtil.removeFloatWindow();
                     mVoiceManager.clearMisUnderstandCount();
                     mVoiceManager.stopUnderstanding();
-                    mVoiceManager.startSpeaking(arg1, SemanticConstants.TTS_DO_NOTHING, false);
+                    mVoiceManager.startSpeaking(arg1, SemanticConstants.TTS_START_UNDERSTANDING, false);
                 }
 
                 @Override

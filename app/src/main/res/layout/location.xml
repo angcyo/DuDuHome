@@ -58,4 +58,26 @@
         android:layout_marginLeft="50dp"
         android:background="@drawable/search" />
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_gravity="right|top"
+        android:layout_marginTop="80dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/gps_bg"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:text="GPS"
+            android:textColor="#949494"
+            android:textSize="@dimen/dp_10"/>
+        <View
+            android:layout_width="40dp"
+            android:layout_height="3dp"
+            android:background="@color/red"
+            android:id="@+id/view_Satellite"/>
+    </LinearLayout>
+
 </FrameLayout>

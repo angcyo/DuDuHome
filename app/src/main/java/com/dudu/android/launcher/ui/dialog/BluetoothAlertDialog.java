@@ -3,6 +3,7 @@ package com.dudu.android.launcher.ui.dialog;
 import android.app.Activity;
 import android.app.Dialog;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -14,10 +15,9 @@ import com.dudu.android.launcher.R;
  * 没有蓝牙是弹出的dialog
  */
 public class BluetoothAlertDialog extends Dialog implements View.OnClickListener{
-    private Activity mActivity;
-    public BluetoothAlertDialog(Activity activity) {
-        super(activity, R.style.BlueTeethPromptDialog);
-        this.mActivity=activity;
+
+    public BluetoothAlertDialog(Context context) {
+        super(context, R.style.BlueTeethPromptDialog);
     }
 
     @Override

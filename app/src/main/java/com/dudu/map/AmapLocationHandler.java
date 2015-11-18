@@ -76,17 +76,12 @@ public class AmapLocationHandler implements AMapLocationListener {
                     break;
                 // 卫星状态改变
                 case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
-                    GpsStatus gpsStatus = locationManager.getGpsStatus(null);
-                    int maxSatellites = gpsStatus.getMaxSatellites();
-                    Iterator<GpsSatellite> iters = gpsStatus.getSatellites()
-                            .iterator();
-                    int count = 0;
-                    while (iters.hasNext() && count <= maxSatellites) {
-
-                        count++;
+                    topActivity = ActivitiesManager.getInstance().getTopActivity();
+                    if ((topActivity instanceof LocationMapActivity) ||
+                            (topActivity instanceof NaviCustomActivity) ||
+                            (topActivity instanceof NaviCustomActivity)) {
+                        EventBus.getDefault().post(locationManager.getGpsStatus(null));
                     }
-                    log.debug("搜索到{}颗卫星", count);
-
                     break;
                 // 定位启动
                 case GpsStatus.GPS_EVENT_STARTED:
@@ -128,11 +123,11 @@ public class AmapLocationHandler implements AMapLocationListener {
     @Override
     public void onLocationChanged(AMapLocation location) {
         String provider = location.getProvider();
-        if (GPSdataTime < 2 && !provider.equals("lbs")) {
+        if (GPSdataTime < 2) {
             GPSdataTime++;
             return;
         }
-        log.trace("onLocationChanged");
+        log.debug("onLocationChanged,定位模式为：{} ",provider);
 
         // 保存当前定位点
         LocationUtils.getInstance(mContext).setCurrentLocation(

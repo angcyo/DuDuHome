@@ -64,7 +64,7 @@ public class BleScanner {
 
     public BleScanner(String name) {
         this.mName = name;
-        log = LoggerFactory.getLogger(BleScanner.class);
+        log = LoggerFactory.getLogger("ble.scanner");
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
