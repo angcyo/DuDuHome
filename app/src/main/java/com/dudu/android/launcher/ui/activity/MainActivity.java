@@ -18,6 +18,7 @@ import android.view.View.OnLongClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -407,6 +408,10 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     @Override
     public void onWeatherLiveSearched(AMapLocalWeatherLive aMapLocalWeatherLive) {
+        LinearLayout ll_weatherInfo = (LinearLayout) findViewById(R.id.ll_weather_info);
+
+        RelativeLayout.LayoutParams lps = (RelativeLayout.LayoutParams) ll_weatherInfo.getLayoutParams();
+
         if (aMapLocalWeatherLive != null
                 && aMapLocalWeatherLive.getAMapException().getErrorCode() == 0) {
             String weather = aMapLocalWeatherLive.getWeather();
@@ -422,18 +427,25 @@ public class MainActivity extends BaseTitlebarActivity implements
 
             mTemperatureView.setText(temperature
                     + getString(R.string.temperature_degree));
+
+            if (weather.length() == 1) {
+                lps.removeRule(RelativeLayout.CENTER_HORIZONTAL);
+            } else {
+                lps.addRule(RelativeLayout.CENTER_HORIZONTAL);
+            }
+
             mWeatherView.setText(weather);
             mWeatherImage.setImageResource(WeatherIconsUtils
                     .getWeatherIcon(WeatherIconsUtils.getWeatherType(weather)));
+            mWeatherImage.setImageResource(R.drawable.weather_cloudy);
             LocationUtils.getInstance(this).setCurrentCity(aMapLocalWeatherLive.getCity());
             LocationUtils.getInstance(this).setCurrentCitycode(aMapLocalWeatherLive.getCityCode());
         } else {
             Toast.makeText(this, R.string.get_weather_info_failed,
                     Toast.LENGTH_SHORT).show();
+            lps.addRule(RelativeLayout.CENTER_HORIZONTAL);
             mWeatherView.setGravity(Gravity.CENTER);
             mWeatherView.setText(R.string.unkown_weather_info);
-
-
         }
     }
 

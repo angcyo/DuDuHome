@@ -11,6 +11,7 @@ import com.dudu.voice.semantic.chain.ChoosePageChain;
 import com.dudu.voice.semantic.chain.CmdChain;
 import com.dudu.voice.semantic.chain.CommonAddressChain;
 import com.dudu.voice.semantic.chain.DatetimeChain;
+import com.dudu.voice.semantic.chain.DimScreenChain;
 import com.dudu.voice.semantic.chain.DuDuChain;
 import com.dudu.voice.semantic.chain.MapSearchChain;
 import com.dudu.voice.semantic.chain.NavigationChain;
@@ -121,6 +122,11 @@ public class ChainGenerator {
 
     public DuDuChain getDuDuChain() {
         DuDuChain chain = new DuDuChain();
+        return chain;
+    }
+
+    public DimScreenChain getDimScreenChain() {
+        DimScreenChain chain = new DimScreenChain();
         return chain;
     }
 

@@ -1,8 +1,6 @@
 package com.dudu.obd;
 
 import android.app.Service;
-import android.app.admin.DevicePolicyManager;
-import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -10,8 +8,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.PowerManager;
-import android.util.Log;
 import com.amap.api.location.AMapLocation;
 import com.dudu.android.launcher.utils.DeviceIDUtil;
 import com.dudu.android.launcher.utils.TimeUtils;
@@ -20,7 +16,6 @@ import com.dudu.conn.Connection;
 import com.dudu.conn.ConnectionEvent;
 import com.dudu.conn.SendMessage;
 import com.dudu.map.AmapLocationHandler;
-import com.dudu.map.NavigationHandler;
 import com.google.gson.Gson;
 import org.json.JSONArray;
 import org.json.JSONException;

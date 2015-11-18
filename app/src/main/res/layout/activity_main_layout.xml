@@ -13,14 +13,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="60dp"
-            android:layout_marginTop="8.6dp" >
+            android:layout_marginTop="8dp">
 
             <DigitalClock
                 android:id="@+id/digital_clock"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
-                android:textSize="40sp" />
+                android:textSize="45sp" />
 
             <TextView
                 android:id="@+id/date_text"
@@ -30,56 +30,60 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="9dp"
                 android:textColor="@android:color/white"
-                android:textSize="8sp" />
+                android:textSize="10sp" />
 
-            <ImageView
-                android:id="@+id/weather_image"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+            <RelativeLayout
+                android:id="@+id/image_linear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/date_text"
                 android:layout_alignTop="@id/digital_clock"
-                android:layout_marginLeft="20dp"
-                android:layout_toRightOf="@id/digital_clock"
-                android:src="@drawable/weather_cloudy" />
+                android:layout_marginLeft="15dp"
+                android:layout_toRightOf="@id/digital_clock">
 
-            <TextView
-                android:id="@+id/weather_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@id/date_text"
-                android:layout_marginRight="6dp"
-                android:layout_toLeftOf="@+id/temperature_text"
-                android:ellipsize="marquee"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:text="@string/fetching_weather"
-                android:gravity="center"
-                android:maxWidth="50dp"
-                android:minWidth="30dp"
-                android:singleLine="true"
-                android:textColor="@android:color/white"
-                android:textSize="8sp" />
+                <ImageView
+                    android:id="@+id/weather_image"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/weather_cloudy" />
 
-            <TextView
-                android:id="@+id/temperature_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignRight="@id/weather_image"
-                android:layout_alignTop="@id/weather_text"
-                android:textColor="@android:color/white"
-                android:textSize="8sp" />
+                <LinearLayout
+                    android:id="@+id/ll_weather_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/weather_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="marquee"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:gravity="center_horizontal"
+                        android:maxWidth="60dp"
+                        android:minWidth="30dp"
+                        android:singleLine="true"
+                        android:text="@string/fetching_weather"
+                        android:textColor="@android:color/white"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:id="@+id/temperature_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:textColor="@android:color/white"
+                        android:textSize="10sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
         </RelativeLayout>
 
-        <!--<Button-->
-            <!--android:id="@+id/version_button"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:layout_marginRight="60dp"-->
-            <!--android:layout_marginTop="15dp"-->
-            <!--android:background="@drawable/version_info"-->
-            <!--android:textColor="@android:color/white"-->
-            <!--android:textSize="11sp"-->
-            <!--android:orientation="horizontal" />-->
+
         <LinearLayout
             android:id="@+id/self_checking_container"
             android:layout_width="wrap_content"

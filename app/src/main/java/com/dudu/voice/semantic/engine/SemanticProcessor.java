@@ -10,10 +10,8 @@ import com.dudu.voice.semantic.chain.DefaultChain;
 import com.dudu.voice.semantic.chain.MapChoiseDefalutChain;
 import com.dudu.voice.semantic.chain.NavigationDefaultChain;
 import com.dudu.voice.semantic.chain.SemanticChain;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -207,6 +205,7 @@ public class SemanticProcessor {
         mChainMap.put(SemanticConstants.SERVICE_BAIKE, mChainGenerator.getBaikeChain());
         mChainMap.put(SemanticConstants.SERVICE_DEATETIME, mChainGenerator.getDatetimeChain());
         mChainMap.put(SemanticConstants.SERVICE_DUDU, mChainGenerator.getDuDuChain());
+        mChainMap.put(SemanticConstants.SERVICE_DIM, mChainGenerator.getDimScreenChain());
     }
 
     private void addCarCheckingChains() {

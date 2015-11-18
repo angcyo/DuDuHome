@@ -58,6 +58,8 @@ public class SemanticConstants {
 
     public static final String SERVICE_DUDU = "dudu";
 
+    public static final String SERVICE_DIM = "dim";
+
 
     /**
      * 语音合成后处理类型
