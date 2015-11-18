@@ -15,6 +15,7 @@ import android.util.Log;
 import com.amap.api.location.AMapLocation;
 import com.dudu.android.launcher.utils.DeviceIDUtil;
 import com.dudu.android.launcher.utils.TimeUtils;
+import com.dudu.android.launcher.utils.WeakLock;
 import com.dudu.conn.ActiveDevice;
 import com.dudu.conn.Connection;
 import com.dudu.conn.ConnectionEvent;
@@ -417,7 +418,7 @@ public class OBDDataService extends Service implements
         if (carState == BleOBD.CarStatus.CAR_ONLINE){
             noticeFating();
         }else{
-
+            WeakLock.weakLock(getApplicationContext());
         }
     }
 

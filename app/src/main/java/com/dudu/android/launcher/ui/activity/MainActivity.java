@@ -36,6 +36,7 @@ import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Util;
+import com.dudu.android.launcher.utils.WeakLock;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.map.MapManager;
@@ -294,6 +295,7 @@ public class MainActivity extends BaseTitlebarActivity implements
                 } else {
                     startActivity(new Intent(MainActivity.this, ActivationActivity.class));
                 }
+
                 break;
 
             case R.id.navigation_button:
