@@ -38,7 +38,7 @@ public class Connection extends Thread {
     private boolean mIsNetworkOK = true;
     private List<String> important_msgList;
     private static Connection mConnection;
-    private org.slf4j.Logger log;
+    private Logger log;
     private ConnectionResultHandler resultHandler;
     public Connection(Context context) {
         mPersistentStorage = PersistentStorage.getInstance(context);
@@ -69,7 +69,7 @@ public class Connection extends Thread {
         try{
             session = future.getSession();
         }catch(Exception e){
-            e.printStackTrace();
+            log.warn("{}", e.getMessage());
         }
     }
 
