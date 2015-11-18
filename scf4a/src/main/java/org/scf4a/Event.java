@@ -17,6 +17,7 @@ public class Event {
     public enum ErrorCode {
         BluetoothNotSupport,
         BLENotSupport,
+        ScanInvokeFail,
         ConnectInvokeFail,
         DeviceDisConnected,
         UNKNOWN

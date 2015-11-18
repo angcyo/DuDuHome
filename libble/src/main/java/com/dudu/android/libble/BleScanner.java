@@ -83,6 +83,7 @@ public class BleScanner {
             //noinspection deprecation
             if (!mBluetoothAdapter.startLeScan(/*serviceUuids, */mLeScanCallback)) {
                 log.error("startLeScan fail!");
+                EventBus.getDefault().post(new Event.Disconnected(Event.ErrorCode.ScanInvokeFail));
             }
         }
     }
