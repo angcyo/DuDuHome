@@ -148,8 +148,10 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
             @Override
             public void onClick(View v) {
+                if (backButton.getVisibility() == View.VISIBLE && localVideo.getVisibility() == View.VISIBLE) {
+                    return;
+                }
                 toggleAnimation();
-
                 stopBackDisappearHandler();
                 startBackDisappearHandler();
             }
