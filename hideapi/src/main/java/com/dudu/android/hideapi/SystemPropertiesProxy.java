@@ -1,5 +1,8 @@
 package com.dudu.android.hideapi;
 
+import android.content.Context;
+import android.content.Intent;
+
 import java.lang.reflect.Method;
 
 /**
@@ -65,6 +68,13 @@ public class SystemPropertiesProxy {
             throw e;
         } catch (Exception e) {
         }
+    }
+
+    public void set(Context context, String key, String val) {
+        Intent intent = new Intent("android.settings.SET_PROP");
+        intent.putExtra("prop", key);
+        intent.putExtra("val", val);
+        context.startActivity(intent);
     }
 
     /**
