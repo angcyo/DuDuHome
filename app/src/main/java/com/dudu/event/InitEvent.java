@@ -1,7 +1,7 @@
 package com.dudu.event;
 
 
-public class LocalEvent {
+public class InitEvent {
 
     public static class CheckBtFt {
     }

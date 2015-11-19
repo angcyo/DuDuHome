@@ -8,7 +8,7 @@ public class BleStateChange {
 
     public static final int BLEDISCONNECTED = 0;
 
-    int connState ;
+    private int connState ;
 
     public BleStateChange(int connState){
         this.connState = connState;

@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationManager;
@@ -14,20 +13,19 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
 import com.amap.api.location.LocationProviderProxy;
-import com.dudu.android.hideapi.SystemPropertiesProxy;
 import com.dudu.android.launcher.ui.activity.LocationMapActivity;
 import com.dudu.android.launcher.ui.activity.NaviCustomActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.LocationFilter;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.TimeUtils;
+import com.dudu.event.DeviceEvent;
 import com.dudu.obd.MyGPSData;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -103,9 +101,8 @@ public class AmapLocationHandler implements AMapLocationListener {
     }
 
     public void init(Context context) {
-        SystemPropertiesProxy.getInstance().set("persist.sys.gps", "start");
-
         mContext = context;
+
         mLocationManagerProxy = LocationManagerProxy.getInstance(context);
         mLocationManagerProxy.requestLocationData(
                 LocationProviderProxy.AMapNetwork, 2000, 10, this);
@@ -127,7 +124,7 @@ public class AmapLocationHandler implements AMapLocationListener {
             GPSdataTime++;
             return;
         }
-        log.debug("onLocationChanged,定位模式为：{} ",provider);
+        log.debug("onLocationChanged,定位模式为：{} ", provider);
 
         // 保存当前定位点
         LocationUtils.getInstance(mContext).setCurrentLocation(
@@ -298,7 +295,7 @@ public class AmapLocationHandler implements AMapLocationListener {
 
     public void stopLocation() {
         if (mLocationManagerProxy != null) {
-            SystemPropertiesProxy.getInstance().set("persist.sys.gps", "stop");
+            EventBus.getDefault().post(new DeviceEvent.GPS(DeviceEvent.OFF));
             mLocationManagerProxy.removeUpdates(this);
             mLocationManagerProxy.destroy();
         }

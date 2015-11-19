@@ -42,7 +42,8 @@ import com.dudu.android.launcher.utils.Util;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.event.BleStateChange;
-import com.dudu.event.LocalEvent;
+import com.dudu.event.DeviceEvent;
+import com.dudu.event.InitEvent;
 import com.dudu.map.MapManager;
 import com.dudu.obd.OBDDataService;
 import com.dudu.voice.semantic.VoiceManager;
@@ -110,12 +111,12 @@ public class MainActivity extends BaseTitlebarActivity implements
                 .subscribe(new Action1<Long>() {
                     @Override
                     public void call(final Long aLong) {
-                        EventBus.getDefault().post(new LocalEvent.CheckBtFt());
+                        EventBus.getDefault().post(new InitEvent.CheckBtFt());
                     }
                 });
     }
 
-    public void onEventMainThread(LocalEvent.CheckBtFt event) {
+    public void onEventMainThread(InitEvent.CheckBtFt event) {
         log_init.debug("[main][{}]start checkBTFT", log_step++);
         checkBTFT();
     }
@@ -159,12 +160,12 @@ public class MainActivity extends BaseTitlebarActivity implements
                 .subscribe(new Action1<Long>() {
                     @Override
                     public void call(final Long aLong) {
-                        EventBus.getDefault().post(new LocalEvent.InitAfter10s());
+                        EventBus.getDefault().post(new InitEvent.InitAfter10s());
                     }
                 });
     }
 
-    public void onEventMainThread(LocalEvent.InitAfter10s event) {
+    public void onEventMainThread(InitEvent.InitAfter10s event) {
         initAfter10s();
     }
 
@@ -180,6 +181,7 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     private void startOBDService() {
         log_init.debug("startOBDService");
+        com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.gps", "start");
         Intent i = new Intent(this, OBDDataService.class);
         startService(i);
     }
@@ -461,8 +463,8 @@ public class MainActivity extends BaseTitlebarActivity implements
         startService(i);
     }
 
-    private void showBleDialog(){
-        if(bluetoothDialog!=null&&bluetoothDialog.isShowing())
+    private void showBleDialog() {
+        if (bluetoothDialog != null && bluetoothDialog.isShowing())
             return;
         bluetoothDialog = new BluetoothAlertDialog(mContext);
         Window dialogWindow = bluetoothDialog.getWindow();
@@ -476,14 +478,25 @@ public class MainActivity extends BaseTitlebarActivity implements
         bluetoothDialog.show();
     }
 
-    private void disMissbluetoothDialog(){
-        if(bluetoothDialog!=null&&bluetoothDialog.isShowing()){
+    private void disMissbluetoothDialog() {
+        if (bluetoothDialog != null && bluetoothDialog.isShowing()) {
             bluetoothDialog.cancel();
             bluetoothDialog = null;
         }
     }
-    public void onEventMainThread(BleStateChange event){
-        switch (event.getConnState()){
+
+    public void onEventMainThread(DeviceEvent.GPS event) {
+        com.dudu.android.hideapi.SystemPropertiesProxy.getInstance()
+                .set(mContext, "persist.sys.gps", event.getState() == DeviceEvent.ON ? "start" : "stop");
+    }
+
+    public void onEventMainThread(DeviceEvent.Screen event) {
+        com.dudu.android.hideapi.SystemPropertiesProxy.getInstance()
+                .set(mContext, "persist.sys.screen", event.getState() == DeviceEvent.ON ? "on" : "off");
+    }
+
+    public void onEventMainThread(BleStateChange event) {
+        switch (event.getConnState()) {
 
             case BleStateChange.BLEDISCONNECTED:
                 showBleDialog();
