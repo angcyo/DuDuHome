@@ -147,7 +147,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     private Logger log;
 
-    private static final int REMOVEWINDOW_TIME = 8 * 1000;
+    private static final int REMOVEWINDOW_TIME = 9 * 1000;
 
     private Bundle locBundle;
 
@@ -807,6 +807,9 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     // 选择路径规划策略
     private void chooseDriveMode(int position) {
+        if(poiResultList.isEmpty())
+            return;
+
         if (position > mStrategyMethods.size()) {
             mVoiceManager.stopUnderstanding();
             String playText = "选择错误，请重新选择";
@@ -814,13 +817,13 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     SemanticConstants.TTS_START_UNDERSTANDING, false);
             return;
         }
-
         startNavigation(mStrategyMethods.get(position - 1).getDriveMode());
 
     }
 
     public void startChooseResult(int size, int type) {
-
+        SemanticProcessor.getProcessor().switchSemanticType(
+                SemanticType.MAP_CHOISE);
         if (type == ChoiseChain.TYPE_NORMAL) {
 
             if (chooseType == 1) {
@@ -1013,8 +1016,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     startActivity(new Intent(LocationMapActivity.this,NaviCustomActivity.class));
                     finish();
                 }
-
-
             }
         }, t);
 

@@ -187,8 +187,7 @@ public class OBDDataService extends Service implements
 
         log.debug("odbservice startCommand");
         bleOBD = new BleOBD();
-        bleOBD.initOBD(this);
-//        scanBle();
+        bleOBD.initOBD(getApplicationContext());
         DriveBehaviorHappend.getInstance().setListener(this);
         try {
             if (conn != null && !isOpen && !conn.isAlive()) {
@@ -515,18 +514,5 @@ public class OBDDataService extends Service implements
         }, 20 * 1000);
 
     }
-
-    //扫描蓝牙设备
-    private void scanBle() {
-        mhandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mhandler.postDelayed(this, 20 * 1000);
-                EventBus.getDefault().post(new Event.StartScanner());
-            }
-        }, 60 * 1000);
-    }
-
-
 
 }

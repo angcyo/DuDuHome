@@ -15,6 +15,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -32,12 +34,15 @@ import com.dudu.android.launcher.service.NewMessageShowService;
 import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
+import com.dudu.android.launcher.ui.dialog.BluetoothAlertDialog;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Util;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
+import com.dudu.event.BleStateChange;
+import com.dudu.event.LocalEvent;
 import com.dudu.map.MapManager;
 import com.dudu.obd.OBDDataService;
 import com.dudu.voice.semantic.VoiceManager;
@@ -79,6 +84,8 @@ public class MainActivity extends BaseTitlebarActivity implements
     private Logger log_init;
 
     private int log_step;
+
+    private BluetoothAlertDialog bluetoothDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -454,12 +461,37 @@ public class MainActivity extends BaseTitlebarActivity implements
         startService(i);
     }
 
-    private static class LocalEvent {
+    private void showBleDialog(){
+        if(bluetoothDialog!=null&&bluetoothDialog.isShowing())
+            return;
+        bluetoothDialog = new BluetoothAlertDialog(mContext);
+        Window dialogWindow = bluetoothDialog.getWindow();
+        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+        lp.x = 10; // 新位置X坐标
+        lp.y = 0; // 新位置Y坐标
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.alpha = 0.8f; // 透明度
+        dialogWindow.setAttributes(lp);
+        bluetoothDialog.show();
+    }
 
-        public static class CheckBtFt {
+    private void disMissbluetoothDialog(){
+        if(bluetoothDialog!=null&&bluetoothDialog.isShowing()){
+            bluetoothDialog.cancel();
+            bluetoothDialog = null;
+        }
+    }
+    public void onEventMainThread(BleStateChange event){
+        switch (event.getConnState()){
+
+            case BleStateChange.BLEDISCONNECTED:
+                showBleDialog();
+                break;
+            case BleStateChange.BLECONNECTED:
+                disMissbluetoothDialog();
+                break;
         }
 
-        public static class InitAfter10s {
-        }
     }
 }

@@ -8,6 +8,8 @@ import com.dudu.android.launcher.utils.ChoiseUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.map.MapManager;
 import com.dudu.voice.semantic.SemanticConstants;
+import com.dudu.voice.semantic.SemanticType;
+import com.dudu.voice.semantic.engine.SemanticProcessor;
 
 /**
  * Created by pc on 2015/10/30.

@@ -47,9 +47,6 @@ public class MapSearchChain extends SemanticChain {
         String semantic = JsonUtils.parseIatResult(json,
                 "semantic");
 
-        SemanticProcessor.getProcessor().switchSemanticType(
-                SemanticType.MAP_CHOISE);
-
         if (!TextUtils.isEmpty(service)) {
             switch (service) {
                 case SemanticConstants.SERVICE_MAP:

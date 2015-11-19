@@ -1,12 +1,17 @@
 package com.dudu.android.libble;
 
+import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 
 import org.scf4a.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.TimeUnit;
+
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.functions.Action1;
 
 public class BleConnectMain {
 
@@ -29,6 +34,18 @@ public class BleConnectMain {
         }
         log.debug("Start BLE Scanner");
         mBleScanner.startScan();
+        Observable.timer(BleScanner.SCAN_PERIOD, TimeUnit.MILLISECONDS)
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        if(bleManager.getConnectionState()!= BluetoothProfile.STATE_CONNECTED){
+                            log.debug("BLE scan time out");
+                            mBleScanner.stopScan();
+                            EventBus.getDefault().post(new Event.Disconnected(Event.ErrorCode.ScanInvokeFail));
+                        }
+
+                    }
+                });
     }
 
     public void onEventMainThread(Event.StopScanner event) {

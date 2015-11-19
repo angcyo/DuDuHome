@@ -1,8 +1,6 @@
 package com.dudu.android.launcher.ui.dialog;
 
-import android.app.Activity;
 import android.app.Dialog;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
@@ -17,16 +15,15 @@ import com.dudu.android.launcher.R;
 public class BluetoothAlertDialog extends Dialog implements View.OnClickListener{
 
     public BluetoothAlertDialog(Context context) {
-        super(context, R.style.BlueTeethPromptDialog);
+        super(context, R.style.GeneralDialogStyle);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.blue_teeth_error_prompt);
-       LinearLayout linearLayout=(LinearLayout)findViewById(R.id.layout_blue_teeth);
+        LinearLayout linearLayout=(LinearLayout)findViewById(R.id.layout_blue_teeth);
         setCanceledOnTouchOutside(false);
-       //linearLayout.getBackground().setAlpha(120);//180为透明的比率
        linearLayout.setOnClickListener(this);
 
     }

@@ -18,7 +18,7 @@ import de.greenrobot.event.EventBus;
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class BleScanner {
 
-    private static final int SCAN_PERIOD = 5000;  // 扫描时间
+    public static final int SCAN_PERIOD = 5000;  // 扫描时间
     private Logger log;
 
     private String mName;
