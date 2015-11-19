@@ -1,5 +1,6 @@
 package com.dudu.android.hideapi;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 
@@ -74,7 +75,11 @@ public class SystemPropertiesProxy {
         Intent intent = new Intent("android.settings.SET_PROP");
         intent.putExtra("prop", key);
         intent.putExtra("val", val);
-        context.startActivity(intent);
+        try {
+            context.startActivity(intent);
+        } catch (ActivityNotFoundException exception) {
+
+        }
     }
 
     /**

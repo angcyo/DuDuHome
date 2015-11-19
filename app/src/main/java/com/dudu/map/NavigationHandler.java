@@ -177,8 +177,12 @@ public class NavigationHandler {
                 public void onGetNavigationText(int arg0, String arg1) {
                     log.debug("[{}] 导航播报信息", step++);
                     mVoiceManager.clearMisUnderstandCount();
-                    mVoiceManager.stopUnderstanding();
-                    mVoiceManager.startSpeaking(arg1, SemanticConstants.TTS_START_UNDERSTANDING, false);
+                    VoiceManager.getInstance().stopUnderstanding();
+                    if(FloatWindowUtil.IsWindowShow()){
+                        VoiceManager.getInstance().startSpeaking(arg1, SemanticConstants.TTS_START_UNDERSTANDING, false);
+                    }else{
+                        VoiceManager.getInstance().startSpeaking(arg1, SemanticConstants.TTS_DO_NOTHING, false);
+                    }
                 }
 
                 @Override
@@ -210,15 +214,11 @@ public class NavigationHandler {
                             break;
 
                     }
-
                     LocationUtils.getInstance(mContext).setNaviStartPoint
                             (mStartPoints.get(0).getLatitude(), mStartPoints.get(0).getLongitude());
 
                     LocationUtils.getInstance(mContext).setNaviStartPoint
                             (mEndPoint.getLatitude(), mEndPoint.getLongitude());
-
-                    ActivitiesManager.getInstance().closeTargetActivity(
-                            NaviCustomActivity.class);
                     Activity topActivity = ActivitiesManager.getInstance().getTopActivity();
                     Intent standIntent = new Intent(topActivity,naviClass);
                     standIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -233,7 +233,7 @@ public class NavigationHandler {
                     String playText = "路径规划出错,请检查网络";
                     mVoiceManager.clearMisUnderstandCount();
                     mVoiceManager.startSpeaking(playText);
-                    FloatWindowUtil.removeFloatWindow();
+
 
                 }
 

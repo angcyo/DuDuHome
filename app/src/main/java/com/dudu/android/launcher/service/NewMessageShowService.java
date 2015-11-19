@@ -90,7 +90,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
     private int pageIndex = 0;
 
     private Logger log_init;
-    private Logger log;
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -101,7 +101,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         log_init = LoggerFactory.getLogger("init.ui.float");
-        log = LoggerFactory.getLogger("ui.floatmsg");
+
         log_init.debug("onStartCommand");
         init();
         return super.onStartCommand(intent, flags, startId);
@@ -187,6 +187,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
             list.clear();
         }
         isShowWindow = false;
+        mFloatWindow.setIsWindowShow(false);
         super.onDestroy();
     }
 
@@ -206,6 +207,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
         addressList.setAdapter(mStrategyAdapter);
         mStrategyAdapter.notifyDataSetChanged();
         isShowWindow = true;
+        mFloatWindow.setIsWindowShow(true);
     }
 
     @Override
@@ -225,6 +227,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
         addressList.setAdapter(mRouteSearchAdapter);
         mRouteSearchAdapter.notifyDataSetChanged();
         isShowWindow = true;
+        mFloatWindow.setIsWindowShow(true);
     }
 
     //消息显示
@@ -260,6 +263,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
                 if (mMessageAdapter != null)
                     mMessageAdapter.notifyDataSetChanged();
                 isShowWindow = true;
+                mFloatWindow.setIsWindowShow(true);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -275,7 +279,6 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
     @Override
     public void onAddressListItemClick(OnItemClickListener listener) {
-        // TODO Auto-generated method stub
         if (addressList != null)
             addressList.setOnItemClickListener(listener);
 
@@ -381,6 +384,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
                     }
                     isShowWindow = false;
                     isShowAddress = false;
+                    mFloatWindow.setIsWindowShow(false);
                     if (!list.isEmpty())
                         list.clear();
                 } catch (Exception e) {

@@ -16,7 +16,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
+import com.amap.api.maps.model.LatLng;
 import com.amap.api.navi.AMapNavi;
 import com.amap.api.navi.AMapNaviListener;
 import com.amap.api.navi.AMapNaviView;
@@ -33,6 +35,7 @@ import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.NaviSettingUtil;
+import com.dudu.android.launcher.utils.ViewAnimation;
 import com.dudu.map.AmapLocationChangeEvent;
 import com.dudu.map.MapManager;
 import com.dudu.map.Navigation;
@@ -131,6 +134,21 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
     @Override
     public void initDatas() {
         mHandler = new Handler();
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ViewAnimation.startAnimation(back_button, back_button.getVisibility() == View.VISIBLE
+                        ? R.anim.back_key_disappear : R.anim.back_key_appear, NaviCustomActivity.this);
+            }
+        }, 3000);
+
+        mAmapAMapNaviView.getMap().setOnMapClickListener(new AMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                ViewAnimation.startAnimation(back_button, back_button.getVisibility() == View.VISIBLE
+                        ? R.anim.back_key_disappear : R.anim.back_key_appear, NaviCustomActivity.this);
+            }
+        });
     }
 
     /**
@@ -156,6 +174,8 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         viewOptions.setLeaderLineEnabled(Color.RED);
         mAmapAMapNaviView.setViewOptions(viewOptions);
         mAmapAMapNaviView.getMap().setTrafficEnabled(true);
+
+
 
     }
 
@@ -261,7 +281,8 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 
                 @Override
                 public void onGetNavigationText(int arg0, String arg1) {
-                    VoiceManager.getInstance().startSpeaking(arg1, SemanticConstants.TTS_DO_NOTHING, false);
+
+
                 }
 
                 @Override
@@ -456,6 +477,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
 
         return super.onTouchEvent(event);
 

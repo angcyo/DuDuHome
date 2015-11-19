@@ -1,11 +1,10 @@
-package com.dudu.obd;
+package com.dudu.conn;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 
-import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +46,7 @@ public class PersistentStorage {
 
 
     public boolean addTail(String jsonStrData) {
-        if (alldatas != null)
+        if (alldatas != null&&!alldatas.contains(jsonStrData))
             alldatas.add(jsonStrData);
             if (!gson.toJson(alldatas).equals("[]")) {
                 mPreferences.edit().putString(JSONSTR, gson.toJson(alldatas)).commit();
@@ -85,7 +84,9 @@ public class PersistentStorage {
                 alldataArr = gson.fromJson(str,String[].class);
                 if (alldataArr != null) {
                     for (int i = 0; i < alldataArr.length; i++) {
-                        alldatas.add(alldataArr[i].toString());
+                        if(!alldatas.contains(alldataArr[i].toString())){
+                            alldatas.add(alldataArr[i].toString());
+                        }
                     }
                 }
 

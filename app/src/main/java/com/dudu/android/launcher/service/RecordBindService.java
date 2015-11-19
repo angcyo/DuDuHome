@@ -43,6 +43,7 @@ import com.dudu.android.launcher.utils.FileNameUtil;
 import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
+import com.dudu.android.launcher.utils.ViewAnimation;
 import com.dudu.conn.ConnectionEvent;
 import com.dudu.http.MultipartRequest;
 import com.dudu.http.MultipartRequestParams;
@@ -532,28 +533,9 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     }
 
     private void toggleAnimation() {
-        startAnimation(backButton, backButton.getVisibility() == View.VISIBLE ? R.anim.back_key_disappear : R.anim.back_key_appear);
-        startAnimation(localVideo, localVideo.getVisibility() == View.VISIBLE ? R.anim.camera_image_disappear : R.anim.camera_image_apear);
+       ViewAnimation.startAnimation(backButton, backButton.getVisibility() == View.VISIBLE ? R.anim.back_key_disappear : R.anim.back_key_appear,this);
+        ViewAnimation.startAnimation(localVideo, localVideo.getVisibility() == View.VISIBLE ? R.anim.camera_image_disappear : R.anim.camera_image_apear,this);
     }
 
-    private void startAnimation(final View view, int animId) {
-        Animation anim = AnimationUtils.loadAnimation(RecordBindService.this, animId);
-        anim.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
 
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                view.setVisibility(view.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        view.startAnimation(anim);
-    }
 }

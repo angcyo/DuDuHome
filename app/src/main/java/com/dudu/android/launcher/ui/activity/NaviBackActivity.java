@@ -11,7 +11,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
+import com.amap.api.maps.model.LatLng;
 import com.amap.api.navi.AMapNavi;
 import com.amap.api.navi.AMapNaviListener;
 import com.amap.api.navi.AMapNaviView;
@@ -22,6 +24,7 @@ import com.amap.api.navi.model.AMapNaviLocation;
 import com.amap.api.navi.model.NaviInfo;
 import com.amap.api.navi.model.NaviLatLng;
 import com.dudu.android.launcher.R;
+import com.dudu.android.launcher.utils.ViewAnimation;
 import com.dudu.map.AmapLocationChangeEvent;
 import com.dudu.map.AmapLocationHandler;
 import com.dudu.map.MapManager;
@@ -132,6 +135,21 @@ AMapNaviViewListener{
 		mAmapAMapNaviView.setViewOptions(viewOptions);
 		mAmapAMapNaviView.getMap().setTrafficEnabled(true);
 
+		mHandler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				ViewAnimation.startAnimation(back_button, back_button.getVisibility() == View.VISIBLE
+						? R.anim.back_key_disappear : R.anim.back_key_appear, NaviBackActivity.this);
+			}
+		}, 3000);
+
+		mAmapAMapNaviView.getMap().setOnMapClickListener(new AMap.OnMapClickListener() {
+			@Override
+			public void onMapClick(LatLng latLng) {
+				ViewAnimation.startAnimation(back_button, back_button.getVisibility() == View.VISIBLE
+						? R.anim.back_key_disappear : R.anim.back_key_appear, NaviBackActivity.this);
+			}
+		});
 	}
 	// 全程预览
     public void mapPriview(){

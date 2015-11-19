@@ -8,6 +8,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.IBinder;
+
 import com.amap.api.location.AMapLocation;
 import com.dudu.android.launcher.utils.DeviceIDUtil;
 import com.dudu.android.launcher.utils.TimeUtils;
@@ -17,15 +18,17 @@ import com.dudu.conn.ConnectionEvent;
 import com.dudu.conn.SendMessage;
 import com.dudu.map.AmapLocationHandler;
 import com.google.gson.Gson;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.scf4a.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import de.greenrobot.event.EventBus;
 
 /**
@@ -37,13 +40,6 @@ public class OBDDataService extends Service implements
     public final static int SENSOR_NORMAL = 1; // 传感器频率为 40HZ左右
     public final static int SENSOR_FASTER = 2; // 传感器频率为60HZ左右
     public final static int SENSOR_FASTEST = 3; // 传感器频率为最快的频率
-
-    private static final String DRIVE_DATAS = "driveDatas";
-    private static final String OBD_DATA = "obdDatas";
-    private static final String COORDINATES = "coordinates";
-
-    private static String TAG = "OBDDataService";
-
     private List<JSONArray> positionAry_list; // 存放要发送的定位点的队列
     private List<JSONArray> postOBDDataArr; // 存放要发送的OBD数据队列
     private Integer mSyncObj = new Integer(0);
@@ -54,8 +50,6 @@ public class OBDDataService extends Service implements
     private Handler mhandler;
     private int carState;
     private String obe_id = "111";
-    private String gpsStr, obdStr, fStr;
-
     private SensorManager mSensorManager;
     private MyAccSensorEventListener mMysensorEventListener;
     private MyGyrSensorEventListener mGyrSensorEventListener;
@@ -89,6 +83,7 @@ public class OBDDataService extends Service implements
         @Override
         public void run() {
             while (isAlive) {
+
                 putGpsDataToJSON();
                 putOBDData();
 

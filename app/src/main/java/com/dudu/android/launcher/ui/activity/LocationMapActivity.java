@@ -6,15 +6,13 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
-import android.location.LocationManager;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.PowerManager;
-import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -67,6 +65,7 @@ import com.dudu.android.launcher.utils.FloatWindow;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.JourneyTool;
 import com.dudu.android.launcher.utils.LocationUtils;
+import com.dudu.android.launcher.utils.ViewAnimation;
 import com.dudu.map.AmapLocationChangeEvent;
 import com.dudu.map.MapManager;
 import com.dudu.map.Navigation;
@@ -201,6 +200,13 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
         view_Satellite = findViewById(R.id.view_Satellite);
 
+        mhandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ViewAnimation.startAnimation(mBackButton, mBackButton.getVisibility() == View.VISIBLE
+                        ? R.anim.back_key_disappear : R.anim.back_key_appear,LocationMapActivity.this);
+            }
+        },3000);
     }
 
     @Override
@@ -286,6 +292,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         if (latLonPoint != null) {
             handlerOpenNavi();
         }
+
     }
 
     private void getMapEntity(Serializable data) {
@@ -321,6 +328,13 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         geocoderSearch = new GeocodeSearch(this);
         geocoderSearch.setOnGeocodeSearchListener(this);
 
+        aMap.setOnMapClickListener(new AMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                ViewAnimation.startAnimation(mBackButton, mBackButton.getVisibility() == View.VISIBLE
+                        ? R.anim.back_key_disappear : R.anim.back_key_appear,LocationMapActivity.this);
+            }
+        });
     }
 
     public void onEventMainThread(AmapLocationChangeEvent event) {
@@ -1059,4 +1073,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         log.debug("搜索到{}颗卫星", satellite);
 
     }
+
+
 }

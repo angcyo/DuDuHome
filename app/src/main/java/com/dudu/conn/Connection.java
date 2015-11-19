@@ -4,8 +4,6 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.dudu.obd.PersistentStorage;
-
 import org.apache.mina.core.future.CloseFuture;
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.service.IoConnector;
@@ -26,7 +24,6 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 
 public class Connection extends Thread {
-    private String TAG = "DUDU_CONNETION";
 //    	private String host = "192.168.124.177";
     private String host = "119.29.65.127";
     private int port = 8888;
@@ -55,7 +52,7 @@ public class Connection extends Thread {
     }
 
     public void startConn() {
-        Log.d(TAG, "Connection 开始连接");
+       log.debug("Connection 开始连接");
         connector = new NioSocketConnector();
         // 设置链接超时时间
         connector.setConnectTimeoutMillis(30 * 1000);
@@ -245,7 +242,7 @@ public class Connection extends Thread {
 
         @Override
         public void sessionIdle(IoSession session, IdleStatus idlestatus) {
-            Log.d(TAG, "客户端会话休眠");
+            log.debug("客户端会话休眠");
             isSessionOpen = false;
             EventBus.getDefault().post(ConnectionEvent.SessionStateChange.SESSION_IDLE);
 
@@ -253,7 +250,7 @@ public class Connection extends Thread {
 
         @Override
         public void sessionOpened(IoSession session) {
-            Log.d(TAG, "客户端会话打开");
+            log.debug("客户端会话打开");
             isSessionOpen = true;
             EventBus.getDefault().post(ConnectionEvent.SessionStateChange.SESSION_OPEND);
 

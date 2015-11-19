@@ -21,6 +21,8 @@ public class FloatWindow {
 	public static final String MESSAGE_IN = "input";
 	public static final String MESSAGE_OUT = "output";
 
+	private boolean isWindowShow = false;
+
 	public static FloatWindow getInstance() {
 		if(floatWindow == null)
 			floatWindow = new FloatWindow();
@@ -152,4 +154,11 @@ public class FloatWindow {
 		this.chooseAddressPageCallBack = chooseAddressPageCallBack;
 	}
 
+	public boolean isWindowShow(){
+		return isWindowShow;
+	}
+
+	public void setIsWindowShow(boolean isWindowShow) {
+		this.isWindowShow = isWindowShow;
+	}
 }
