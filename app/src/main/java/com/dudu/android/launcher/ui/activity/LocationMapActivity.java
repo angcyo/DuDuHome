@@ -359,7 +359,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
             cur_locationDesc = locBundle.getString("desc");
             String playText = "您好，您现在在" + cur_locationDesc;
-            mVoiceManager.startSpeaking(playText,SemanticConstants.TTS_DO_NOTHING,true);
+            mVoiceManager.startSpeaking(playText,SemanticConstants.TTS_START_UNDERSTANDING,true);
             toNaivActivity(REMOVEWINDOW_TIME);
         }
         else{
@@ -513,7 +513,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     private void search() {
         Log.d(TAG, "searchKeyWord ： " + searchKeyWord);
-        SemanticProcessor.getProcessor().switchSemanticType(SemanticType.MAP_CHOISE);
         if (!TextUtils.isEmpty(searchKeyWord)) {
             if (Constants.CURRENT_POI.equals(searchKeyWord)) {
                 getCur_locationDesc();
@@ -640,7 +639,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                             VoiceManager.getInstance().startSpeaking(
                                     getString(R.string.no_result),
                                     SemanticConstants.TTS_DO_NOTHING);
-                            removeFloatWindow(REMOVEWINDOW_TIME);
+
                         }
                     } else {
 
@@ -648,7 +647,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                         VoiceManager.getInstance().startSpeaking(
                                 getString(R.string.no_result),
                                 SemanticConstants.TTS_DO_NOTHING);
-                        removeFloatWindow(REMOVEWINDOW_TIME);
+
                     }
                     break;
                 case 27:
@@ -656,20 +655,20 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     VoiceManager.getInstance().stopUnderstanding();
                     FloatWindowUtil.showMessage(getString(R.string.error_network),
                             FloatWindow.MESSAGE_IN);
-                    removeFloatWindow(REMOVEWINDOW_TIME);
+
                     break;
                 case 32:
                     VoiceManager.getInstance().stopUnderstanding();
                     FloatWindowUtil.showMessage(getString(R.string.error_key),
                             FloatWindow.MESSAGE_IN);
-                    removeFloatWindow(REMOVEWINDOW_TIME);
+
                     break;
                 default:
                     log.debug("未知错误，请稍后重试!错误码为:{}", code);
                     VoiceManager.getInstance().stopUnderstanding();
                     FloatWindowUtil.showMessage(getString(R.string.error_other) + code,
                             FloatWindow.MESSAGE_IN);
-                    removeFloatWindow(REMOVEWINDOW_TIME);
+
 
                     break;
 
@@ -684,11 +683,13 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     };
 
     private void handlerPoiResult() {
+        SemanticProcessor.getProcessor().switchSemanticType(
+                SemanticType.MAP_CHOISE);
         if (mapManager.getSearchType() == MapManager.SEARCH_PLACE_LOCATION) {
 
             String playText = "您好，" + searchKeyWord + "的位置为：" + poiResultList.get(0).getAddressDetial();
-            mVoiceManager.startSpeaking(playText, SemanticConstants.TTS_DO_NOTHING, true);
-            removeFloatWindow(REMOVEWINDOW_TIME);
+            mVoiceManager.startSpeaking(playText, SemanticConstants.TTS_START_UNDERSTANDING, true);
+
             return;
         }
         if (mapManager.getSearchType() == MapManager.SEARCH_NEAREST) {
@@ -755,7 +756,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                             this, point.getLatitude(), point.getLongitude());
                     VoiceManager.getInstance().startSpeaking("添加" + startpoiItem.getAddressTitle() + "为" + addType + "地址成功！",
                             SemanticConstants.TTS_DO_NOTHING, true);
-                    removeFloatWindow(REMOVEWINDOW_TIME);
+
                     return;
                 }
                 if (isManual) {
@@ -836,8 +837,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     }
 
     public void startChooseResult(int size, int type) {
-        SemanticProcessor.getProcessor().switchSemanticType(
-                SemanticType.MAP_CHOISE);
+
         if (type == ChoiseChain.TYPE_NORMAL) {
 
             if (chooseType == 1) {
@@ -941,13 +941,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         EventBus.getDefault().post(new Navigation(destination, Navigation.NAVI_NORMAL, driveMode));
     }
 
-
-    private void removeFloatWindow(int time) {
-        if (mhandler != null && removeWindowRunnable != null) {
-            mhandler.postDelayed(removeWindowRunnable, time);
-        }
-    }
-
     public void choosePage(int type) {
 
 
@@ -1021,13 +1014,13 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     }
 
     public void toNaivActivity(int t) {
-        removeFloatWindow(t);
+
         mhandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 if (mapManager.isNavi() || mapManager.isNaviBack()){
-
-                    startActivity(new Intent(LocationMapActivity.this,NaviCustomActivity.class));
+                    FloatWindowUtil.removeFloatWindow();
+                    startActivity(new Intent(LocationMapActivity.this, NaviCustomActivity.class));
                     finish();
                 }
             }
@@ -1045,7 +1038,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 cur_locationDesc = "您好，您现在在"+result.getRegeocodeAddress().getFormatAddress()
                         + "附近";
                 if(isGetCurdesc){
-                    mVoiceManager.startSpeaking(cur_locationDesc, SemanticConstants.TTS_DO_NOTHING,true);
+                    mVoiceManager.startSpeaking(cur_locationDesc, SemanticConstants.TTS_START_UNDERSTANDING,true);
                     toNaivActivity(REMOVEWINDOW_TIME);
                 }
                 isGetCurdesc = false;
