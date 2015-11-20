@@ -62,7 +62,7 @@ public class SendMessage {
 
 //        if(ActiveDevice.getInstance(mContext).getActiveFlag()==ActiveDevice.ACTIVE_OK){
         try {
-            conn.getlog().debug("sendData:{}",data);
+            conn.getlog().debug("sendData");
             conn.sendMessage(Encrypt.AESEncrypt(sendJson.toString(),Encrypt.vi), true);
         } catch (Exception e) {
             e.printStackTrace();

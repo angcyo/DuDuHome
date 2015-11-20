@@ -125,7 +125,7 @@ public class NavigationHandler {
                 code = CALCULATEERROR;
             }
         }
-        log.debug("路线计算:{}", code);
+        log.trace("路线计算:{}", code);
         return code;
     }
 
@@ -176,12 +176,11 @@ public class NavigationHandler {
                 @Override
                 public void onGetNavigationText(int arg0, String arg1) {
                     log.debug("[{}] 导航播报信息", step++);
-                    mVoiceManager.clearMisUnderstandCount();
-                    VoiceManager.getInstance().stopUnderstanding();
+                    mVoiceManager.stopUnderstanding();
                     if(FloatWindowUtil.IsWindowShow()){
-                        VoiceManager.getInstance().startSpeaking(arg1, SemanticConstants.TTS_START_UNDERSTANDING, false);
+                        mVoiceManager.startSpeaking(arg1, SemanticConstants.TTS_START_UNDERSTANDING, false);
                     }else{
-                        VoiceManager.getInstance().startSpeaking(arg1, SemanticConstants.TTS_DO_NOTHING, false);
+                        mVoiceManager.startSpeaking(arg1, SemanticConstants.TTS_DO_NOTHING, false);
                     }
                 }
 
@@ -198,8 +197,6 @@ public class NavigationHandler {
                         log.debug("[{}] 导航过程中路线规划成功", step++);
                         return;
                     }
-
-
                     MapManager.getInstance().setSearchType(0);
                     switch (naviType){
 
@@ -231,9 +228,9 @@ public class NavigationHandler {
                     log.debug("[{}] 步行或者驾车路径规划失败", step++);
 
                     String playText = "路径规划出错,请检查网络";
-                    mVoiceManager.clearMisUnderstandCount();
-                    mVoiceManager.startSpeaking(playText);
-
+                    mVoiceManager.stopUnderstanding();
+                    mVoiceManager.startSpeaking(playText, SemanticConstants.TTS_START_UNDERSTANDING, true);
+                    MapManager.getInstance().setSearchType(0);
 
                 }
 

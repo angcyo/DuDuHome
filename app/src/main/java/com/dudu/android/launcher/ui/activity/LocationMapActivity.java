@@ -620,58 +620,35 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         @Override
         public void onPoiSearched(PoiResult poiResult, int code) {
             dissmissProgressDialog();
+            if(code == 0){
+                if (poiResult != null && poiResult.getQuery() != null) {
 
-            switch (code) {
-
-                case 0:
-                    if (poiResult != null && poiResult.getQuery() != null) {
-
-                        // 取得搜索到的poiitems有多少页
-                        poiItems = poiResult.getPois();// 取得第一页的poiitem数据，页数从数字0开始
-                        List<SuggestionCity> suggestionCities = poiResult
-                                .getSearchSuggestionCitys();// 当搜索不到poiitem数据时，会返回含有搜索关键字的城市信息
-                        aMap.clear();// 清理之前的图标
-                        if (poiItems != null && poiItems.size() > 0) {
-                            setPoiList();
-                            handlerPoiResult();
-                        } else {
-                            VoiceManager.getInstance().stopUnderstanding();
-                            VoiceManager.getInstance().startSpeaking(
-                                    getString(R.string.no_result),
-                                    SemanticConstants.TTS_DO_NOTHING);
-
-                        }
+                    // 取得搜索到的poiitems有多少页
+                    poiItems = poiResult.getPois();// 取得第一页的poiitem数据，页数从数字0开始
+                    List<SuggestionCity> suggestionCities = poiResult
+                            .getSearchSuggestionCitys();// 当搜索不到poiitem数据时，会返回含有搜索关键字的城市信息
+                    aMap.clear();// 清理之前的图标
+                    if (poiItems != null && poiItems.size() > 0) {
+                        setPoiList();
+                        handlerPoiResult();
                     } else {
-
-                        VoiceManager.getInstance().stopUnderstanding();
                         VoiceManager.getInstance().startSpeaking(
                                 getString(R.string.no_result),
-                                SemanticConstants.TTS_DO_NOTHING);
+                                SemanticConstants.TTS_START_UNDERSTANDING);
 
                     }
-                    break;
-                case 27:
-                    log.debug("搜索失败,请检查网络连接");
-                    VoiceManager.getInstance().stopUnderstanding();
-                    FloatWindowUtil.showMessage(getString(R.string.error_network),
-                            FloatWindow.MESSAGE_IN);
+                } else {
 
-                    break;
-                case 32:
-                    VoiceManager.getInstance().stopUnderstanding();
-                    FloatWindowUtil.showMessage(getString(R.string.error_key),
-                            FloatWindow.MESSAGE_IN);
+                    VoiceManager.getInstance().startSpeaking(
+                            getString(R.string.no_result),
+                            SemanticConstants.TTS_START_UNDERSTANDING);
+                    SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
+                }
+            }else{
 
-                    break;
-                default:
-                    log.debug("未知错误，请稍后重试!错误码为:{}", code);
-                    VoiceManager.getInstance().stopUnderstanding();
-                    FloatWindowUtil.showMessage(getString(R.string.error_other) + code,
-                            FloatWindow.MESSAGE_IN);
-
-
-                    break;
-
+                log.debug("搜索失败 errorcode:{}", code);
+                mVoiceManager.startSpeaking(getString(R.string.error_other),SemanticConstants.TTS_START_UNDERSTANDING,true);
+                SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
             }
 
         }
@@ -709,6 +686,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
             showAddressDialog();
         } else {
             removeCallback();
+
             final String playText = "请选择列表中的地址";
             mVoiceManager.clearMisUnderstandCount();
             mVoiceManager.startSpeaking(

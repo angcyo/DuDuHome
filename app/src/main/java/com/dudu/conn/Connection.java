@@ -4,6 +4,8 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.dudu.android.launcher.utils.Encrypt;
+
 import org.apache.mina.core.future.CloseFuture;
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.service.IoConnector;
@@ -13,6 +15,8 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +28,7 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 
 public class Connection extends Thread {
-//    	private String host = "192.168.124.177";
+    //    private String host = "192.168.124.177";
     private String host = "119.29.65.127";
     private int port = 8888;
     private IoConnector connector = null;
@@ -37,6 +41,7 @@ public class Connection extends Thread {
     private static Connection mConnection;
     private Logger log;
     private ConnectionResultHandler resultHandler;
+
     public Connection(Context context) {
         mPersistentStorage = PersistentStorage.getInstance(context);
         important_msgList = new ArrayList<>();
@@ -52,7 +57,7 @@ public class Connection extends Thread {
     }
 
     public void startConn() {
-       log.debug("Connection 开始连接");
+        log.debug("Connection 开始连接");
         connector = new NioSocketConnector();
         // 设置链接超时时间
         connector.setConnectTimeoutMillis(30 * 1000);
@@ -63,10 +68,10 @@ public class Connection extends Thread {
         connector.setHandler(new MinaClientHandler());
         ConnectFuture future = connector.connect(new InetSocketAddress(host, port));// 创建连接
         future.awaitUninterruptibly(); // 等待连接创建完成
-        try{
+        try {
             session = future.getSession();
-        }catch(Exception e){
-            log.warn("{}", e.getMessage());
+        } catch (Exception e) {
+            log.warn("{}", e);
         }
     }
 
@@ -106,13 +111,12 @@ public class Connection extends Thread {
                     startConn();
                     try {
                         Thread.sleep(5000);
-                    }catch (InterruptedException e){
+                    } catch (InterruptedException e) {
 
                     }
-
                 }
                 checkCache();
-                Thread.sleep(3000);
+                Thread.sleep(5000);
             }
         } catch (Exception e) {
             isSessionOpen = false;
@@ -125,26 +129,28 @@ public class Connection extends Thread {
         if (needCache) {
             synchronized (mPersistentStorage) {
                 mPersistentStorage.addTail(msg);
+                log.debug("添加发送消息队列:{}", mPersistentStorage.getCount());
             }
         }
     }
 
     /**
      * 直接发送，不缓存
+     *
      * @param msg
      */
-    public void sendMessage(String msg){
+    public void sendMessage(String msg) {
         try {
-            if(!TextUtils.isEmpty(msg)&&session!=null)
+            if (!TextUtils.isEmpty(msg) && session != null)
                 session.write(msg);
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
     }
 
     // 连接后检查是否有缓存数据，如果有，则发送
     private void checkCache() {
-            if (isSessionOpen) {
+        if (isSessionOpen) {
 
             synchronized (important_msgList) {
                 synchronized (mPersistentStorage) {
@@ -157,7 +163,7 @@ public class Connection extends Thread {
                         }
                     }
                     if (important_msgList.size() > 0) {
-                        if(!TextUtils.isEmpty(important_msgList.get(0))&&!important_msgList.get(0).equals("null")){
+                        if (!TextUtils.isEmpty(important_msgList.get(0)) && !important_msgList.get(0).equals("null")) {
                             session.write(important_msgList.get(0));
                         }
                         important_msgList.remove(0);
@@ -206,19 +212,27 @@ public class Connection extends Thread {
         @Override
         public void messageReceived(IoSession session, Object message) {
             String msg = message.toString();
-            if (isHasData)
-                mPersistentStorage.deleteHeader();
-            log.debug("received message{}" + msg);
+            try {
+                JSONObject jsonResult = new JSONObject(msg);
+                if(jsonResult.has("resultCode")&&jsonResult.get("resultCode").equals("200")){
+                    if (isHasData)
+                        mPersistentStorage.deleteHeader();
+                    log.debug("发送消息队列成功[{}]", mPersistentStorage.getCount());
+                }else{
+                    log.debug("received message{}", msg);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             EventBus.getDefault().post(new ConnectionEvent.ReceivedMessage(msg));
-
-
 
         }
 
         @Override
         public void messageSent(IoSession session, Object message) {
-            log.debug("send message{}",message);
+
             try {
+                log.debug("send message{}", Encrypt.AESDecrypt(message.toString(), Encrypt.vi));
                 super.messageSent(session, message);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -257,7 +271,7 @@ public class Connection extends Thread {
         }
     }
 
-    public Logger getlog(){
+    public Logger getlog() {
         return log;
     }
 }

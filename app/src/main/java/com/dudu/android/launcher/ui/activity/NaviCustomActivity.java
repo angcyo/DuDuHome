@@ -67,7 +67,6 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
     // 导航界面风格
     private int mThemeStle;
     // 导航监听
-    private AMapNaviListener mAmapNaviListener;
 
     @Override
     protected void onPostResume() {
@@ -100,7 +99,6 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
 
-//        AMapNavi.getInstance(this).setAMapNaviListener(getAMapNaviListener());
 
     }
 
@@ -234,106 +232,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         }
     }
 
-    private AMapNaviListener getAMapNaviListener() {
-        if (mAmapNaviListener == null) {
 
-            mAmapNaviListener = new AMapNaviListener() {
-
-                @Override
-                public void onTrafficStatusUpdate() {
-
-
-                }
-
-                @Override
-                public void onStartNavi(int arg0) {
-
-
-                }
-
-                @Override
-                public void onReCalculateRouteForYaw() {
-                    log.warn("naviCustom 偏离路线");
-
-                }
-
-                @Override
-                public void onReCalculateRouteForTrafficJam() {
-
-                }
-
-                @Override
-                public void onLocationChange(AMapNaviLocation location) {
-
-                }
-
-                @Override
-                public void onInitNaviSuccess() {
-
-
-                }
-
-                @Override
-                public void onInitNaviFailure() {
-
-                    log.warn("naviCustom导航创建失败");
-                }
-
-                @Override
-                public void onGetNavigationText(int arg0, String arg1) {
-
-
-                }
-
-                @Override
-                public void onEndEmulatorNavi() {
-
-
-                }
-
-                @Override
-                public void onCalculateRouteSuccess() {
-
-                }
-
-                @Override
-                public void onCalculateRouteFailure(int arg0) {
-
-                }
-
-                @Override
-                public void onArrivedWayPoint(int arg0) {
-
-
-                }
-
-                @Override
-                public void onArriveDestination() {
-
-
-                }
-
-                @Override
-                public void onGpsOpenStatus(boolean arg0) {
-
-
-                }
-
-                @Override
-                public void onNaviInfoUpdated(AMapNaviInfo info) {
-
-
-                }
-
-                @Override
-                public void onNaviInfoUpdate(NaviInfo arg0) {
-
-
-                }
-            };
-        }
-        return mAmapNaviListener;
-    }
 
     /**
      * 导航界面返回按钮监听

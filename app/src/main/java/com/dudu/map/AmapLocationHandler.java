@@ -37,8 +37,6 @@ import static android.support.v4.content.PermissionChecker.checkSelfPermission;
  */
 public class AmapLocationHandler implements AMapLocationListener {
 
-    private static final String TAG = "AmapLocationHandler";
-
     private Context mContext;
 
     private LocationManagerProxy mLocationManagerProxy;
@@ -124,7 +122,7 @@ public class AmapLocationHandler implements AMapLocationListener {
             GPSdataTime++;
             return;
         }
-        log.debug("onLocationChanged,定位模式为：{} ", provider);
+        log.debug("onLocationChanged,{} ", provider);
 
         // 保存当前定位点
         LocationUtils.getInstance(mContext).setCurrentLocation(
@@ -164,8 +162,9 @@ public class AmapLocationHandler implements AMapLocationListener {
         if (LocationFilter.checkStageOne(location.getLatitude(),
                 location.getLongitude(), location.getAccuracy(),
                 location.getBearing())) {
-            // 第一个点，只用第一阶段过滤和速度过滤
+            log.debug("gps第一阶段过滤成功");
             if (isFirstRun) {
+                // 第一个点，只用第一阶段过滤和速度过滤
                 if (LocationFilter.checkSpeed(location.getSpeed())) {
                     isFirstRun = false;
                     isAvalable = true;
@@ -231,7 +230,6 @@ public class AmapLocationHandler implements AMapLocationListener {
                                             TimeUtils.format1))) {
                                 isAvalable = true;
                                 location = unAvalableList.get(2);
-                                // unAvalableList.clear();
                             } else {
                                 unAvalableList.clear();
                             }
@@ -255,7 +253,7 @@ public class AmapLocationHandler implements AMapLocationListener {
             }
 
         } else {
-            log.trace("gps未通过过滤locaion:{},{},{},{}", location.getLatitude(), location.getLongitude(),
+            log.trace("gps未通过过滤locaion:lat={},lon={},speed={},bear={}", location.getLatitude(), location.getLongitude(),
                     location.getSpeed(), location.getBearing());
         }
     }

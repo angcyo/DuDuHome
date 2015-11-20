@@ -15,12 +15,12 @@ public class LocationFilter {
 	}
 	
 	/**
-	 * 过滤精度  (0, 50]
+	 * 过滤精度  (0, 60]
 	 * @param radius 
 	 * @return
 	 */
 	private static boolean checkRadius(float radius) {
-		return radius > 0 && radius <= 50;
+		return radius > 0 && radius <= 60;
 	}
 	
 	/**
