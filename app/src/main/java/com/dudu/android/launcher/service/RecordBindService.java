@@ -114,6 +114,8 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
     private RequestQueue queue;
 
+    private boolean mCarDriving = false;
+
     //Back键定时消失的handler
     private Handler mBackDisappearHandler = new Handler() {
         @Override
@@ -365,7 +367,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
         videoName = dateFormat.format(new Date()) + ".mp4";
 
-        if (FileUtils.isTFlashCardExists()) {
+        if (FileUtils.isTFlashCardExists() && mCarDriving) {
             mediaRecorder.setOutputFile(videoPath + File.separator + videoName);
         } else {
             mediaRecorder.setOutputFile(videoPath + File.separator + "temp.mp4");
@@ -526,9 +528,13 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
     public void onEventBackgroundThread(BleOBD.CarStatus event) {
         if (event.getCarStatus() == BleOBD.CarStatus.CAR_OFFLINE) {
-            ToastUtils.showToast("车辆熄火");
+            mCarDriving = false;
+            stopRecord();
+            stopRecordTimer();
         } else if (event.getCarStatus() == BleOBD.CarStatus.CAR_ONLINE) {
-            ToastUtils.showToast("车辆点火");
+            mCarDriving = true;
+            startRecord();
+            startRecordTimer();
         }
     }
 

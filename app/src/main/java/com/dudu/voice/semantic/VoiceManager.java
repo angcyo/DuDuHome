@@ -13,6 +13,7 @@ import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.android.launcher.utils.NetworkUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
+import com.dudu.event.DeviceEvent;
 import com.dudu.voice.semantic.engine.SemanticProcessor;
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
@@ -32,10 +33,13 @@ import com.iflytek.cloud.util.ResourceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.greenrobot.event.EventBus;
+
 /**
  * Created by 赵圣琪 on 2015/10/27.
  */
 public class VoiceManager {
+
     private static final int MISUNDERSTAND_REPEAT_COUNT = 2;
 
     private static VoiceManager mInstance;
@@ -198,6 +202,8 @@ public class VoiceManager {
             return;
         }
 
+        EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.ON));
+
         startSpeaking(Constants.WAKEUP_WORDS, SemanticConstants.TTS_START_UNDERSTANDING);
     }
 
@@ -249,7 +255,7 @@ public class VoiceManager {
         mSpeechUnderstander.setParameter(SpeechConstant.ACCENT, "mandarin");
 
         // 设置语音前端点 前端点检测；静音超时时间，即用户多长时间不说话则当做超时处理；
-        mSpeechUnderstander.setParameter(SpeechConstant.VAD_BOS, "8000");
+        mSpeechUnderstander.setParameter(SpeechConstant.VAD_BOS, "6000");
 
         // 设置语音后端点 后断点检测；后端点静音检测时间，即用户停止说话多长时间内即认为不再输入， 自动停止录音
         mSpeechUnderstander.setParameter(SpeechConstant.VAD_EOS, "2000");

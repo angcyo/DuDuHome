@@ -1,5 +1,6 @@
 package com.dudu.voice.semantic.chain;
 
+import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.event.DeviceEvent;
 import com.dudu.voice.semantic.SemanticConstants;
 
@@ -17,8 +18,8 @@ public class DimScreenChain extends SemanticChain {
 
     @Override
     public boolean doSemantic(String json) {
-        //TODO
         EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.OFF));
+        FloatWindowUtil.removeFloatWindow();
         return true;
     }
 
