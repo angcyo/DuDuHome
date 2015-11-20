@@ -63,4 +63,5 @@ dependencies {
     compile project(':scf4a')
     compile project(':libble')
     compile project(':hideapi')
+    compile 'com.github.PhilJay:MPAndroidChart:v2.1.6'
 }

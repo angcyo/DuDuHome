@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.dudu.android.launcher">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.dudu.android.launcher" >
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -11,7 +10,7 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
@@ -54,7 +53,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:theme="@android:style/Theme.Black">
+        android:theme="@android:style/Theme.Black" >
 
         <!--
             debug key 6d9506f145dbf546da02076d89294390
@@ -67,9 +66,9 @@
 
         <activity
             android:name=".ui.activity.MainActivity"
-            android:screenOrientation="landscape"
             android:launchMode="singleTask"
-            android:theme="@style/AppBaseTheme">
+            android:screenOrientation="landscape"
+            android:theme="@style/AppBaseTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -78,69 +77,71 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.activity.LocationMapActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/AppBaseTheme"></activity>
-
+            android:theme="@style/AppBaseTheme" />
         <activity
             android:name=".ui.activity.NaviCustomActivity"
             android:launchMode="singleInstance"
-            android:theme="@style/Theme.TitleBar"
-            android:screenOrientation="landscape" />
-
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.TitleBar" />
         <activity
             android:name=".ui.activity.NaviBackActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="landscape" />
-
+        <!--<activity
+            android:name=".ui.activity.LineChartActivity1"
+            android:launchMode="singleInstance"
+            android:screenOrientation="landscape" />-->
+        <!--<activity
+            android:name=".ui.activity.GsensorChartActivity"
+            android:launchMode="singleInstance"
+            android:screenOrientation="landscape" />-->
         <activity
             android:name=".ui.activity.video.VideoActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="landscape"></activity>
-
+            android:screenOrientation="landscape" />
         <activity
             android:name=".ui.activity.video.VideoListActivity"
             android:launchMode="singleTop"
             android:screenOrientation="landscape"
-            android:theme="@style/AppBaseTheme"></activity>
-
+            android:theme="@style/AppBaseTheme" />
         <activity
             android:name=".ui.activity.video.VideoPlayActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="landscape"></activity>
-
+            android:screenOrientation="landscape" />
         <activity
             android:name=".ui.activity.WifiActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/AppBaseTheme"></activity>
-
+            android:theme="@style/AppBaseTheme" />
         <activity
             android:name=".ui.activity.ActivationActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/AppBaseTheme"></activity>
-
+            android:theme="@style/AppBaseTheme" />
         <activity
             android:name=".ui.activity.SimpleHudActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppBaseTheme" />
-
         <activity
             android:name=".ui.activity.OBDCheckingActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="landscape"></activity>
-
+            android:screenOrientation="landscape" />
         <activity
             android:name=".ui.activity.NearbyRepairActivity"
             android:launchMode="singleTop"
             android:screenOrientation="landscape"
-            android:theme="@style/AppBaseTheme"></activity>
+            android:theme="@style/AppBaseTheme" />
 
         <service android:name=".service.NewMessageShowService" />
         <service android:name=".service.RecordBindService" />
         <service android:name="com.dudu.obd.OBDDataService" />
 
+        <activity android:name=".ui.activity.GsensorChartActivity" >
+        </activity>
+        <!--<activity
+            android:name=".ui.activity.LineChartActivity2"
+            android:screenOrientation="landscape"/>-->
     </application>
 
 </manifest>

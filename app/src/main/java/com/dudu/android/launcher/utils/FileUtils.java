@@ -20,6 +20,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.FileNameMap;
 import java.net.URLConnection;
@@ -55,6 +57,17 @@ public class FileUtils {
 
         FileUtils.makeNoMediaFile(dir);
         log.debug("VideoPath:{}", dir.getAbsolutePath());
+        return dir;
+    }
+
+    public static File getGsensorDataStorageDir() {
+        File dir = new File(getStorageDir(), "/GsensorData");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        FileUtils.makeNoMediaFile(dir);
+        log.debug("gsensorData:{}", dir.getAbsolutePath());
         return dir;
     }
 
@@ -751,5 +764,70 @@ public class FileUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    public static boolean writeObjectToFile(Object object, String fileName){
+
+        ObjectOutputStream oos = null;
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(fileName);
+            oos = new ObjectOutputStream(fos);
+            oos.writeObject(object);
+
+            return true;
+        } catch (Exception e) {
+
+        } finally {
+            try {
+                if (oos != null) {
+                    oos.close();
+                    oos = null;
+                }
+                if (fos != null) {
+                    fos.close();
+                    fos = null;
+                }
+            } catch (IOException e) {
+                LogUtils.e("FileUtils", "writeObjectToFile error");
+            }
+        }
+
+        return false;
+
+    }
+
+    public static Object readObjectFromFile(String fileName){
+
+        ObjectInputStream ois = null;
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(fileName);
+            ois = new ObjectInputStream(fis);
+            return ois.readObject();
+
+        } catch (Exception e) {
+
+        } finally {
+            if (ois != null)
+                try {
+                    ois.close();
+                    ois = null;
+                } catch (IOException e) {
+                    LogUtils.e("FileUtils", "readObjectFromFile error");
+                }
+            if (fis != null)
+                try {
+                    fis.close();
+                    fis = null;
+                } catch (IOException e) {
+                    LogUtils.e("FileUtils", "readObjectFromFile error");
+                }
+        }
+
+        return null;
+
+
     }
 }
