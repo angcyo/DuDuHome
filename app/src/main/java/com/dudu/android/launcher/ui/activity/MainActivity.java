@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
@@ -506,5 +507,13 @@ public class MainActivity extends BaseTitlebarActivity implements
                 break;
         }
 
+    }
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        if (e2.getX() - e1.getX() > 400 && e2.getY() - e1.getY() > 400) {
+            PackageManager packageManager = MainActivity.this.getPackageManager();
+            startActivity(new Intent(packageManager.getLaunchIntentForPackage("com.qualcomm.factory")));
+        }
+        return true;
     }
 }
