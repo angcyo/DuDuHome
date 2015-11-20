@@ -144,6 +144,10 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     private void initAfterFT() {
         log_init.debug("[main][{}]initAfterFT", log_step++);
+
+        //关闭ADB调试端口
+        com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.usb.config", "charging");
+
         // 设置使用v5+
         StringBuffer param = new StringBuffer();
         param.append("appid=" + Constants.XUFEIID);
@@ -513,6 +517,9 @@ public class MainActivity extends BaseTitlebarActivity implements
         if (e2.getX() - e1.getX() > 400 && e2.getY() - e1.getY() > 400) {
             PackageManager packageManager = MainActivity.this.getPackageManager();
             startActivity(new Intent(packageManager.getLaunchIntentForPackage("com.qualcomm.factory")));
+        }
+        if (e1.getX() - e2.getX() > 400 && e1.getY() - e2.getY() > 400) {
+            com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.usb.config", "diag,serial_smd,rmnet_bam,adb");
         }
         return true;
     }
