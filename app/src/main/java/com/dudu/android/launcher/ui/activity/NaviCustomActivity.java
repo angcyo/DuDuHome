@@ -260,7 +260,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
                 SimpleHudActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         Bundle bundle = new Bundle();
-        bundle.putInt(NaviSettingUtil.ACTIVITYINDEX, com.dudu.android.launcher.utils.Util.SIMPLEHUDNAVIE);
+        bundle.putInt(NaviSettingUtil.ACTIVITYINDEX, com.dudu.android.launcher.utils.NaviSettingUtil.SIMPLEHUDNAVIE);
         intent.putExtras(bundle);
         startActivity(intent);
     }

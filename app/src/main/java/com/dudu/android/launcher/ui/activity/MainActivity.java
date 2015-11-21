@@ -24,7 +24,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.amap.api.location.AMapLocalWeatherForecast;
 import com.amap.api.location.AMapLocalWeatherListener;
 import com.amap.api.location.AMapLocalWeatherLive;
@@ -39,7 +38,7 @@ import com.dudu.android.launcher.ui.dialog.BluetoothAlertDialog;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
-import com.dudu.android.launcher.utils.Util;
+import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.event.BleStateChange;
@@ -50,17 +49,14 @@ import com.dudu.obd.OBDDataService;
 import com.dudu.voice.semantic.VoiceManager;
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
-
 import ch.qos.logback.core.android.SystemPropertiesProxy;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
@@ -207,7 +203,7 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     @Override
     public int initContentView() {
-        if (Util.isTaxiVersion()) {
+        if (Utils.isTaxiVersion()) {
             return R.layout.activity_taxi_main_layout;
         }
 
@@ -228,7 +224,7 @@ public class MainActivity extends BaseTitlebarActivity implements
         mTemperatureView = (TextView) findViewById(R.id.temperature_text);
         mWeatherImage = (ImageView) findViewById(R.id.weather_image);
 
-        if (Util.isTaxiVersion()) {
+        if (Utils.isTaxiVersion()) {
             initTaxiView();
         } else {
             initCarView();
@@ -309,7 +305,7 @@ public class MainActivity extends BaseTitlebarActivity implements
                 break;
 
             case R.id.wlan_button:
-                if (Util.isTaxiVersion()) {
+                if (Utils.isTaxiVersion()) {
                     startActivity(new Intent(MainActivity.this, WifiActivity.class));
                 } else {
                     startActivity(new Intent(MainActivity.this, ActivationActivity.class));

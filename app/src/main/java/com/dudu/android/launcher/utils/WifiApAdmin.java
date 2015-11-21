@@ -65,7 +65,7 @@ public class WifiApAdmin {
             return false;
         }
 
-        if (Util.isTaxiVersion()) {
+        if (Utils.isTaxiVersion()) {
             startWifiAp(context, DEFAULT_SSID, "", null);
         } else {
             if (SharedPreferencesUtil.getBooleanValue(context, KEY_WIFI_AP_STATE, false)) {

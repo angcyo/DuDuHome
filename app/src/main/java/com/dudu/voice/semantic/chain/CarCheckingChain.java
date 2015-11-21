@@ -1,7 +1,6 @@
 package com.dudu.voice.semantic.chain;
 
 import android.content.Intent;
-
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.bean.CmdEntity;
 import com.dudu.android.launcher.bean.CmdSlots;
@@ -11,7 +10,7 @@ import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.GsonUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
-import com.dudu.android.launcher.utils.Util;
+import com.dudu.android.launcher.utils.Utils;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.SemanticType;
 import com.dudu.voice.semantic.engine.SemanticProcessor;
@@ -35,7 +34,7 @@ public class CarCheckingChain extends  SemanticChain  {
 
     @Override
     public boolean doSemantic(String json) {
-        if (Util.isTaxiVersion()) {
+        if (Utils.isTaxiVersion()) {
             return false;
         }
 

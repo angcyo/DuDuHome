@@ -3,14 +3,12 @@ package com.dudu.android.launcher.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
-
 import com.amap.api.navi.AMapHudView;
 import com.amap.api.navi.AMapHudViewListener;
 import com.amap.api.navi.AMapNavi;
 import com.dudu.android.launcher.R;
-import com.dudu.android.launcher.ui.activity.base.BaseActivity;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
-import com.dudu.android.launcher.utils.Util;
+import com.dudu.android.launcher.utils.NaviSettingUtil;
 import com.dudu.map.MapManager;
 
 /**
@@ -70,8 +68,8 @@ public class SimpleHudActivity extends BaseNoTitlebarAcitivity implements
 	private void processBundle(Bundle bundle) {
 		if (bundle != null) {
 
-			code = bundle.getInt(Util.ACTIVITYINDEX, -1);
-			if (code == Util.SIMPLEHUDNAVIE) {
+			code = bundle.getInt(NaviSettingUtil.ACTIVITYINDEX, -1);
+			if (code == NaviSettingUtil.SIMPLEHUDNAVIE) {
 				AMapNavi.getInstance(this).startNavi(AMapNavi.GPSNaviMode);
 			}
 

@@ -1,15 +1,13 @@
 package com.dudu.voice.semantic.chain;
 
 import android.content.Context;
-
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.bean.WifiEntity;
 import com.dudu.android.launcher.bean.WifiSlots;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.GsonUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
-import com.dudu.android.launcher.utils.SharedPreferencesUtil;
-import com.dudu.android.launcher.utils.Util;
+import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.voice.semantic.SemanticConstants;
 
@@ -32,7 +30,7 @@ public class WifiChain extends SemanticChain {
 
     @Override
     public boolean doSemantic(String json) {
-        if (Util.isTaxiVersion()) {
+        if (Utils.isTaxiVersion()) {
             return false;
         }
 
