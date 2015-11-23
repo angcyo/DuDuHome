@@ -64,17 +64,21 @@
     <string name="nearby_tire_repair_brand">附近评价最高的轮胎保养品牌</string>
     <string name="network_no_signal">无网络信号</string>
 
-    <!-- 行车记录字符串-->
+    <!-- 行车记录字符串 -->
     <string name="video_sdcard_removed_alert">没有插入SD卡，不能存储行车录像!</string>
     <string name="video_sdcard_inserted_alert">已插入SD卡</string>
     <string name="video_cache_space_full_alert">存储空间已满，请手动释放存储空间!</string>
     <string name="video_delete_alert">确定删除此视频？</string>
     <string name="video_lock_alert">本视频已锁定.</string>
-    <string name="OBD_not_connect">OBD模块未正确连接</string>
-    <string name="OBD_use_connect">请连接后使用</string>
     <string name="video_end_alert">已经是最后一个视频！</string>
     <string name="video_start_alert">已经是第一个视频！</string>
 
+
+    <!-- OBD字符串 -->
+    <string name="obd_checking_obd">正在检测OBD连接...</string>
+    <string name="obd_checking_unconnected">未检测到OBD\n设备未能正常使用</string>
+    <string name="OBD_not_connect">OBD模块未正确连接</string>
+    <string name="OBD_use_connect">请连接OBD后使用</string>
 
     <string-array name="action_menu_list_select">
         <item>选择</item>

@@ -1,7 +1,5 @@
 package com.dudu.android.launcher.ui.activity;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -16,55 +14,38 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.amap.api.location.AMapLocalWeatherForecast;
 import com.amap.api.location.AMapLocalWeatherListener;
 import com.amap.api.location.AMapLocalWeatherLive;
 import com.amap.api.location.LocationManagerProxy;
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
-import com.dudu.android.launcher.service.NewMessageShowService;
 import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
-import com.dudu.android.launcher.ui.dialog.BluetoothAlertDialog;
-import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.LocationUtils;
-import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.event.BleStateChange;
 import com.dudu.event.DeviceEvent;
-import com.dudu.event.InitEvent;
 import com.dudu.map.MapManager;
-import com.dudu.obd.OBDDataService;
 import com.dudu.voice.semantic.VoiceManager;
-import com.iflytek.cloud.SpeechConstant;
-import com.iflytek.cloud.SpeechUtility;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
-
-import ch.qos.logback.core.android.SystemPropertiesProxy;
 import de.greenrobot.event.EventBus;
-import rx.Observable;
-import rx.functions.Action1;
+
 
 public class MainActivity extends BaseTitlebarActivity implements
         OnClickListener, AMapLocalWeatherListener {
@@ -87,8 +68,6 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     private int log_step;
 
-    private BluetoothAlertDialog bluetoothDialog;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         log_init = LoggerFactory.getLogger("init.start");
@@ -98,113 +77,13 @@ public class MainActivity extends BaseTitlebarActivity implements
         log_init.debug("[main][{}]register EventBus", log_step++);
         EventBus.getDefault().register(this);
 
-        startFloatMessageShowService();
-
         getDate();
 
         initVideoService();
 
         initWeatherInfo();
 
-        //添加生产测试判断
-        log_init.debug("[main][{}]checkBTFT after 5s", log_step++);
-        Observable.timer(5, TimeUnit.SECONDS)
-                .subscribe(new Action1<Long>() {
-                    @Override
-                    public void call(final Long aLong) {
-                        EventBus.getDefault().post(new InitEvent.CheckBtFt());
-                    }
-                });
-    }
-
-    public void onEventMainThread(InitEvent.CheckBtFt event) {
-        log_init.debug("[main][{}]start checkBTFT", log_step++);
-        checkBTFT();
-    }
-
-    private void checkBTFT() {
-        SystemPropertiesProxy sps = SystemPropertiesProxy.getInstance();
-        boolean need_bt = !"1".equals(sps.get("persist.sys.bt", "0"));
-        boolean need_ft = !"1".equals(sps.get("persist.sys.ft", "0"));
-        Intent intent;
-        PackageManager packageManager = getPackageManager();
-        intent = packageManager.getLaunchIntentForPackage("com.qualcomm.factory");
-        log_init.debug("[main][{}] bt:{}, ft:{}, app:{}", log_step++, !need_bt, !need_ft, intent != null);
-        if ((need_bt || need_ft) && intent != null) {
-            //close wifi ap for ft test
-            WifiApAdmin.closeWifiAp(this);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                    | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
-                    | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-        } else {
-            initAfterFT();
-        }
-    }
-
-    private void initAfterFT() {
-        log_init.debug("[main][{}]initAfterFT", log_step++);
-
-        //关闭ADB调试端口
-        if (!Utils.isDemoVersion(this)) {
-            com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.usb.config", "charging");
-        }
-
-        // 设置使用v5+
-        StringBuffer param = new StringBuffer();
-        param.append("appid=" + Constants.XUFEIID);
-        param.append(",");
-        param.append(SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC);
-
-        log_init.debug("[main][{}]SpeechUtility createUtility", log_step++);
-        SpeechUtility.createUtility(this, param.toString());
-
-        log_init.debug("[main][{}]VoiceWakeuper startWakeup", log_step++);
-        VoiceManager.getInstance().startWakeup();
-
-        //延迟10S开启其他服务
-        Observable.timer(10, TimeUnit.SECONDS)
-                .subscribe(new Action1<Long>() {
-                    @Override
-                    public void call(final Long aLong) {
-                        EventBus.getDefault().post(new InitEvent.InitAfter10s());
-                    }
-                });
-    }
-
-    public void onEventMainThread(InitEvent.InitAfter10s event) {
-        initAfter10s();
-    }
-
-    private void initAfter10s() {
-        log_init.debug("initAfter10s");
-
         WifiApAdmin.initWifiApState(this);
-
-        openBlueTooth();
-
-        startOBDService();
-    }
-
-    private void startOBDService() {
-        log_init.debug("startOBDService");
-        com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.gps", "start");
-        Intent i = new Intent(this, OBDDataService.class);
-        startService(i);
-    }
-
-    private void openBlueTooth() {
-        //初始化蓝牙的适配器
-        BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-        BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
-
-        if (bluetoothAdapter != null) {
-            if (!bluetoothAdapter.isEnabled()) {
-                //如果蓝牙没有开启的话，则开启蓝牙
-                log_init.debug("bluetoothAdapter.enable");
-                bluetoothAdapter.enable();
-            }
-        }
     }
 
     @Override
@@ -268,6 +147,7 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     @Override
     public void initDatas() {
+
     }
 
     @Override
@@ -295,19 +175,7 @@ public class MainActivity extends BaseTitlebarActivity implements
                 break;
 
             case R.id.didi_button:
-                Intent intent;
-                PackageManager packageManager = getPackageManager();
-                intent = packageManager.getLaunchIntentForPackage("com.sdu.didi.gsui");
-                if (intent != null) {
-                    ((LauncherApplication) getApplication()).setReceivingOrder(true);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                            | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
-                            | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                } else {
-                    ToastUtils.showToast("您还没安装滴滴客户端，请先安装滴滴出行客户端");
-                }
-
+                Utils.startThirdPartyApp(MainActivity.this, "com.sdu.didi.gsui");
                 break;
 
             case R.id.wlan_button:
@@ -338,9 +206,11 @@ public class MainActivity extends BaseTitlebarActivity implements
 
                 startActivity(navigationIntent);
                 break;
+
             case R.id.self_checking_container:
                 startActivity(new Intent(MainActivity.this, OBDCheckingActivity.class));
                 break;
+
             case R.id.voice_button:
                 VoiceManager.getInstance().startVoiceService();
                 break;
@@ -464,44 +334,6 @@ public class MainActivity extends BaseTitlebarActivity implements
         }
     }
 
-    private void startFloatMessageShowService() {
-        log_init.debug("[main][{}]startFloatMessageShowService", log_step++);
-        Intent i = new Intent(MainActivity.this, NewMessageShowService.class);
-        startService(i);
-    }
-
-    private void showBleDialog() {
-        if (Utils.isDemoVersion(this)) {
-            return;
-        }
-
-        if (bluetoothDialog != null && bluetoothDialog.isShowing()) {
-            return;
-        }
-
-        bluetoothDialog = new BluetoothAlertDialog(mContext);
-        Window dialogWindow = bluetoothDialog.getWindow();
-        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
-        lp.x = 10; // 新位置X坐标
-        lp.y = 0; // 新位置Y坐标
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
-        lp.alpha = 0.8f; // 透明度
-        dialogWindow.setAttributes(lp);
-        bluetoothDialog.show();
-    }
-
-    private void disMissbluetoothDialog() {
-        if (Utils.isDemoVersion(this)) {
-            return;
-        }
-
-        if (bluetoothDialog != null && bluetoothDialog.isShowing()) {
-            bluetoothDialog.cancel();
-            bluetoothDialog = null;
-        }
-    }
-
     public void onEventMainThread(DeviceEvent.GPS event) {
         com.dudu.android.hideapi.SystemPropertiesProxy.getInstance()
                 .set(mContext, "persist.sys.gps", event.getState() == DeviceEvent.ON ? "start" : "stop");
@@ -516,10 +348,9 @@ public class MainActivity extends BaseTitlebarActivity implements
         switch (event.getConnState()) {
 
             case BleStateChange.BLEDISCONNECTED:
-                showBleDialog();
+                startActivity(new Intent(MainActivity.this, BleCheckingActivity.class));
                 break;
             case BleStateChange.BLECONNECTED:
-                disMissbluetoothDialog();
                 break;
         }
 

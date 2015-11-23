@@ -6,28 +6,41 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.utils.Constants;
+import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.event.BleStateChange;
+import com.dudu.event.InitEvent;
 import com.dudu.obd.OBDDataService;
 import com.dudu.voice.semantic.VoiceManager;
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
 import ch.qos.logback.core.android.SystemPropertiesProxy;
+import de.greenrobot.event.EventBus;
 
 public class BleCheckingActivity extends BaseTitlebarActivity {
+
+    private ProgressBar mCheckingProgressBar;
+
+    private TextView mCheckingTextView;
 
     @Override
     public int initContentView() {
         return R.layout.activity_ble_checking;
     }
 
+
     @Override
     public void initView(Bundle savedInstanceState) {
-
+        mCheckingProgressBar = (ProgressBar) findViewById(R.id.obd_checking_pb);
+        mCheckingTextView = (TextView) findViewById(R.id.obd_checking_tv);
     }
 
     @Override
@@ -37,23 +50,32 @@ public class BleCheckingActivity extends BaseTitlebarActivity {
 
     @Override
     public void initDatas() {
+        EventBus.getDefault().register(this);
+
         if (Utils.isDemoVersion(BleCheckingActivity.this)) {
+
             initAfterBTFT();
+
+            EventBus.getDefault().post(new BleStateChange(BleStateChange.BLECONNECTED));
             return;
         }
 
         checkBTFT();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
     private void initAfterBTFT() {
+
         // 1.初始化语音
         initMSC();
 
         // 2.打开蓝牙
         openBlueTooth();
-
-        // 3.启动OBDService
-        startOBDService();
     }
 
     private void checkBTFT() {
@@ -71,16 +93,25 @@ public class BleCheckingActivity extends BaseTitlebarActivity {
                     | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         } else {
+            // 关闭ADB调试端口
+            com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext,
+                    "persist.sys.usb.config", "charging");
+
             initAfterBTFT();
+
+            startOBDService();
         }
     }
 
     public void onEventMainThread(BleStateChange event) {
+        LogUtils.e("BleCheckingActivity", event.toString());
         switch (event.getConnState()) {
             case BleStateChange.BLEDISCONNECTED:
-
+                mCheckingProgressBar.setVisibility(View.GONE);
+                mCheckingTextView.setText(R.string.obd_checking_unconnected);
                 break;
             case BleStateChange.BLECONNECTED:
+                mCheckingProgressBar.setVisibility(View.GONE);
                 startActivity(new Intent(BleCheckingActivity.this,
                         MainActivity.class));
                 finish();
@@ -113,7 +144,8 @@ public class BleCheckingActivity extends BaseTitlebarActivity {
     }
 
     private void startOBDService() {
-        com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.gps", "start");
+        com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(BleCheckingActivity.this,
+                "persist.sys.gps", "start");
         Intent i = new Intent(this, OBDDataService.class);
         startService(i);
     }

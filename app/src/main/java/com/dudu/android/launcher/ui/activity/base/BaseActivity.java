@@ -31,7 +31,6 @@ public abstract class BaseActivity extends Activity implements OnGestureListener
     private int maxBrightness, currentBrightness;
     private static final float STEP_BRIGHTNESS = 2f;// 协调亮度滑动时的步长，避免每次滑动都改变，导致改变过快
     private static final float STEP_VOLUME = 2f;// 协调音量滑动时的步长，避免每次滑动都改变，导致改变过快
-    private boolean firstScroll = false;// 每次触摸屏幕后，第一次scroll的标志
     private int GESTURE_FLAG = 0;// 1，调节音量 2，调节亮度
     private static final int GESTURE_MODIFY_VOLUME = 1;
     private static final int GESTURE_MODIFY_BRIGHTNESS = 2;
@@ -51,21 +50,23 @@ public abstract class BaseActivity extends Activity implements OnGestureListener
 
         initListener();
 
-
         gestureDetector = new GestureDetector(this, this);
         gestureDetector.setIsLongpressEnabled(true);
         audiomanager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         maxVolume = audiomanager.getStreamMaxVolume(AudioManager.STREAM_MUSIC); // 获取系统最大音量
         currentVolume = audiomanager.getStreamVolume(AudioManager.STREAM_MUSIC); // 获取当前值
         maxBrightness = 255;
-        currentBrightness = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, 255);//取得当前亮度
+        currentBrightness = Settings.System.getInt(getContentResolver(),
+                Settings.System.SCREEN_BRIGHTNESS, 255);//取得当前亮度
         if (currentBrightness < 80) {
             currentBrightness = 80;
         }
+
         WindowManager wm = this.getWindowManager();
         width = wm.getDefaultDisplay().getWidth();
         Context mContext = this;
-        mContext.getContentResolver().registerContentObserver(Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS), true, mBrightnessObserver);
+        mContext.getContentResolver().registerContentObserver(Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS),
+                true, mBrightnessObserver);
     }
 
     public abstract int initContentView();
@@ -129,7 +130,6 @@ public abstract class BaseActivity extends Activity implements OnGestureListener
 
     @Override
     public boolean onDown(MotionEvent e) {
-        firstScroll = true;// 设定是触摸屏幕后第一次scroll的标志
         return false;
     }
 
@@ -211,7 +211,6 @@ public abstract class BaseActivity extends Activity implements OnGestureListener
 
         }
 
-        firstScroll = false;
         return false;
 
     }

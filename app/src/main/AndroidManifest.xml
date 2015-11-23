@@ -65,8 +65,7 @@
             android:value="476a2032389d1d702025e4183c74a51d" />
 
         <activity
-            android:name=".ui.activity.MainActivity"
-            android:launchMode="singleTask"
+            android:name=".ui.activity.BleCheckingActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppBaseTheme" >
             <intent-filter>
@@ -77,6 +76,13 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.activity.MainActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppBaseTheme" />
+
         <activity
             android:name=".ui.activity.LocationMapActivity"
             android:screenOrientation="landscape"

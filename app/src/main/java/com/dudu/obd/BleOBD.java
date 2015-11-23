@@ -121,10 +121,8 @@ public class BleOBD {
 
     
     public void onEventBackgroundThread(Event.BTConnected event){
-
         log.debug("ble BTConnected");
         EventBus.getDefault().post(new BleStateChange(BleStateChange.BLECONNECTED));
-
     }
 
     private void parseOBDData(String result){

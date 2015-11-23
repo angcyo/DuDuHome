@@ -46,6 +46,11 @@ public class Utils {
         }
     }
 
+    /**
+     * 判断当前是demo版本还是正式版
+     * @param context
+     * @return
+     */
     public static boolean isDemoVersion(Context context) {
         PackageInfo packageInfo = null;
         try {
