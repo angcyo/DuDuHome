@@ -18,13 +18,13 @@ android {
         }
     }
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    buildToolsVersion "23.0.2"
     defaultConfig {
         applicationId "com.dudu.android.launcher"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 1010
-        versionName "T-1.0.10"
+        versionCode 1101
+        versionName "T-1.1.1-demo"
     }
     buildTypes {
         release {
@@ -51,7 +51,7 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.0'
+    compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.github.tony19:logback-android-core:1.1.1-4'
     compile 'com.github.tony19:logback-android-classic:1.1.1-4'
     compile 'org.slf4j:slf4j-api:1.7.12'
@@ -59,7 +59,7 @@ dependencies {
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'io.reactivex:rxandroid:0.25.0'
     compile 'io.reactivex:rxandroid-framework:0.25.0'
-    compile 'com.android.support:design:23.1.0'
+    compile 'com.android.support:design:23.1.1'
     compile project(':scf4a')
     compile project(':libble')
     compile project(':hideapi')

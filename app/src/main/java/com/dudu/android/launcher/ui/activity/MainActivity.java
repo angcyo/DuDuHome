@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.amap.api.location.AMapLocalWeatherForecast;
 import com.amap.api.location.AMapLocalWeatherListener;
 import com.amap.api.location.AMapLocalWeatherLive;
@@ -49,14 +50,17 @@ import com.dudu.obd.OBDDataService;
 import com.dudu.voice.semantic.VoiceManager;
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
+
 import ch.qos.logback.core.android.SystemPropertiesProxy;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
@@ -142,7 +146,9 @@ public class MainActivity extends BaseTitlebarActivity implements
         log_init.debug("[main][{}]initAfterFT", log_step++);
 
         //关闭ADB调试端口
-        com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.usb.config", "charging");
+        if (!Utils.isDemoVersion(this)) {
+            com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.usb.config", "charging");
+        }
 
         // 设置使用v5+
         StringBuffer param = new StringBuffer();
@@ -465,8 +471,14 @@ public class MainActivity extends BaseTitlebarActivity implements
     }
 
     private void showBleDialog() {
-        if (bluetoothDialog != null && bluetoothDialog.isShowing())
+        if (Utils.isDemoVersion(this)) {
             return;
+        }
+
+        if (bluetoothDialog != null && bluetoothDialog.isShowing()) {
+            return;
+        }
+
         bluetoothDialog = new BluetoothAlertDialog(mContext);
         Window dialogWindow = bluetoothDialog.getWindow();
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
@@ -480,6 +492,10 @@ public class MainActivity extends BaseTitlebarActivity implements
     }
 
     private void disMissbluetoothDialog() {
+        if (Utils.isDemoVersion(this)) {
+            return;
+        }
+
         if (bluetoothDialog != null && bluetoothDialog.isShowing()) {
             bluetoothDialog.cancel();
             bluetoothDialog = null;
@@ -508,13 +524,17 @@ public class MainActivity extends BaseTitlebarActivity implements
         }
 
     }
+
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         if (e2.getX() - e1.getX() > 400 && e2.getY() - e1.getY() > 400) {
+            //关闭语音
+            VoiceManager.getInstance().stopUnderstanding();
+            VoiceManager.getInstance().stopWakeup();
             PackageManager packageManager = MainActivity.this.getPackageManager();
             startActivity(new Intent(packageManager.getLaunchIntentForPackage("com.qualcomm.factory")));
         }
-        if (e1.getX() - e2.getX() > 400 && e1.getY() - e2.getY() > 400) {
+        if (e2.getX() - e1.getX() > 400 && e1.getY() - e2.getY() > 400) {
             com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.usb.config", "diag,serial_smd,rmnet_bam,adb");
         }
         return true;
