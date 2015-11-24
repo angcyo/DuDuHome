@@ -7,10 +7,13 @@ import android.content.pm.PackageManager;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
+import com.dudu.android.launcher.ui.dialog.ErrorMessageDialog;
 
 public class Utils {
 
     private static final String TAG = "Utils";
+
+    private static ErrorMessageDialog mOBDErrorDialog;
 
     public static boolean isTaxiVersion() {
         int code = LauncherApplication.getContext().
@@ -67,5 +70,28 @@ public class Utils {
         return false;
     }
 
+    public static void showOBDErrorDialog(Context context) {
+        if (isDemoVersion(context)) {
+            return;
+        }
+
+        if (mOBDErrorDialog != null && mOBDErrorDialog.isShowing()) {
+            return;
+        }
+
+        mOBDErrorDialog = new ErrorMessageDialog(context, R.string.obd_checking_unconnected,
+                R.drawable.obd_checking_icon);
+        mOBDErrorDialog.show();
+    }
+
+    public static void dismissOBDErrorDialog(Context context) {
+        if (Utils.isDemoVersion(context)) {
+            return;
+        }
+
+        if (mOBDErrorDialog != null && mOBDErrorDialog.isShowing()) {
+            mOBDErrorDialog.dismiss();
+        }
+    }
 
 }

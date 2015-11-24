@@ -202,8 +202,6 @@ public class VoiceManager {
             return;
         }
 
-        EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.ON));
-
         startSpeaking(Constants.WAKEUP_WORDS, SemanticConstants.TTS_START_UNDERSTANDING);
     }
 

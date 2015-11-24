@@ -133,6 +133,8 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     public void onCreate() {
         super.onCreate();
 
+        EventBus.getDefault().register(this);
+
         videoPath = FileUtils.getVideoStorageDir().getAbsolutePath();
 
         if (FileUtils.isTFlashCardExists()) {
@@ -299,6 +301,8 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         windowManager.removeView(videoView);
 
         unregisterReceiver(mTFlashCardReceiver);
+
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -491,8 +495,6 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     }
 
     public void onEventBackgroundThread(final ConnectionEvent.TakePhoto takePhoto) {
-
-
         if (camera != null) {
             camera.autoFocus(null);
             camera.takePicture(null, null, new Camera.PictureCallback() {
@@ -539,9 +541,10 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     }
 
     private void toggleAnimation() {
-       ViewAnimation.startAnimation(backButton, backButton.getVisibility() == View.VISIBLE ? R.anim.back_key_disappear : R.anim.back_key_appear,this);
-        ViewAnimation.startAnimation(localVideo, localVideo.getVisibility() == View.VISIBLE ? R.anim.camera_image_disappear : R.anim.camera_image_apear,this);
+        ViewAnimation.startAnimation(backButton, backButton.getVisibility() == View.VISIBLE ?
+                R.anim.back_key_disappear : R.anim.back_key_appear,this);
+        ViewAnimation.startAnimation(localVideo, localVideo.getVisibility() == View.VISIBLE ?
+                R.anim.camera_image_disappear : R.anim.camera_image_apear,this);
     }
-
 
 }
