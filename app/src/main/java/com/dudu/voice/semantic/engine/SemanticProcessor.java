@@ -2,17 +2,19 @@ package com.dudu.voice.semantic.engine;
 
 import com.dudu.android.launcher.bean.Rsphead;
 import com.dudu.android.launcher.utils.JsonUtils;
-import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.SemanticType;
 import com.dudu.voice.semantic.VoiceManager;
-import com.dudu.voice.semantic.chain.CarCheckingDefault;
 import com.dudu.voice.semantic.chain.DefaultChain;
-import com.dudu.voice.semantic.chain.MapChoiseDefalutChain;
-import com.dudu.voice.semantic.chain.NavigationDefaultChain;
 import com.dudu.voice.semantic.chain.SemanticChain;
+import com.dudu.voice.semantic.state.CarCheckingState;
+import com.dudu.voice.semantic.state.MapChoiseState;
+import com.dudu.voice.semantic.state.NavigationState;
+import com.dudu.voice.semantic.state.NormalState;
+import com.dudu.voice.semantic.state.SemanticState;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.HashMap;
+
 import java.util.Stack;
 
 /**
@@ -24,9 +26,17 @@ public class SemanticProcessor {
 
     private static SemanticProcessor mInstance = null;
 
-    private ChainGenerator mChainGenerator = null;
-
     private Stack<SemanticChain> mSemanticStack = new Stack<>();
+
+    private SemanticState mSemanticState;
+
+    private NormalState mNormaState;
+
+    private CarCheckingState mCarCheckingState;
+
+    private NavigationState mNavigationState;
+
+    private MapChoiseState mMapChoiseState;
 
     /**
      * 如果没有匹配到链对象，则使用默认链对象处理。
@@ -43,8 +53,6 @@ public class SemanticProcessor {
 
     private SemanticChain mCurChain;
 
-    private HashMap<String, SemanticChain> mChainMap = new HashMap<>();
-
     /**
      * 加入业务处理链条
      */
@@ -52,11 +60,9 @@ public class SemanticProcessor {
 
         log = LoggerFactory.getLogger("voice.semantic");
 
-        mChainGenerator = new ChainGenerator();
-
         mDefaultChain = new DefaultChain();
 
-        addNormalChains();
+        initSemanticStates();
     }
 
     public void processSemantic(final String text) {
@@ -77,7 +83,7 @@ public class SemanticProcessor {
 
                 pushSemanticStack(mCurChain);
 
-                mCurChain = mChainMap.get(service);
+                mCurChain = mSemanticState.getChain(service);
                 if (mCurChain != null) {
                     log.debug("匹配到其它的语义链，开始处理语义...");
 
@@ -90,7 +96,6 @@ public class SemanticProcessor {
                     log.debug("栈顶语义链出栈...");
 
                     mCurChain = popSemanticStack();
-
                 }
             }
 
@@ -103,7 +108,7 @@ public class SemanticProcessor {
 
     private boolean isChainExists(Rsphead head) {
         if (mCurChain == null) {
-            mCurChain = mChainMap.get(head.getService());
+            mCurChain = mSemanticState.getChain(head.getService());
         }
 
         return mCurChain != null;
@@ -145,97 +150,55 @@ public class SemanticProcessor {
     }
 
     public void switchSemanticType(SemanticType type) {
-        mChainMap.clear();
-
         switch (type) {
             case NORMAL:
                 log.debug("设置当前语义类型为正常...");
 
                 VoiceManager.getInstance().setShowMessageWindow(true);
 
-                addNormalChains();
+                mSemanticState = mNormaState;
 
-                mDefaultChain = new DefaultChain();
                 break;
+
             case CAR_CHECKING:
                 log.debug("设置当前语义类型为车辆自检...");
 
                 VoiceManager.getInstance().setShowMessageWindow(false);
 
-                addCarCheckingChains();
+                mSemanticState = mCarCheckingState;
 
-                mDefaultChain = new CarCheckingDefault();
                 break;
+
             case NAVIGATION:
                 log.debug("设置当前语义类型为导航...");
 
                 VoiceManager.getInstance().setShowMessageWindow(true);
 
-                addNavigationChains();
+                mSemanticState = mNavigationState;
 
-                mDefaultChain = new NavigationDefaultChain();
                 break;
+
             case MAP_CHOISE:
                 log.debug("设置当前语义类型为地址选择...");
 
-                addMapChoiseChains();
+                mSemanticState = mMapChoiseState;
 
-                mDefaultChain = new MapChoiseDefalutChain();
                 break;
         }
+
+        mDefaultChain = mSemanticState.getDefaultChain();
     }
 
-    private void addNormalChains() {
-        mChainMap.put(SemanticConstants.SERVICE_VOICE, mChainGenerator.generateVoiceChain());
-        mChainMap.put(SemanticConstants.SERVICE_CMD, mChainGenerator.generateCmdChain());
-        mChainMap.put(SemanticConstants.SERVICE_MAP, mChainGenerator.getMapSearchChain());
-        mChainMap.put(SemanticConstants.SERVICE_NEARBY, mChainGenerator.getMapSearchChain());
-        mChainMap.put(SemanticConstants.SERVICE_RESTAURANT, mChainGenerator.getMapSearchChain());
-        mChainMap.put(SemanticConstants.SERVICE_HOTEL, mChainGenerator.getMapSearchChain());
-        mChainMap.put(SemanticConstants.SERVICE_NAVI, mChainGenerator.getNavigationChain());
-        mChainMap.put(SemanticConstants.SERVICE_WEATHER, mChainGenerator.getWeatherChain());
-        mChainMap.put(SemanticConstants.SERVICE_CHOISE, mChainGenerator.getChoiseChain());
-        mChainMap.put(SemanticConstants.SERVICE_CHAT, mChainGenerator.getChatChain());
-        mChainMap.put(SemanticConstants.SERVICE_OPENQA, mChainGenerator.getOpenQaChain());
-        mChainMap.put(SemanticConstants.SERVICE_CHOOSEPAGE, mChainGenerator.getChoosePageChain());
-        mChainMap.put(SemanticConstants.SERVICE_POI, mChainGenerator.getPoiChain());
-        mChainMap.put(SemanticConstants.SERVICE_COMMONADDRESS, mChainGenerator.getCommonAddressChain());
-        mChainMap.put(SemanticConstants.SERVICE_CAR_CHECKING, mChainGenerator.getCarCheckingChain());
-        mChainMap.put(SemanticConstants.SERVICE_WIFI, mChainGenerator.getWIFIChain());
-        mChainMap.put(SemanticConstants.SERVICE_BAIKE, mChainGenerator.getBaikeChain());
-        mChainMap.put(SemanticConstants.SERVICE_DEATETIME, mChainGenerator.getDatetimeChain());
-        mChainMap.put(SemanticConstants.SERVICE_DUDU, mChainGenerator.getDuDuChain());
-        mChainMap.put(SemanticConstants.SERVICE_DIM, mChainGenerator.getDimScreenChain());
-    }
+    private void initSemanticStates() {
+        mNormaState = new NormalState();
 
-    private void addCarCheckingChains() {
-        mChainMap.put(SemanticConstants.SERVICE_VOICE, mChainGenerator.generateVoiceChain());
-        mChainMap.put(SemanticConstants.SERVICE_CMD, mChainGenerator.generateCmdChain());
-        mChainMap.put(SemanticConstants.SERVICE_WHETHER, mChainGenerator.getCarCheckingWhetherChain());
-        mChainMap.put(SemanticConstants.SERVICE_CAR_CHECKING, mChainGenerator.getCarCheckingChain());
-        mChainMap.put(SemanticConstants.SERVICE_CHOISE, mChainGenerator.getCarCheckingChoiseChain());
-    }
+        mNavigationState = new NavigationState();
 
-    private void addNavigationChains() {
-        mChainMap.put(SemanticConstants.SERVICE_CMD, mChainGenerator.generateCmdChain());
-        mChainMap.put(SemanticConstants.SERVICE_VOICE, mChainGenerator.generateVoiceChain());
-        mChainMap.put(SemanticConstants.SERVICE_MAP, mChainGenerator.getMapSearchChain());
-        mChainMap.put(SemanticConstants.SERVICE_NEARBY, mChainGenerator.getMapSearchChain());
-        mChainMap.put(SemanticConstants.SERVICE_RESTAURANT, mChainGenerator.getMapSearchChain());
-        mChainMap.put(SemanticConstants.SERVICE_HOTEL, mChainGenerator.getMapSearchChain());
-        mChainMap.put(SemanticConstants.SERVICE_POI, mChainGenerator.getPoiChain());
-    }
+        mMapChoiseState = new MapChoiseState();
 
-    private void addMapChoiseChains() {
-        mChainMap.put(SemanticConstants.SERVICE_CMD, mChainGenerator.generateCmdChain());
-        mChainMap.put(SemanticConstants.SERVICE_VOICE, mChainGenerator.generateVoiceChain());
-        mChainMap.put(SemanticConstants.SERVICE_MAP, mChainGenerator.getMapSearchChain());
-        mChainMap.put(SemanticConstants.SERVICE_NEARBY, mChainGenerator.getMapSearchChain());
-        mChainMap.put(SemanticConstants.SERVICE_RESTAURANT, mChainGenerator.getMapSearchChain());
-        mChainMap.put(SemanticConstants.SERVICE_HOTEL, mChainGenerator.getMapSearchChain());
-        mChainMap.put(SemanticConstants.SERVICE_POI, mChainGenerator.getPoiChain());
-        mChainMap.put(SemanticConstants.SERVICE_CHOISE, mChainGenerator.getChoiseChain());
-        mChainMap.put(SemanticConstants.SERVICE_CHOOSEPAGE, mChainGenerator.getChoosePageChain());
+        mCarCheckingState = new CarCheckingState();
+
+        mSemanticState = mNormaState;
     }
 
 }

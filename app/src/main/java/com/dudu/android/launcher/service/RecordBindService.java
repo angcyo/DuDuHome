@@ -43,6 +43,7 @@ import com.dudu.android.launcher.utils.FileNameUtil;
 import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
+import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.ViewAnimation;
 import com.dudu.conn.ConnectionEvent;
 import com.dudu.http.MultipartRequest;
@@ -199,8 +200,10 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         registerTFlashCardReceiver();
 
         queue = Volley.newRequestQueue(this);
-        EventBus.getDefault().unregister(this);
-        EventBus.getDefault().register(this);
+
+        if (Utils.isDemoVersion(this)) {
+            mCarDriving = true;
+        }
     }
 
     private void registerTFlashCardReceiver() {

@@ -16,9 +16,12 @@ import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dudu.android.launcher.R;
@@ -52,9 +55,13 @@ public class VideoListActivity extends FragmentActivity {
 
     private View mEmptyView;
 
-    private int mPerPageItemNum = 9;
+    private int mPerPageItemNum = 6;
 
     private int mCurrentPage = 0;
+
+//    private RelativeLayout mVideoContent;
+//
+//    private View mLoadingMoreView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +74,8 @@ public class VideoListActivity extends FragmentActivity {
         mGridView = (GridView) findViewById(R.id.video_grid);
         mGridView.setOverScrollMode(View.OVER_SCROLL_NEVER);
         mEmptyView = findViewById(R.id.empty_view);
+//        mVideoContent = (RelativeLayout) findViewById(R.id.video_content);
+//        mLoadingMoreView = findViewById(R.id.loading_more);
 
         initDatas();
     }
@@ -96,7 +105,7 @@ public class VideoListActivity extends FragmentActivity {
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 if (view.getLastVisiblePosition() == view.getCount() - 1 &&
                         scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
-                    if (view.getCount() ==  mDbHelper.getVideoTotalCount()) {
+                    if (view.getCount() == mDbHelper.getVideoTotalCount()) {
                         return;
                     }
 
@@ -123,6 +132,20 @@ public class VideoListActivity extends FragmentActivity {
             mVideoData.addAll(videos);
         }
     }
+
+//    private void onLoadingFinished() {
+//        mLoadingMoreView.setVisibility(View.GONE);
+//        FrameLayout.LayoutParams lps = (FrameLayout.LayoutParams)
+//                mVideoContent.getLayoutParams();
+//        lps.bottomMargin = 30;
+//    }
+//
+//    private void onLoadingStarted() {
+//        mLoadingMoreView.setVisibility(View.VISIBLE);
+//        FrameLayout.LayoutParams lps = (FrameLayout.LayoutParams)
+//                mVideoContent.getLayoutParams();
+//        lps.bottomMargin = 0;
+//    }
 
     @Override
     protected void onDestroy() {
@@ -260,7 +283,8 @@ public class VideoListActivity extends FragmentActivity {
             }
 
             final VideoEntity video = data.get(position);
-            holder.date.setText(video.getName());
+            holder.date.setText((position + 1) + ":   " +
+                    getVideoDisplayName(video.getName()));
             holder.delete.setOnClickListener(new OnClickListener() {
 
                 @Override
@@ -306,6 +330,10 @@ public class VideoListActivity extends FragmentActivity {
             mThumbsFetcher.loadImage(video.getFile().getAbsolutePath(),
                     holder.thumbnail);
             return convertView;
+        }
+
+        private String getVideoDisplayName(String videoName) {
+            return videoName.substring(0, videoName.lastIndexOf("."));
         }
 
         class ViewHolder {

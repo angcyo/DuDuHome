@@ -27,6 +27,7 @@ public class WifiActivity extends BaseTitlebarActivity {
 
     @Override
     public void initListener() {
+
     }
 
     @Override

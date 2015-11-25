@@ -51,6 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/video_container"
         android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
         android:textColor="@android:color/white"
         android:textSize="10sp" />
 

@@ -17,14 +17,25 @@ import com.dudu.voice.semantic.chain.MapSearchChain;
 import com.dudu.voice.semantic.chain.NavigationChain;
 import com.dudu.voice.semantic.chain.OpenQaChain;
 import com.dudu.voice.semantic.chain.PoiChain;
+import com.dudu.voice.semantic.chain.VideoPlayChain;
 import com.dudu.voice.semantic.chain.WifiChain;
 import com.dudu.voice.semantic.chain.WeatherChain;
 import com.dudu.voice.semantic.chain.WhetherChain;
 
-public class ChainGenerator {
+public class ChainSimpleFactory {
 
-    public ChainGenerator() {
+    private static ChainSimpleFactory mInstance;
 
+    private ChainSimpleFactory() {
+
+    }
+
+    public static ChainSimpleFactory getInstance() {
+        if (mInstance == null) {
+            mInstance = new ChainSimpleFactory();
+        }
+
+        return mInstance;
     }
 
     public AdjustVolumeChain generateVoiceChain() {
@@ -127,6 +138,11 @@ public class ChainGenerator {
 
     public DimScreenChain getDimScreenChain() {
         DimScreenChain chain = new DimScreenChain();
+        return chain;
+    }
+
+    public VideoPlayChain getVideoPlayChain() {
+        VideoPlayChain chain = new VideoPlayChain();
         return chain;
     }
 

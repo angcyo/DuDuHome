@@ -110,7 +110,7 @@
             android:theme="@style/AppBaseTheme" />
         <activity
             android:name=".ui.activity.video.VideoPlayActivity"
-            android:launchMode="singleTop"
+            android:noHistory="true"
             android:screenOrientation="landscape" />
         <activity
             android:name=".ui.activity.WifiActivity"

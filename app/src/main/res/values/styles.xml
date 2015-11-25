@@ -133,4 +133,12 @@
         <item name="android:minHeight">30.0dip</item>
     </style>
 
+    <style name="base_small_progressbar_style">
+        <item name="android:maxWidth">25.0dip</item>
+        <item name="android:maxHeight">25.0dip</item>
+        <item name="android:indeterminateDrawable">@anim/base_loading_small_anim</item>
+        <item name="android:minWidth">25.0dip</item>
+        <item name="android:minHeight">25.0dip</item>
+    </style>
+
 </resources>

@@ -21,7 +21,7 @@ import java.io.File;
 
 public class VideoActivity extends BaseNoTitlebarAcitivity {
 
-    private VideoPreviewReciever mPreviewReciever;
+    private VideoPreviewReceiver mPreviewReceiver;
 
     private RecordBindService mRecordService;
 
@@ -46,6 +46,10 @@ public class VideoActivity extends BaseNoTitlebarAcitivity {
     @Override
     protected void onResume() {
         super.onResume();
+        initRecordService();
+    }
+
+    private void initRecordService() {
         LauncherApplication application = ((LauncherApplication) getApplication());
         if (application != null) {
             mRecordService = application.getRecordService();
@@ -66,7 +70,12 @@ public class VideoActivity extends BaseNoTitlebarAcitivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterPreviewReciever();
+        unregisterPreviewReceiver();
+
+        if (mRecordService != null) {
+            mRecordService.stopRecord();
+            mRecordService.stopRecordTimer();
+        }
     }
 
     @Override
@@ -93,19 +102,19 @@ public class VideoActivity extends BaseNoTitlebarAcitivity {
     }
 
     private void registerPreviewReceiver() {
-        mPreviewReciever = new VideoPreviewReciever();
+        mPreviewReceiver = new VideoPreviewReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Constants.VIDEO_PREVIEW_BROADCAST);
-        registerReceiver(mPreviewReciever, intentFilter);
+        registerReceiver(mPreviewReceiver, intentFilter);
     }
 
-    private void unregisterPreviewReciever() {
-        if (mPreviewReciever != null) {
-            unregisterReceiver(mPreviewReciever);
+    private void unregisterPreviewReceiver() {
+        if (mPreviewReceiver != null) {
+            unregisterReceiver(mPreviewReceiver);
         }
     }
 
-    private class VideoPreviewReciever extends BroadcastReceiver {
+    private class VideoPreviewReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {

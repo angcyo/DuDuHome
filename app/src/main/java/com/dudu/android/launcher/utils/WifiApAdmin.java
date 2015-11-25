@@ -116,14 +116,15 @@ public class WifiApAdmin {
             WifiConfiguration netConfig = new WifiConfiguration();
             netConfig.SSID = ssid;
             if (password.isEmpty()) {
-                netConfig.allowedAuthAlgorithms.clear();
-                netConfig.allowedGroupCiphers.clear();
-                netConfig.allowedKeyManagement.clear();
-                netConfig.allowedPairwiseCiphers.clear();
-                netConfig.allowedProtocols.clear();
-                netConfig.wepKeys[0] = "";
-                netConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
-                netConfig.wepTxKeyIndex = 0;
+//                netConfig.allowedAuthAlgorithms.clear();
+//                netConfig.allowedGroupCiphers.clear();
+//                netConfig.allowedKeyManagement.clear();
+//                netConfig.allowedPairwiseCiphers.clear();
+//                netConfig.allowedProtocols.clear();
+//                netConfig.wepKeys[0] = "";
+//                netConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+//                netConfig.wepTxKeyIndex = 0;
+                netConfig = null;
             } else {
                 netConfig.preSharedKey = password;
                 netConfig.allowedAuthAlgorithms

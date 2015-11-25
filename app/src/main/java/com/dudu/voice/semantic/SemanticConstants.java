@@ -60,6 +60,8 @@ public class SemanticConstants {
 
     public static final String SERVICE_DIM = "dim";
 
+    public static final String SERVICE_VIDEO = "video";
+
 
     /**
      * 语音合成后处理类型
