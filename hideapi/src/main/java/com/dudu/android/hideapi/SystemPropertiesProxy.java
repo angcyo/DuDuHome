@@ -72,11 +72,11 @@ public class SystemPropertiesProxy {
     }
 
     public void set(Context context, String key, String val) {
-        Intent intent = new Intent("android.settings.SET_PROP");
+        Intent intent = new Intent("dudu.android.SET_PROP");
         intent.putExtra("prop", key);
         intent.putExtra("val", val);
         try {
-            context.startActivity(intent);
+            context.sendBroadcast(intent);
         } catch (ActivityNotFoundException exception) {
 
         }

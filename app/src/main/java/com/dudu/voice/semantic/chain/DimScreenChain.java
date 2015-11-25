@@ -18,7 +18,7 @@ public class DimScreenChain extends SemanticChain {
 
     @Override
     public boolean doSemantic(String json) {
-//        EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.OFF));
+        EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.OFF));
         FloatWindowUtil.removeFloatWindow();
         return true;
     }

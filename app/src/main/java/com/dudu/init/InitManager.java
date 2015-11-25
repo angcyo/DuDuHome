@@ -10,7 +10,6 @@ import android.content.pm.PackageManager;
 import com.dudu.android.launcher.service.FloatBackButtonService;
 import com.dudu.android.launcher.service.MonitorService;
 import com.dudu.android.launcher.service.NewMessageShowService;
-import com.dudu.android.launcher.ui.dialog.ErrorMessageDialog;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
@@ -18,6 +17,7 @@ import com.dudu.obd.OBDDataService;
 import com.dudu.voice.semantic.VoiceManager;
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
+
 import ch.qos.logback.core.android.SystemPropertiesProxy;
 
 /**
@@ -30,7 +30,7 @@ public class InitManager {
     private Activity mActivity;
 
     private InitManager(Activity activity) {
-         mActivity = activity;
+        mActivity = activity;
     }
 
     public static InitManager getInstance(Activity activity) {
@@ -124,8 +124,10 @@ public class InitManager {
             mActivity.startActivity(intent);
         } else {
             // 关闭ADB调试端口
-            com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mActivity,
-                    "persist.sys.usb.config", "charging");
+            if (!Utils.isDemoVersion(mActivity)) {
+                com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mActivity,
+                        "persist.sys.usb.config", "charging");
+            }
 
             initAfterBTFT();
         }

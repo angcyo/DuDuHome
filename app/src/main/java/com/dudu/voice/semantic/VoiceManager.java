@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.text.TextUtils;
 
+import com.dudu.android.hideapi.SystemPropertiesProxy;
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FloatWindow;
@@ -13,7 +14,6 @@ import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.android.launcher.utils.NetworkUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
-import com.dudu.event.DeviceEvent;
 import com.dudu.voice.semantic.engine.SemanticProcessor;
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
@@ -32,8 +32,6 @@ import com.iflytek.cloud.util.ResourceUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Created by 赵圣琪 on 2015/10/27.
@@ -347,6 +345,10 @@ public class VoiceManager {
         int code = mSpeechSynthesizer.startSpeaking(playText, mSynthesizerListener);
 
         log.debug("[voice][{}]语音合成结果:{}", log_step++, code);
+
+        if ("off".equals(SystemPropertiesProxy.getInstance().get("persist.sys.screen", "unkonw"))) {
+            SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.screen", "on");
+        }
     }
 
 

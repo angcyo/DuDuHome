@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.amap.api.location.AMapLocalWeatherForecast;
 import com.amap.api.location.AMapLocalWeatherListener;
 import com.amap.api.location.AMapLocalWeatherLive;
@@ -29,31 +30,25 @@ import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
-import com.dudu.android.launcher.ui.dialog.ErrorMessageDialog;
-import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.LocationUtils;
-import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
-import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.event.BleStateChange;
 import com.dudu.event.DeviceEvent;
 import com.dudu.init.InitManager;
-import com.dudu.map.MapManager;
 import com.dudu.navi.NavigationManager;
 import com.dudu.navi.vauleObject.FloatButtonEvent;
-import com.dudu.obd.OBDDataService;
 import com.dudu.voice.semantic.VoiceManager;
-import com.iflytek.cloud.SpeechConstant;
-import com.iflytek.cloud.SpeechUtility;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import de.greenrobot.event.EventBus;
 
 
@@ -281,7 +276,6 @@ public class MainActivity extends BaseTitlebarActivity implements
                     LocationManagerProxy.WEATHER_TYPE_LIVE, MainActivity.this);
         }
     }
-
 
 
     @Override
