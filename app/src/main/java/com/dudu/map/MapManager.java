@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+
+import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.ui.activity.LocationMapActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
@@ -111,8 +113,8 @@ public class MapManager {
 
 			Intent intent = new Intent();
 			intent.putExtras(bundle);
-			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			intent.setClass(topActivity, LocationMapActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			intent.setClass(LauncherApplication.getContext(), LocationMapActivity.class);
             topActivity.startActivity(intent);
 		}
     }

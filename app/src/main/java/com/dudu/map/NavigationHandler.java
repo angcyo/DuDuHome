@@ -5,17 +5,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 
+import com.amap.api.maps.AMapException;
+import com.amap.api.maps.AMapUtils;
+import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.NaviPara;
 import com.amap.api.navi.AMapNavi;
 import com.amap.api.navi.AMapNaviListener;
 import com.amap.api.navi.model.AMapNaviInfo;
 import com.amap.api.navi.model.AMapNaviLocation;
 import com.amap.api.navi.model.NaviInfo;
 import com.amap.api.navi.model.NaviLatLng;
+import com.dudu.android.launcher.LauncherApplication;
+import com.dudu.android.launcher.ui.activity.LocationMapActivity;
 import com.dudu.android.launcher.ui.activity.NaviBackActivity;
 import com.dudu.android.launcher.ui.activity.NaviCustomActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.LocationUtils;
+import com.dudu.navi.vauleObject.FloatButtonEvent;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
 
@@ -79,7 +86,7 @@ public class NavigationHandler {
 
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
-        initNaviListener();
+//        initNaviListener();
 
         mVoiceManager = VoiceManager.getInstance();
 
@@ -97,12 +104,30 @@ public class NavigationHandler {
     private void handleNavigation(){
         log.debug("handleNavigation");
 
-        mEndPoint = new NaviLatLng(destination[0], destination[1]);
-        int driverIndex = calculateDriverRoute();
-        if (driverIndex == CALCULATEERROR) {
-            return;
+//        mEndPoint = new NaviLatLng(destination[0], destination[1]);
+//        int driverIndex = calculateDriverRoute();
+//        if (driverIndex == CALCULATEERROR) {
+//            return;
+//        }
+        log.debug("handleNavigation");
+        NaviPara naviPara = new NaviPara();
+        naviPara.setTargetPoint(new LatLng(destination[0],destination[1]));
+        naviPara.setNaviStyle(driveMode);
+        try {
+            Activity topActivity = ActivitiesManager.getInstance().getTopActivity();
+            if(topActivity instanceof LocationMapActivity)
+                topActivity.finish();
+            AMapUtils.openAMapNavi(naviPara, LauncherApplication.getContext());
+            MapManager.getInstance().setNavi(true);
+            EventBus.getDefault().post(FloatButtonEvent.SHOW);
+        } catch (AMapException e) {
+            e.printStackTrace();
         }
-
+//        mEndPoint = new NaviLatLng(destination[0], destination[1]);
+//        int driverIndex = calculateDriverRoute();
+//        if (driverIndex == CALCULATEERROR) {
+//            return;
+//        }
     }
 
     private int calculateDriverRoute() {

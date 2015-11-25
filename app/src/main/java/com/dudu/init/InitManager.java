@@ -6,6 +6,8 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+
+import com.dudu.android.launcher.service.FloatBackButtonService;
 import com.dudu.android.launcher.service.MonitorService;
 import com.dudu.android.launcher.service.NewMessageShowService;
 import com.dudu.android.launcher.ui.dialog.ErrorMessageDialog;
@@ -66,6 +68,12 @@ public class InitManager {
     private void startFloatMessageService() {
         Intent intent = new Intent(mActivity, NewMessageShowService.class);
         mActivity.startService(intent);
+
+        /**
+         * 悬浮按钮服务
+         */
+        Intent i = new Intent(mActivity, FloatBackButtonService.class);
+        mActivity.startService(i);
     }
 
     /**

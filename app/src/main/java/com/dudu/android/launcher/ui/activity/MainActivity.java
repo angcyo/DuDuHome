@@ -40,6 +40,8 @@ import com.dudu.event.BleStateChange;
 import com.dudu.event.DeviceEvent;
 import com.dudu.init.InitManager;
 import com.dudu.map.MapManager;
+import com.dudu.navi.NavigationManager;
+import com.dudu.navi.vauleObject.FloatButtonEvent;
 import com.dudu.obd.OBDDataService;
 import com.dudu.voice.semantic.VoiceManager;
 import com.iflytek.cloud.SpeechConstant;
@@ -195,24 +197,9 @@ public class MainActivity extends BaseTitlebarActivity implements
                 break;
 
             case R.id.navigation_button:
-                Intent navigationIntent = new Intent();
-                Bundle bundle = new Bundle();
-                bundle.putBoolean("isManual", true);
-                navigationIntent.putExtras(bundle);
-                if (MapManager.getInstance().isNavi() || MapManager.getInstance().isNaviBack()) {
-                    if (MapManager.getInstance().isNavi()) {
-                        navigationIntent.setClass(MainActivity.this,
-                                NaviCustomActivity.class);
-                    } else if (MapManager.getInstance().isNaviBack()) {
-                        navigationIntent.setClass(MainActivity.this,
-                                NaviBackActivity.class);
-                    }
-                } else {
-                    navigationIntent.setClass(MainActivity.this, LocationMapActivity.class);
 
-                }
+                NavigationManager.getInstance(this).openNavi();
 
-                startActivity(navigationIntent);
                 break;
 
             case R.id.self_checking_container:
@@ -378,5 +365,11 @@ public class MainActivity extends BaseTitlebarActivity implements
             com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.usb.config", "diag,serial_smd,rmnet_bam,adb");
         }
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EventBus.getDefault().post(FloatButtonEvent.HIDE);
     }
 }
