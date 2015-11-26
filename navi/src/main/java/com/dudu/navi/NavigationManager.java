@@ -4,12 +4,10 @@ import android.content.Context;
 
 import com.dudu.navi.entity.Navigation;
 import com.dudu.navi.repo.ResourceManager;
-import com.dudu.navi.vauleObject.FloatButtonEvent;
+import com.dudu.navi.service.NaviProcess;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import de.greenrobot.event.EventBus;
 
 
 /**
@@ -39,32 +37,15 @@ public class NavigationManager {
 
     public void initNaviManager(){
         ResourceManager.getInstance(mContext).init();
+        NaviProcess.getInstance(mContext).initNaviProcess();
     }
 
     public void startCalculate(Navigation navigation){
 
     }
 
-   public void openNavi(){
+    public void existNavigation(){
 
-       EventBus.getDefault().post(FloatButtonEvent.SHOW);
-       Utils.startThirdPartyApp(mContext,"com.autonavi.minimap");
-//       if (MapManager.getInstance().isNavi() || MapManager.getInstance().isNaviBack()) {
-//           if (MapManager.getInstance().isNavi()) {
-//               navigationIntent.setClass(MainActivity.this,
-//                       NaviCustomActivity.class);
-//           } else if (MapManager.getInstance().isNaviBack()) {
-//               navigationIntent.setClass(MainActivity.this,
-//                       NaviBackActivity.class);
-//           }
-//       } else {
-//           navigationIntent.setClass(MainActivity.this, LocationMapActivity.class);
-//
-//       }
-//
-//       startActivity(navigationIntent);
-
-   }
-
+    }
 
 }

@@ -36,8 +36,8 @@ import com.dudu.android.launcher.utils.WeatherIconsUtils;
 import com.dudu.event.BleStateChange;
 import com.dudu.event.DeviceEvent;
 import com.dudu.init.InitManager;
-import com.dudu.navi.NavigationManager;
-import com.dudu.navi.vauleObject.FloatButtonEvent;
+import com.dudu.map.NavigationClerk;
+import com.dudu.navi.vauleObject.NaviEvent;
 import com.dudu.voice.semantic.VoiceManager;
 
 import org.slf4j.Logger;
@@ -193,7 +193,7 @@ public class MainActivity extends BaseTitlebarActivity implements
 
             case R.id.navigation_button:
 
-                NavigationManager.getInstance(this).openNavi();
+                NavigationClerk.getInstance(this).openNavi();
 
                 break;
 
@@ -364,6 +364,6 @@ public class MainActivity extends BaseTitlebarActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        EventBus.getDefault().post(FloatButtonEvent.HIDE);
+        EventBus.getDefault().post(NaviEvent.FloatButtonEvent.HIDE);
     }
 }

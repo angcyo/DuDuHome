@@ -11,7 +11,7 @@ import android.widget.Button;
 
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.MainActivity;
-import com.dudu.navi.vauleObject.FloatButtonEvent;
+import com.dudu.navi.vauleObject.NaviEvent;
 
 import de.greenrobot.event.EventBus;
 
@@ -87,7 +87,7 @@ public class FloatBackButtonService extends Service{
         return windowManager;
     }
 
-    public void onEventMainThread(FloatButtonEvent event){
+    public void onEventMainThread(NaviEvent.FloatButtonEvent event){
 
         switch (event){
             case SHOW:

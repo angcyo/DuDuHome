@@ -9,7 +9,7 @@ import com.dudu.navi.vauleObject.OpenMode;
 /**
  * Created by lxh on 2015/11/25.
  */
-public class Utils {
+public class NaviUtils {
 
     public static OpenMode getOpenMode(Context context){
 
@@ -27,12 +27,11 @@ public class Utils {
         return OpenMode.OUTSIDE;
     }
 
-    public static void startThirdPartyApp(Context context, String packageName) {
+    public static void startGaodeApp(Context context) {
         Intent intent;
         PackageManager packageManager = context.getPackageManager();
-        intent = packageManager.getLaunchIntentForPackage(packageName);
+        intent = packageManager.getLaunchIntentForPackage("com.autonavi.minimap");
         if (intent != null) {
-//            LauncherApplication.getContext().setReceivingOrder(true);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                     | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
                     | Intent.FLAG_ACTIVITY_CLEAR_TOP);

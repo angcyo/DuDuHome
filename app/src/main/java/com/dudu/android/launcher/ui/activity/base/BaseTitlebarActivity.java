@@ -88,7 +88,6 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
             gpsImg.setBackgroundResource(R.drawable.gps_abnormal);
         }
 
-        Log.d("lxh","-----------gps 卫星颗数"+satellite);
     }
 
 }

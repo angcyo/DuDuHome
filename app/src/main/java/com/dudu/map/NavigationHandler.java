@@ -22,7 +22,7 @@ import com.dudu.android.launcher.ui.activity.NaviCustomActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.LocationUtils;
-import com.dudu.navi.vauleObject.FloatButtonEvent;
+import com.dudu.navi.vauleObject.NaviEvent;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
 
@@ -119,7 +119,7 @@ public class NavigationHandler {
                 topActivity.finish();
             AMapUtils.openAMapNavi(naviPara, LauncherApplication.getContext());
             MapManager.getInstance().setNavi(true);
-            EventBus.getDefault().post(FloatButtonEvent.SHOW);
+            EventBus.getDefault().post(NaviEvent.FloatButtonEvent.SHOW);
         } catch (AMapException e) {
             e.printStackTrace();
         }
