@@ -18,7 +18,8 @@ public class LocationUtils {
 	public static final String NAVIEND_LAT = "NAVIEND_LAT";
 	public static final String NAVIEND_LON = "NAVIEND_LON";
 	public static final String CURRENT_CITYCODE = "CURRENT_CITYCODE";
-	
+	public static final String LOCATION_PROVIDER = "LOCATION_PROVIDER";
+
 	public static LocationUtils getInstance(Context context){
 		if(mCurrentLocation==null)
 			mCurrentLocation = new LocationUtils();
@@ -141,5 +142,17 @@ public class LocationUtils {
 		if(locationPreferences==null)
 			locationPreferences =  mContext.getSharedPreferences(LOCATION_SPF, Context.MODE_PRIVATE);
 		locationPreferences.edit().putString(CURRENT_CITYCODE,citycode).commit();
+	}
+
+	public void setLocProvider(String locProvider){
+		if(locationPreferences==null)
+			locationPreferences =  mContext.getSharedPreferences(LOCATION_SPF, Context.MODE_PRIVATE);
+		locationPreferences.edit().putString(LOCATION_PROVIDER,locProvider).commit();
+	}
+
+	public String getLocProvider(){
+		if(locationPreferences==null)
+			locationPreferences =  mContext.getSharedPreferences(LOCATION_SPF, Context.MODE_PRIVATE);
+		return locationPreferences.getString(LOCATION_PROVIDER,"");
 	}
 }

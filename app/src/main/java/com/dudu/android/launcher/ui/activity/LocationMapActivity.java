@@ -158,7 +158,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     private boolean isGetCurdesc = false;
 
-    private int satellite = 0;
+
 
     private View view_Satellite;
     private Runnable removeWindowRunnable = new Runnable() {
@@ -1028,22 +1028,5 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     public void onGeocodeSearched(GeocodeResult geocodeResult, int i) {
 
     }
-
-
-    public void onEventMainThread(GpsStatus gpsStatus){
-        int maxSatellites = gpsStatus.getMaxSatellites();
-        Iterator<GpsSatellite> iters = gpsStatus.getSatellites()
-                .iterator();
-        satellite = 0;
-        while (iters.hasNext() && satellite <= maxSatellites) {
-            satellite++;
-        }
-        if(satellite > 0 &&(locProvider!=null&&!locProvider.equals("lbs"))){
-            view_Satellite.setBackgroundColor(Color.GREEN);
-        }
-        log.debug("搜索到{}颗卫星", satellite);
-
-    }
-
 
 }

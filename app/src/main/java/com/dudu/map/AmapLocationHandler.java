@@ -15,6 +15,7 @@ import com.amap.api.location.LocationManagerProxy;
 import com.amap.api.location.LocationProviderProxy;
 import com.dudu.android.launcher.ui.activity.LocationMapActivity;
 import com.dudu.android.launcher.ui.activity.NaviCustomActivity;
+import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.LocationFilter;
 import com.dudu.android.launcher.utils.LocationUtils;
@@ -73,9 +74,7 @@ public class AmapLocationHandler implements AMapLocationListener {
                 // 卫星状态改变
                 case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
                     topActivity = ActivitiesManager.getInstance().getTopActivity();
-                    if ((topActivity instanceof LocationMapActivity) ||
-                            (topActivity instanceof NaviCustomActivity) ||
-                            (topActivity instanceof NaviCustomActivity)) {
+                    if ((topActivity instanceof BaseTitlebarActivity)) {
                         EventBus.getDefault().post(locationManager.getGpsStatus(null));
                     }
                     break;
@@ -127,6 +126,8 @@ public class AmapLocationHandler implements AMapLocationListener {
         // 保存当前定位点
         LocationUtils.getInstance(mContext).setCurrentLocation(
                 location.getLatitude(), location.getLongitude());
+
+        LocationUtils.getInstance(mContext).setLocProvider(location.getProvider());
 
         topActivity = ActivitiesManager.getInstance().getTopActivity();
         if ((topActivity instanceof LocationMapActivity) ||
