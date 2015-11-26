@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <!--圆角的大小-->
+  <corners
+      android:radius="10dp"/>
+
+  <gradient
+      android:startColor="#ffffc554"
+      android:endColor="#ffffc554"
+      />
+</shape>
