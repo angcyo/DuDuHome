@@ -1,4 +1,22 @@
-Launcher_1.0.10
+Launcher_1.1.2
+2015-11-26
+commit:b440a361230e5e3c66a628f6b7f5f8045e0e1115
+Change-Id:Id5d4aa1ca49f917de37acdfb346e54d0a95b750e
+1.修复GPS启动和屏幕上的开关。
+2.修改导航bug,隐藏导航界面返回按钮。
+3.修改地图页面语音弹窗。
+4.修改熄灭屏幕问题。
+5.增加启动手势。
+6.添加connection log，修改地图搜索无结果的提示。
+7.增加Gsensor测试页面。
+8.更改启动流程，增加obd检测。
+9.使用demo版本为默认。
+10.删除MainActivity中不必要的初始化。
+11.加入chain对象池，将语音管理改为状态模式避免创建过多对象。
+12.将导航改为调用高德地图APP.
+13.状态栏增加GPS标志。
+
+Launcher_1.1.1
 2015-11-19
 commit:58d251abc877d43b9d9fd51416cd1a2b5fd83a02
 Change-Id:I60d54c6de0397b9c19804b11516077843cbbd60c
