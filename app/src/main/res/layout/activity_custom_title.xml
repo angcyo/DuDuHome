@@ -8,34 +8,41 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:layout_centerVertical="true"
        android:layout_toLeftOf="@+id/signal_textview"
         android:gravity="center_vertical"
-        android:layout_marginRight="10dp">
+        android:layout_marginRight="15dp">
        <ImageView
-           android:layout_width="15dp"
-           android:layout_height="14dp"
-           android:background="@drawable/gps_abnormal"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:src="@drawable/gps_signal_error"
            android:id="@+id/gps_img"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:text="GPS"
+            android:text="@string/gps"
+            android:textSize="9sp"
             android:layout_marginLeft="3dp"/>
     </LinearLayout>
 
     <TextView
         android:id="@+id/signal_textview"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
+        android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="20dp"
-        android:gravity="center_vertical"
+        android:layout_toLeftOf="@+id/video_signal_image"
         android:text="@string/network_no_signal"
         android:textColor="@color/white"
         android:textSize="9sp" />
 
+    <ImageView
+        android:id="@+id/video_signal_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/video_signal_image"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="20dp"
+        android:layout_alignParentRight="true"
+        android:visibility="invisible"/>
 </RelativeLayout>

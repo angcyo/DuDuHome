@@ -2,6 +2,7 @@ package com.dudu.android.launcher.ui.activity;
 
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -70,6 +71,11 @@ public class ActivationActivity extends BaseTitlebarActivity {
     @Override
     public void initDatas() {
         slideSwitch.setStatus(WifiApAdmin.isWifiApEnabled(ActivationActivity.this));
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        return super.dispatchTouchEvent(ev);
     }
 
     private void toggleWifiAp() {

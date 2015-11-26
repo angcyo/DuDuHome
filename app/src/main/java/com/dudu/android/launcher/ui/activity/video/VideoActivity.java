@@ -72,10 +72,10 @@ public class VideoActivity extends BaseNoTitlebarAcitivity {
         super.onDestroy();
         unregisterPreviewReceiver();
 
-        if (mRecordService != null) {
-            mRecordService.stopRecord();
-            mRecordService.stopRecordTimer();
-        }
+//        if (mRecordService != null) {
+//            mRecordService.stopRecord();
+//            mRecordService.stopRecordTimer();
+//        }
     }
 
     @Override

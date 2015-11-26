@@ -30,6 +30,7 @@ import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
+import com.dudu.android.launcher.utils.DialogUtils;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
@@ -79,14 +80,11 @@ public class MainActivity extends BaseTitlebarActivity implements
         log_step = 0;
         super.onCreate(savedInstanceState);
 
-        log_init.debug("[main][{}]register EventBus", log_step++);
-        EventBus.getDefault().register(this);
+        initVideoService();
 
         InitManager.getInstance(this).init();
 
         initDate();
-
-        initVideoService();
 
         initWeatherInfo();
     }
@@ -157,8 +155,6 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     @Override
     protected void onDestroy() {
-        EventBus.getDefault().unregister(this);
-
         if (timer != null) {
             timer.cancel();
         }
@@ -338,10 +334,10 @@ public class MainActivity extends BaseTitlebarActivity implements
     public void onEventMainThread(BleStateChange event) {
         switch (event.getConnState()) {
             case BleStateChange.BLEDISCONNECTED:
-                Utils.showOBDErrorDialog(MainActivity.this);
+                DialogUtils.showOBDErrorDialog(MainActivity.this);
                 break;
             case BleStateChange.BLECONNECTED:
-                Utils.dismissOBDErrorDialog(MainActivity.this);
+                DialogUtils.dismissOBDErrorDialog(MainActivity.this);
                 break;
         }
     }

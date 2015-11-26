@@ -30,4 +30,17 @@ public class DeviceEvent {
         }
     }
 
+    public static class Video {
+        private int state;
+
+        public int getState() {
+            return state;
+        }
+
+        public Video(final int state) {
+
+            this.state = state;
+        }
+    }
+
 }

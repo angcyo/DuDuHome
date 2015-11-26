@@ -48,11 +48,6 @@ public class MonitorService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-//		if (mMonitorThread == null || !mMonitorThread.isAlive()) {
-//			mMonitoring = true;
-//			mMonitorThread = new MonitorThread();
-//			mMonitorThread.start();
-//		}
 		return START_STICKY;
 	}
 

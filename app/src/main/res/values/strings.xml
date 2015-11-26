@@ -10,6 +10,7 @@
     <string name="cancel">取消</string>
     <string name="temperature_degree">度</string>
     <string name="weather_turn">转</string>
+    <string name="error_no_didi">您没有安装滴滴客户端，请先安装滴滴客户端</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="error_network">搜索失败,请检查网络连接！</string>
@@ -32,6 +33,7 @@
     <string name="theme_blue">经典蓝</string>
     <string name="theme_pink">可爱粉</string>
     <string name="theme_white">简约白</string>
+    <string name="gps">GPS</string>
 
     <string name="routeshow">线路展示</string>
     <string name="routeinfo_1">全程 </string>

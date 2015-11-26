@@ -46,6 +46,7 @@ import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.ViewAnimation;
 import com.dudu.conn.ConnectionEvent;
+import com.dudu.event.DeviceEvent;
 import com.dudu.http.MultipartRequest;
 import com.dudu.http.MultipartRequestParams;
 
@@ -245,6 +246,8 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     public void stopRecord() {
         if (mediaRecorder != null) {
             try {
+                EventBus.getDefault().post(new DeviceEvent.Video(DeviceEvent.OFF));
+
                 mediaRecorder.stop();
             } catch (Exception e) {
                 LogUtils.e(TAG, e.toString());
@@ -466,7 +469,11 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         @Override
         protected Void doInBackground(Void... params) {
             if (prepareMediaRecorder()) {
+
                 mediaRecorder.start();
+
+                EventBus.getDefault().post(new DeviceEvent.Video(DeviceEvent.ON));
+
                 isRecording = true;
             } else {
                 releaseMediaRecorder();
@@ -482,7 +489,6 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            LogUtils.v(TAG, "SD卡插拔广播" + action);
             if (action.equals(Intent.ACTION_MEDIA_MOUNTED)) {
 
                 ToastUtils.showToast(R.string.video_sdcard_inserted_alert);

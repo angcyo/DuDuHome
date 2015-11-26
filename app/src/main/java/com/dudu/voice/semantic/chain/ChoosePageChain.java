@@ -31,7 +31,7 @@ public class ChoosePageChain extends SemanticChain {
 
     public static final String LAST_THREE = "上夜";
 
-    private int type = 0;
+    protected int type = 0;
 
     @Override
     public boolean matchSemantic(String service) {
@@ -40,7 +40,6 @@ public class ChoosePageChain extends SemanticChain {
 
     @Override
     public boolean doSemantic(String json) {
-
         Activity activity = ActivitiesManager.getInstance().getTopActivity();
         if(activity != null && activity instanceof LocationMapActivity){
             getPageType(json);
@@ -49,14 +48,14 @@ public class ChoosePageChain extends SemanticChain {
             if(type!=0){
                 mVoiceManager.startUnderstanding();
                 ((LocationMapActivity) activity).choosePage(type);
-                return  true;
+                return true;
             }
         }
 
         return false;
     }
 
-    private int getPageType(String json){
+    protected int getPageType(String json){
         try {
             JSONObject semantic = new JSONObject(JsonUtils.parseIatResult(json,
                     "semantic"));

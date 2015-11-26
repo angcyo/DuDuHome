@@ -78,7 +78,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.activity.LocationMapActivity"
             android:screenOrientation="landscape"
@@ -92,14 +91,18 @@
             android:name=".ui.activity.NaviBackActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="landscape" />
-        <!--<activity
+        <!--
+            <activity
             android:name=".ui.activity.LineChartActivity1"
             android:launchMode="singleInstance"
-            android:screenOrientation="landscape" />-->
-        <!--<activity
+            android:screenOrientation="landscape" />
+        -->
+        <!--
+            <activity
             android:name=".ui.activity.GsensorChartActivity"
             android:launchMode="singleInstance"
-            android:screenOrientation="landscape" />-->
+            android:screenOrientation="landscape" />
+        -->
         <activity
             android:name=".ui.activity.video.VideoActivity"
             android:launchMode="singleTop"
@@ -142,9 +145,16 @@
 
         <activity android:name=".ui.activity.GsensorChartActivity" >
         </activity>
-        <!--<activity
+        <!--
+            <activity
             android:name=".ui.activity.LineChartActivity2"
-            android:screenOrientation="landscape"/>-->
+            android:screenOrientation="landscape"/>
+        -->
+
+        <receiver
+            android:name=".broadcast.SimCardReceiver" >
+
+        </receiver>
     </application>
 
 </manifest>

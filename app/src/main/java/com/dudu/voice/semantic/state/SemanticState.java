@@ -27,6 +27,10 @@ public abstract class SemanticState {
         return mChainMap.get(service);
     }
 
+    /**
+     * 不能返回空对象 否则会导致崩溃
+     * @return
+     */
     public abstract DefaultChain getDefaultChain();
 
 }
