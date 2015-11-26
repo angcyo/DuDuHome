@@ -318,6 +318,7 @@ public class MainActivity extends BaseTitlebarActivity implements
             lps.addRule(RelativeLayout.CENTER_HORIZONTAL);
             mWeatherView.setGravity(Gravity.CENTER);
             mWeatherView.setText(R.string.unkown_weather_info);
+            mTemperatureView.setText("");
         }
     }
 
@@ -362,4 +363,5 @@ public class MainActivity extends BaseTitlebarActivity implements
         super.onResume();
         EventBus.getDefault().post(NaviEvent.FloatButtonEvent.HIDE);
     }
+
 }

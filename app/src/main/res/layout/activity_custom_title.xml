@@ -39,10 +39,9 @@
         android:id="@+id/video_signal_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/video_signal_image"
+        android:src="@drawable/video_signal_stop"
         android:layout_centerVertical="true"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="20dp"
-        android:layout_alignParentRight="true"
-        android:visibility="invisible"/>
+        android:layout_alignParentRight="true" />
 </RelativeLayout>

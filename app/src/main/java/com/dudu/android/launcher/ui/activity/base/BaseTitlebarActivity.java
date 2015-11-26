@@ -147,8 +147,8 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
     }
 
     public void onEventMainThread(DeviceEvent.Video event) {
-        mVideoSignalImage.setVisibility(event.getState() == DeviceEvent.ON ?
-                View.VISIBLE : View.INVISIBLE);
+        mVideoSignalImage.setImageResource(event.getState() == DeviceEvent.ON ?
+                R.drawable.video_signal_recording : R.drawable.video_signal_stop);
     }
 
 }

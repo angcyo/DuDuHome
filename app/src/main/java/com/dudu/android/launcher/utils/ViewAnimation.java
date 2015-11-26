@@ -10,7 +10,7 @@ import android.view.animation.AnimationUtils;
  */
 public class ViewAnimation {
 
-    public static void startAnimation(final View view, int animId,Context context) {
+    public static void startAnimation(final View view, int animId, Context context) {
         Animation anim = AnimationUtils.loadAnimation(context, animId);
         anim.setAnimationListener(new Animation.AnimationListener() {
             @Override

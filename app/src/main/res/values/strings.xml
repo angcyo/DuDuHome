@@ -60,6 +60,7 @@
     <string name="car_self_checking">车辆自检</string>
     <string name="nearby_tire_repair_brand">附近评价最高的轮胎保养品牌</string>
     <string name="network_no_signal">无网络信号</string>
+    <string name="without_sim_card">移动4G流量卡未插入</string>
 
     <!-- 行车记录字符串 -->
     <string name="video_sdcard_removed_alert">没有插入SD卡，不能存储行车录像!</string>
