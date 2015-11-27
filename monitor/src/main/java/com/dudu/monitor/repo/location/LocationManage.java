@@ -1,6 +1,7 @@
 package com.dudu.monitor.repo.location;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
 import com.dudu.monitor.valueobject.LocationInfo;
@@ -42,8 +43,9 @@ public class LocationManage implements ILocationListener{
 
     @Override
     public void onLocationResult(Object locationInfo) {
-        if (locationInfo instanceof AmapLocation){
+        if (locationInfo instanceof AMapLocation){
             currentLoction = (AMapLocation) locationInfo;
+
         }else if (locationInfo instanceof  LocationInfo){
             locationInfoList.add((LocationInfo)locationInfo);
             mCurLocation = (LocationInfo)locationInfo;
@@ -68,7 +70,7 @@ public class LocationManage implements ILocationListener{
     }
 
     public void startLocation(Context context){
-        mILocation.setLocationListener(this);
+//        mILocation.setLocationListener(this);
         mILocation.startLocation(context);
     }
 

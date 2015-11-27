@@ -1,4 +1,4 @@
-package com.dudu.android.launcher.bean;
+package com.dudu.navi.entity;
 
 import java.io.Serializable;
 import java.util.Comparator;

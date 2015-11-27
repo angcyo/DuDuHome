@@ -15,18 +15,15 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.AbsListView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
-import com.dudu.android.launcher.bean.PoiResultInfo;
-import com.dudu.android.launcher.bean.StrategyMethod;
 import com.dudu.android.launcher.bean.WindowMessageEntity;
 import com.dudu.android.launcher.ui.adapter.RouteSearchAdapter;
 import com.dudu.android.launcher.ui.adapter.StrategyAdapter;
 import com.dudu.android.launcher.ui.view.RadioDialog;
 import com.dudu.android.launcher.ui.view.SpeechDialogWindow;
+import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FloatWindow;
 import com.dudu.android.launcher.utils.FloatWindow.AddressListItemClickCallback;
 import com.dudu.android.launcher.utils.FloatWindow.AddressShowCallBack;
@@ -35,11 +32,10 @@ import com.dudu.android.launcher.utils.FloatWindow.FloatVoiceChangeCallBack;
 import com.dudu.android.launcher.utils.FloatWindow.MessageShowCallBack;
 import com.dudu.android.launcher.utils.FloatWindow.RemoveFloatWindowCallBack;
 import com.dudu.android.launcher.utils.FloatWindow.StrategyChooseCallBack;
-import com.dudu.map.MapManager;
+import com.dudu.navi.entity.PoiResultInfo;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.SemanticType;
 import com.dudu.voice.semantic.VoiceManager;
-import com.dudu.voice.semantic.chain.ChoiseChain;
 import com.dudu.voice.semantic.chain.ChoosePageChain;
 import com.dudu.voice.semantic.engine.SemanticProcessor;
 
@@ -192,7 +188,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
     }
 
     @Override
-    public void showStrategy(List<StrategyMethod> mStrategyMethods) {
+    public void showStrategy() {
         pageIndex = 0;
         if (!isShowWindow) {
             if (windowManager != null && floatWindowLayout != null && windowParams != null) {
@@ -203,7 +199,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
             messageList.setVisibility(View.GONE);
         if (addressList != null)
             addressList.setVisibility(View.VISIBLE);
-        mStrategyAdapter = new StrategyAdapter(this, mStrategyMethods);
+        mStrategyAdapter = new StrategyAdapter(this);
         addressList.setAdapter(mStrategyAdapter);
         mStrategyAdapter.notifyDataSetChanged();
         isShowWindow = true;
@@ -211,7 +207,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
     }
 
     @Override
-    public void showAddress(List<PoiResultInfo> poiList) {
+    public void showAddress() {
         isShowAddress = true;
         pageIndex = 0;
         if (!isShowWindow) {
@@ -223,7 +219,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
             messageList.setVisibility(View.GONE);
         if (addressList != null)
             addressList.setVisibility(View.VISIBLE);
-        mRouteSearchAdapter = new RouteSearchAdapter(this, poiList, 1);
+        mRouteSearchAdapter = new RouteSearchAdapter(this, 1);
         addressList.setAdapter(mRouteSearchAdapter);
         mRouteSearchAdapter.notifyDataSetChanged();
         isShowWindow = true;
@@ -288,7 +284,6 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
     public void choosePage(int type,int page) {
 
         switch (type){
-
             case ChoosePageChain.NEXT_PAGE:
                 if (pageIndex > 5) {
                     VoiceManager.getInstance().startSpeaking("已经是最后一页", SemanticConstants.TTS_DO_NOTHING, false);
@@ -314,7 +309,8 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
                 pageIndex = page-1;
                 break;
         }
-        addressList.setSelection(pageIndex * MapManager.ADDRESS_VIEW_COUNT);
+        Log.d("lxh","choosePage ："+ pageIndex);
+        addressList.setSelection(pageIndex * Constants.ADDRESS_VIEW_COUNT);
     }
 
 

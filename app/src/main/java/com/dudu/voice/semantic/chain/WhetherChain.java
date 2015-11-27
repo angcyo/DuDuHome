@@ -2,10 +2,10 @@ package com.dudu.voice.semantic.chain;
 
 import android.text.TextUtils;
 
-import com.dudu.android.launcher.utils.FloatWindow;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
-import com.dudu.map.MapManager;
+import com.dudu.map.NavigationClerk;
+import com.dudu.navi.vauleObject.SearchType;
 import com.dudu.voice.semantic.SemanticConstants;
 
 import org.json.JSONObject;
@@ -48,7 +48,7 @@ public class WhetherChain extends SemanticChain {
                 case YES:
                 case YES_TWO:
                 case YES_THREE:
-                    MapManager.getInstance().mapControl(null, null, MapManager.SEARCH_COMMONADDRESS);
+                    NavigationClerk.getInstance().searchControl(null,null,"", SearchType.SEARCH_COMMONADDRESS);
                     break;
                 case NO:
                 case NO_TWO:

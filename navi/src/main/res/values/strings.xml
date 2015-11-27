@@ -2,7 +2,7 @@
     <string name="app_name">navi</string>
 
     /**0 表示打开内部的导航页面， 1表示打开高德地图app**/
-    <string name="open_naviMode">1</string>
+    <string name="open_naviMode">0</string>
 
 
     <string name="navi_strategy_speed">速度最快</string>
@@ -11,4 +11,7 @@
     <string name="navi_strategy_nohighway">不走高速快速路</string>
     <string name="navi_strategy_timenojam">时间最短且躲避拥堵</string>
     <string name="navi_strategy_costnojam">避免收费且躲避拥堵</string>
+
+    <string name="error_other">搜索失败，请稍后重试!</string>
+    <string name="no_result">抱歉，没有找到您想要的结果！</string>
 </resources>

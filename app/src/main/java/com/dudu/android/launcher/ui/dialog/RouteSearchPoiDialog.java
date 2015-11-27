@@ -12,9 +12,9 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.dudu.android.launcher.R;
-import com.dudu.android.launcher.bean.PoiResultInfo;
 import com.dudu.android.launcher.ui.adapter.RouteSearchAdapter;
-import com.dudu.map.MapManager;
+import com.dudu.android.launcher.utils.Constants;
+import com.dudu.navi.entity.PoiResultInfo;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
 
@@ -23,7 +23,6 @@ import java.util.List;
 public class RouteSearchPoiDialog extends Dialog implements
 		OnItemClickListener, OnItemSelectedListener {
 
-	private List<PoiResultInfo> poiItems;
 	private Context context;
 	private RouteSearchAdapter adapter;
 	protected OnListItemClick mOnClickListener;
@@ -34,23 +33,20 @@ public class RouteSearchPoiDialog extends Dialog implements
 
 	public RouteSearchPoiDialog(Context context) {
 		this(context, R.style.RouteSearchPoiDialogStyle);
+		this.context = context;
 	}
 
 	public RouteSearchPoiDialog(Context context, int theme) {
 		super(context, theme);
 	}
 
-	public RouteSearchPoiDialog(Context context, List<PoiResultInfo> poiItems) {
-		this(context, R.style.RouteSearchPoiDialogStyle);
-		this.context = context;
-		this.poiItems = poiItems;
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Log.d("lxh","------RouteSearchPoiDialog onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.routesearch_list_poi);
-		adapter = new RouteSearchAdapter(this.context,poiItems);
+		adapter = new RouteSearchAdapter(this.context);
 		listView = (ListView) findViewById(R.id.search_list_poi);
 		listView.setAdapter(adapter);
 		listView.setOnItemClickListener(new OnItemClickListener() {
@@ -103,7 +99,7 @@ public class RouteSearchPoiDialog extends Dialog implements
 		}
 
 		pageIndex++;
-		listView.setSelection(pageIndex * MapManager.ADDRESS_VIEW_COUNT);
+		listView.setSelection(pageIndex * Constants.ADDRESS_VIEW_COUNT);
 	}
 
 	public void lastPage() {
@@ -113,7 +109,7 @@ public class RouteSearchPoiDialog extends Dialog implements
 		}
 
 		pageIndex--;
-		listView.setSelection(pageIndex*MapManager.ADDRESS_VIEW_COUNT);
+		listView.setSelection(pageIndex*Constants.ADDRESS_VIEW_COUNT);
 	}
 
 	public void choosePage(int page){
@@ -124,6 +120,6 @@ public class RouteSearchPoiDialog extends Dialog implements
 			return;
 		}
 		pageIndex = page-1;
-		listView.setSelection(pageIndex*MapManager.ADDRESS_VIEW_COUNT);
+		listView.setSelection(pageIndex*Constants.ADDRESS_VIEW_COUNT);
 	}
 }

@@ -28,7 +28,7 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 
 public class Connection extends Thread {
-    //    private String host = "192.168.124.177";
+//        private String host = "192.168.124.177";
     private String host = "119.29.65.127";
     private int port = 8888;
     private IoConnector connector = null;

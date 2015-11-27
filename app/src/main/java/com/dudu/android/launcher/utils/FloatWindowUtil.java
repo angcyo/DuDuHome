@@ -2,8 +2,7 @@ package com.dudu.android.launcher.utils;
 
 import java.util.List;
 import android.widget.AdapterView.OnItemClickListener;
-import com.dudu.android.launcher.bean.PoiResultInfo;
-import com.dudu.android.launcher.bean.StrategyMethod;
+import com.dudu.navi.entity.PoiResultInfo;
 
 
 public class FloatWindowUtil {
@@ -30,9 +29,9 @@ public class FloatWindowUtil {
 	}
 	
 	// 显示地址选择
-	public static void showAddress(List<PoiResultInfo> poiList,OnItemClickListener listener){
+	public static void showAddress(OnItemClickListener listener){
 		if(FloatWindow.getInstance().getAddressShowCallBack()!=null){
-			FloatWindow.getInstance().getAddressShowCallBack().showAddress(poiList);
+			FloatWindow.getInstance().getAddressShowCallBack().showAddress();
 		}
 
 		if(FloatWindow.getInstance().getAddressListItemClickCallback()!=null){
@@ -41,9 +40,9 @@ public class FloatWindowUtil {
 	}
 	
 	// 显示路线优先策略选择
-	public static void showStrategy(List<StrategyMethod> mStrategyMethods,OnItemClickListener listener){
+	public static void showStrategy(OnItemClickListener listener){
 		if(FloatWindow.getInstance().getStrategyChooseCallBack()!=null){
-			FloatWindow.getInstance().getStrategyChooseCallBack().showStrategy(mStrategyMethods);
+			FloatWindow.getInstance().getStrategyChooseCallBack().showStrategy();
 		}
 		if(FloatWindow.getInstance().getAddressListItemClickCallback()!=null){
 			FloatWindow.getInstance().getAddressListItemClickCallback().onAddressListItemClick(listener);

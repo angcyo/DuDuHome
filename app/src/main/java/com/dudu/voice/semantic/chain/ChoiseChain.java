@@ -1,15 +1,13 @@
 package com.dudu.voice.semantic.chain;
 
 import android.app.Activity;
-import android.util.Log;
+
 import com.dudu.android.launcher.ui.activity.LocationMapActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.ChoiseUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
-import com.dudu.map.MapManager;
+import com.dudu.map.NavigationClerk;
 import com.dudu.voice.semantic.SemanticConstants;
-import com.dudu.voice.semantic.SemanticType;
-import com.dudu.voice.semantic.engine.SemanticProcessor;
 
 /**
  * Created by pc on 2015/10/30.
@@ -50,10 +48,9 @@ public class ChoiseChain extends SemanticChain {
         Activity topActivity = ActivitiesManager.getInstance().getTopActivity();
 
         if (topActivity != null && (topActivity instanceof LocationMapActivity) &&
-                MapManager.getInstance().isShowAddress()) {
+                NavigationClerk.getInstance().isShowAddress()) {
             mVoiceManager.startUnderstanding();
-            ((LocationMapActivity) topActivity)
-                    .startChooseResult(choiseSize, type);
+            NavigationClerk.getInstance().startChooseResult(choiseSize, type);
             return true;
         }
 

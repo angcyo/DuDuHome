@@ -5,6 +5,7 @@ import com.dudu.android.launcher.ui.activity.LocationMapActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.android.launcher.utils.LogUtils;
+import com.dudu.map.NavigationClerk;
 import com.dudu.voice.semantic.SemanticConstants;
 import org.json.JSONObject;
 
@@ -43,12 +44,10 @@ public class ChoosePageChain extends SemanticChain {
         Activity activity = ActivitiesManager.getInstance().getTopActivity();
         if(activity != null && activity instanceof LocationMapActivity){
             getPageType(json);
-
-            getPageType(json);
             if(type!=0){
                 mVoiceManager.startUnderstanding();
-                ((LocationMapActivity) activity).choosePage(type);
-                return true;
+                NavigationClerk.getInstance().choosePage(type);
+                return  true;
             }
         }
 

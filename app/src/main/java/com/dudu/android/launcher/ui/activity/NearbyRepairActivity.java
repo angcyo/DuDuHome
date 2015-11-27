@@ -8,25 +8,29 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
+
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
 import com.amap.api.location.LocationProviderProxy;
 import com.amap.api.maps.LocationSource;
-import com.amap.api.navi.AMapNavi;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.ui.adapter.NearbyRepairAdapter;
-import com.dudu.map.Navigation;
+import com.dudu.navi.NavigationManager;
+import com.dudu.navi.entity.Navigation;
+import com.dudu.navi.entity.Point;
+import com.dudu.navi.vauleObject.NaviDriveMode;
+import com.dudu.navi.vauleObject.NavigationType;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.SemanticType;
 import com.dudu.voice.semantic.VoiceManager;
 import com.dudu.voice.semantic.engine.SemanticProcessor;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import de.greenrobot.event.EventBus;
 
 public class NearbyRepairActivity extends BaseNoTitlebarAcitivity implements
 		LocationSource, AMapLocationListener {
@@ -83,7 +87,8 @@ public class NearbyRepairActivity extends BaseNoTitlebarAcitivity implements
 					int position, long id) {
 
                 double[] location = {23.156596,113.30791};
-                EventBus.getDefault().post(new Navigation(location,Navigation.NAVI_NORMAL,AMapNavi.DrivingDefault));
+				Navigation navigation = new Navigation(new Point(23.156596,113.30791), NaviDriveMode.SPEEDFIRST, NavigationType.NAVIGATION);
+				NavigationManager.getInstance(getContext()).startCalculate(navigation);
 			}
 		});
 
@@ -91,8 +96,8 @@ public class NearbyRepairActivity extends BaseNoTitlebarAcitivity implements
 
             @Override
             public void onListItemClick(int position) {
-                double[] location = {23.156596,113.30791};
-                EventBus.getDefault().post(new Navigation(location, Navigation.NAVI_NORMAL, AMapNavi.DrivingDefault));
+				Navigation navigation = new Navigation(new Point(23.156596,113.30791), NaviDriveMode.SPEEDFIRST, NavigationType.NAVIGATION);
+				NavigationManager.getInstance(getContext()).startCalculate(navigation);
             }
         });
 

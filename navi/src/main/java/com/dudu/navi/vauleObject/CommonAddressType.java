@@ -5,9 +5,19 @@ package com.dudu.navi.vauleObject;
  */
 public enum CommonAddressType {
 
-    HOME,
+    HOME("家"),
 
-    HOMETOWN,
+    HOMETOWN("老家"),
 
-    COMPANY
+    COMPANY("公司");
+
+    private String name;
+
+    private CommonAddressType(String name){
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

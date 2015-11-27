@@ -2,16 +2,18 @@ package com.dudu.voice.semantic.chain;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.amap.api.navi.AMapNavi;
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.utils.CommonAddressUtil;
-import com.dudu.android.launcher.utils.FloatWindow;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
-import com.dudu.map.MapManager;
-import com.dudu.map.Navigation;
+import com.dudu.navi.NavigationManager;
+import com.dudu.navi.entity.Navigation;
+import com.dudu.navi.entity.Point;
+import com.dudu.navi.vauleObject.CommonAddressType;
+import com.dudu.navi.vauleObject.NaviDriveMode;
+import com.dudu.navi.vauleObject.NavigationType;
 import com.dudu.voice.semantic.SemanticConstants;
 
 import org.json.JSONObject;
@@ -54,18 +56,18 @@ public class CommonAddressChain extends SemanticChain{
                 case CommonAddressUtil.HOME:
                     address = CommonAddressUtil.getHome(mContext);
                     location = CommonAddressUtil.getHomeAddress(mContext);
-                    MapManager.getInstance().setCommonAddressType(CommonAddressUtil.HOME);
+                    NavigationManager.getInstance(mContext).setCommonAddressType(CommonAddressType.HOME);
                     break;
                 case CommonAddressUtil.HOMETOWN:
                     address = CommonAddressUtil.getHometown(mContext);
                     location = CommonAddressUtil.getHometownAddress(mContext);
-                    MapManager.getInstance().setCommonAddressType(CommonAddressUtil.HOMETOWN);
+                    NavigationManager.getInstance(mContext).setCommonAddressType(CommonAddressType.HOMETOWN);
                     break;
 
                 case CommonAddressUtil.COMPANY:
                     address = CommonAddressUtil.getCompany(mContext);
                     location = CommonAddressUtil.getCompanyAddress(mContext);
-                    MapManager.getInstance().setCommonAddressType(CommonAddressUtil.COMPANY);
+                    NavigationManager.getInstance(mContext).setCommonAddressType(CommonAddressType.COMPANY);
                     break;
 
             }
@@ -73,7 +75,9 @@ public class CommonAddressChain extends SemanticChain{
 
             if(!TextUtils.isEmpty(address)&&!checkPoint(location)){
                 FloatWindowUtil.removeFloatWindow();
-                EventBus.getDefault().post(new Navigation(location,Navigation.NAVI_TWO, AMapNavi.DrivingDefault));
+
+                Navigation navigation = new Navigation(new Point(location[0],location[1]), NaviDriveMode.SPEEDFIRST, NavigationType.NAVIGATION);
+                NavigationManager.getInstance(LauncherApplication.getContext()).startCalculate(navigation);
 
             }else{
                 String playText = "您还没有常用的" + addressType + "地址，是否添加？";

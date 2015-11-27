@@ -1,18 +1,17 @@
 package com.dudu.voice.semantic.chain;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.ui.activity.NaviCustomActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.JsonUtils;
-import com.dudu.map.MapManager;
+import com.dudu.navi.NavigationManager;
+import com.dudu.navi.vauleObject.NavigationType;
 import com.dudu.voice.semantic.SemanticConstants;
 
 import org.json.JSONObject;
@@ -43,8 +42,8 @@ public class NavigationChain extends SemanticChain {
 
     @Override
     public boolean doSemantic(String json) {
-        isNavi = MapManager.getInstance().isNavi();
-        if(isNavi){
+        NavigationType type = NavigationManager.getInstance(LauncherApplication.getContext()).getNavigationType();
+        if(type!=NavigationType.DEFAULT){
             mContext = ActivitiesManager
                     .getInstance().getTopActivity();
             mBundle = new Bundle();

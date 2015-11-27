@@ -133,4 +133,6 @@ public class Constants {
     // SharePreference常量
     public static final String KEY_SIM_CARD_SERIAL_NUMBER = "sim_card_serial_number";
 
+	public static final int ADDRESS_VIEW_COUNT = 4;
+
 }

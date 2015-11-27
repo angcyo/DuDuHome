@@ -1,15 +1,11 @@
 package com.dudu.android.launcher.ui.activity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.PowerManager;
-import android.os.SystemClock;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,13 +16,9 @@ import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.navi.AMapNavi;
-import com.amap.api.navi.AMapNaviListener;
 import com.amap.api.navi.AMapNaviView;
 import com.amap.api.navi.AMapNaviViewListener;
 import com.amap.api.navi.AMapNaviViewOptions;
-import com.amap.api.navi.model.AMapNaviInfo;
-import com.amap.api.navi.model.AMapNaviLocation;
-import com.amap.api.navi.model.NaviInfo;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
@@ -37,9 +29,8 @@ import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.NaviSettingUtil;
 import com.dudu.android.launcher.utils.ViewAnimation;
 import com.dudu.map.AmapLocationChangeEvent;
-import com.dudu.map.MapManager;
-import com.dudu.map.Navigation;
-import com.dudu.map.NavigationHandler;
+import com.dudu.navi.NavigationManager;
+import com.dudu.navi.vauleObject.NavigationType;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
 
@@ -220,14 +211,14 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         FloatWindowUtil.removeFloatWindow();
 
         if (points != null) {
-            VoiceManager.getInstance().startSpeaking("正在为您进行路线规划", SemanticConstants.TTS_DO_NOTHING, false);
-            mHandler.postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    EventBus.getDefault().post(new Navigation(points, Navigation.NAVI_BACK, AMapNavi.DrivingDefault));
-                }
-            }, 800);
+//            VoiceManager.getInstance().startSpeaking("正在为您进行路线规划", SemanticConstants.TTS_DO_NOTHING, false);
+//            mHandler.postDelayed(new Runnable() {
+//
+//                @Override
+//                public void run() {
+//                    EventBus.getDefault().post(new Navigation(points, Navigation.NAVI_BACK, AMapNavi.DrivingDefault));
+//                }
+//            }, 800);
 
         }
     }
@@ -314,9 +305,9 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
     public void onResume() {
         super.onResume();
         setAmapNaviViewOptions();
+        NavigationManager.getInstance(this).setNavigationType(NavigationType.NAVIGATION);
         AMapNavi.getInstance(this).startGPS();
         AMapNavi.getInstance(this).startNavi(AMapNavi.GPSNaviMode);
-        MapManager.getInstance().setNavi(true);
         Bundle bundle = getIntent().getExtras();
         processBundle(bundle);
         if (bundle != null) {
@@ -357,9 +348,12 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
     @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
-        MapManager.getInstance().setNavi(false);
-        NavigationHandler.getInstance(getApplicationContext()).destoryAmapNavi();
-        mAmapAMapNaviView.onDestroy();
+        NavigationManager.getInstance(this).existNavigation();
+        try {
+            mAmapAMapNaviView.onDestroy();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         super.onDestroy();
     }
 

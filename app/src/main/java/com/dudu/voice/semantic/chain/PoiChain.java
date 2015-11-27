@@ -1,16 +1,14 @@
 package com.dudu.voice.semantic.chain;
 
-import android.content.Context;
 import android.text.TextUtils;
 
-import com.dudu.android.launcher.LauncherApplication;
-import com.dudu.android.launcher.bean.MapEntity;
 import com.dudu.android.launcher.bean.PoiEntity;
 import com.dudu.android.launcher.bean.PoiSlots;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.GsonUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
-import com.dudu.map.MapManager;
+import com.dudu.map.NavigationClerk;
+import com.dudu.navi.vauleObject.SearchType;
 import com.dudu.voice.semantic.SemanticConstants;
 
 /**
@@ -18,6 +16,7 @@ import com.dudu.voice.semantic.SemanticConstants;
  */
 public class PoiChain extends SemanticChain {
 
+    private String searchKeyword;
     @Override
     public boolean matchSemantic(String service) {
         return SemanticConstants.SERVICE_POI.equals(service);
@@ -35,28 +34,24 @@ public class PoiChain extends SemanticChain {
             return false;
         }
 
-        MapManager mapManager = MapManager.getInstance();
-        Context context = LauncherApplication.getContext();
         switch (keyword) {
             case Constants.REFUEL:
-                mapManager.mapControl(null, Constants.GAS_STATION,
-                        MapManager.SEARCH_NEARBY);
+
+                searchKeyword = Constants.GAS_STATION;
                 break;
             case Constants.SLEEPY:
             case Constants.TIRED:
             case Constants.SLEEP:
-                mapManager.mapControl(null, Constants.HOTEL,
-                        MapManager.SEARCH_NEARBY);
+                searchKeyword = Constants.HOTEL;
                 break;
             case Constants.DRAW_MONEY:
-                mapManager.mapControl(null, Constants.BANK,
-                        MapManager.SEARCH_NEARBY);
+                searchKeyword = Constants.BANK;
                 break;
             default:
-                mapManager.mapControl(null, keyword,
-                        MapManager.SEARCH_NEARBY);
-        }
+                searchKeyword = keyword;
 
+        }
+        NavigationClerk.getInstance().searchControl(null, null, searchKeyword, SearchType.SEARCH_NEARBY);
         return true;
     }
 

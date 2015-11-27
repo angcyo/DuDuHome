@@ -2,16 +2,17 @@ package com.dudu.voice.semantic.chain;
 
 import android.app.Activity;
 
-import com.amap.api.navi.AMapNavi;
+import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.ui.activity.NearbyRepairActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
-import com.dudu.android.launcher.utils.Constants;
-import com.dudu.map.Navigation;
+import com.dudu.navi.NavigationManager;
+import com.dudu.navi.entity.Navigation;
+import com.dudu.navi.entity.Point;
+import com.dudu.navi.vauleObject.NaviDriveMode;
+import com.dudu.navi.vauleObject.NavigationType;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.SemanticType;
 import com.dudu.voice.semantic.engine.SemanticProcessor;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Created by Administrator on 2015/11/5.
@@ -30,7 +31,9 @@ public class CarCheckingChoiseChain extends SemanticChain {
         if (activity != null
                 && activity instanceof NearbyRepairActivity) {
             double[] location = {23.156596, 113.30791};
-            EventBus.getDefault().post(new Navigation(location, Navigation.NAVI_NORMAL, AMapNavi.DrivingDefault));
+
+            Navigation navigation = new Navigation(new Point(23.156596,113.30791), NaviDriveMode.SPEEDFIRST, NavigationType.NAVIGATION);
+            NavigationManager.getInstance(LauncherApplication.getContext()).startCalculate(navigation);
 
             SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
         }

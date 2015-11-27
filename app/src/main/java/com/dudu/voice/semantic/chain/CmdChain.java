@@ -3,13 +3,11 @@ package com.dudu.voice.semantic.chain;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.bean.CmdEntity;
 import com.dudu.android.launcher.bean.CmdSlots;
-import com.dudu.android.launcher.ui.activity.LocationMapActivity;
 import com.dudu.android.launcher.ui.activity.MainActivity;
-import com.dudu.android.launcher.ui.activity.NaviBackActivity;
-import com.dudu.android.launcher.ui.activity.NaviCustomActivity;
 import com.dudu.android.launcher.ui.activity.OBDCheckingActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
@@ -18,7 +16,8 @@ import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.GsonUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
-import com.dudu.map.MapManager;
+import com.dudu.map.NavigationClerk;
+import com.dudu.navi.NavigationManager;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.SemanticType;
 import com.dudu.voice.semantic.engine.SemanticProcessor;
@@ -30,12 +29,9 @@ public class CmdChain extends SemanticChain {
 
     private LauncherApplication mApplication;
 
-    private MapManager mapManager;
-
     public CmdChain() {
         super();
         mApplication = LauncherApplication.getContext();
-        mapManager = MapManager.getInstance();
     }
 
     @Override
@@ -86,43 +82,11 @@ public class CmdChain extends SemanticChain {
         switch (option) {
             case Constants.OPEN:
             case Constants.START:
-
-                Activity activity = ActivitiesManager.getInstance().getTopActivity();
-                if ((activity instanceof LocationMapActivity)) {
-                    int type = mapManager.getSearchType();
-                    if (type == MapManager.SEARCH_NAVI || type == MapManager.SEARCH_DEFAULT) {
-                        mapManager.setSearchType(MapManager.SEARCH_NAVI);
-                        ((LocationMapActivity) activity).handlerOpenNavi();
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-
-                FloatWindowUtil.removeFloatWindow();
-                Intent intent = new Intent();
-                if (MapManager.getInstance().isNavi()) {
-                    intent.setClass(mApplication, NaviCustomActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    mApplication.startActivity(intent);
-                } else if (MapManager.getInstance().isNaviBack()) {
-                    intent.setClass(mApplication, NaviBackActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    mApplication.startActivity(intent);
-                } else {
-
-                    mapManager.mapControl(null, null, MapManager.SEARCH_NAVI);
-                }
-                break;
+               return NavigationClerk.getInstance().openNavi(NavigationClerk.OPEN_VOICE);
             case Constants.CLOSE:
             case Constants.EXIT:
                 FloatWindowUtil.removeFloatWindow();
-                ActivitiesManager.getInstance().closeTargetActivity(
-                        NaviCustomActivity.class);
-                ActivitiesManager.getInstance().closeTargetActivity(
-                        LocationMapActivity.class);
-                ActivitiesManager.getInstance().closeTargetActivity(
-                        NaviBackActivity.class);
+                NavigationClerk.getInstance().existNavi();
                 break;
         }
         return true;
@@ -175,7 +139,6 @@ public class CmdChain extends SemanticChain {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mApplication.startActivity(intent);
         }
-
         Activity topActivity = ActivitiesManager.getInstance()
                 .getTopActivity();
         if (topActivity != null && !(topActivity instanceof MainActivity)) {

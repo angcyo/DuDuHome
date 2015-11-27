@@ -40,5 +40,7 @@ public enum SearchType {
     /**
      * 添加常用地
      */
-    SEARCH_COMMONADDRESS
+    SEARCH_COMMONADDRESS,
+
+    SEARCH_DEFAULT
 }

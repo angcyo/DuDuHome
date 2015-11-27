@@ -1,17 +1,26 @@
 package com.dudu.navi.service;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 
+import com.amap.api.location.AMapLocation;
+import com.amap.api.maps.AMapException;
+import com.amap.api.maps.AMapUtils;
+import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.NaviPara;
 import com.amap.api.navi.AMapNavi;
 import com.amap.api.navi.AMapNaviListener;
 import com.amap.api.navi.model.AMapNaviInfo;
 import com.amap.api.navi.model.AMapNaviLocation;
 import com.amap.api.navi.model.NaviInfo;
 import com.amap.api.navi.model.NaviLatLng;
+import com.dudu.monitor.Monitor;
+import com.dudu.navi.NavigationManager;
+import com.dudu.navi.Util.NaviUtils;
 import com.dudu.navi.entity.Navigation;
-import com.dudu.navi.vauleObject.NaviEvent;
+import com.dudu.navi.entity.Point;
+import com.dudu.navi.event.NaviEvent;
+import com.dudu.navi.vauleObject.NavigationType;
+import com.dudu.navi.vauleObject.SearchType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,62 +53,88 @@ public class NaviProcess {
 
     private int step;
 
-    public NaviProcess(Context context){
+    private NavigationType navigationType;
+
+    private AMapLocation cur_location;
+
+    public NaviProcess(Context context) {
         this.mContext = context;
         log = LoggerFactory.getLogger("lbs.navi");
 
     }
 
-    public static NaviProcess getInstance(Context context){
+    public static NaviProcess getInstance(Context context) {
 
-        if(naviProcess==null)
+        if (naviProcess == null)
             naviProcess = new NaviProcess(context);
 
         return naviProcess;
     }
 
-    public void initNaviProcess(){
-        EventBus.getDefault().unregister(this);
-        EventBus.getDefault().register(this);
+    public void initNaviProcess() {
+
     }
 
-    public void initNaviListener(){
+    public void initNaviListener() {
         log.debug("initNaviListener");
         AMapNavi.getInstance(mContext).setAMapNaviListener(getAMapNaviListener());
         AMapNavi.getInstance(mContext).startGPS();
     }
 
-    public void destoryAmapNavi(){
+    public void destoryAmapNavi() {
         log.debug("destoryAmapNavi");
         AMapNavi.getInstance(mContext).removeAMapNaviListener(mAmapNaviListener);
         AMapNavi.getInstance(mContext).stopNavi();
         AMapNavi.getInstance(mContext).destroy();
+
     }
 
-    private int calculateDriverRoute(Navigation navigation) {
+    public void calculateDriverRoute(Navigation navigation) {
         log.debug("calculateDriverRoute");
+        navigationType = navigation.getType();
+        switch (NaviUtils.getOpenMode(mContext)) {
+            case OUTSIDE:
+                NavigationManager.getInstance(mContext).setNavigationType(NavigationType.NAVIGATION);
+                NaviPara naviPara = new NaviPara();
+                naviPara.setTargetPoint(new LatLng(navigation.getDestination().latitude,
+                        navigation.getDestination().longitude));
+                naviPara.setNaviStyle(navigation.getDriveMode().ordinal());
+                try {
+                    AMapUtils.openAMapNavi(naviPara, mContext);
+                } catch (AMapException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case INSIDE:
+                initNaviListener();
+                calculateInside(navigation);
+                break;
 
+        }
+    }
+
+    private int calculateInside(Navigation navigation) {
+        log.debug("calculateDriverRoute");
+        cur_location = Monitor.getInstance(mContext).getCurrentLocation();
         int code = CALCULATEERROR;
-//        double[] cur_Location = LocationUtils.getInstance(mContext).getCurrentLocation();
-//        if (cur_Location != null && mEndPoint!=null) {
-//            System.out.print("路线规划");
-//            NaviLatLng naviLatLng = new NaviLatLng(cur_Location[0],
-//                    cur_Location[1]);
-//            mEndPoints.clear();
-//            mEndPoints.add(mEndPoint);
-//            mStartPoints.clear();
-//            mStartPoints.add(naviLatLng);
-//            if (AMapNavi.getInstance(mContext).calculateDriveRoute(mStartPoints, mEndPoints, null,
-//                    driveMode)) {
-//                code = CALCULATESUCCESS;
-//            } else {
-//                code = CALCULATEERROR;
-//            }
-//        }
-
+        NaviLatLng mEndPoint = new NaviLatLng(navigation.getDestination().latitude, navigation.getDestination().longitude);
+        if (cur_location != null && mEndPoint != null) {
+            System.out.print("路线规划");
+            NaviLatLng naviLatLng = new NaviLatLng(cur_location.getLatitude(), cur_location.getLongitude());
+            mEndPoints.clear();
+            mEndPoints.add(new NaviLatLng(navigation.getDestination().latitude, navigation.getDestination().longitude));
+            mStartPoints.clear();
+            mStartPoints.add(naviLatLng);
+            if (AMapNavi.getInstance(mContext).calculateDriveRoute(mStartPoints, mEndPoints, null,
+                    navigation.getDriveMode().ordinal())) {
+                code = CALCULATESUCCESS;
+            } else {
+                code = CALCULATEERROR;
+            }
+        }
+        log.trace("路线计算:{}", code);
         return code;
     }
-
 
     private AMapNaviListener getAMapNaviListener() {
         if (mAmapNaviListener == null) {
@@ -159,43 +194,15 @@ public class NaviProcess {
                 @Override
                 public void onCalculateRouteSuccess() {
                     log.debug("[{}] 步行或者驾车路径规划成功", step++);
+                    EventBus.getDefault().post(navigationType);
 
-
-//                    if(MapManager.getInstance().isNavi()||MapManager.getInstance().isNaviBack()){
-//                        log.debug("[{}] 导航过程中路线规划成功", step++);
-//                        return;
-//                    }
-//                    MapManager.getInstance().setSearchType(0);
-//                    switch (naviType){
-//
-//                        case Navigation.NAVI_NORMAL:
-//                        case Navigation.NAVI_TWO:
-//
-//                            naviClass = NaviCustomActivity.class;
-//                            break;
-//
-//                        case Navigation.NAVI_BACK:
-//                            naviClass = NaviBackActivity.class;
-//                            break;
-//
-//                    }
-//                    LocationUtils.getInstance(mContext).setNaviStartPoint
-//                            (mStartPoints.get(0).getLatitude(), mStartPoints.get(0).getLongitude());
-//
-//                    LocationUtils.getInstance(mContext).setNaviStartPoint
-//                            (mEndPoint.getLatitude(), mEndPoint.getLongitude());
-//                    Activity topActivity = ActivitiesManager.getInstance().getTopActivity();
-//                    Intent standIntent = new Intent(topActivity,naviClass);
-//                    standIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//                    topActivity.startActivity(standIntent);
-//                    topActivity.finish();
                 }
 
                 @Override
                 public void onCalculateRouteFailure(int arg0) {
                     log.debug("[{}] 步行或者驾车路径规划失败", step++);
-                    String playText = "路径规划出错,请检查网络";
-                    EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast(playText));
+                    navigationType = NavigationType.CALCULATEERROR;
+                    EventBus.getDefault().post(navigationType);
                 }
 
                 @Override

@@ -18,10 +18,7 @@ import com.dudu.conn.ConnectionEvent;
 import com.dudu.conn.SendMessage;
 import com.dudu.fdfs.fastdfs.test.Monitor;
 import com.dudu.map.AmapLocationHandler;
-
-import com.dudu.map.NavigationHandler;
 import com.dudu.obd.gsensor.MotionData;
-
 import com.google.gson.Gson;
 
 import org.json.JSONArray;

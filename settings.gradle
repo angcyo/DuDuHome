@@ -1,1 +1,1 @@
-include ':app', ':libble', ':scf4a', ':navi', ':hideapi', ':obd', ':moniter', ':monitor'
+include ':app', ':libble', ':scf4a', ':navi', ':hideapi', ':monitor'

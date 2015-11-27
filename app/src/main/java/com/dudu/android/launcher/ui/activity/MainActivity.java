@@ -38,7 +38,7 @@ import com.dudu.event.BleStateChange;
 import com.dudu.event.DeviceEvent;
 import com.dudu.init.InitManager;
 import com.dudu.map.NavigationClerk;
-import com.dudu.navi.vauleObject.NaviEvent;
+import com.dudu.navi.event.NaviEvent;
 import com.dudu.voice.semantic.VoiceManager;
 
 import org.slf4j.Logger;
@@ -189,8 +189,8 @@ public class MainActivity extends BaseTitlebarActivity implements
 
             case R.id.navigation_button:
 
-                NavigationClerk.getInstance(this).openNavi();
-
+                NavigationClerk.getInstance().openNavi(NavigationClerk.OPEN_MANUAL);
+//                Utils.startThirdPartyApp(MainActivity.this, "com.autonavi.minimap");
                 break;
 
             case R.id.self_checking_container:

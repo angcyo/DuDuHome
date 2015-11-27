@@ -15,30 +15,24 @@ import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.navi.AMapNavi;
-import com.amap.api.navi.AMapNaviListener;
 import com.amap.api.navi.AMapNaviView;
 import com.amap.api.navi.AMapNaviViewListener;
 import com.amap.api.navi.AMapNaviViewOptions;
-import com.amap.api.navi.model.AMapNaviInfo;
-import com.amap.api.navi.model.AMapNaviLocation;
-import com.amap.api.navi.model.NaviInfo;
 import com.amap.api.navi.model.NaviLatLng;
 import com.dudu.android.launcher.R;
-import com.dudu.android.launcher.utils.ViewAnimation;
-import com.dudu.map.AmapLocationChangeEvent;
-import com.dudu.map.AmapLocationHandler;
-import com.dudu.map.MapManager;
-import com.dudu.map.Navigation;
-import com.dudu.map.NavigationHandler;
-import com.dudu.voice.semantic.SemanticConstants;
-import com.dudu.voice.semantic.VoiceManager;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.NaviSettingUtil;
-
+import com.dudu.android.launcher.utils.ViewAnimation;
+import com.dudu.map.AmapLocationChangeEvent;
+import com.dudu.navi.NavigationManager;
+import com.dudu.navi.entity.Point;
+import com.dudu.navi.vauleObject.NavigationType;
+import com.dudu.voice.semantic.SemanticConstants;
+import com.dudu.voice.semantic.VoiceManager;
 
 import de.greenrobot.event.EventBus;
 
@@ -77,7 +71,7 @@ AMapNaviViewListener{
 		mAmapAMapNaviView.setAMapNaviViewListener(this);
 		setAmapNaviViewOptions();
 		back_button = (Button) findViewById(R.id.back_button);
-		MapManager.getInstance().setNaviBack(true);
+		NavigationManager.getInstance(this).setNavigationType(NavigationType.BACKNAVI);
 		EventBus.getDefault().unregister(this);
 		EventBus.getDefault().register(this);
 
@@ -181,19 +175,20 @@ AMapNaviViewListener{
     }
     // 继续之前的导航
     public void continueNavi(){
-    	final double[] point = LocationUtils.getInstance(this).getNaviEndPoint();
-    	final NaviLatLng startLatLng = new NaviLatLng(point[0], point[1]);
+//    	final NaviLatLng startLatLng = new NaviLatLng(point[0], point[1]);
 
-    	if(startLatLng!=null){
+//    	if(startLatLng!=null){
     		VoiceManager.getInstance().startSpeaking("正在为您进行路线规划");
-    		mHandler.postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					EventBus.getDefault().post(new Navigation(point, Navigation.NAVI_TWO,AMapNavi.DrivingDefault));
-				}
-			}, 800);
+
+//			NavigationManager.getInstance(this).startCalculate();
+//    		mHandler.postDelayed(new Runnable() {
+//				@Override
+//				public void run() {
+//					EventBus.getDefault().post(new Navigation(point, Navigation.NAVI_TWO,AMapNavi.DrivingDefault));
+//				}
+//			}, 800);
     		
-    	}
+//    	}
     }
     
 
@@ -322,7 +317,6 @@ AMapNaviViewListener{
 	@Override
 	public void onDestroy() {
 
-		MapManager.getInstance().setNaviBack(false);
 		mAmapAMapNaviView.onDestroy();
 		super.onDestroy();
 	}

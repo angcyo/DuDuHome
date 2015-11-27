@@ -1,10 +1,18 @@
 package com.dudu.navi.repo;
 
 import android.content.Context;
+import android.content.Intent;
 
+import com.amap.api.services.core.PoiItem;
+import com.dudu.navi.entity.PoiResultInfo;
 import com.dudu.navi.vauleObject.NaviDriveMode;
+import com.dudu.navi.vauleObject.NavigationType;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by lxh on 2015/11/25.
@@ -15,20 +23,27 @@ public class ResourceManager {
 
     private Context mContext;
 
-    private EnumMap<NaviDriveMode, String> driveModeMap;
+    private List<NaviDriveMode> driveModeList = new ArrayList<>();
 
-    public ResourceManager(Context context){
+    private String cur_locationDesc;
+
+    private List<PoiResultInfo> poiResultList = new ArrayList<PoiResultInfo>();
+
+    private List<PoiItem> poiItems;
+
+    public ResourceManager(Context context) {
 
         this.mContext = context;
     }
 
-    public static ResourceManager getInstance(Context context){
+    public static ResourceManager getInstance(Context context) {
 
-        if(resourceManager==null)
+        if (resourceManager == null)
             resourceManager = new ResourceManager(context);
         return resourceManager;
     }
-    public void init(){
+
+    public void init() {
 
         initDriveMode();
     }
@@ -36,21 +51,43 @@ public class ResourceManager {
     /**
      * 初始化导航驾驶模式数据
      */
-    private void initDriveMode(){
+    private void initDriveMode() {
 
-        driveModeMap = new EnumMap<NaviDriveMode, String>(
-                NaviDriveMode.class );
-        driveModeMap.put(NaviDriveMode.SPEEDFIRST,"速度最快");
-        driveModeMap.put(NaviDriveMode.SAVEMONEY,"避免收费");
-        driveModeMap.put(NaviDriveMode.SHORTDESTANCE,"距离最短");
-        driveModeMap.put(NaviDriveMode.NOEXPRESSWAYS,"不走高速快速路");
-        driveModeMap.put(NaviDriveMode.FASTESTTIME,"时间最短且躲避拥堵");
-        driveModeMap.put(NaviDriveMode.AVOIDCONGESTION,"避免收费且躲避拥堵");
-
+        driveModeList.add(0, NaviDriveMode.SPEEDFIRST);
+        driveModeList.add(1, NaviDriveMode.SAVEMONEY);
+        driveModeList.add(2, NaviDriveMode.SHORTDESTANCE);
+        driveModeList.add(3, NaviDriveMode.NOEXPRESSWAYS);
+        driveModeList.add(4, NaviDriveMode.FASTESTTIME);
+        driveModeList.add(5, NaviDriveMode.AVOIDCONGESTION);
     }
 
-    public EnumMap<NaviDriveMode, String> getDriveModeMap(){
-        return driveModeMap;
+    public List<NaviDriveMode> getDriveModeMap() {
+        return driveModeList;
     }
 
+
+    public void setCur_locationDesc(String cur_locationDesc) {
+        this.cur_locationDesc = cur_locationDesc;
+    }
+
+    public String getCur_locationDesc() {
+        return cur_locationDesc;
+    }
+
+    public void setPoiResultList(List<PoiResultInfo> poiResultList) {
+        this.poiResultList = poiResultList;
+    }
+
+    public List<PoiResultInfo> getPoiResultList() {
+        return poiResultList;
+    }
+
+    public List<PoiItem> getPoiItems() {
+        return poiItems;
+    }
+
+    public void setPoiItems(List<PoiItem> poiItems) {
+
+        this.poiItems = poiItems;
+    }
 }

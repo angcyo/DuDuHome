@@ -5,6 +5,8 @@ package com.dudu.navi.vauleObject;
  */
 public enum NavigationType {
 
-    NORMAL,
-    BACKNAVI
+    NAVIGATION,
+    BACKNAVI,
+    DEFAULT,
+    CALCULATEERROR
 }

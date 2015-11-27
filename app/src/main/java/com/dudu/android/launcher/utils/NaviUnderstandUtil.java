@@ -1,15 +1,14 @@
 package com.dudu.android.launcher.utils;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 
-import com.dudu.map.MapManager;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class NaviUnderstandUtil {
 

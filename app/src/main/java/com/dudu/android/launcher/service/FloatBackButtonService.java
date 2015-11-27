@@ -11,7 +11,7 @@ import android.widget.Button;
 
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.MainActivity;
-import com.dudu.navi.vauleObject.NaviEvent;
+import com.dudu.navi.event.NaviEvent;
 
 import de.greenrobot.event.EventBus;
 

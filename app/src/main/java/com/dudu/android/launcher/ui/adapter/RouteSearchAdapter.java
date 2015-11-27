@@ -12,23 +12,25 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.dudu.android.launcher.R;
-import com.dudu.android.launcher.bean.PoiResultInfo;
 import com.dudu.android.launcher.ui.dialog.RouteSearchPoiDialog.OnListItemClick;
+import com.dudu.navi.NavigationManager;
+import com.dudu.navi.entity.PoiResultInfo;
 
 public class RouteSearchAdapter extends BaseAdapter {
 	private List<PoiResultInfo> mPoiItems = null;
 	private LayoutInflater mInflater;
 	private OnListItemClick mOnListItemClick;
 	private int type;			// 手动搜索还是语音搜索
-	public RouteSearchAdapter(Context context, List<PoiResultInfo> poiItems) {
-		this.mPoiItems = poiItems;
-		mInflater = LayoutInflater.from(context);
-	}
 
-	public RouteSearchAdapter(Context context, List<PoiResultInfo> poiItems,int type) {
-		this.mPoiItems = poiItems;
+	public RouteSearchAdapter(Context context,int type) {
 		mInflater = LayoutInflater.from(context);
 		this.type = type;
+		mPoiItems = NavigationManager.getInstance(context).getPoiResultList();
+	}
+
+	public RouteSearchAdapter(Context context) {
+		mInflater = LayoutInflater.from(context);
+		mPoiItems = NavigationManager.getInstance(context).getPoiResultList();
 	}
 
 	public void setOnListItemClick(OnListItemClick listener) {
@@ -56,7 +58,6 @@ public class RouteSearchAdapter extends BaseAdapter {
 			convertView = mInflater.inflate(R.layout.poi_result_list, parent,
 					false);
 		}
-
 		TextView PoiName = ((TextView) convertView.findViewById(R.id.poiName));
 		TextView poiAddress = (TextView) convertView
 				.findViewById(R.id.poiAddress);
