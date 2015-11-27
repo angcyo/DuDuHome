@@ -16,6 +16,7 @@ import com.dudu.conn.ActiveDevice;
 import com.dudu.conn.Connection;
 import com.dudu.conn.ConnectionEvent;
 import com.dudu.conn.SendMessage;
+import com.dudu.fdfs.fastdfs.test.Monitor;
 import com.dudu.map.AmapLocationHandler;
 
 import com.dudu.map.NavigationHandler;
@@ -79,6 +80,7 @@ public class OBDDataService extends Service implements
 
     private Gson gson;
 
+    private com.dudu.monitor.Monitor mMonitor;
     /**
      * 采集数据线程 30s 将所有数据风封装到JSONArray里
      */
@@ -184,6 +186,8 @@ public class OBDDataService extends Service implements
         initSensor();
         initConn();
 
+
+
         log.debug("odbservice startCommand");
         bleOBD = new BleOBD();
         bleOBD.initOBD(getApplicationContext());
@@ -216,6 +220,9 @@ public class OBDDataService extends Service implements
         if (!dataSendThread.isAlive()) {
             dataSendThread.start();
         }
+
+        mMonitor = com.dudu.monitor.Monitor.getInstance(this);
+        mMonitor.startWork();
     }
 
     private void initConn() {

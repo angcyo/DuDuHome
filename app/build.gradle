@@ -65,4 +65,6 @@ dependencies {
     compile project(':hideapi')
     compile 'com.github.PhilJay:MPAndroidChart:v2.1.6'
     compile project(':navi')
+    compile project(':monitor')
+
 }
