@@ -176,7 +176,7 @@ public class MainActivity extends BaseTitlebarActivity implements
                 break;
 
             case R.id.didi_button:
-                Utils.startThirdPartyApp(MainActivity.this, "com.sdu.didi.gsui");
+                Utils.startThirdPartyApp(MainActivity.this, "com.sdu.didi.gsui", R.string.error_no_didi);
                 break;
 
             case R.id.wlan_button:

@@ -54,7 +54,7 @@ public class DialogUtils {
         mWithoutSimCardDialog.show();
     }
 
-    public static void dismissWithoutSimCardDialog(Context context) {
+    public static void dismissWithoutSimCardDialog() {
         if (mWithoutSimCardDialog != null && mWithoutSimCardDialog.isShowing()) {
             mWithoutSimCardDialog.dismiss();
             mWithoutSimCardDialog = null;
@@ -66,13 +66,13 @@ public class DialogUtils {
             return;
         }
 
-        mSimCardReplaceDialog = new ErrorMessageDialog(context, R.string.without_sim_card,
+        mSimCardReplaceDialog = new ErrorMessageDialog(context, R.string.sim_card_replaced_error,
                 R.drawable.sim_card_uninserted_icon);
         mSimCardReplaceDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         mSimCardReplaceDialog.show();
     }
 
-    public static void dismissSimCardReplaceDialog(Context context) {
+    public static void dismissSimCardReplaceDialog() {
         if (mSimCardReplaceDialog != null && mSimCardReplaceDialog.isShowing()) {
             mSimCardReplaceDialog.dismiss();
             mSimCardReplaceDialog = null;

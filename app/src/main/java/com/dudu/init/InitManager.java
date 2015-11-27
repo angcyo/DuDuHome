@@ -6,17 +6,23 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 
 import com.dudu.android.launcher.service.FloatBackButtonService;
 import com.dudu.android.launcher.service.MonitorService;
 import com.dudu.android.launcher.service.NewMessageShowService;
 import com.dudu.android.launcher.utils.Constants;
+import com.dudu.android.launcher.utils.DeviceIDUtil;
+import com.dudu.android.launcher.utils.SharedPreferencesUtil;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.obd.OBDDataService;
 import com.dudu.voice.semantic.VoiceManager;
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
+
+import org.w3c.dom.Text;
 
 import ch.qos.logback.core.android.SystemPropertiesProxy;
 
@@ -144,6 +150,8 @@ public class InitManager {
         startFloatMessageService();
 
         startOBDService();
+
+        Utils.checkSimCardState(mActivity);
 
         WifiApAdmin.initWifiApState(mActivity);
     }

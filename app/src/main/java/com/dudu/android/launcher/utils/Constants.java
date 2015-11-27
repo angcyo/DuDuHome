@@ -2,10 +2,6 @@ package com.dudu.android.launcher.utils;
 
 public class Constants {
 
-	public static final String FLOW_UPDATE_BROADCAST = "broadcast_flow_update";
-	
-	public static final String VIDEO_PREVIEW_BROADCAST = "broadcast_video_preview";
-
 	public static final boolean DEBUG = true;
 	public static final String XUFEIID = "55bda6e9";
 
@@ -125,9 +121,16 @@ public class Constants {
 	public static final String NAVI_LISTEN = "听";
 	public static final String NAVI_LOOK = "查看";
 
+	// 默认版本号
     public static final int VERSION_TYPE_TAXI = 1;
 
     // Activity传递参数的常量
     public static final String EXTRA_VIDEO_POSITION = "video_position";
+
+	// 广播常量
+	public static final String VIDEO_PREVIEW_BROADCAST = "broadcast_video_preview";
+
+    // SharePreference常量
+    public static final String KEY_SIM_CARD_SERIAL_NUMBER = "sim_card_serial_number";
 
 }

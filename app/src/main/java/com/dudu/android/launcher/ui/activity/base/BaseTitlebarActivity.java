@@ -19,6 +19,7 @@ import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.NetworkUtils;
+import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.event.DeviceEvent;
 
 import java.util.Iterator;
@@ -47,13 +48,13 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
 
     private PhoneStateListener mPhoneStateListener;
 
-    private int mSimLevel = 0;
+    private TextView mSignalTextView;
 
     private ImageView mGpsSignalImage;
 
     private ImageView mVideoSignalImage;
 
-    private int satellite = 0;
+    private int mSatellite = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,8 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
 
         EventBus.getDefault().register(this);
 
+        initTitleBar();
+
         mPhoneManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
 
         mPhoneStateListener = new PhoneStateListener() {
@@ -71,7 +74,6 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
             @Override
             public void onDataConnectionStateChanged(int state, int networkType) {
                 super.onDataConnectionStateChanged(state, networkType);
-                LogUtils.e(TAG, "networkType: " + networkType);
             }
 
             @Override
@@ -82,7 +84,7 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
                             invoke(signalStrength);
                     LogUtils.e(TAG, "signal level: " + level);
                 } catch (Exception e) {
-                    LogUtils.e(TAG, e.getMessage() + "");
+                    // ignore
                 }
             }
         };
@@ -94,8 +96,6 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_CONNECTIVITY_CHANGE);
         registerReceiver(mConnectivityReceiver, intentFilter);
-
-
     }
 
     @Override
@@ -108,25 +108,19 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
     }
 
     private void initTitleBar() {
-        TextView textView = (TextView) getWindow().findViewById(
-                R.id.signal_textview);
-        String type = NetworkUtils.getCurrentNetworkType(mContext);
-        textView.setText(type);
+        mSignalTextView = (TextView) getWindow().findViewById(R.id.signal_textview);
 
-        mGpsSignalImage = (ImageView) findViewById(R.id.gps_img);
+        mGpsSignalImage = (ImageView) getWindow().findViewById(R.id.gps_img);
 
-        mVideoSignalImage = (ImageView) findViewById(R.id.video_signal_image);
-    }
-
-    private void updateSimSignalLevel() {
-
+        mVideoSignalImage = (ImageView) getWindow().findViewById(R.id.video_signal_image);
     }
 
     private class ConnectivityChangeReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            initTitleBar();
+            String type = NetworkUtils.getCurrentNetworkType(mContext);
+            mSignalTextView.setText(type);
         }
     }
 
@@ -134,12 +128,12 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
         int maxSatellites = gpsStatus.getMaxSatellites();
         Iterator<GpsSatellite> iterator = gpsStatus.getSatellites()
                 .iterator();
-        satellite = 0;
-        while (iterator.hasNext() && satellite <= maxSatellites) {
-            satellite++;
+        mSatellite = 0;
+        while (iterator.hasNext() && mSatellite <= maxSatellites) {
+            mSatellite++;
         }
 
-        if (satellite > 0 && (!LocationUtils.getInstance(this).getLocProvider().equals("lbs"))) {
+        if (mSatellite > 0 && (!LocationUtils.getInstance(this).getLocProvider().equals("lbs"))) {
             mGpsSignalImage.setBackgroundResource(R.drawable.gps_signal_normal);
         } else {
             mGpsSignalImage.setBackgroundResource(R.drawable.gps_signal_error);

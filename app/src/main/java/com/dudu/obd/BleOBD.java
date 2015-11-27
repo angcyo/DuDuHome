@@ -60,7 +60,7 @@ public class BleOBD {
 
     public BleOBD() {
         readL1 = new PrefixReadL1();
-        log = LoggerFactory.getLogger("ble.odb");
+        log = LoggerFactory.getLogger("ble.odb.old");
     }
 
     public void initOBD(Context context) {
