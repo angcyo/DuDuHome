@@ -48,11 +48,9 @@ public class ResourceManager {
         initDriveMode();
     }
 
-    /**
-     * 初始化导航驾驶模式数据
-     */
     private void initDriveMode() {
-
+        if(driveModeList.size()>0)
+            driveModeList.clear();
         driveModeList.add(0, NaviDriveMode.SPEEDFIRST);
         driveModeList.add(1, NaviDriveMode.SAVEMONEY);
         driveModeList.add(2, NaviDriveMode.SHORTDESTANCE);

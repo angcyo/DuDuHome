@@ -15,6 +15,8 @@ import com.dudu.navi.vauleObject.CommonAddressType;
 import com.dudu.navi.vauleObject.NaviDriveMode;
 import com.dudu.navi.vauleObject.NavigationType;
 import com.dudu.voice.semantic.SemanticConstants;
+import com.dudu.voice.semantic.SemanticType;
+import com.dudu.voice.semantic.engine.SemanticProcessor;
 
 import org.json.JSONObject;
 
@@ -75,7 +77,6 @@ public class CommonAddressChain extends SemanticChain{
 
             if(!TextUtils.isEmpty(address)&&!checkPoint(location)){
                 FloatWindowUtil.removeFloatWindow();
-
                 Navigation navigation = new Navigation(new Point(location[0],location[1]), NaviDriveMode.SPEEDFIRST, NavigationType.NAVIGATION);
                 NavigationManager.getInstance(LauncherApplication.getContext()).startCalculate(navigation);
 

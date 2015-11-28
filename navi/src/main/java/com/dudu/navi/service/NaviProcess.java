@@ -17,10 +17,8 @@ import com.dudu.monitor.Monitor;
 import com.dudu.navi.NavigationManager;
 import com.dudu.navi.Util.NaviUtils;
 import com.dudu.navi.entity.Navigation;
-import com.dudu.navi.entity.Point;
 import com.dudu.navi.event.NaviEvent;
 import com.dudu.navi.vauleObject.NavigationType;
-import com.dudu.navi.vauleObject.SearchType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,7 +117,6 @@ public class NaviProcess {
         int code = CALCULATEERROR;
         NaviLatLng mEndPoint = new NaviLatLng(navigation.getDestination().latitude, navigation.getDestination().longitude);
         if (cur_location != null && mEndPoint != null) {
-            System.out.print("路线规划");
             NaviLatLng naviLatLng = new NaviLatLng(cur_location.getLatitude(), cur_location.getLongitude());
             mEndPoints.clear();
             mEndPoints.add(new NaviLatLng(navigation.getDestination().latitude, navigation.getDestination().longitude));
@@ -132,7 +129,6 @@ public class NaviProcess {
                 code = CALCULATEERROR;
             }
         }
-        log.trace("路线计算:{}", code);
         return code;
     }
 

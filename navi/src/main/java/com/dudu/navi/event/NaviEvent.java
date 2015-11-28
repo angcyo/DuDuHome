@@ -26,10 +26,6 @@ public class NaviEvent {
     }
 
 
-    public static class ExistNavigation{
-
-    }
-
     public enum  ChangeSemanticType{
 
         NORMAL,

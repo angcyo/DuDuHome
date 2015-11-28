@@ -370,7 +370,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
     @Override
     public void removeFloatWindow() {
-
+        SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {

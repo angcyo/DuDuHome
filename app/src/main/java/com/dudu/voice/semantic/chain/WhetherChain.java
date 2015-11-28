@@ -5,10 +5,15 @@ import android.text.TextUtils;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.map.NavigationClerk;
+import com.dudu.navi.event.NaviEvent;
 import com.dudu.navi.vauleObject.SearchType;
 import com.dudu.voice.semantic.SemanticConstants;
+import com.dudu.voice.semantic.SemanticType;
+import com.dudu.voice.semantic.engine.SemanticProcessor;
 
 import org.json.JSONObject;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by pc on 2015/11/3.

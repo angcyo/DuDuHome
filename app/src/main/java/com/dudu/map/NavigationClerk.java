@@ -1,7 +1,6 @@
 package com.dudu.map;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
@@ -12,35 +11,24 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 
-import com.amap.api.maps.CameraUpdateFactory;
-import com.amap.api.maps.model.LatLng;
-import com.amap.api.maps.model.NaviPara;
-import com.amap.api.maps.overlay.PoiOverlay;
-import com.amap.api.navi.model.NaviLatLng;
-import com.amap.api.services.core.LatLonPoint;
-import com.amap.api.services.poisearch.PoiResult;
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.ui.activity.LocationMapActivity;
 import com.dudu.android.launcher.ui.activity.MainActivity;
 import com.dudu.android.launcher.ui.activity.NaviBackActivity;
 import com.dudu.android.launcher.ui.activity.NaviCustomActivity;
-import com.dudu.android.launcher.ui.dialog.RouteSearchPoiDialog;
-import com.dudu.android.launcher.ui.dialog.StrategyChoiseDialog;
 import com.dudu.android.launcher.ui.dialog.WaitingDialog;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.CommonAddressUtil;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
-import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.event.MapResultShow;
-import com.dudu.navi.Util.NaviUtils;
 import com.dudu.navi.NavigationManager;
+import com.dudu.navi.Util.NaviUtils;
 import com.dudu.navi.entity.Navigation;
 import com.dudu.navi.entity.PoiResultInfo;
 import com.dudu.navi.entity.Point;
 import com.dudu.navi.event.NaviEvent;
-import com.dudu.navi.vauleObject.NaviDriveMode;
 import com.dudu.navi.vauleObject.NavigationType;
 import com.dudu.navi.vauleObject.OpenMode;
 import com.dudu.navi.vauleObject.SearchType;
@@ -89,6 +77,8 @@ public class NavigationClerk {
     private PoiResultInfo choosepoiResult;
 
     private WaitingDialog waitingDialog = null;// 搜索时进度条
+
+    private boolean isCommonAddress = false;
 
     private Runnable removeWindowRunnable = new Runnable() {
 
@@ -163,6 +153,35 @@ public class NavigationClerk {
         return true;
     }
 
+    public boolean openMap() {
+        switch (NaviUtils.getOpenMode(mContext)) {
+            case INSIDE:
+                return openMapActivity();
+            case OUTSIDE:
+                EventBus.getDefault().post(NaviEvent.FloatButtonEvent.SHOW);
+                Utils.startThirdPartyApp(ActivitiesManager.getInstance().getTopActivity(), "com.autonavi.minimap");
+                break;
+        }
+        return true;
+    }
+
+    public void closeMap() {
+        ActivitiesManager.getInstance().closeTargetActivity(
+                LocationMapActivity.class);
+    }
+
+    private boolean openMapActivity() {
+        topActivity = ActivitiesManager.getInstance().getTopActivity();
+        Intent intent = new Intent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        if (topActivity instanceof LocationMapActivity)
+            return false;
+        intent.setClass(mContext, LocationMapActivity.class);
+        mContext.startActivity(intent);
+
+        return true;
+    }
 
     private boolean openActivity(int openType) {
         topActivity = ActivitiesManager.getInstance().getTopActivity();
@@ -171,9 +190,11 @@ public class NavigationClerk {
                 | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         switch (navigationManager.getNavigationType()) {
             case NAVIGATION:
+                FloatWindowUtil.removeFloatWindow();
                 intent.setClass(mContext, NaviCustomActivity.class);
                 break;
             case BACKNAVI:
+                FloatWindowUtil.removeFloatWindow();
                 intent.setClass(mContext, NaviBackActivity.class);
                 break;
             case DEFAULT:
@@ -209,6 +230,7 @@ public class NavigationClerk {
 
     public void searchControl(String semantic, String service, String keyword, SearchType type) {
         navigationManager.setSearchType(type);
+        navigationManager.setKeyword(null);
         if (keyword == null)
             navigationManager.parseKeyword(semantic, service);
         else
@@ -234,26 +256,34 @@ public class NavigationClerk {
     }
 
     public void doSearch() {
-        String msg ;
-        switch (navigationManager.getSearchType()){
+        String msg;
+        switch (navigationManager.getSearchType()) {
             case SEARCH_DEFAULT:
                 return;
             case SEARCH_PLACE:
-            case SEARCH_COMMONADDRESS:
             case SEARCH_PLACE_LOCATION:
             case SEARCH_NEARBY:
             case SEARCH_NEAREST:
+                if (TextUtils.isEmpty(navigationManager.getKeyword())) {
+                    VoiceManager.getInstance().startSpeaking("关键字有误，请重新输入！",
+                            SemanticConstants.TTS_START_UNDERSTANDING, true);
+                    return;
+                }
                 msg = "正在搜索:" + navigationManager.getKeyword();
-                if(Constants.CURRENT_POI.equals(navigationManager.getKeyword())){
+                if (Constants.CURRENT_POI.equals(navigationManager.getKeyword())) {
+                    navigationManager.setSearchType(SearchType.SEARCH_CUR_LOCATION);
                     msg = "正在获取当前位置信息";
                 }
                 showProgressDialog(msg);
+                break;
+            case SEARCH_COMMONADDRESS:
+                isCommonAddress = true;
                 break;
         }
         navigationManager.search();
     }
 
-    public void onEventBackgroundThread(NaviEvent.NaviVoiceBroadcast event) {
+    public void onEventMainThread(NaviEvent.NaviVoiceBroadcast event) {
         VoiceManager.getInstance().clearMisUnderstandCount();
         if (navigationManager.getNavigationType() == NavigationType.DEFAULT) {
             removeCallback();
@@ -271,7 +301,7 @@ public class NavigationClerk {
 
     public void onEventMainThread(NaviEvent.SearchResult event) {
         disMissProgressDialog();
-        navigationManager.getLog().debug("----SearchResult{}",navigationManager.getSearchType());
+        navigationManager.getLog().debug("----SearchResult{}", navigationManager.getSearchType());
         if (event == NaviEvent.SearchResult.SUCCESS) {
             handlerPoiResult();
         }
@@ -323,11 +353,16 @@ public class NavigationClerk {
     }
 
     public void handlerPoiResult() {
+
         switch (navigationManager.getSearchType()) {
             case SEARCH_CUR_LOCATION:
-                removeCallback();
-                VoiceManager.getInstance().startSpeaking(navigationManager.getCurlocationDesc(),
-                        SemanticConstants.TTS_START_UNDERSTANDING, true);
+                mhandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        VoiceManager.getInstance().startSpeaking(navigationManager.getCurlocationDesc(),
+                                SemanticConstants.TTS_START_UNDERSTANDING, true);
+                    }
+                }, 200);
                 break;
             case SEARCH_PLACE_LOCATION:
                 String playText = "您好，" + navigationManager.getKeyword() + "的位置为："
@@ -339,12 +374,13 @@ public class NavigationClerk {
                 return;
             default:
                 SemanticProcessor.getProcessor().switchSemanticType(
-                        SemanticType.MAP_CHOISE);
+                    SemanticType.MAP_CHOISE);
                 isShowAddress = true;
                 chooseStep = 1;
                 if (isManual) {
                     EventBus.getDefault().post(MapResultShow.ADDRESS);
                 } else {
+
                     showAddressByVoice();
                 }
                 break;
@@ -358,7 +394,7 @@ public class NavigationClerk {
         if (waitingDialog != null) {
             waitingDialog = null;
         }
-        waitingDialog = new WaitingDialog(ActivitiesManager.getInstance().getTopActivity(),message);
+        waitingDialog = new WaitingDialog(ActivitiesManager.getInstance().getTopActivity(), message);
         Window dialogWindow = waitingDialog.getWindow();
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
         lp.x = 10; // 新位置X坐标
@@ -374,9 +410,15 @@ public class NavigationClerk {
      * 显示进度框
      */
     public void showProgressDialog(String message) {
-        FloatWindowUtil.removeFloatWindow();
+
         initWaitingDialog(message);
         waitingDialog.show();
+        switch (navigationManager.getSearchType()) {
+            case SEARCH_PLACE_LOCATION:
+            case SEARCH_CUR_LOCATION:
+                return;
+        }
+        FloatWindowUtil.removeFloatWindow();
     }
 
     public void disMissProgressDialog() {
@@ -409,7 +451,8 @@ public class NavigationClerk {
             endPoint = new Point(choosepoiResult.getLatitude(), choosepoiResult.getLongitude());
             if (choosepoiResult != null) {
 
-                if (navigationManager.getSearchType() == SearchType.SEARCH_COMMONADDRESS) {
+                if (isCommonAddress) {
+                    isCommonAddress = false;
                     addCommonAddress(choosepoiResult);
                     return;
                 }
@@ -440,12 +483,14 @@ public class NavigationClerk {
      * @param choosePoint
      */
     private void addCommonAddress(PoiResultInfo choosePoint) {
+        FloatWindowUtil.removeFloatWindow();
         String addType = navigationManager.getCommonAddressType().getName();
         CommonAddressUtil.setCommonAddress(addType, mContext, choosePoint.getAddressTitle());
         CommonAddressUtil.setCommonLocation(addType,
                 mContext, choosePoint.getLatitude(), choosePoint.getLongitude());
         VoiceManager.getInstance().startSpeaking("添加" + choosePoint.getAddressTitle() + "为" + addType + "地址成功！",
                 SemanticConstants.TTS_DO_NOTHING, true);
+
     }
 
     /**
@@ -491,7 +536,7 @@ public class NavigationClerk {
                     SemanticConstants.TTS_START_UNDERSTANDING, false);
             return;
         }
-        startNavigation(new Navigation(endPoint, navigationManager.getDriveModeList().get(position),
+        startNavigation(new Navigation(endPoint, navigationManager.getDriveModeList().get(position-1),
                 NavigationType.NAVIGATION));
     }
 

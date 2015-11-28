@@ -39,10 +39,8 @@ public class KeywordProcess {
 
     private static String keyWord;
 
-
-
     public static String parseKeyword(String semantic,String service){
-
+         keyWord = null;
         if (!TextUtils.isEmpty(service)) {
 
                 switch (service){
@@ -70,17 +68,7 @@ public class KeywordProcess {
 
 
         }
-
         return  keyWord;
-    }
-
-
-    private static void parseOperation(String json) {
-        try {
-            mapOperation = new JSONObject(json).getString("operation");
-        } catch (JSONException e) {
-            mapOperation = "";
-        }
     }
 
     private static void getMapEntityKeyword(MapEntity entity){

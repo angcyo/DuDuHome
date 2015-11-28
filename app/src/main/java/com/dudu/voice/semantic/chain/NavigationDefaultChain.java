@@ -4,9 +4,11 @@ package com.dudu.voice.semantic.chain;
 import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.map.NavigationClerk;
 import com.dudu.navi.vauleObject.SearchType;
+import com.dudu.voice.semantic.SemanticConstants;
+import com.dudu.voice.semantic.engine.ChainSimpleFactory;
 
 /**
- * Created by pc on 2015/11/10.
+ * Created by lxh on 2015/11/10.
  */
 public class NavigationDefaultChain extends DefaultChain {
 

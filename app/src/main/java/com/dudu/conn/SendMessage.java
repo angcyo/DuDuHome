@@ -179,4 +179,30 @@ public class SendMessage {
             obeType = "E1";
         activemap.put("obeType",obeType);
     }
+
+    /**
+     * 检查设备激活
+     * @return
+     */
+    public boolean checkDeviceActive(){
+
+        SystemPropertiesProxy sps = SystemPropertiesProxy.getInstance();
+        activemap = new HashMap<>();
+        activemap.put("ro.build.fingerprint",sps.get("ro.build.fingerprint","UNKNOWN"));
+        activemap.put("ro.product.manufacturer",sps.get("ro.product.manufacturer","UNKNOWN"));
+        activemap.put("ro.product.model",sps.get("ro.product.model","UNKNOWN"));
+        activemap.put("sim.seralno",DeviceIDUtil.getSimSerialNumber(mContext));
+        activemap.put("launcher.version", versionCode);
+        activemap.put("imei",OBEID);
+        activemap.put("method","activationStatus");
+        JSONObject jsonObject = new JSONObject(activemap);
+        try {
+            String msg = Encrypt.AESEncrypt(jsonObject.toString(),Encrypt.vi);
+            conn.sendMessage(msg);
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+        return conn.isAlive();
+    }
 }

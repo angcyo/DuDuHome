@@ -7,7 +7,6 @@ import android.text.TextUtils;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.model.LatLng;
-import com.amap.api.maps.overlay.PoiOverlay;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.core.SuggestionCity;
@@ -19,7 +18,6 @@ import com.amap.api.services.poisearch.PoiItemDetail;
 import com.amap.api.services.poisearch.PoiResult;
 import com.amap.api.services.poisearch.PoiSearch;
 import com.dudu.monitor.Monitor;
-import com.dudu.monitor.repo.location.AmapLocation;
 import com.dudu.monitor.utils.LocationUtils;
 import com.dudu.navi.NavigationManager;
 import com.dudu.navi.R;
@@ -28,8 +26,6 @@ import com.dudu.navi.event.NaviEvent;
 import com.dudu.navi.repo.ResourceManager;
 import com.dudu.navi.vauleObject.NavigationType;
 import com.dudu.navi.vauleObject.SearchType;
-
-import org.scf4a.Event;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -70,7 +66,7 @@ public class SearchProcess {
 
     private Bundle locBundle;
     private List<PoiItem> poiItems = null;
-    private List<PoiResultInfo> poiResultList = new ArrayList<PoiResultInfo>();
+    private List<PoiResultInfo> poiResultList = new ArrayList<>();
     private AMapLocation cur_location;
 
     public SearchProcess(Context context) {
@@ -87,14 +83,10 @@ public class SearchProcess {
     }
 
     public void search(String keyword) {
-        if (CURRENT_POI.equals(keyword)) {
-            NavigationManager.getInstance(mContext).setSearchType(SearchType.SEARCH_CUR_LOCATION);
-        }
         searchType = NavigationManager.getInstance(mContext).getSearchType();
         cur_location = Monitor.getInstance(mContext).getCurrentLocation();
         NavigationManager.getInstance(mContext).getLog().debug("开始搜索{}",searchType);
         if (cur_location != null) {
-            locProvider = cur_location.getProvider();
             locBundle = cur_location.getExtras();
             latLonPoint = new LatLonPoint(cur_location.getLatitude(), cur_location.getLongitude());
             cityCode = LocationUtils.getInstance(mContext).getCurrentCityCode();
@@ -107,6 +99,7 @@ public class SearchProcess {
                     break;
                 case SEARCH_COMMONADDRESS:
                     EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast("您好，请说出您要添加的地址"));
+                    EventBus.getDefault().post(NaviEvent.ChangeSemanticType.NAVIGATION);
                     break;
                 case SEARCH_CUR_LOCATION:
                     getCur_locationDesc();
@@ -138,6 +131,7 @@ public class SearchProcess {
         } else {
             String playText = "您好，关键字有误，请重新输入";
             EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast(playText));
+            EventBus.getDefault().post(NaviEvent.SearchResult.FAIL);
         }
 
     }
@@ -162,6 +156,7 @@ public class SearchProcess {
                         if(!isGetCurdesc){
                             EventBus.getDefault().
                                     post(new NaviEvent.NaviVoiceBroadcast("抱歉，暂时无法获取到您的详细位置，请稍后再试"));
+                            EventBus.getDefault().post(NaviEvent.SearchResult.FAIL);
                         }
 
                     }
@@ -186,6 +181,7 @@ public class SearchProcess {
                         setPoiList();
                         EventBus.getDefault().post(NaviEvent.SearchResult.SUCCESS);
                     } else {
+                        EventBus.getDefault().post(NaviEvent.ChangeSemanticType.NORMAL);
                         EventBus.getDefault().post(NaviEvent.SearchResult.FAIL);
                         EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast(mContext.getString(R.string.no_result)));
                     }

@@ -92,7 +92,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     private StrategyChoiseDialog strategyDialog;// 优先策略选择弹出框
 
 
-
     private Runnable getLocatinRunable = new Runnable() {
         @Override
         public void run() {
@@ -101,7 +100,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 mHandler.postDelayed(this, 2000);
             amapLocation = Monitor.getInstance(LauncherApplication.getContext()).getCurrentLocation();
             if (amapLocation != null) {
-                log.debug("LocationMapActivity amapLocation" );
+                log.debug("LocationMapActivity amapLocation");
                 if (listener != null) {
                     listener.onLocationChanged(amapLocation);// 显示系统小蓝点
                 }
@@ -184,9 +183,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     }
 
 
-
-
-
     @Override
     public void initDatas() {
 
@@ -198,13 +194,12 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     }
 
-    private void searchManual(){
+    private void searchManual() {
         navigationManager.setKeyword(search_edit.getText().toString());
         navigationManager.setSearchType(SearchType.SEARCH_PLACE);
         NavigationClerk.getInstance().setIsManual(true);
         NavigationClerk.getInstance().doSearch();
     }
-
 
 
     @Override
@@ -247,33 +242,33 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     }
 
     private void getLocation() {
-        if(mHandler!=null){
-            mHandler.postDelayed(getLocatinRunable,1000);
+        if (mHandler != null) {
+            mHandler.postDelayed(getLocatinRunable, 1000);
         }
     }
 
-   public void onEventMainThread(MapResultShow event){
-       log.debug("---------MapResultShow");
-       switch (event){
-           case ADDRESS:
-               switch (navigationManager.getSearchType()) {
-                   case SEARCH_PLACE:
-                   case SEARCH_NEARBY:
-                       aMap.moveCamera(CameraUpdateFactory.zoomTo(15));
-                       poiOverlay = new PoiOverlay(aMap, navigationManager.getAmapPoiItem());
-                       poiOverlay.removeFromMap();
-                       poiOverlay.addToMap();
-                       poiOverlay.zoomToSpan();
-                       break;
+    public void onEventMainThread(MapResultShow event) {
+        log.debug("---------MapResultShow");
+        switch (event) {
+            case ADDRESS:
+                switch (navigationManager.getSearchType()) {
+                    case SEARCH_PLACE:
+                    case SEARCH_NEARBY:
+                        aMap.moveCamera(CameraUpdateFactory.zoomTo(15));
+                        poiOverlay = new PoiOverlay(aMap, navigationManager.getAmapPoiItem());
+                        poiOverlay.removeFromMap();
+                        poiOverlay.addToMap();
+                        poiOverlay.zoomToSpan();
+                        break;
 
-               }
-               showAddressManual();
-               break;
-           case STRATEGY:
-               showStrategyDialog(NavigationClerk.getInstance().getChoosepoiResult());
-               break;
-       }
-   }
+                }
+                showAddressManual();
+                break;
+            case STRATEGY:
+                showStrategyDialog(NavigationClerk.getInstance().getChoosepoiResult());
+                break;
+        }
+    }
 
     @Override
     public void activate(OnLocationChangedListener onLocationChangedListener) {
@@ -344,7 +339,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         if (strategyDialog != null && strategyDialog.isShowing()) {
             strategyDialog.dismiss();
         }
-        if(addressDialog!=null&&addressDialog.isShowing()){
+        if (addressDialog != null && addressDialog.isShowing()) {
             addressDialog.dismiss();
         }
         String address = choosePoint.getAddressDetial();

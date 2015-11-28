@@ -3,7 +3,6 @@ package com.dudu.navi;
 import android.content.Context;
 
 import com.amap.api.services.core.PoiItem;
-import com.amap.api.services.poisearch.PoiResult;
 import com.dudu.navi.entity.Navigation;
 import com.dudu.navi.entity.PoiResultInfo;
 import com.dudu.navi.repo.ResourceManager;
@@ -18,7 +17,6 @@ import com.dudu.navi.vauleObject.SearchType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.EnumMap;
 import java.util.List;
 
 

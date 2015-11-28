@@ -145,11 +145,13 @@ public class InitManager {
         logger.debug("[init][{}]启动OBD服务", log_step++);
         startOBDService();
 
+
         logger.debug("[init][{}]检查sim卡状态", log_step++);
         Utils.checkSimCardState(mActivity);
 
         logger.debug("[init][{}]打开热点", log_step++);
         WifiApAdmin.initWifiApState(mActivity);
+
 
         NavigationManager.getInstance(LauncherApplication.getContext()).initNaviManager();
     }

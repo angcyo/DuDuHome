@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.bean.CmdEntity;
 import com.dudu.android.launcher.bean.CmdSlots;
+import com.dudu.android.launcher.ui.activity.LocationMapActivity;
 import com.dudu.android.launcher.ui.activity.MainActivity;
 import com.dudu.android.launcher.ui.activity.OBDCheckingActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
@@ -80,8 +81,7 @@ public class CmdChain extends SemanticChain {
             handleCarRecord(option);
             return true;
         } else if (type.contains(Constants.MAP)) {
-            handleMapCmd(option);
-            return true;
+            return handleMapCmd(option);
         }
 
         return false;
@@ -91,7 +91,7 @@ public class CmdChain extends SemanticChain {
         switch (option) {
             case Constants.OPEN:
             case Constants.START:
-               return NavigationClerk.getInstance().openNavi(NavigationClerk.OPEN_VOICE);
+                return NavigationClerk.getInstance().openNavi(NavigationClerk.OPEN_VOICE);
             case Constants.CLOSE:
             case Constants.EXIT:
                 FloatWindowUtil.removeFloatWindow();
@@ -186,19 +186,23 @@ public class CmdChain extends SemanticChain {
         }
     }
 
-    private void handleMapCmd(String option) {
+    private boolean handleMapCmd(String option) {
         FloatWindowUtil.removeFloatWindow();
         switch (option) {
             case Constants.OPEN:
             case Constants.START:
             case Constants.KAIQI:
-
-                break;
+                if (NavigationClerk.getInstance().openMap()) {
+                    FloatWindowUtil.removeFloatWindow();
+                    return true;
+                }
+                return false;
             case Constants.CLOSE:
             case Constants.EXIT:
-
+                NavigationClerk.getInstance().closeMap();
                 break;
         }
+        return true;
     }
 
 }
