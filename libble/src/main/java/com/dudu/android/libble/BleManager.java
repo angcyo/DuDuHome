@@ -86,6 +86,7 @@ public class BleManager {
                 mBluetoothGatt.discoverServices();
             } else /*if (newState == BluetoothProfile.STATE_DISCONNECTED)*/ {
                 log.info("Disconnected from GATT server.");
+                EventBus.getDefault().post(new Event.Disconnected(Event.ErrorCode.DeviceDisConnected));
                 close();
             }
         }

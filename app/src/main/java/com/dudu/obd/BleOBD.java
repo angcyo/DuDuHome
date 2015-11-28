@@ -66,7 +66,7 @@ public class BleOBD {
     public void initOBD(Context context) {
         log.debug("initOBD");
         ConnSession.getInstance();
-        BleConnectMain.getInstance().init(LauncherApplication.getContext());
+        BleConnectMain.getInstance().init(context);
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
         EventBus.getDefault().unregister(readL1);
@@ -77,14 +77,14 @@ public class BleOBD {
         mContext = context;
     }
 
-    public void onEventMainThread(Event.BackScanResult event) {
+    public void onEvent(Event.BackScanResult event) {
         BluetoothDevice device = event.getDevice();
         log.debug("Try Connect {}[{}]", device.getName(), device.getAddress());
         EventBus.getDefault().post(new Event.Connect(device.getAddress(), Event.ConnectType.BLE, false));
     }
 
 
-    public void onEventMainThread(Event.BLEInit event) {
+    public void onEvent(Event.BLEInit event) {
         log.debug("ble BLEInit");
         mBluetoothGatt = event.getBluetoothGatt();
         mWriteChara = event.getWriteChara();
@@ -106,7 +106,7 @@ public class BleOBD {
     }
 
 
-    public void onEventBackgroundThread(Event.Disconnected event){
+    public void onEvent(Event.Disconnected event){
         log.debug("ble Disconnected");
         EventBus.getDefault().post(new BleStateChange(BleStateChange.BLEDISCONNECTED));
         Observable.timer(10, TimeUnit.SECONDS)
@@ -119,8 +119,7 @@ public class BleOBD {
 
         }
 
-    
-    public void onEventBackgroundThread(Event.BTConnected event){
+    public void onEvent(Event.BTConnected event){
         log.debug("ble BTConnected");
         EventBus.getDefault().post(new BleStateChange(BleStateChange.BLECONNECTED));
     }

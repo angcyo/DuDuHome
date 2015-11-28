@@ -34,18 +34,20 @@ public class BleConnectMain {
         }
         log.debug("Start BLE Scanner");
         mBleScanner.startScan();
+
         Observable.timer(BleScanner.SCAN_PERIOD, TimeUnit.MILLISECONDS)
                 .subscribe(new Action1<Long>() {
                     @Override
                     public void call(Long aLong) {
-                        if(bleManager.getConnectionState()!= BluetoothProfile.STATE_CONNECTED){
+                        if (bleManager.getConnectionState() != BluetoothProfile.STATE_CONNECTED) {
                             log.debug("BLE scan time out");
                             mBleScanner.stopScan();
-                            EventBus.getDefault().post(new Event.Disconnected(Event.ErrorCode.ScanInvokeFail));
+                            //FIXME 蓝牙有问题时，会导致重新扫描的线程被阻塞，所以先停止再扫描
+//                            EventBus.getDefault().post(new Event.Disconnected(Event.ErrorCode.ScanInvokeFail));
                         }
-
                     }
                 });
+
     }
 
     public void onEventMainThread(Event.StopScanner event) {
