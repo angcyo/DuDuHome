@@ -40,8 +40,8 @@ public class Monitor {
     private Monitor(Context context){
         mContext = context;
         mLocationManage = LocationManage.getInstance();
-        mSensorManage = SensorManage.getInstance(context);
-        mObdManage = ObdManage.getInstance();
+//        mSensorManage = SensorManage.getInstance(context);
+//        mObdManage = ObdManage.getInstance();
     }
 
     public void startWork(){
@@ -50,8 +50,8 @@ public class Monitor {
 
     public void stopWork(){
         mLocationManage.stopLocation();
-        mSensorManage.release();
-        mObdManage.release();
+//        mSensorManage.release();
+//        mObdManage.release();
     }
 
     //获取高德定位未过滤位置数据
