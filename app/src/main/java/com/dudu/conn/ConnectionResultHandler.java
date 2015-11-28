@@ -1,6 +1,7 @@
 package com.dudu.conn;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.utils.LogUtils;
@@ -33,7 +34,6 @@ public class ConnectionResultHandler {
     public void onEventBackgroundThread(ConnectionEvent.ReceivedMessage event) {
         try {
             JSONObject jsonResult = new JSONObject(event.getResultJson());
-
             if (jsonResult.has("result") && jsonResult.has("resultCode") && jsonResult.has("resultDesc")) {
                 EventBus.getDefault().post(new ConnectionEvent.SendDatasResponse(jsonResult.getString("result"),
                         jsonResult.getString("resultCode"), jsonResult.getString("resultDesc")));
@@ -58,6 +58,13 @@ public class ConnectionResultHandler {
                         break;
                     case ConnMethod.METHOD_ACTIVATAIONSTATUS:
                         ActiveDevice.getInstance(mContext).handlerCheckActive(jsonResult);
+                    case ConnMethod.METHOD_GETFLOW:
+                        JSONObject getFlowJsonObject = new JSONObject(jsonResult.getString("result"));
+                        new TrafficMonitoring().getFlow(mContext, getFlowJsonObject.getString("remainingFlow"));
+                        break;
+                    case ConnMethod.METHOD_SYNCONFIGURATION:
+                        JSONObject synConfigurationJsonObject = new JSONObject(jsonResult.getString("result"));
+                        new TrafficMonitoring().synConfiguration(mContext, synConfigurationJsonObject.getString("trafficControl"), synConfigurationJsonObject.getString("monthMaxValue"), synConfigurationJsonObject.getString("freeAddValue"), synConfigurationJsonObject.getString("dailyMaxValue"), synConfigurationJsonObject.getString("upLimitMaxValue"), synConfigurationJsonObject.getString("potalAddress"), synConfigurationJsonObject.getString("downLimitMaxValue"), synConfigurationJsonObject.getString("lifeType"), synConfigurationJsonObject.getString("uploadLimit"), synConfigurationJsonObject.getString("freeAddTimes"), synConfigurationJsonObject.getString("remainingFlow"), synConfigurationJsonObject.getString("middleArlamValue"), synConfigurationJsonObject.getString("highArlamValue"), synConfigurationJsonObject.getString("lowArlamValue"), synConfigurationJsonObject.getString("downloadLimit"), synConfigurationJsonObject.getString("freeArriveValue"), synConfigurationJsonObject.getString("portalVersion"));
                         break;
                 }
             }

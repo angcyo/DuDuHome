@@ -3,6 +3,8 @@ package com.dudu.conn;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.util.Log;
+
 import com.dudu.android.launcher.utils.DeviceIDUtil;
 import com.dudu.android.launcher.utils.Encrypt;
 import com.dudu.obd.FlamoutData;
@@ -126,6 +128,67 @@ public class SendMessage {
         flameoutData.setMethod(ConnMethod.METHOD_FLAMEOUTDATA);
         sendData(gson.toJson(flameoutData));
         sendGPSDatas(gpsDatas);
+        return conn.isAlive();
+    }
+
+    /**
+     * 发送流量监控数据
+     * @param usedFlow
+     * @param createTime
+     * @return
+     */
+    public boolean sendFlowDatas(float usedFlow,String createTime){
+
+        sendJson = new JSONObject();
+        try {
+            sendJson.put(METHOD, ConnMethod.METHOD_FLOW);
+            sendJson.put(OBEID, obeId);
+            sendJson.put("usedFlow", usedFlow);
+            sendJson.put("createTime", createTime);
+            sendJson.put(VERSION_CODE, versionCode);
+            sendData(sendJson.toString());
+            Log.i("MonitorService", sendJson.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return conn.isAlive();
+    }
+    /**
+     * 发送流量查询请求
+     *
+     * @return
+     */
+    public boolean getFlow(){
+
+        sendJson = new JSONObject();
+        try {
+            sendJson.put(METHOD, ConnMethod.METHOD_GETFLOW);
+            sendJson.put(OBEID, obeId);
+            sendJson.put(VERSION_CODE, versionCode);
+            sendData(sendJson.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return conn.isAlive();
+    }
+    /**
+     * 发送流量策略同步请求
+     *
+     * @return
+     */
+    public boolean synConfiguration() {
+        sendJson = new JSONObject();
+        try {
+            sendJson.put(METHOD, ConnMethod.METHOD_SYNCONFIGURATION);
+            sendJson.put(OBEID, obeId);
+            sendJson.put(VERSION_CODE, versionCode);
+            sendData(sendJson.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         return conn.isAlive();
     }
 

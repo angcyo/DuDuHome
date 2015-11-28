@@ -44,9 +44,9 @@ public class DbHelper extends SQLiteOpenHelper {
             + FLOW_COLUMN_ID
             + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + FLOW_COLUMN_UPLOAD
-            + " Long,"
+            + " Float,"
             + FLOW_COLUMN_DOWNLOAD
-            + " Long,"
+            + " Float,"
             + FLOW_COLUMN_TYPE
             + " INTEGER," + FLOW_COLUMN_TIME + " DATETIME)";
 
@@ -96,9 +96,9 @@ public class DbHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void insertFlow(long UpFlow, long DownFlow, int WebType, Date date) {
+    public void insertFlow(float UpFlow, float DownFlow, int WebType, Date date) {
         db = getWritableDatabase();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:MM:ss",
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
                 Locale.getDefault());
         String dateString = format.format(date);
         String insertData = " INSERT INTO " + FLOW_TABLE_NAME + " ("
@@ -109,17 +109,17 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(insertData);
     }
 
-    public long calculateForMonth(int year, int Month, int netType) {
+    public float calculateForMonth(int year, int Month, int netType) {
         db = getWritableDatabase();
         Cursor c = fetchMonthFlow(year, Month, netType);
-        long sum;
-        long monthSum = 0;
+        float sum;
+        float monthSum = 0;
         if (c != null) {
             if (c.moveToFirst()) {
                 do {
                     int upColumn = c.getColumnIndex("monthUp");
                     int dwColumn = c.getColumnIndex("monthDw");
-                    sum = c.getLong(upColumn) + c.getLong(dwColumn);
+                    sum = c.getFloat(upColumn) + c.getFloat(dwColumn);
                     monthSum += sum;
                 } while (c.moveToNext());
             }
@@ -177,31 +177,31 @@ public class DbHelper extends SQLiteOpenHelper {
         return c;
     }
 
-    public long getProFlowUp(int netType, Date date) {
+    public float getProFlowUp(int netType, Date date) {
         db = getWritableDatabase();
         Cursor c = getRecord(netType, date);
-        long up = 0;
+        float up = 0;
         if (c.moveToNext()) {
-            up = c.getLong(c.getColumnIndex("upPro"));
+            up = c.getFloat(c.getColumnIndex("upPro"));
         }
 
         c.close();
         return up;
     }
 
-    public long getProFlowDw(int netType, Date date) {
+    public float getProFlowDw(int netType, Date date) {
         db = getWritableDatabase();
         Cursor c = getRecord(netType, date);
-        long up = 0;
+        float up = 0;
         if (c.moveToNext()) {
-            up = c.getLong(c.getColumnIndex("dwPro"));
+            up = c.getFloat(c.getColumnIndex("dwPro"));
         }
 
         c.close();
         return up;
     }
 
-    public void updateFlow(long down, long up, int webType, Date date) {
+    public void updateFlow(float down, float up, int webType, Date date) {
         db = getWritableDatabase();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",
                 Locale.getDefault());

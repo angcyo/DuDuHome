@@ -27,4 +27,10 @@ public class ConnMethod {
 
     public static final String METHOD_ACTIVATAIONSTATUS = "activationStatus";       //检查设备是否激活
 
+    public static final String METHOD_FLOW = "flow";                  // 上传流量数据
+
+    public static final String METHOD_GETFLOW = "getFlow";                  // 流量查询
+
+    public static final String METHOD_SYNCONFIGURATION = "synConfiguration";          // 流量策略配置同步
+
 }

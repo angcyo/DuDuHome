@@ -60,7 +60,7 @@ public class TasksCompletedView extends View {
         mStrokeWidth = typeArray.getDimension(R.styleable.TasksCompletedView_strokeWidth, 30);
         mCircleColor = typeArray.getColor(R.styleable.TasksCompletedView_circleColor, 0x00000000);
         mRingColor = typeArray.getColor(R.styleable.TasksCompletedView_ringColor, context.getResources().getColor(R.color.color_ed6512));
-        mRingColor2= typeArray.getColor(R.styleable.TasksCompletedView_ringColor, context.getResources().getColor(R.color.three_color));
+        mRingColor2 = typeArray.getColor(R.styleable.TasksCompletedView_ringColor, context.getResources().getColor(R.color.three_color));
 
         mRingRadius = mRadius + mStrokeWidth / 2;
     }
@@ -110,19 +110,17 @@ public class TasksCompletedView extends View {
         canvas.drawArc(oval, -90, 1 * 360, false, mRingPaint2);
 
         //根据进度形成的圆
-        if (mProgress > 0 ) {
+        if (mProgress >= 0) {
             RectF oval2 = new RectF();
             oval2.left = (mXCenter - mRingRadius);
             oval2.top = (mYCenter - mRingRadius);
             oval2.right = mRingRadius * 2 + (mXCenter - mRingRadius);
             oval2.bottom = mRingRadius * 2 + (mYCenter - mRingRadius);
-            canvas.drawArc(oval2, -90, ((float)mProgress / mTotalProgress) * 360, false, mRingPaint);
+            canvas.drawArc(oval2, -90, ((float) mProgress / mTotalProgress) * 360, false, mRingPaint);
             String txt = mProgress + "%";
             mTxtWidth = mTextPaint.measureText(txt, 0, txt.length());
             canvas.drawText(txt, mXCenter - mTxtWidth / 2, mYCenter + mTxtHeight / 4, mTextPaint);
         }
-
-
 
 
     }

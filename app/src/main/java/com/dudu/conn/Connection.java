@@ -28,7 +28,7 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 
 public class Connection extends Thread {
-//        private String host = "192.168.124.177";
+   //  private String host = "192.168.0.177";
     private String host = "119.29.65.127";
     private int port = 8888;
     private IoConnector connector = null;
@@ -214,11 +214,11 @@ public class Connection extends Thread {
             String msg = message.toString();
             try {
                 JSONObject jsonResult = new JSONObject(msg);
-                if(jsonResult.has("resultCode")&&jsonResult.get("resultCode").equals("200")){
+                if (jsonResult.has("resultCode") && jsonResult.get("resultCode").equals("200")) {
                     if (isHasData)
                         mPersistentStorage.deleteHeader();
                     log.debug("发送消息队列成功[{}]", mPersistentStorage.getCount());
-                }else{
+                } else {
                     log.debug("received message{}", msg);
                 }
             } catch (JSONException e) {
