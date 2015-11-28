@@ -6,6 +6,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 
+import com.dudu.android.launcher.bean.VideoEntity;
+import com.dudu.android.launcher.db.DbHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +30,7 @@ import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -60,6 +64,38 @@ public class FileUtils {
         return dir;
     }
 
+    public static void clearVideoFolder() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (FileUtils.isTFlashCardExists()) {
+                    try {
+                        LinkedList<VideoEntity> videos = DbHelper.getDbHelper().getAllVideos();
+
+                        File[] videoFiles = getVideoStorageDir().listFiles();
+                        for (File file : videoFiles) {
+                            if (!checkVideoExists(file.getName(), videos)) {
+                                file.delete();
+                            }
+                        }
+                    } catch (Exception e) {
+                        log.error(e.getMessage() + "");
+                    }
+                }
+            }
+        }).start();
+    }
+
+    private static boolean checkVideoExists(String videoName, LinkedList<VideoEntity> videos) {
+        for (VideoEntity video : videos) {
+            if (video.getName().equals(videoName)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static File getGsensorDataStorageDir() {
         File dir = new File(getStorageDir(), "/GsensorData");
         if (!dir.exists()) {
@@ -81,6 +117,16 @@ public class FileUtils {
         if (isTFlashCardExists()) {
             dir = new File(T_FLASH_PATH);
             return dir.getTotalSpace() * 0.8;
+        }
+
+        return 0;
+    }
+
+    public static double getTFlashCardFreeSpace() {
+        File dir;
+        if (isTFlashCardExists()) {
+            dir = new File(T_FLASH_PATH);
+            return dir.getFreeSpace();
         }
 
         return 0;

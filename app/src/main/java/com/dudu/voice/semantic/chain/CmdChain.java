@@ -1,6 +1,7 @@
 package com.dudu.voice.semantic.chain;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 
@@ -10,6 +11,7 @@ import com.dudu.android.launcher.bean.CmdSlots;
 import com.dudu.android.launcher.ui.activity.MainActivity;
 import com.dudu.android.launcher.ui.activity.OBDCheckingActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
+import com.dudu.android.launcher.ui.activity.video.VideoListActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
@@ -58,7 +60,8 @@ public class CmdChain extends SemanticChain {
 
         if (type.contains(Constants.NAVIGATION)) {
             return handleNavigationCmd(option);
-        } else if (type.contains(Constants.LUXIANG)) {
+        } else if (type.contains(Constants.LUXIANG) ||
+                type.contains(Constants.CAMERA)) {
             handleVideoCmd(option);
             return true;
         } else if (type.contains(Constants.JIE)) {
@@ -72,6 +75,12 @@ public class CmdChain extends SemanticChain {
             return true;
         } else if (type.contains(Constants.BACK)) {
             handleBackCmd();
+            return true;
+        } else if (type.contains(Constants.CAR_RECORD)) {
+            handleCarRecord(option);
+            return true;
+        } else if (type.contains(Constants.MAP)) {
+            handleMapCmd(option);
             return true;
         }
 
@@ -97,6 +106,7 @@ public class CmdChain extends SemanticChain {
         switch (option) {
             case Constants.OPEN:
             case Constants.START:
+            case Constants.KAIQI:
                 if (mApplication.getRecordService() != null) {
                     mApplication.getRecordService().startRecord();
                     mApplication.getRecordService().startRecordTimer();
@@ -155,6 +165,40 @@ public class CmdChain extends SemanticChain {
         FloatWindowUtil.removeFloatWindow();
         SemanticProcessor.getProcessor().clearSemanticStack();
         SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
+    }
+
+    private void handleCarRecord(String option) {
+        FloatWindowUtil.removeFloatWindow();
+        switch (option) {
+            case Constants.OPEN:
+            case Constants.START:
+            case Constants.KAIQI:
+                Intent intent = new Intent();
+                intent.setClass(mApplication, VideoListActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mApplication.startActivity(intent);
+                break;
+            case Constants.CLOSE:
+            case Constants.EXIT:
+                ActivitiesManager.getInstance().closeTargetActivity(
+                        VideoListActivity.class);
+                break;
+        }
+    }
+
+    private void handleMapCmd(String option) {
+        FloatWindowUtil.removeFloatWindow();
+        switch (option) {
+            case Constants.OPEN:
+            case Constants.START:
+            case Constants.KAIQI:
+
+                break;
+            case Constants.CLOSE:
+            case Constants.EXIT:
+
+                break;
+        }
     }
 
 }

@@ -33,20 +33,20 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
 
     public static final String ACTION_CONNECTIVITY_CHANGE = "android.net.conn.CONNECTIVITY_CHANGE";
 
-    private static final int SIM_SIGNAL_IMAGE_IDS[] = {
-            R.drawable.signal_0,
-            R.drawable.signal_1,
-            R.drawable.signal_2,
-            R.drawable.signal_3,
-            R.drawable.signal_4,
-            R.drawable.signal_5
-    };
+//    private static final int SIM_SIGNAL_IMAGE_IDS[] = {
+//            R.drawable.signal_0,
+//            R.drawable.signal_1,
+//            R.drawable.signal_2,
+//            R.drawable.signal_3,
+//            R.drawable.signal_4,
+//            R.drawable.signal_5
+//    };
 
     private ConnectivityChangeReceiver mConnectivityReceiver;
 
-    private TelephonyManager mPhoneManager;
-
-    private PhoneStateListener mPhoneStateListener;
+//    private TelephonyManager mPhoneManager;
+//
+//    private PhoneStateListener mPhoneStateListener;
 
     private TextView mSignalTextView;
 
@@ -67,30 +67,28 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
 
         initTitleBar();
 
-        mPhoneManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+//        mPhoneManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+//
+//        mPhoneStateListener = new PhoneStateListener() {
+//
+//            @Override
+//            public void onDataConnectionStateChanged(int state, int networkType) {
+//                super.onDataConnectionStateChanged(state, networkType);
+//            }
+//
+//            @Override
+//            public void onSignalStrengthsChanged(SignalStrength signalStrength) {
+//                super.onSignalStrengthsChanged(signalStrength);
+//                try {
+//
+//                } catch (Exception e) {
+//                    // ignore
+//                }
+//            }
+//        };
 
-        mPhoneStateListener = new PhoneStateListener() {
-
-            @Override
-            public void onDataConnectionStateChanged(int state, int networkType) {
-                super.onDataConnectionStateChanged(state, networkType);
-            }
-
-            @Override
-            public void onSignalStrengthsChanged(SignalStrength signalStrength) {
-                super.onSignalStrengthsChanged(signalStrength);
-                try {
-                    int level = (int) signalStrength.getClass().getMethod("getLevel").
-                            invoke(signalStrength);
-                    LogUtils.e(TAG, "signal level: " + level);
-                } catch (Exception e) {
-                    // ignore
-                }
-            }
-        };
-
-        mPhoneManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS |
-                PhoneStateListener.LISTEN_DATA_CONNECTION_STATE);
+//        mPhoneManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS |
+//                PhoneStateListener.LISTEN_DATA_CONNECTION_STATE);
 
         mConnectivityReceiver = new ConnectivityChangeReceiver();
         IntentFilter intentFilter = new IntentFilter();

@@ -59,10 +59,6 @@ public class VideoListActivity extends FragmentActivity {
 
     private int mCurrentPage = 0;
 
-//    private RelativeLayout mVideoContent;
-//
-//    private View mLoadingMoreView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,8 +70,6 @@ public class VideoListActivity extends FragmentActivity {
         mGridView = (GridView) findViewById(R.id.video_grid);
         mGridView.setOverScrollMode(View.OVER_SCROLL_NEVER);
         mEmptyView = findViewById(R.id.empty_view);
-//        mVideoContent = (RelativeLayout) findViewById(R.id.video_content);
-//        mLoadingMoreView = findViewById(R.id.loading_more);
 
         initDatas();
     }
@@ -132,20 +126,6 @@ public class VideoListActivity extends FragmentActivity {
             mVideoData.addAll(videos);
         }
     }
-
-//    private void onLoadingFinished() {
-//        mLoadingMoreView.setVisibility(View.GONE);
-//        FrameLayout.LayoutParams lps = (FrameLayout.LayoutParams)
-//                mVideoContent.getLayoutParams();
-//        lps.bottomMargin = 30;
-//    }
-//
-//    private void onLoadingStarted() {
-//        mLoadingMoreView.setVisibility(View.VISIBLE);
-//        FrameLayout.LayoutParams lps = (FrameLayout.LayoutParams)
-//                mVideoContent.getLayoutParams();
-//        lps.bottomMargin = 0;
-//    }
 
     @Override
     protected void onDestroy() {

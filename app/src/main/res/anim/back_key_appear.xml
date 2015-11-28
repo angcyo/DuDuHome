@@ -3,13 +3,13 @@
 <alpha
     android:fromAlpha="0"
     android:toAlpha="1.0"
-    android:duration="1000"
+    android:duration="600"
     ></alpha>
     <translate
         android:fromYDelta="0"
         android:fromXDelta="-100%"
         android:toYDelta="0"
         android:toXDelta="0"
-        android:duration="1000"
+        android:duration="600"
         ></translate>
 </set>

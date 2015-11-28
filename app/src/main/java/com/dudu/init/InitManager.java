@@ -6,25 +6,19 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.telephony.TelephonyManager;
-import android.text.TextUtils;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.service.FloatBackButtonService;
 import com.dudu.android.launcher.service.MonitorService;
 import com.dudu.android.launcher.service.NewMessageShowService;
-import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.DeviceIDUtil;
-import com.dudu.android.launcher.utils.SharedPreferencesUtil;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.navi.NavigationManager;
 import com.dudu.obd.OBDDataService;
 import com.dudu.voice.semantic.VoiceManager;
-import com.iflytek.cloud.SpeechConstant;
-import com.iflytek.cloud.SpeechUtility;
 
-import org.w3c.dom.Text;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.core.android.SystemPropertiesProxy;
 
@@ -37,7 +31,12 @@ public class InitManager {
 
     private Activity mActivity;
 
+    private Logger logger;
+
+    private int log_step = 0;
+
     private InitManager(Activity activity) {
+        logger = LoggerFactory.getLogger("init.manager");
         mActivity = activity;
     }
 
@@ -56,18 +55,6 @@ public class InitManager {
         }
 
         checkBTFT();
-    }
-
-    /**
-     * 初始化语音
-     */
-    private void initMSC() {
-        StringBuffer param = new StringBuffer();
-        param.append("appid=" + Constants.XUFEIID);
-        param.append(",");
-        param.append(SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC);
-        SpeechUtility.createUtility(mActivity, param.toString());
-        VoiceManager.getInstance().startWakeup();
     }
 
     /**
@@ -143,18 +130,25 @@ public class InitManager {
 
     private void initAfterBTFT() {
 
-        initMSC();
+        logger.debug("[init][{}]开启语音监听", log_step++);
+        VoiceManager.getInstance().startWakeup();
 
+        logger.debug("[init][{}]打开蓝牙", log_step++);
         openBlueTooth();
 
+        logger.debug("[init][{}]启动监听服务", log_step++);
         startMonitorService();
 
+        logger.debug("[init][{}]启动语音悬浮框服务", log_step++);
         startFloatMessageService();
 
+        logger.debug("[init][{}]启动OBD服务", log_step++);
         startOBDService();
 
+        logger.debug("[init][{}]检查sim卡状态", log_step++);
         Utils.checkSimCardState(mActivity);
 
+        logger.debug("[init][{}]打开热点", log_step++);
         WifiApAdmin.initWifiApState(mActivity);
 
         NavigationManager.getInstance(LauncherApplication.getContext()).initNaviManager();

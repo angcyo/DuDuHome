@@ -71,6 +71,7 @@ public class VoiceManager {
     private boolean mShowMessageWindow = true;
 
     private Logger log;
+
     private int log_step;
 
     private Runnable mRemoveFloatWindow = new Runnable() {
@@ -97,6 +98,12 @@ public class VoiceManager {
         log = LoggerFactory.getLogger("voice.manager");
         log_step = 0;
         log.debug("[voice][{}]new Instance", log_step++);
+
+        StringBuffer param = new StringBuffer();
+        param.append("appid=" + Constants.XUFEIID);
+        param.append(",");
+        param.append(SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC);
+        SpeechUtility.createUtility(mContext, param.toString());
 
         registerWakeuper();
 

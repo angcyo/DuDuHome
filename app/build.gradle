@@ -49,7 +49,7 @@ android {
 
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(dir: 'libs', include: ['*.jar'], exclude: 'Android_Location_V1.3.3.jar')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.github.tony19:logback-android-core:1.1.1-4'
@@ -66,5 +66,4 @@ dependencies {
     compile 'com.github.PhilJay:MPAndroidChart:v2.1.6'
     compile project(':navi')
     compile project(':monitor')
-
 }

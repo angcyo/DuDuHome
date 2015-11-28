@@ -9,9 +9,13 @@ public class Constants {
 	public static final String NAVIGATION = "导航";
 	public static final String SPEECH = "语音";
 	public static final String LUXIANG = "录像";
+	public static final String CAMERA = "摄像头";
+    public static final String CAR_RECORD = "行车记录仪";
+    public static final String MAP = "地图";
 
 	public static final String EXIT = "退出";
 	public static final String OPEN = "打开";
+    public static final String KAIQI = "开启";
 	public static final String START = "开始";
 	public static final String CLOSE = "关闭";
 	public static final String END = "结束";

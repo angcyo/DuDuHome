@@ -32,10 +32,12 @@ public class WifiActivity extends BaseTitlebarActivity {
 
     @Override
     public void initDatas() {
+
         mTaskCompleteView.setProgress(50);
     }
 
     public void onBackPressed(View v) {
+
         finish();
     }
 

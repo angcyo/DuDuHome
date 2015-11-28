@@ -23,8 +23,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 
@@ -49,11 +47,12 @@ import com.dudu.conn.ConnectionEvent;
 import com.dudu.event.DeviceEvent;
 import com.dudu.http.MultipartRequest;
 import com.dudu.http.MultipartRequestParams;
-
-import java.io.ByteArrayInputStream;
-
 import com.dudu.obd.BleOBD;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -94,7 +93,8 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
     private ImageButton localVideo;
 
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss", Locale.getDefault());
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss",
+            Locale.getDefault());
 
     private String videoName = "";
 
@@ -118,6 +118,8 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
     private boolean mCarDriving = false;
 
+    private Logger logger;
+
     //Back键定时消失的handler
     private Handler mBackDisappearHandler = new Handler() {
         @Override
@@ -135,14 +137,16 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     public void onCreate() {
         super.onCreate();
 
+        logger = LoggerFactory.getLogger("video.service");
+
         EventBus.getDefault().register(this);
 
         videoPath = FileUtils.getVideoStorageDir().getAbsolutePath();
+        logger.debug("录像存储的路径: " + videoPath);
 
         if (FileUtils.isTFlashCardExists()) {
             mVideoCacheMaxSize = Float.parseFloat(FileUtils.fileByte2Mb(FileUtils.getTFlashCardSpace()));
-        } else {
-            ToastUtils.showToast(R.string.video_sdcard_removed_alert);
+            logger.debug("录像存储最大可用空间: " + mVideoCacheMaxSize);
         }
 
         windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
@@ -264,10 +268,14 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
         releaseCamera();
 
-        insertVideo();
+        insertVideo(videoName);
     }
 
     public void startRecordTimer() {
+        if (isRecording) {
+            return;
+        }
+
         timer = new Timer();
 
         timerTask = new TimerTask() {
@@ -338,6 +346,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     }
 
     private boolean prepareMediaRecorder() {
+        logger.debug("开始初始化录像: prepareMediaRecorder");
         camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
         Camera.Parameters p = camera.getParameters();
         p.setPreviewFormat(PixelFormat.YCbCr_420_SP);
@@ -353,7 +362,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
                     if (mr != null)
                         mr.reset();
                 } catch (Exception e) {
-                    LogUtils.e(TAG, "stopRecord: " + e.getMessage());
+                    logger.error(e.getMessage() + "");
                 }
             }
         });
@@ -378,8 +387,10 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         videoName = dateFormat.format(new Date()) + ".mp4";
 
         if (FileUtils.isTFlashCardExists() && mCarDriving) {
+            logger.debug("用户正在开车并且TFlashCard存在，录像正常...");
             mediaRecorder.setOutputFile(videoPath + File.separator + videoName);
         } else {
+            logger.debug("开启相机预览模式...");
             mediaRecorder.setOutputFile(videoPath + File.separator + "temp.mp4");
         }
 
@@ -420,7 +431,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         }
     }
 
-    private void insertVideo() {
+    private void insertVideo(final String videoName) {
         new Thread(new Runnable() {
 
             @Override
@@ -429,45 +440,68 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
                     return;
                 }
 
-                File file = new File(videoPath, videoName);
-                if (file.exists() && file.length() > 0) {
-                    String length = FileUtils.fileByte2Mb(file.length());
-                    float totalSize = dbHelper.getTotalSize() + Float.parseFloat(length);
-                    if (totalSize >= mVideoCacheMaxSize) {
-                        if (dbHelper.isAllVideoLocked()) {
-                            handler.post(new Runnable() {
+                checkTFlashCardSpace();
 
-                                @Override
-                                public void run() {
-                                    ToastUtils.showToast(R.string.video_cache_space_full_alert);
-                                }
-                            });
-
-                            file.delete();
-                            return;
-                        }
-
-                        do {
-                            dbHelper.deleteOldestVideo();
-                            totalSize = dbHelper.getTotalSize() + Float.parseFloat(length);
-                        } while (totalSize >= mVideoCacheMaxSize);
+                try {
+                    File file = new File(videoPath, videoName);
+                    if (file.exists() && file.length() > 0) {
+                        insertVideo(file);
                     }
+                } catch (Exception e) {
 
-                    VideoEntity video = new VideoEntity();
-                    video.setName(file.getName());
-                    video.setFile(file);
-                    video.setPath(videoPath);
-                    video.setSize(length);
-                    dbHelper.insertVideo(video);
                 }
             }
         }).start();
+    }
+
+    private void checkTFlashCardSpace() {
+        double totalSpace = FileUtils.getTFlashCardSpace();
+        double freeSpace = FileUtils.getTFlashCardFreeSpace();
+        if (freeSpace < totalSpace * 0.2) {
+            logger.debug("剩余存储空间小于TFlashCard空间20%，开始清理空间...");
+            FileUtils.clearVideoFolder();
+        }
+    }
+
+    private void insertVideo(final File file) throws Exception {
+        String length = FileUtils.fileByte2Mb(file.length());
+
+        float size = Float.parseFloat(length);
+        logger.debug("视频大小: {}M", size);
+
+        while (mVideoCacheMaxSize <= dbHelper.getTotalSize() + size) {
+            logger.debug("录像存储空间不够，准备释放空间...");
+            if (dbHelper.isAllVideoLocked()) {
+                handler.post(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        ToastUtils.showToast(R.string.video_cache_space_full_alert);
+                    }
+                });
+
+                file.delete();
+                return;
+            }
+
+            logger.debug("删除时间最久的视频...");
+            dbHelper.deleteOldestVideo();
+        }
+
+        logger.debug("将视频信息插入数据库...");
+        VideoEntity video = new VideoEntity();
+        video.setName(file.getName());
+        video.setFile(file);
+        video.setPath(videoPath);
+        video.setSize(length);
+        dbHelper.insertVideo(video);
     }
 
     class MediaPrepareTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... params) {
+            logger.debug("开启录像初始化线程: MediaPrepareTask");
             if (prepareMediaRecorder()) {
 
                 mediaRecorder.start();
@@ -501,6 +535,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
                 ToastUtils.showToast(R.string.video_sdcard_removed_alert);
             }
         }
+
     }
 
     public void onEventBackgroundThread(final ConnectionEvent.TakePhoto takePhoto) {
@@ -539,21 +574,23 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
     public void onEventBackgroundThread(BleOBD.CarStatus event) {
         if (event.getCarStatus() == BleOBD.CarStatus.CAR_OFFLINE) {
-            mCarDriving = false;
-            stopRecord();
-            stopRecordTimer();
+              logger.debug("接收到熄火的消息...");
+//            mCarDriving = false;
+//            stopRecord();
+//            stopRecordTimer();
         } else if (event.getCarStatus() == BleOBD.CarStatus.CAR_ONLINE) {
-            mCarDriving = true;
-            startRecord();
-            startRecordTimer();
+            logger.debug("接收到点火的消息...");
+//            mCarDriving = true;
+//            startRecord();
+//            startRecordTimer();
         }
     }
 
     private void toggleAnimation() {
         ViewAnimation.startAnimation(backButton, backButton.getVisibility() == View.VISIBLE ?
-                R.anim.back_key_disappear : R.anim.back_key_appear,this);
+                R.anim.back_key_disappear : R.anim.back_key_appear, this);
         ViewAnimation.startAnimation(localVideo, localVideo.getVisibility() == View.VISIBLE ?
-                R.anim.camera_image_disappear : R.anim.camera_image_apear,this);
+                R.anim.camera_image_disappear : R.anim.camera_image_apear, this);
     }
 
 }

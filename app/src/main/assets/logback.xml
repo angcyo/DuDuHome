@@ -108,6 +108,18 @@
         </rollingPolicy>
     </appender>
 
+    <appender name="FILE_VIDEO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/log_video.today.txt</file>
+        <encoder>
+            <pattern>%date [%thread] %-5level %logger{36} [%file:%line] - %msg%n</pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/log_video.%d.txt</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
     <logger name="init" level="DEBUG">
         <appender-ref ref="FILE_INIT"/>
     </logger>
@@ -130,6 +142,10 @@
 
     <logger name="voice" level="DEBUG">
         <appender-ref ref="FILE_VOICE"/>
+    </logger>
+
+    <logger name="video" level="DEBUG">
+        <appender-ref ref="FILE_VIDEO"/>
     </logger>
 
     <logger name="cache.persist" level="DEBUG">
