@@ -120,9 +120,16 @@ public class WifiApAdmin {
         return true;
     }
 
-    public static void startPortal(Context context) {
+    public static void startPortal(final Context context) {
         log_init.debug("打开Portal服务");
         SystemPropertiesProxy.getInstance().set(context, "persist.sys.nodog", "start");
+        rx.Observable.timer(10, TimeUnit.SECONDS)
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(final Long aLong) {
+                        //TODO 检测protal是否启动成功
+                    }
+                });
     }
 
     public static boolean startWifiAp(Context context) {
@@ -132,23 +139,31 @@ public class WifiApAdmin {
         return startWifiAp(context, ssid, password, null);
     }
 
-    public static boolean startWifiAp(Context context, String ssid,
+    public static boolean startWifiAp(final Context context, String ssid,
                                       String password, WifiSettingStateCallback callback) {
         mWifiManager = (WifiManager) context
                 .getSystemService(Context.WIFI_SERVICE);
 
-        if (mWifiManager.isWifiEnabled()) {
-            mWifiManager.setWifiEnabled(false);
-        }
-
         if (!startWifiAp(ssid, password)) {
+            log_init.error("打开热点调用失败，退出");
             return false;
         }
 
-        log_init.debug("打开热点成功，保存状态");
-        SharedPreferencesUtil.putBooleanValue(context, KEY_WIFI_AP_STATE, true);
+        log_init.debug("准备打开Portal");
+        rx.Observable.timer(7, TimeUnit.SECONDS)
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(final Long aLong) {
+                        if (isWifiApEnabled(context)) {
+                            log_init.debug("打开热点成功，保存状态");
+                            SharedPreferencesUtil.putBooleanValue(context, KEY_WIFI_AP_STATE, true);
 
-        startPortal(context);
+                            startPortal(context);
+                        } else {
+                            log_init.error("打开热点失败，Portal也没启动，退出");
+                        }
+                    }
+                });
 
         if (callback != null) {
             callback.onWifiStateChanged(true);
