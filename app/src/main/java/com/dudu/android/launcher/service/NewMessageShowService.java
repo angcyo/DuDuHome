@@ -192,6 +192,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
     @Override
     public void showStrategy() {
         pageIndex = 0;
+        isShowAddress = true;
         if (!isShowWindow) {
             if (windowManager != null && floatWindowLayout != null && windowParams != null) {
                 windowManager.addView(floatWindowLayout, windowParams);
@@ -311,7 +312,6 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
                 pageIndex = page-1;
                 break;
         }
-        Log.d("lxh","choosePage ："+ pageIndex);
         addressList.setSelection(pageIndex * Constants.ADDRESS_VIEW_COUNT);
     }
 

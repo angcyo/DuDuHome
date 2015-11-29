@@ -15,13 +15,18 @@ public class NaviEvent {
 
     public static class NaviVoiceBroadcast{
         private String naviVoice;
-
-        public NaviVoiceBroadcast(String naviVoice){
+        private boolean isShow;
+        public NaviVoiceBroadcast(String naviVoice,boolean isShow){
             this.naviVoice = naviVoice;
+            this.isShow = isShow;
         }
 
         public String getNaviVoice() {
             return naviVoice;
+        }
+
+        public boolean isShow() {
+            return isShow;
         }
     }
 

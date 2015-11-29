@@ -39,6 +39,17 @@ public class NavigationManager {
 
     private CommonAddressType commonAddressType;
 
+    private boolean isNavigatining = false;
+
+    public boolean isNavigatining() {
+        return isNavigatining;
+    }
+
+    public void setIsNavigatining(boolean isNavigatining) {
+
+        this.isNavigatining = isNavigatining;
+    }
+
     public CommonAddressType getCommonAddressType() {
         return commonAddressType;
     }
@@ -100,6 +111,7 @@ public class NavigationManager {
 
     public void existNavigation() {
         setNavigationType(NavigationType.DEFAULT);
+        setIsNavigatining(false);
         NaviProcess.getInstance(mContext).destoryAmapNavi();
     }
 

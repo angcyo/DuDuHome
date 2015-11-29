@@ -15,7 +15,7 @@ public class MapChoiseDefalutChain extends  DefaultChain  {
 
     @Override
     public boolean doSemantic(String json) {
-        mVoiceManager.startSpeaking(Constants.UNDERSTAND_CHOISE_INPUT_TIPS, SemanticConstants.TTS_START_UNDERSTANDING);
+        mVoiceManager.startSpeaking(Constants.UNDERSTAND_CHOISE_INPUT_TIPS, SemanticConstants.TTS_START_UNDERSTANDING,false);
         return true;
     }
 

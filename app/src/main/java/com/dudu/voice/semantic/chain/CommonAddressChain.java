@@ -8,6 +8,7 @@ import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.utils.CommonAddressUtil;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
+import com.dudu.map.NavigationClerk;
 import com.dudu.navi.NavigationManager;
 import com.dudu.navi.entity.Navigation;
 import com.dudu.navi.entity.Point;
@@ -78,7 +79,7 @@ public class CommonAddressChain extends SemanticChain{
             if(!TextUtils.isEmpty(address)&&!checkPoint(location)){
                 FloatWindowUtil.removeFloatWindow();
                 Navigation navigation = new Navigation(new Point(location[0],location[1]), NaviDriveMode.SPEEDFIRST, NavigationType.NAVIGATION);
-                NavigationManager.getInstance(LauncherApplication.getContext()).startCalculate(navigation);
+                NavigationClerk.getInstance().startNavigation(navigation);
 
             }else{
                 String playText = "您还没有常用的" + addressType + "地址，是否添加？";

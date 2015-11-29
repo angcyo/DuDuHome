@@ -71,7 +71,6 @@ AMapNaviViewListener{
 		mAmapAMapNaviView.setAMapNaviViewListener(this);
 		setAmapNaviViewOptions();
 		back_button = (Button) findViewById(R.id.back_button);
-		NavigationManager.getInstance(this).setNavigationType(NavigationType.BACKNAVI);
 		EventBus.getDefault().unregister(this);
 		EventBus.getDefault().register(this);
 
@@ -275,7 +274,8 @@ AMapNaviViewListener{
 	public void onResume() {
 		super.onResume();
 		setAmapNaviViewOptions();
-
+		NavigationManager.getInstance(this).setIsNavigatining(true);
+		NavigationManager.getInstance(this).setNavigationType(NavigationType.BACKNAVI);
 		Bundle bundle = getIntent().getExtras();
 		processBundle(bundle);
 		if(bundle!=null){
@@ -316,7 +316,8 @@ AMapNaviViewListener{
 
 	@Override
 	public void onDestroy() {
-
+		NavigationManager.getInstance(this).existNavigation();
+		VoiceManager.getInstance().startSpeaking("导航结束", SemanticConstants.TTS_DO_NOTHING, false);
 		mAmapAMapNaviView.onDestroy();
 		super.onDestroy();
 	}

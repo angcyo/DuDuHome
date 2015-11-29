@@ -82,19 +82,10 @@ public class NavigationClerk {
 
         @Override
         public void run() {
-
-            switch (navigationManager.getNavigationType()) {
-                case NAVIGATION:
-                    intentClass = NaviCustomActivity.class;
-                    break;
-                case BACKNAVI:
-                    intentClass = NaviBackActivity.class;
-                    break;
-                case DEFAULT:
-                    return;
-            }
             FloatWindowUtil.removeFloatWindow();
-            intentActivity();
+            VoiceManager.getInstance().stopUnderstanding();
+            if(navigationManager.getNavigationType()!=NavigationType.DEFAULT)
+                navigationManager.setIsNavigatining(true);
         }
     };
 
@@ -135,7 +126,7 @@ public class NavigationClerk {
 
         switch (NaviUtils.getOpenMode(mContext)) {
             case INSIDE:
-                return (openType==OPEN_MAP)?openMapActivity():openActivity(openType);
+                return (openType == OPEN_MAP) ? openMapActivity() : openActivity(openType);
             case OUTSIDE:
                 EventBus.getDefault().post(NaviEvent.FloatButtonEvent.SHOW);
                 Utils.startThirdPartyApp(ActivitiesManager.getInstance().getTopActivity(), "com.autonavi.minimap");
@@ -175,11 +166,12 @@ public class NavigationClerk {
                 intentClass = LocationMapActivity.class;
                 break;
         }
+
         intentActivity();
         return true;
     }
 
-    private boolean isSearching(){
+    private boolean isSearching() {
         SearchType type = navigationManager.getSearchType();
         if (type == SearchType.OPEN_NAVI || type == SearchType.SEARCH_DEFAULT) {
             navigationManager.setSearchType(SearchType.OPEN_NAVI);
@@ -189,10 +181,12 @@ public class NavigationClerk {
             return false;
         }
     }
-    private boolean isMapActivity(){
+
+    private boolean isMapActivity() {
         topActivity = ActivitiesManager.getInstance().getTopActivity();
-        return (topActivity !=null && topActivity instanceof LocationMapActivity);
+        return (topActivity != null && topActivity instanceof LocationMapActivity);
     }
+
     public void existNavi() {
         navigationManager.existNavigation();
         ActivitiesManager.getInstance().closeTargetActivity(
@@ -205,7 +199,7 @@ public class NavigationClerk {
 
 
     public void searchControl(String semantic, String service, String keyword, SearchType type) {
-        if (navigationManager.getSearchType()==SearchType.SEARCH_COMMONADDRESS)
+        if (navigationManager.getSearchType() == SearchType.SEARCH_COMMONADDRESS)
             type = SearchType.SEARCH_COMMONPLACE;
         navigationManager.setSearchType(type);
         navigationManager.setKeyword(null);
@@ -213,16 +207,16 @@ public class NavigationClerk {
             navigationManager.parseKeyword(semantic, service);
         else
             navigationManager.setKeyword(keyword);
-
-        if(!isMapActivity()){
-            intentClass = LocationMapActivity.class;
-            intentActivity();
-            return;
-        }
         doSearch();
     }
 
     public void doSearch() {
+        if (!navigationManager.isNavigatining() && !isMapActivity()) {
+            intentClass = LocationMapActivity.class;
+            intentActivity();
+            return;
+        }
+        isNaviActivity();
         String msg;
         switch (navigationManager.getSearchType()) {
             case SEARCH_DEFAULT:
@@ -249,20 +243,47 @@ public class NavigationClerk {
         navigationManager.search();
     }
 
-    public void onEventMainThread(NaviEvent.NaviVoiceBroadcast event) {
-        VoiceManager.getInstance().clearMisUnderstandCount();
-        removeCallback();
-        if (navigationManager.getNavigationType() == NavigationType.DEFAULT) {
-            VoiceManager.getInstance().stopUnderstanding();
-            VoiceManager.getInstance().startSpeaking(event.getNaviVoice(), SemanticConstants.TTS_START_UNDERSTANDING, true);
-        } else {
-            if (FloatWindowUtil.IsWindowShow()) {
-                VoiceManager.getInstance().startSpeaking(event.getNaviVoice(), SemanticConstants.TTS_START_UNDERSTANDING, false);
-            } else {
-                VoiceManager.getInstance().stopUnderstanding();
-                VoiceManager.getInstance().startSpeaking(event.getNaviVoice(), SemanticConstants.TTS_DO_NOTHING, false);
+    private boolean isNaviActivity(){
+        topActivity = ActivitiesManager.getInstance().getTopActivity();
+        if(navigationManager.isNavigatining()){
+            switch (navigationManager.getNavigationType()){
+                case NAVIGATION:
+                    if(!(topActivity instanceof NaviCustomActivity)){
+                        intentClass = NaviCustomActivity.class;
+                    }
+                    intentActivity();
+                    return true;
+                case BACKNAVI:
+                    if(!(topActivity instanceof NaviBackActivity)){
+                        intentClass = NaviBackActivity.class;
+                    }
+                    intentActivity();
+                    return true;
+                case DEFAULT:
+                    return false;
             }
         }
+        return false;
+    }
+
+    public void onEventMainThread(NaviEvent.NaviVoiceBroadcast event) {
+        VoiceManager.getInstance().clearMisUnderstandCount();
+        VoiceManager.getInstance().stopUnderstanding();
+        removeCallback();
+        if (event.isShow()) {
+            VoiceManager.getInstance().startSpeaking(event.getNaviVoice(), SemanticConstants.TTS_START_UNDERSTANDING, true);
+            removeWindow(REMOVEWINDOW_TIME);
+        } else {
+            if (navigationManager.isNavigatining()) {
+                if (FloatWindowUtil.IsWindowShow()) {
+                    VoiceManager.getInstance().startSpeaking(event.getNaviVoice(), SemanticConstants.TTS_START_UNDERSTANDING, false);
+                } else {
+                    VoiceManager.getInstance().startSpeaking(event.getNaviVoice(), SemanticConstants.TTS_DO_NOTHING, false);
+                }
+            }
+        }
+
+
     }
 
     public void onEventMainThread(NaviEvent.SearchResult event) {
@@ -270,6 +291,8 @@ public class NavigationClerk {
         navigationManager.getLog().debug("----SearchResult: {}", navigationManager.getSearchType());
         if (event == NaviEvent.SearchResult.SUCCESS) {
             handlerPoiResult();
+        } else {
+            navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
         }
     }
 
@@ -291,27 +314,39 @@ public class NavigationClerk {
 
     public void onEventMainThread(NavigationType event) {
         removeCallback();
-        if (navigationManager.getNavigationType() == NavigationType.NAVIGATION)
+        disMissProgressDialog();
+        if (navigationManager.isNavigatining())
             return;
         switch (event) {
             case NAVIGATION:
+                navigationManager.setNavigationType(NavigationType.NAVIGATION);
                 intentClass = NaviCustomActivity.class;
                 break;
             case BACKNAVI:
+                navigationManager.setNavigationType(NavigationType.BACKNAVI);
                 intentClass = NaviBackActivity.class;
                 break;
             case CALCULATEERROR:
-                disMissProgressDialog();
+                navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
                 VoiceManager.getInstance().startSpeaking("路径规划出错，请检查网络", SemanticConstants.TTS_DO_NOTHING, true);
-                toNaivActivity(REMOVEWINDOW_TIME);
+                removeWindow(REMOVEWINDOW_TIME);
                 return;
+            case NAVIGATION_END:
+                navigationManager.setNavigationType(NavigationType.DEFAULT);
+                intentClass = LocationMapActivity.class;
+                ActivitiesManager.getInstance().closeTargetActivity(NaviCustomActivity.class);
+                ActivitiesManager.getInstance().closeTargetActivity(NaviBackActivity.class);
+                break;
         }
+        navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
         intentActivity();
 
     }
 
     public void handlerPoiResult() {
-
+        removeCallback();
+        endPoint = null;
+        choosepoiResult = null;
         switch (navigationManager.getSearchType()) {
             case SEARCH_CUR_LOCATION:
                 mhandler.postDelayed(new Runnable() {
@@ -321,18 +356,24 @@ public class NavigationClerk {
                                 SemanticConstants.TTS_START_UNDERSTANDING, true);
                     }
                 }, 200);
+                removeWindow(REMOVEWINDOW_TIME);
                 break;
             case SEARCH_PLACE_LOCATION:
                 String playText = "您好，" + navigationManager.getKeyword() + "的位置为："
                         + navigationManager.getPoiResultList().get(0).getAddressDetial();
                 VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_START_UNDERSTANDING, true);
+                removeWindow(REMOVEWINDOW_TIME);
                 return;
             case SEARCH_NEAREST:
+                SemanticProcessor.getProcessor().switchSemanticType(
+                        SemanticType.MAP_CHOISE);
+                endPoint = new Point(navigationManager.getPoiResultList().get(0).getLatitude(),
+                        navigationManager.getPoiResultList().get(0).getLongitude());
                 showStrategyMethod(0);
                 return;
             default:
                 SemanticProcessor.getProcessor().switchSemanticType(
-                    SemanticType.MAP_CHOISE);
+                        SemanticType.MAP_CHOISE);
                 isShowAddress = true;
                 chooseStep = 1;
                 if (isManual) {
@@ -344,7 +385,7 @@ public class NavigationClerk {
                 break;
 
         }
-
+        navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
     }
 
     private void initWaitingDialog(String message) {
@@ -376,7 +417,7 @@ public class NavigationClerk {
                 case SEARCH_CUR_LOCATION:
                     return;
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
@@ -414,7 +455,7 @@ public class NavigationClerk {
             endPoint = new Point(choosepoiResult.getLatitude(), choosepoiResult.getLongitude());
             if (choosepoiResult != null) {
 
-                if (navigationManager.getSearchType()==SearchType.SEARCH_COMMONPLACE) {
+                if (navigationManager.getSearchType() == SearchType.SEARCH_COMMONPLACE) {
                     addCommonAddress(choosepoiResult);
                     return;
                 }
@@ -452,7 +493,7 @@ public class NavigationClerk {
         VoiceManager.getInstance().stopUnderstanding();
         VoiceManager.getInstance().startSpeaking("添加" + choosePoint.getAddressTitle() + "为" + addType + "地址成功！",
                 SemanticConstants.TTS_DO_NOTHING, true);
-        navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
+        removeWindow(REMOVEWINDOW_TIME);
 
     }
 
@@ -460,6 +501,7 @@ public class NavigationClerk {
      * 语音选择路线优先策略
      */
     public void showStrategyMethod(int position) {
+        isShowAddress = true;
         if (!isAddressManual && position > navigationManager.getPoiResultList().size()) {
             VoiceManager.getInstance().stopUnderstanding();
             String playText = "选择错误，请重新选择";
@@ -467,9 +509,9 @@ public class NavigationClerk {
                     SemanticConstants.TTS_START_UNDERSTANDING, false);
             return;
         }
+        chooseStep = 2;
         VoiceManager.getInstance().stopUnderstanding();
         VoiceManager.getInstance().clearMisUnderstandCount();
-        chooseStep = 2;
         String playText = "请选择路线优先策略。";
         VoiceManager.getInstance().startSpeaking(playText,
                 SemanticConstants.TTS_START_UNDERSTANDING, false);
@@ -482,7 +524,6 @@ public class NavigationClerk {
                             int position, long arg3) {
                         startNavigation(new Navigation(endPoint, navigationManager.getDriveModeList().get(position),
                                 NavigationType.NAVIGATION));
-
                     }
                 });
 
@@ -537,7 +578,6 @@ public class NavigationClerk {
         isShowAddress = false;
         isManual = false;
         SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
-        navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
         FloatWindowUtil.removeFloatWindow();
         VoiceManager.getInstance().stopUnderstanding();
         navigationManager.startCalculate(navigation);
@@ -550,18 +590,22 @@ public class NavigationClerk {
         }
     }
 
-    public void toNaivActivity(int t) {
-        mhandler.postDelayed(removeWindowRunnable, REMOVEWINDOW_TIME);
+    public void removeWindow(int t) {
+        if (navigationManager.isNavigatining())
+            mhandler.postDelayed(removeWindowRunnable, REMOVEWINDOW_TIME);
     }
 
-    private void intentActivity(){
+    private void intentActivity() {
         topActivity = ActivitiesManager.getInstance().getTopActivity();
-        Intent standIntent = new Intent(topActivity, intentClass);
+        Intent standIntent = new Intent(mContext, intentClass);
         standIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                 | Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(standIntent);
-        if(isMapActivity()){
+        if (isMapActivity()) {
             topActivity.finish();
+        }
+        if(LauncherApplication.getContext().getRecordService()!=null){
+            LauncherApplication.getContext().getRecordService().updatePreviewSize(1, 1);
         }
     }
 }

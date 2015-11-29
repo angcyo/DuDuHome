@@ -8,5 +8,6 @@ public enum NavigationType {
     NAVIGATION,
     BACKNAVI,
     DEFAULT,
-    CALCULATEERROR
+    CALCULATEERROR,
+    NAVIGATION_END
 }

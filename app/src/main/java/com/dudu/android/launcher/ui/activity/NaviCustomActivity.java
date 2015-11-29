@@ -1,6 +1,7 @@
 package com.dudu.android.launcher.ui.activity;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -104,12 +105,8 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
             @Override
             public void onClick(View v) {
                 try {
-                    Activity activity = ActivitiesManager.getInstance().getSecondActivity();
-                    if (activity != null) {
-                        startActivity(new Intent(NaviCustomActivity.this, activity.getClass()));
-                    } else {
-                        startActivity(new Intent(NaviCustomActivity.this, MainActivity.class));
-                    }
+                    startActivity(new Intent(ActivitiesManager.getInstance().getTopActivity(),
+                            MainActivity.class));
                 } catch (Exception e) {
                     LogUtils.e(TAG, e.getMessage());
                     startActivity(new Intent(NaviCustomActivity.this, MainActivity.class));
@@ -306,6 +303,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         super.onResume();
         setAmapNaviViewOptions();
         NavigationManager.getInstance(this).setNavigationType(NavigationType.NAVIGATION);
+        NavigationManager.getInstance(this).setIsNavigatining(true);
         AMapNavi.getInstance(this).startGPS();
         AMapNavi.getInstance(this).startNavi(AMapNavi.GPSNaviMode);
         Bundle bundle = getIntent().getExtras();
@@ -349,6 +347,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         NavigationManager.getInstance(this).existNavigation();
+        VoiceManager.getInstance().startSpeaking("导航结束",SemanticConstants.TTS_DO_NOTHING,false);
         try {
             mAmapAMapNaviView.onDestroy();
         } catch (Exception e) {
