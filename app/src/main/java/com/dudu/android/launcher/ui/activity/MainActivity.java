@@ -34,6 +34,7 @@ import com.dudu.android.launcher.utils.DialogUtils;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
+import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.event.BleStateChange;
 import com.dudu.event.DeviceEvent;
 import com.dudu.init.InitManager;
@@ -349,6 +350,10 @@ public class MainActivity extends BaseTitlebarActivity implements
             //关闭语音
             VoiceManager.getInstance().stopUnderstanding();
             VoiceManager.getInstance().stopWakeup();
+            //关闭Portal
+            com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.nodog", "stop");
+            //关闭热点
+            WifiApAdmin.closeWifiAp(mActivity);
             PackageManager packageManager = MainActivity.this.getPackageManager();
             startActivity(new Intent(packageManager.getLaunchIntentForPackage("com.qualcomm.factory")));
         }

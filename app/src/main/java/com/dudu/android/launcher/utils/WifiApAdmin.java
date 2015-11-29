@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 
+import com.dudu.android.hideapi.SystemPropertiesProxy;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,6 +89,7 @@ public class WifiApAdmin {
             //如果开机已经打开ap，则不再打开
             if (isWifiApEnabled(context)) {
                 log_init.debug("热点已经打开");
+                startPortal(context);
                 return true;
             }
         } else {
@@ -117,6 +120,11 @@ public class WifiApAdmin {
         return true;
     }
 
+    public static void startPortal(Context context) {
+        log_init.debug("打开Portal服务");
+        SystemPropertiesProxy.getInstance().set(context, "persist.sys.nodog", "start");
+    }
+
     public static boolean startWifiAp(Context context) {
         log_init.debug("读取配置，然后打开热点");
         String ssid = SharedPreferencesUtil.getStringValue(context, KEY_WIFI_AP_SSID, DEFAULT_SSID);
@@ -139,6 +147,8 @@ public class WifiApAdmin {
 
         log_init.debug("打开热点成功，保存状态");
         SharedPreferencesUtil.putBooleanValue(context, KEY_WIFI_AP_STATE, true);
+
+        startPortal(context);
 
         if (callback != null) {
             callback.onWifiStateChanged(true);
