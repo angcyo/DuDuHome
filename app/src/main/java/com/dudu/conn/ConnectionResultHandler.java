@@ -5,6 +5,8 @@ import android.content.Context;
 import com.dudu.android.launcher.LauncherApplication;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.greenrobot.event.EventBus;
 
@@ -15,8 +17,11 @@ public class ConnectionResultHandler {
 
     private Context mContext;
 
+    private Logger log;
+
     public ConnectionResultHandler(){
         mContext = LauncherApplication.getContext().getApplicationContext();
+        log = LoggerFactory.getLogger("net.conn.mina");
     }
 
     public void init(){
@@ -33,10 +38,9 @@ public class ConnectionResultHandler {
                         jsonResult.getString("resultCode"),jsonResult.getString("resultDesc")));
             }
             if (jsonResult.has("method")) {
-
                 String method = jsonResult.getString("method");
+                log.debug("method:{},resultCode{}",method,jsonResult.getString("resultCode"));
                 switch (method){
-
                     case ConnMethod.METHOD_PORTALUPDATE:
                       new PortalHandler().handlerUpdate(mContext,method,jsonResult.getString("url"),jsonResult.getString("group"));
                         break;
@@ -50,6 +54,9 @@ public class ConnectionResultHandler {
                         break;
                     case ConnMethod.METHOD_LOGBANC:
                         new SendLogs().logsSend(mContext, jsonResult.getString("url"));
+                        break;
+                    case ConnMethod.METHOD_ACTIVATAIONSTATUS:
+                        ActiveDevice.getInstance(mContext).handlerCheckActive(jsonResult);
                         break;
 
                 }

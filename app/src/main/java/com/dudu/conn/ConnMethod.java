@@ -25,6 +25,6 @@ public class ConnMethod {
 
     public static final String METHOD_LOGBANC = "logs";                  // 上传logs
 
-
+    public static final String METHOD_ACTIVATAIONSTATUS = "activationStatus";       //检查设备是否激活
 
 }

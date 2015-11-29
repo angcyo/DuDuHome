@@ -189,12 +189,12 @@ public class SendMessage {
         SystemPropertiesProxy sps = SystemPropertiesProxy.getInstance();
         activemap = new HashMap<>();
         activemap.put("ro.build.fingerprint",sps.get("ro.build.fingerprint","UNKNOWN"));
-        activemap.put("ro.product.manufacturer",sps.get("ro.product.manufacturer","UNKNOWN"));
+        activemap.put("ro.serialno", DeviceIDUtil.getAndroidID(mContext));
         activemap.put("ro.product.model",sps.get("ro.product.model","UNKNOWN"));
         activemap.put("sim.seralno",DeviceIDUtil.getSimSerialNumber(mContext));
         activemap.put("launcher.version", versionCode);
-        activemap.put("imei",OBEID);
-        activemap.put("method","activationStatus");
+        activemap.put(OBEID,obeId);
+        activemap.put("method",ConnMethod.METHOD_ACTIVATAIONSTATUS);
         JSONObject jsonObject = new JSONObject(activemap);
         try {
             String msg = Encrypt.AESEncrypt(jsonObject.toString(),Encrypt.vi);
