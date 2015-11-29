@@ -13,7 +13,6 @@ import android.widget.AdapterView;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.ui.activity.LocationMapActivity;
-import com.dudu.android.launcher.ui.activity.MainActivity;
 import com.dudu.android.launcher.ui.activity.NaviBackActivity;
 import com.dudu.android.launcher.ui.activity.NaviCustomActivity;
 import com.dudu.android.launcher.ui.dialog.WaitingDialog;
@@ -58,7 +57,7 @@ public class NavigationClerk {
 
     public static final int OPEN_VOICE = 2;
 
-    private Class naviClass;
+    public static final int OPEN_MAP = 3;
 
     private boolean isAddressManual = false;
 
@@ -78,32 +77,25 @@ public class NavigationClerk {
 
     private WaitingDialog waitingDialog = null;// 搜索时进度条
 
-    private boolean isCommonAddress = false;
+    private Class intentClass;
 
     private Runnable removeWindowRunnable = new Runnable() {
 
         @Override
         public void run() {
-            topActivity = ActivitiesManager.getInstance().getTopActivity();
-            Intent intent = new Intent();
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
-                    Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+
             switch (navigationManager.getNavigationType()) {
                 case NAVIGATION:
-                    intent.setClass(topActivity, NaviCustomActivity.class);
+                    intentClass = NaviCustomActivity.class;
                     break;
                 case BACKNAVI:
-                    intent.setClass(topActivity, NaviBackActivity.class);
+                    intentClass = NaviBackActivity.class;
                     break;
                 case DEFAULT:
+                    return;
             }
             FloatWindowUtil.removeFloatWindow();
-            mContext.startActivity(intent);
-            if (!(topActivity instanceof MainActivity)) {
-                topActivity.finish();
-            }
-
-
+            intentActivity();
         }
     };
 
@@ -144,19 +136,7 @@ public class NavigationClerk {
 
         switch (NaviUtils.getOpenMode(mContext)) {
             case INSIDE:
-                return openActivity(openType);
-            case OUTSIDE:
-                EventBus.getDefault().post(NaviEvent.FloatButtonEvent.SHOW);
-                Utils.startThirdPartyApp(ActivitiesManager.getInstance().getTopActivity(), "com.autonavi.minimap");
-                break;
-        }
-        return true;
-    }
-
-    public boolean openMap() {
-        switch (NaviUtils.getOpenMode(mContext)) {
-            case INSIDE:
-                return openMapActivity();
+                return (openType==OPEN_MAP)?openMapActivity():openActivity(openType);
             case OUTSIDE:
                 EventBus.getDefault().post(NaviEvent.FloatButtonEvent.SHOW);
                 Utils.startThirdPartyApp(ActivitiesManager.getInstance().getTopActivity(), "com.autonavi.minimap");
@@ -171,52 +151,49 @@ public class NavigationClerk {
     }
 
     private boolean openMapActivity() {
-        topActivity = ActivitiesManager.getInstance().getTopActivity();
-        Intent intent = new Intent();
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        if (topActivity instanceof LocationMapActivity)
-            return false;
-        intent.setClass(mContext, LocationMapActivity.class);
-        mContext.startActivity(intent);
-
+        intentClass = LocationMapActivity.class;
+        intentActivity();
         return true;
     }
 
     private boolean openActivity(int openType) {
-        topActivity = ActivitiesManager.getInstance().getTopActivity();
-        Intent intent = new Intent();
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+
         switch (navigationManager.getNavigationType()) {
             case NAVIGATION:
                 FloatWindowUtil.removeFloatWindow();
-                intent.setClass(mContext, NaviCustomActivity.class);
+                intentClass = NaviCustomActivity.class;
                 break;
             case BACKNAVI:
                 FloatWindowUtil.removeFloatWindow();
-                intent.setClass(mContext, NaviBackActivity.class);
+                intentClass = NaviCustomActivity.class;
                 break;
             case DEFAULT:
-                if (topActivity instanceof LocationMapActivity) {
-                    SearchType type = navigationManager.getSearchType();
-                    if (type == SearchType.OPEN_NAVI || type == SearchType.SEARCH_DEFAULT) {
-                        navigationManager.setSearchType(SearchType.OPEN_NAVI);
-                        navigationManager.search();
-                        return true;
-                    } else {
-                        return false;
-                    }
+                if (isMapActivity()) {
+                    isSearching();
                 }
                 if (openType == OPEN_VOICE)
                     navigationManager.setSearchType(SearchType.OPEN_NAVI);
-                intent.setClass(mContext, LocationMapActivity.class);
+                intentClass = LocationMapActivity.class;
                 break;
         }
-        mContext.startActivity(intent);
+        intentActivity();
         return true;
     }
 
+    private boolean isSearching(){
+        SearchType type = navigationManager.getSearchType();
+        if (type == SearchType.OPEN_NAVI || type == SearchType.SEARCH_DEFAULT) {
+            navigationManager.setSearchType(SearchType.OPEN_NAVI);
+            navigationManager.search();
+            return true;
+        } else {
+            return false;
+        }
+    }
+    private boolean isMapActivity(){
+        topActivity = ActivitiesManager.getInstance().getTopActivity();
+        return (topActivity !=null && topActivity instanceof LocationMapActivity);
+    }
     public void existNavi() {
         navigationManager.existNavigation();
         ActivitiesManager.getInstance().closeTargetActivity(
@@ -229,30 +206,21 @@ public class NavigationClerk {
 
 
     public void searchControl(String semantic, String service, String keyword, SearchType type) {
+        if (navigationManager.getSearchType()==SearchType.SEARCH_COMMONADDRESS)
+            type = SearchType.SEARCH_COMMONPLACE;
         navigationManager.setSearchType(type);
         navigationManager.setKeyword(null);
         if (keyword == null)
             navigationManager.parseKeyword(semantic, service);
         else
             navigationManager.setKeyword(keyword);
-        switch (NaviUtils.getOpenMode(mContext)) {
-            case OUTSIDE:
-                doSearch();
-                break;
-            case INSIDE:
-                topActivity = ActivitiesManager.getInstance().getTopActivity();
-                if (topActivity != null && (topActivity instanceof LocationMapActivity)) {
-                    doSearch();
-                } else {
-                    Intent intent = new Intent();
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
-                            Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                    intent.setClass(LauncherApplication.getContext(), LocationMapActivity.class);
-                    mContext.startActivity(intent);
-                }
-                break;
-        }
 
+        if(!isMapActivity()){
+            intentClass = LocationMapActivity.class;
+            intentActivity();
+            return;
+        }
+        doSearch();
     }
 
     public void doSearch() {
@@ -264,6 +232,7 @@ public class NavigationClerk {
             case SEARCH_PLACE_LOCATION:
             case SEARCH_NEARBY:
             case SEARCH_NEAREST:
+            case SEARCH_COMMONPLACE:
                 if (TextUtils.isEmpty(navigationManager.getKeyword())) {
                     VoiceManager.getInstance().startSpeaking("关键字有误，请重新输入！",
                             SemanticConstants.TTS_START_UNDERSTANDING, true);
@@ -276,9 +245,7 @@ public class NavigationClerk {
                 }
                 showProgressDialog(msg);
                 break;
-            case SEARCH_COMMONADDRESS:
-                isCommonAddress = true;
-                break;
+
         }
         navigationManager.search();
     }
@@ -290,10 +257,10 @@ public class NavigationClerk {
             VoiceManager.getInstance().stopUnderstanding();
             VoiceManager.getInstance().startSpeaking(event.getNaviVoice(), SemanticConstants.TTS_START_UNDERSTANDING, true);
         } else {
-            toNaivActivity(REMOVEWINDOW_TIME);
             if (FloatWindowUtil.IsWindowShow()) {
                 VoiceManager.getInstance().startSpeaking(event.getNaviVoice(), SemanticConstants.TTS_START_UNDERSTANDING, false);
             } else {
+                VoiceManager.getInstance().stopUnderstanding();
                 VoiceManager.getInstance().startSpeaking(event.getNaviVoice(), SemanticConstants.TTS_DO_NOTHING, false);
             }
         }
@@ -301,7 +268,7 @@ public class NavigationClerk {
 
     public void onEventMainThread(NaviEvent.SearchResult event) {
         disMissProgressDialog();
-        navigationManager.getLog().debug("----SearchResult{}", navigationManager.getSearchType());
+        navigationManager.getLog().debug("----SearchResult: {}", navigationManager.getSearchType());
         if (event == NaviEvent.SearchResult.SUCCESS) {
             handlerPoiResult();
         }
@@ -327,29 +294,21 @@ public class NavigationClerk {
 
         if (navigationManager.getNavigationType() == NavigationType.NAVIGATION)
             return;
-        navigationManager.setNavigationType(event);
         switch (event) {
             case NAVIGATION:
-                naviClass = NaviCustomActivity.class;
+                intentClass = NaviCustomActivity.class;
                 break;
             case BACKNAVI:
-                naviClass = NaviBackActivity.class;
+                intentClass = NaviBackActivity.class;
                 break;
             case CALCULATEERROR:
                 disMissProgressDialog();
-                removeCallback();
                 VoiceManager.getInstance().startSpeaking("路径规划出错，请检查网络", SemanticConstants.TTS_DO_NOTHING, true);
                 toNaivActivity(REMOVEWINDOW_TIME);
                 return;
         }
-        Activity topActivity = ActivitiesManager.getInstance().getTopActivity();
-        Intent standIntent = new Intent(topActivity, naviClass);
-        standIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-                | Intent.FLAG_ACTIVITY_NEW_TASK);
-        mContext.startActivity(standIntent);
-        if (!(topActivity instanceof MainActivity)) {
-            topActivity.finish();
-        }
+        intentActivity();
+
     }
 
     public void handlerPoiResult() {
@@ -451,8 +410,7 @@ public class NavigationClerk {
             endPoint = new Point(choosepoiResult.getLatitude(), choosepoiResult.getLongitude());
             if (choosepoiResult != null) {
 
-                if (isCommonAddress) {
-                    isCommonAddress = false;
+                if (navigationManager.getSearchType()==SearchType.SEARCH_COMMONPLACE) {
                     addCommonAddress(choosepoiResult);
                     return;
                 }
@@ -483,13 +441,14 @@ public class NavigationClerk {
      * @param choosePoint
      */
     private void addCommonAddress(PoiResultInfo choosePoint) {
-        FloatWindowUtil.removeFloatWindow();
         String addType = navigationManager.getCommonAddressType().getName();
         CommonAddressUtil.setCommonAddress(addType, mContext, choosePoint.getAddressTitle());
         CommonAddressUtil.setCommonLocation(addType,
                 mContext, choosePoint.getLatitude(), choosePoint.getLongitude());
+        VoiceManager.getInstance().stopUnderstanding();
         VoiceManager.getInstance().startSpeaking("添加" + choosePoint.getAddressTitle() + "为" + addType + "地址成功！",
                 SemanticConstants.TTS_DO_NOTHING, true);
+        navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
 
     }
 
@@ -536,7 +495,7 @@ public class NavigationClerk {
                     SemanticConstants.TTS_START_UNDERSTANDING, false);
             return;
         }
-        startNavigation(new Navigation(endPoint, navigationManager.getDriveModeList().get(position-1),
+        startNavigation(new Navigation(endPoint, navigationManager.getDriveModeList().get(position - 1),
                 NavigationType.NAVIGATION));
     }
 
@@ -591,5 +550,16 @@ public class NavigationClerk {
 
     public void toNaivActivity(int t) {
         mhandler.postDelayed(removeWindowRunnable, REMOVEWINDOW_TIME);
+    }
+
+    private void intentActivity(){
+        topActivity = ActivitiesManager.getInstance().getTopActivity();
+        Intent standIntent = new Intent(topActivity, intentClass);
+        standIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                | Intent.FLAG_ACTIVITY_NEW_TASK);
+        mContext.startActivity(standIntent);
+        if(isMapActivity()){
+            topActivity.finish();
+        }
     }
 }

@@ -42,5 +42,7 @@ public enum SearchType {
      */
     SEARCH_COMMONADDRESS,
 
+    SEARCH_COMMONPLACE,
+
     SEARCH_DEFAULT
 }

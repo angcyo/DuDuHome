@@ -192,7 +192,7 @@ public class CmdChain extends SemanticChain {
             case Constants.OPEN:
             case Constants.START:
             case Constants.KAIQI:
-                if (NavigationClerk.getInstance().openMap()) {
+                if (NavigationClerk.getInstance().openNavi(NavigationClerk.OPEN_MAP)) {
                     FloatWindowUtil.removeFloatWindow();
                     return true;
                 }
