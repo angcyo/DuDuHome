@@ -97,7 +97,7 @@ public class MinaConnection extends IoHandlerAdapter implements IConnection{
 
     @Override
     public void sessionCreated(IoSession session) throws Exception {
-        log.debug("客户端会话创建");
+        log.debug("客户端会话创建");//当有新的连接建立的时候，该方法被调用。
         if (iConnectCallBack != null){
             iConnectCallBack.onConnectionState(new ConnectionState(ConnectionState.CONNECTION_CREATE));
         }
@@ -105,14 +105,14 @@ public class MinaConnection extends IoHandlerAdapter implements IConnection{
 
     @Override
     public void sessionOpened(IoSession session) throws Exception {
-        log.debug("客户端会话打开");
+        log.debug("客户端会话打开");//当有新的连接打开的时候，该方法被调用。该方法在 sessionCreated之后被调用。
         isConnected = true;
         if (iConnectCallBack != null){
             iConnectCallBack.onConnectionState(new ConnectionState(ConnectionState.CONNECTION_SUCCESS));
         }
     }
 
-    @Override
+    @Override  //当连接被关闭的时候，此方法被调用。
     public void sessionClosed(IoSession session) throws Exception {
         log.debug("客户端会话关闭");
         isConnected = false;
@@ -121,7 +121,7 @@ public class MinaConnection extends IoHandlerAdapter implements IConnection{
         }
     }
 
-    @Override
+    @Override  //默认情况下，闲置时间设置是禁用的，可以通过 IoSessionConfig.setIdleTime(IdleStatus, int) 来进行设置
     public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
         log.debug("客户端会话休眠");
         isConnected = false;
@@ -130,7 +130,7 @@ public class MinaConnection extends IoHandlerAdapter implements IConnection{
         }
     }
 
-    @Override
+    @Override  //当 I/O 处理器的实现或是 Apache MINA 中有异常抛出的时候，此方法被调用。
     public void exceptionCaught(IoSession session, Throwable cause) {
         log.debug("客户端连接异常" + cause);
         isConnected = false;
@@ -139,7 +139,7 @@ public class MinaConnection extends IoHandlerAdapter implements IConnection{
         }
     }
 
-    @Override
+    @Override  // 	当接收到新的消息的时候，此方法被调用
     public void messageReceived(IoSession session, Object message) throws Exception {
         String msg = message.toString();
         log.debug("收到消息：" + msg);
@@ -148,10 +148,10 @@ public class MinaConnection extends IoHandlerAdapter implements IConnection{
         }
     }
 
-    @Override
+    @Override //当消息被成功发送出去的时候，此方法被调用。
     public void messageSent(IoSession session, Object message) throws Exception {
         String messageSent = message.toString();
-        log.debug("发送消息："+ messageSent);
+        log.debug("成功发送消息："+ messageSent);
         if (iConnectCallBack != null){
             iConnectCallBack.onMessageSent(messageSent);
         }

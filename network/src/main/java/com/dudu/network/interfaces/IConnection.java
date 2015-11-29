@@ -3,7 +3,7 @@ package com.dudu.network.interfaces;
 import com.dudu.network.valueobject.ConnectionParam;
 
 /**
- * Created by dengjun on 2015/11/27.
+ * Created by dengjun on 2015/11/29.
  * Description :
  */
 public interface IConnection {

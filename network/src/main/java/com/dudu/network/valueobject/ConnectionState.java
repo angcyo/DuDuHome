@@ -8,7 +8,7 @@ public class ConnectionState {
     public static final int CONNECTION_SUCCESS = 0;
     public static final int CONNECTION_CREATE= 1;
     public static final int CONNECTION_FAIL= 2;
-    public static final int CONNECTION_OPEND = 3;
+//    public static final int CONNECTION_OPEND = 3;
     public static final int CONNECTION_IDLE = 4;
 
     public int connectionState;

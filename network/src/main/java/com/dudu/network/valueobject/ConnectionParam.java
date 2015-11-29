@@ -9,6 +9,9 @@ public class ConnectionParam {
     private int port = 8888;
     private int connectTimeout = 30*1000;
 
+    public ConnectionParam() {
+    }
+
     public ConnectionParam(String host, int port) {
         this.host = host;
         this.port = port;
