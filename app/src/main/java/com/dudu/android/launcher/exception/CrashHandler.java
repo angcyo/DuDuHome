@@ -13,6 +13,7 @@ import android.text.TextUtils;
 
 import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.LogUtils;
+import com.dudu.android.launcher.utils.TimeUtils;
 
 public class CrashHandler implements UncaughtExceptionHandler {
 
@@ -61,7 +62,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
 
 			@Override
 			public void run() {
-				String fileName = "crash-" + System.currentTimeMillis()
+				String fileName = "crash-" + TimeUtils.format(TimeUtils.format1)
 						+ ".txt";
 				try {
 					Writer info = new StringWriter();

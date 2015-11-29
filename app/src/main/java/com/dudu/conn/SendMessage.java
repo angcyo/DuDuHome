@@ -60,12 +60,15 @@ public class SendMessage {
         obeId = DeviceIDUtil.getIMEI(context);
     }
 
-    public void sendData(String data){
+    public void sendData(String data,boolean needCache){
 
 //        if(ActiveDevice.getInstance(mContext).getActiveFlag()==ActiveDevice.ACTIVE_OK){
         try {
             conn.getlog().debug("sendData");
-            conn.sendMessage(Encrypt.AESEncrypt(sendJson.toString(),Encrypt.vi), true);
+            if(needCache)
+                conn.sendMessage(Encrypt.AESEncrypt(data,Encrypt.vi), true);
+            else
+                conn.sendMessage(Encrypt.AESEncrypt(data,Encrypt.vi));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -85,7 +88,7 @@ public class SendMessage {
             sendJson.put(OBEID,obeId);
             sendJson.put("lals", gpsDatajson);
             sendJson.put(VERSION_CODE, versionCode);
-            sendData(sendJson.toString());
+            sendData(sendJson.toString(),true);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -109,7 +112,7 @@ public class SendMessage {
             sendJson.put(OBEID, obeId);
             sendJson.put("obds", obdDatajson);
             sendJson.put(VERSION_CODE, versionCode);
-            sendData(sendJson.toString());
+            sendData(sendJson.toString(),true);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -126,7 +129,7 @@ public class SendMessage {
     public boolean sendFlameOutData(FlamoutData flameoutData,JSONArray gpsDatas){
         flameoutData.setObeId(obeId);
         flameoutData.setMethod(ConnMethod.METHOD_FLAMEOUTDATA);
-        sendData(gson.toJson(flameoutData));
+        sendData(gson.toJson(flameoutData),true);
         sendGPSDatas(gpsDatas);
         return conn.isAlive();
     }

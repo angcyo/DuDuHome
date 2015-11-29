@@ -251,8 +251,8 @@ public class NavigationClerk {
 
     public void onEventMainThread(NaviEvent.NaviVoiceBroadcast event) {
         VoiceManager.getInstance().clearMisUnderstandCount();
+        removeCallback();
         if (navigationManager.getNavigationType() == NavigationType.DEFAULT) {
-            removeCallback();
             VoiceManager.getInstance().stopUnderstanding();
             VoiceManager.getInstance().startSpeaking(event.getNaviVoice(), SemanticConstants.TTS_START_UNDERSTANDING, true);
         } else {
@@ -290,7 +290,7 @@ public class NavigationClerk {
     }
 
     public void onEventMainThread(NavigationType event) {
-
+        removeCallback();
         if (navigationManager.getNavigationType() == NavigationType.NAVIGATION)
             return;
         switch (event) {
@@ -368,20 +368,25 @@ public class NavigationClerk {
      * 显示进度框
      */
     public void showProgressDialog(String message) {
+        try {
+            initWaitingDialog(message);
+            waitingDialog.show();
+            switch (navigationManager.getSearchType()) {
+                case SEARCH_PLACE_LOCATION:
+                case SEARCH_CUR_LOCATION:
+                    return;
+            }
+        }catch (Exception e){
 
-        initWaitingDialog(message);
-        waitingDialog.show();
-        switch (navigationManager.getSearchType()) {
-            case SEARCH_PLACE_LOCATION:
-            case SEARCH_CUR_LOCATION:
-                return;
         }
+
         FloatWindowUtil.removeFloatWindow();
     }
 
     public void disMissProgressDialog() {
         if (waitingDialog != null && waitingDialog.isShowing()) {
             waitingDialog.dismiss();
+            waitingDialog = null;
         }
     }
 
@@ -524,10 +529,8 @@ public class NavigationClerk {
     }
 
     public void startNavigation(Navigation navigation) {
-        if (waitingDialog != null) {
-            waitingDialog.setMessage("路径规划中...");
-            waitingDialog.show();
-        }
+
+        showProgressDialog("路径规划中...");
         if (NaviUtils.getOpenMode(mContext) == OpenMode.OUTSIDE) {
             LauncherApplication.getContext().setReceivingOrder(true);
         }
