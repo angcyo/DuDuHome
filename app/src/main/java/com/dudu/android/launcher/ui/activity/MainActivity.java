@@ -173,8 +173,10 @@ public class MainActivity extends BaseTitlebarActivity implements
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.video_button:
-                mRecordService.startRecord();
-                mRecordService.startRecordTimer();
+//                mRecordService.startRecord();
+//                mRecordService.startRecordTimer();
+                mRecordService.prepareCamera();
+                mRecordService.doStartPreview();
                 startActivity(new Intent(MainActivity.this, VideoActivity.class));
                 break;
 
