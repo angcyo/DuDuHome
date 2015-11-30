@@ -8,10 +8,10 @@ import android.app.Service;
 import android.content.Intent;
 import android.net.TrafficStats;
 import android.os.IBinder;
-import android.util.Log;
 
 import com.dudu.android.launcher.db.DbHelper;
 import com.dudu.android.launcher.utils.LogUtils;
+import com.dudu.conn.FlowMonitor;
 import com.dudu.conn.SendMessage;
 
 
@@ -33,9 +33,9 @@ public class MonitorService extends Service {
 
     private boolean mMonitoring = true;
 
-    private SendMessage sendMessage;
+    private FlowMonitor mFlowMonitor;
 
-    private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
+    private SimpleDateFormat mFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
             Locale.getDefault());
 
     @Override
@@ -48,7 +48,7 @@ public class MonitorService extends Service {
         super.onCreate();
 
         mDbHelper = DbHelper.getDbHelper(MonitorService.this);
-        sendMessage = SendMessage.getInstance(this);
+        mFlowMonitor = FlowMonitor.getInstance();
 
         mOldMobileRx = TrafficStats.getMobileRxBytes() / 1024;
         mOldMobileTx = TrafficStats.getMobileTxBytes() / 1024;
@@ -56,13 +56,13 @@ public class MonitorService extends Service {
         mMonitorThread = new MonitorThread();
         mMonitorThread.setPriority(Thread.NORM_PRIORITY - 1);
         mMonitorThread.start();
-        synConfiguration();
+
+        mFlowMonitor.synFlowConfiguration();
     }
 
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
         return START_STICKY;
     }
 
@@ -93,17 +93,20 @@ public class MonitorService extends Service {
                 mMobileTotalRx += mDeltaRx;
                 mMobileTotalTx += mDeltaTx;
 
-              if (mMobileTotalRx != 0 || mMobileTotalTx != 0) {
+                if (mMobileTotalRx != 0 || mMobileTotalTx != 0) {
                     Date date = new Date();
-                    String dateString = format.format(date);
+
                     if (mDbHelper.checkRecord(1, date)) {
                         float up = mDbHelper.getProFlowUp(1, date);
                         float dw = mDbHelper.getProFlowDw(1, date);
 
                         mMobileTotalRx += dw;
                         mMobileTotalTx += up;
+
                         float totalFlow = mMobileTotalRx + mMobileTotalTx;
-                        sendFlowData(totalFlow, dateString);
+
+                        mFlowMonitor.sendFlowMessage(totalFlow, mFormat.format(date));
+
                         mDbHelper.updateFlow(mMobileTotalRx, mMobileTotalTx, 1, date);
                     } else {
                         mDbHelper.insertFlow(mMobileTotalTx, mMobileTotalRx, 1, date);
@@ -111,7 +114,7 @@ public class MonitorService extends Service {
 
                     mMobileTotalRx = 0;
                     mMobileTotalTx = 0;
-             }
+                }
 
                 try {
                     Thread.sleep(WAKE_INTERVAL_MS);
@@ -138,23 +141,6 @@ public class MonitorService extends Service {
         }
 
         mMonitorThread = null;
-
     }
-
-    // 发送Flow数据
-    private void sendFlowData(float usedFlow, String createTime) {
-        sendMessage.sendFlowDatas(usedFlow, createTime);
-    }
-
-    // 发送流量查询请求
-    private void getFlow() {
-        sendMessage.getFlow();
-    }
-
-    // 发送流量策略同步请求
-    private void synConfiguration() {
-        sendMessage.synConfiguration();
-    }
-
 
 }

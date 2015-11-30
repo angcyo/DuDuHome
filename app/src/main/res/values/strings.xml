@@ -53,8 +53,8 @@
     <string name="unkown_weather_info">未知天气</string>
     <string name="fetching_weather">正在获取天气信息...</string>
     <string name="no_network_connection_toast">没有网络</string>
-    <string name="used_flow">已用流量</string>
-    <string name="rest_flow">剩余流量</string>
+    <string name="used_flow">已用流量：&#160;&#160;%s M</string>
+    <string name="remaining_flow">剩余流量：&#160;&#160;%s M</string>
     <string name="car_self_checking">车辆自检</string>
     <string name="nearby_tire_repair_brand">附近评价最高的轮胎保养品牌</string>
     <string name="network_no_signal">无网络信号</string>

@@ -84,7 +84,7 @@ public class SendMessage {
 
         sendJson = new JSONObject();
         try {
-            sendJson.put(METHOD, ConnMethod.METHOD_GPSDATA);
+            sendJson.put(METHOD, ConnectionConstants.METHOD_GPSDATA);
             sendJson.put(OBEID,obeId);
             sendJson.put("lals", gpsDatajson);
             sendJson.put(VERSION_CODE, versionCode);
@@ -108,7 +108,7 @@ public class SendMessage {
 
         sendJson = new JSONObject();
         try {
-            sendJson.put(METHOD, ConnMethod.METHOD_OBDDATA);
+            sendJson.put(METHOD, ConnectionConstants.METHOD_OBDDATA);
             sendJson.put(OBEID, obeId);
             sendJson.put("obds", obdDatajson);
             sendJson.put(VERSION_CODE, versionCode);
@@ -128,7 +128,7 @@ public class SendMessage {
      */
     public boolean sendFlameOutData(FlamoutData flameoutData,JSONArray gpsDatas){
         flameoutData.setObeId(obeId);
-        flameoutData.setMethod(ConnMethod.METHOD_FLAMEOUTDATA);
+        flameoutData.setMethod(ConnectionConstants.METHOD_FLAMEOUTDATA);
         sendData(gson.toJson(flameoutData),true);
         sendGPSDatas(gpsDatas);
         return conn.isAlive();
@@ -144,12 +144,12 @@ public class SendMessage {
 
         sendJson = new JSONObject();
         try {
-            sendJson.put(METHOD, ConnMethod.METHOD_FLOW);
+            sendJson.put(METHOD, ConnectionConstants.METHOD_FLOW);
             sendJson.put(OBEID, obeId);
             sendJson.put("usedFlow", usedFlow);
             sendJson.put("createTime", createTime);
             sendJson.put(VERSION_CODE, versionCode);
-            sendData(sendJson.toString());
+            sendData(sendJson.toString(), true);
             Log.i("MonitorService", sendJson.toString());
         } catch (JSONException e) {
             e.printStackTrace();
@@ -162,14 +162,13 @@ public class SendMessage {
      *
      * @return
      */
-    public boolean getFlow(){
-
+    public boolean queryFlowInfo(){
         sendJson = new JSONObject();
         try {
-            sendJson.put(METHOD, ConnMethod.METHOD_GETFLOW);
+            sendJson.put(METHOD, ConnectionConstants.METHOD_GETFLOW);
             sendJson.put(OBEID, obeId);
             sendJson.put(VERSION_CODE, versionCode);
-            sendData(sendJson.toString());
+            sendData(sendJson.toString(), true);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -184,10 +183,10 @@ public class SendMessage {
     public boolean synConfiguration() {
         sendJson = new JSONObject();
         try {
-            sendJson.put(METHOD, ConnMethod.METHOD_SYNCONFIGURATION);
+            sendJson.put(METHOD, ConnectionConstants.METHOD_SYNCONFIGURATION);
             sendJson.put(OBEID, obeId);
             sendJson.put(VERSION_CODE, versionCode);
-            sendData(sendJson.toString());
+            sendData(sendJson.toString(), true);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -207,7 +206,7 @@ public class SendMessage {
         activemap.put("sim.seralno",DeviceIDUtil.getSimSerialNumber(mContext));
         activemap.put("launcher.version", versionCode);
         activemap.put(OBEID, obeId);
-        activemap.put(METHOD, ConnMethod.METHOD_ACTIVEDEVICE);
+        activemap.put(METHOD, ConnectionConstants.METHOD_ACTIVEDEVICE);
         putActiveVersion();
         JSONObject jsonObject = new JSONObject(activemap);
         try {
@@ -251,7 +250,6 @@ public class SendMessage {
      * @return
      */
     public boolean checkDeviceActive(){
-
         SystemPropertiesProxy sps = SystemPropertiesProxy.getInstance();
         activemap = new HashMap<>();
         activemap.put("ro.build.fingerprint",sps.get("ro.build.fingerprint","UNKNOWN"));
@@ -260,7 +258,7 @@ public class SendMessage {
         activemap.put("sim.seralno",DeviceIDUtil.getSimSerialNumber(mContext));
         activemap.put("launcher.version", versionCode);
         activemap.put(OBEID,obeId);
-        activemap.put("method",ConnMethod.METHOD_ACTIVATAIONSTATUS);
+        activemap.put("method", ConnectionConstants.METHOD_ACTIVATAIONSTATUS);
         JSONObject jsonObject = new JSONObject(activemap);
         try {
             String msg = Encrypt.AESEncrypt(jsonObject.toString(),Encrypt.vi);

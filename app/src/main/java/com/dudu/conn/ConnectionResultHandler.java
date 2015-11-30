@@ -1,7 +1,6 @@
 package com.dudu.conn;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.utils.LogUtils;
@@ -38,33 +37,33 @@ public class ConnectionResultHandler {
                 EventBus.getDefault().post(new ConnectionEvent.SendDatasResponse(jsonResult.getString("result"),
                         jsonResult.getString("resultCode"), jsonResult.getString("resultDesc")));
             }
+
             if (jsonResult.has("method")) {
                 String method = jsonResult.getString("method");
-                log.debug("method:{},resultCode{}", method, jsonResult.getString("resultCode"));
                 switch (method) {
-                    case ConnMethod.METHOD_PORTALUPDATE:
-                        new PortalHandler().handlerUpdate(mContext, method, jsonResult.getString("url"), jsonResult.getString("group"));
+                    case ConnectionConstants.METHOD_PORTALUPDATE:
+                        PortalUpdate.getInstance().handleUpdate(mContext, method,
+                                jsonResult.getString("url"), jsonResult.getString("group"));
                         break;
-                    case ConnMethod.METHOD_TAKEPHOTO:
+                    case ConnectionConstants.METHOD_TAKEPHOTO:
                         EventBus.getDefault().post(new ConnectionEvent.TakePhoto(jsonResult.getString("openid")));
                         break;
-                    case ConnMethod.METHOD_NAVI:
+                    case ConnectionConstants.METHOD_NAVI:
                         break;
-                    case ConnMethod.METHOD_ACTIVEDEVICE:
+                    case ConnectionConstants.METHOD_ACTIVEDEVICE:
                         ActiveDevice.getInstance(mContext).handlerActiveDeviceResult(jsonResult);
                         break;
-                    case ConnMethod.METHOD_LOGBANC:
+                    case ConnectionConstants.METHOD_LOGBANC:
                         new SendLogs().logsSend(mContext, jsonResult.getString("url"));
                         break;
-                    case ConnMethod.METHOD_ACTIVATAIONSTATUS:
+                    case ConnectionConstants.METHOD_ACTIVATAIONSTATUS:
                         ActiveDevice.getInstance(mContext).handlerCheckActive(jsonResult);
-                    case ConnMethod.METHOD_GETFLOW:
-                        JSONObject getFlowJsonObject = new JSONObject(jsonResult.getString("result"));
-                        new TrafficMonitoring().getFlow(mContext, getFlowJsonObject.getString("remainingFlow"));
                         break;
-                    case ConnMethod.METHOD_SYNCONFIGURATION:
-                        JSONObject synConfigurationJsonObject = new JSONObject(jsonResult.getString("result"));
-                        new TrafficMonitoring().synConfiguration(mContext, synConfigurationJsonObject.getString("trafficControl"), synConfigurationJsonObject.getString("monthMaxValue"), synConfigurationJsonObject.getString("freeAddValue"), synConfigurationJsonObject.getString("dailyMaxValue"), synConfigurationJsonObject.getString("upLimitMaxValue"), synConfigurationJsonObject.getString("potalAddress"), synConfigurationJsonObject.getString("downLimitMaxValue"), synConfigurationJsonObject.getString("lifeType"), synConfigurationJsonObject.getString("uploadLimit"), synConfigurationJsonObject.getString("freeAddTimes"), synConfigurationJsonObject.getString("remainingFlow"), synConfigurationJsonObject.getString("middleArlamValue"), synConfigurationJsonObject.getString("highArlamValue"), synConfigurationJsonObject.getString("lowArlamValue"), synConfigurationJsonObject.getString("downloadLimit"), synConfigurationJsonObject.getString("freeArriveValue"), synConfigurationJsonObject.getString("portalVersion"));
+                    case ConnectionConstants.METHOD_GETFLOW:
+                        FlowMonitor.getInstance().onRemainingFlowResult(jsonResult);
+                        break;
+                    case ConnectionConstants.METHOD_SYNCONFIGURATION:
+                        FlowMonitor.getInstance().onFlowConfigurationResult(jsonResult);
                         break;
                 }
             }

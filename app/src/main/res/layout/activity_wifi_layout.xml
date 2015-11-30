@@ -23,46 +23,44 @@
         android:layout_marginLeft="@dimen/dp_70"
         android:layout_toRightOf="@+id/back_button" />
 
-    <TextView
-        android:id="@+id/ues_text"
-        android:layout_width="200dp"
-        android:layout_height="70dp"
-        android:layout_marginLeft="@dimen/dp_50"
-        android:layout_marginTop="@dimen/dp_40"
-        android:layout_toRightOf="@+id/tasks_completed"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         android:gravity="center_vertical"
-        android:text="@string/used_flow"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        android:textStyle="italic" />
-
-    <View
-        android:layout_width="200dp"
-        android:layout_height="3dp"
-        android:layout_below="@+id/ues_text"
         android:layout_marginLeft="@dimen/dp_50"
-        android:layout_toRightOf="@+id/tasks_completed"
-        android:background="@color/color_ed6512" />
+        android:layout_toRightOf="@+id/tasks_completed">
 
-    <TextView
-        android:id="@+id/unuesd_text"
-        android:layout_width="200dp"
-        android:layout_height="70dp"
-        android:layout_below="@+id/ues_text"
-        android:layout_marginLeft="@dimen/dp_50"
-        android:layout_toRightOf="@+id/tasks_completed"
-        android:gravity="center_vertical"
-        android:text="@string/rest_flow"
-        android:textSize="18sp"
-        android:textColor="@color/white"
-        android:textStyle="italic" />
+        <TextView
+            android:id="@+id/used_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/used_flow"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:singleLine="true"
+            android:textStyle="italic" />
 
-    <View
-        android:layout_width="200dp"
-        android:layout_height="3dp"
-        android:layout_below="@+id/unuesd_text"
-        android:layout_marginLeft="@dimen/dp_50"
-        android:layout_toRightOf="@+id/tasks_completed"
-        android:background="@color/color_ed6512" />
+        <View
+            android:layout_width="200dp"
+            android:layout_height="3dp"
+            android:background="@color/color_ed6512" />
+
+        <TextView
+            android:id="@+id/remaining_flow_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="@string/remaining_flow"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:singleLine="true"
+            android:textStyle="italic" />
+
+        <View
+            android:layout_width="200dp"
+            android:layout_height="3dp"
+            android:background="@color/color_ed6512" />
+    </LinearLayout>
 
 </RelativeLayout>

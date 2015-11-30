@@ -3,8 +3,10 @@ package com.dudu.conn;
 import android.content.Context;
 import android.util.Log;
 
+import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.LogUtils;
+import com.dudu.android.launcher.utils.SharedPreferencesUtil;
 import com.dudu.fdfs.common.MyException;
 import com.dudu.fdfs.fastdfs.FileProcessUtil;
 
@@ -15,7 +17,7 @@ import java.io.InputStream;
 /**
  * Created by lxh on 2015/11/7.
  */
-public class PortalHandler {
+public class PortalUpdate {
 
     public static final String FDFS_CLIEND_NAME = "fdfs_client.conf";
     public static final String NODOGSPLASH_NAME = "nodogsplash";
@@ -23,9 +25,19 @@ public class PortalHandler {
     public static final String HTDOCS_FOLDER_NAME = "/htdocs";
     public static final String HTDOCS_ZIP_NAME = "htdocs.zip";
     public static final String TEMP_ZIP_NAME = "temp.zip";
-    private static final String TAG = "PortalHandler";
+    private static final String TAG = "PortalUpdate";
 
-    public PortalHandler() {
+    private static PortalUpdate mInstance;
+
+    public static PortalUpdate getInstance() {
+        if (mInstance == null) {
+            mInstance = new PortalUpdate();
+        }
+
+        return mInstance;
+    }
+
+    private PortalUpdate() {
 
     }
 
@@ -36,7 +48,7 @@ public class PortalHandler {
      * @param group   下载方式
      *  后台发送指令，通知Portal更新
      */
-    public void handlerUpdate(final Context context, String method, final String url, final String group) {
+    public void handleUpdate(final Context context, String method, final String url, final String group) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -80,15 +92,39 @@ public class PortalHandler {
                         if (zipPath.exists()) {
                             //解压文件
                             FileUtils.upZipFile(zipPath,dirFile.getPath());
+
+                            updatePortalVersion(context);
                         }
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LogUtils.e(TAG, e.toString());
                 } catch (MyException e) {
                     LogUtils.e(TAG,e.toString());
                 }
             }
         }).start();
+    }
+
+    public void updatePortal(Context context, String version, String address) {
+        String localVersion = SharedPreferencesUtil.getStringValue(context, Constants.KEY_PORTAL_VERSION, "0");
+        if (!version.equals(localVersion)) {
+            String [] portalAddress = address.split(",");
+            String groupName = portalAddress[0];
+            String fileName = portalAddress[1];
+
+            handleUpdate(context, "", groupName, fileName);
+        }
+    }
+
+    private void updatePortalVersion(Context context) {
+        try {
+            int version = Integer.valueOf(SharedPreferencesUtil.getStringValue(context,
+                    Constants.KEY_PORTAL_VERSION, "0"));
+            SharedPreferencesUtil.putStringValue(context, Constants.KEY_PORTAL_VERSION,
+                    String.valueOf(version + 1));
+        } catch (NumberFormatException e) {
+            // ignore
+        }
     }
 
 }

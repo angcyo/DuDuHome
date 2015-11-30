@@ -62,8 +62,7 @@ public class ActiveDevice {
             if(json.has("resultCode")){
                 if(json.getString("resultCode").equals("200")){
                     setActiveFlag(ACTIVE_OK);
-                }else {
-                    //
+                } else {
 
                 }
 

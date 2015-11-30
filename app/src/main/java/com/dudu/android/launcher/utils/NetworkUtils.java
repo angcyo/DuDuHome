@@ -7,17 +7,13 @@ import android.net.TrafficStats;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 
 import com.dudu.android.launcher.LauncherApplication;
-import com.dudu.conn.PortalHandler;
+import com.dudu.conn.PortalUpdate;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-
-import ch.qos.logback.classic.spi.LoggerContextVO;
 
 public class NetworkUtils {
 
@@ -208,21 +204,21 @@ public class NetworkUtils {
  * 讲htdocs压缩包解压到指定路径
  * */
 	public static void writePortalConfig(Context context) {
-		File portalDir =new File(FileUtils.getExternalStorageDirectory(), PortalHandler.NODOGSPLASH_NAME);
+		File portalDir =new File(FileUtils.getExternalStorageDirectory(), PortalUpdate.NODOGSPLASH_NAME);
 		if (!portalDir.exists()) {
 			portalDir.mkdirs();
 		}
 
-		File portalZipDir = new File(portalDir, PortalHandler.TEMP_ZIP_FOLDER_NAME);
+		File portalZipDir = new File(portalDir, PortalUpdate.TEMP_ZIP_FOLDER_NAME);
 		if (!portalZipDir.exists()) {
 			portalZipDir.mkdirs();
 		}
 
-		File portalZipFile = new File(portalZipDir.getPath(), PortalHandler.HTDOCS_ZIP_NAME);
+		File portalZipFile = new File(portalZipDir.getPath(), PortalUpdate.HTDOCS_ZIP_NAME);
 		if (!portalZipFile.exists()) {
 			try {
 				portalZipFile.createNewFile();
-				InputStream is = context.getAssets().open(PortalHandler.HTDOCS_ZIP_NAME);
+				InputStream is = context.getAssets().open(PortalUpdate.HTDOCS_ZIP_NAME);
 				if (FileUtils.copyFileToSd(is,portalZipFile)) {
 					FileUtils.upZipFile(portalZipFile,portalDir.getPath());
 				}
