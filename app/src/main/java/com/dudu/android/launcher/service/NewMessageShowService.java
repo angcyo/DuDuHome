@@ -154,6 +154,8 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
                 VoiceManager.getInstance().stopUnderstanding();
 
+                VoiceManager.getInstance().stopSpeaking();
+
                 VoiceManager.getInstance().removeFloatCallback();
 
                 SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);

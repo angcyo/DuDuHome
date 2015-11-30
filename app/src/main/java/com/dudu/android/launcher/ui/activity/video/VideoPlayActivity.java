@@ -2,6 +2,7 @@ package com.dudu.android.launcher.ui.activity.video;
 
 import java.io.File;
 import java.util.LinkedList;
+
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
@@ -24,6 +25,7 @@ import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.bean.VideoEntity;
 import com.dudu.android.launcher.db.DbHelper;
@@ -35,143 +37,143 @@ import com.dudu.android.launcher.utils.ToastUtils;
 
 public class VideoPlayActivity extends BaseNoTitlebarAcitivity implements OnClickListener {
 
-	private final static int MESSAGE_PROGRESS_CHANGED = 0;
+    private final static int MESSAGE_PROGRESS_CHANGED = 0;
 
-	private LinkedList<VideoEntity> mPlayList = new LinkedList<>();
+    private LinkedList<VideoEntity> mPlayList = new LinkedList<>();
 
-	private VideoView mVideoView;
+    private VideoView mVideoView;
 
-	private PopupWindow mControlWindow;
+    private PopupWindow mControlWindow;
 
-	private SeekBar mSeekBar;
+    private SeekBar mSeekBar;
 
-	private TextView mTotalDuration;
+    private TextView mTotalDuration;
 
-	private TextView mNowDuration;
+    private TextView mNowDuration;
 
-	private Button mPreButton;
+    private Button mPreButton;
 
-	private Button mNextButton;
+    private Button mNextButton;
 
-	private GestureDetector mGestureDetector;
+    private GestureDetector mGestureDetector;
 
-	private View mControlView;
+    private View mControlView;
 
-	private int mScreenWidth = 0, mScreenHeight = 0;
+    private int mScreenWidth = 0, mScreenHeight = 0;
 
-	private int mControlHeight = 0;
+    private int mControlHeight = 0;
 
-	private boolean mPaused = false;
+    private boolean mPaused = false;
 
-	private Button mPauseButton;
+    private Button mPauseButton;
 
     private int position;
 
-	private Handler mHandler = new Handler() {
+    private Handler mHandler = new Handler() {
 
-		@Override
-		public void handleMessage(Message msg) {
-			if (msg.what == MESSAGE_PROGRESS_CHANGED) {
-				int position = mVideoView.getCurrentPosition();
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == MESSAGE_PROGRESS_CHANGED) {
+                int position = mVideoView.getCurrentPosition();
 
-				mSeekBar.setProgress(position);
+                mSeekBar.setProgress(position);
 
-				position /= 1000;
-				int minutes = position / 60;
-				int hours = minutes / 60;
-				int seconds = position % 60;
-				minutes %= 60;
-				mNowDuration.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+                position /= 1000;
+                int minutes = position / 60;
+                int hours = minutes / 60;
+                int seconds = position % 60;
+                minutes %= 60;
+                mNowDuration.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
 
-				sendEmptyMessageDelayed(MESSAGE_PROGRESS_CHANGED, 100);
-			}
-		}
-	};
+                sendEmptyMessageDelayed(MESSAGE_PROGRESS_CHANGED, 100);
+            }
+        }
+    };
 
-	@Override
-	public int initContentView() {
-		return R.layout.video_play_layout;
-	}
+    @Override
+    public int initContentView() {
+        return R.layout.video_play_layout;
+    }
 
-	@Override
-	public void initView(Bundle savedInstanceState) {
+    @Override
+    public void initView(Bundle savedInstanceState) {
 
-		Looper.myQueue().addIdleHandler(new IdleHandler() {
+        Looper.myQueue().addIdleHandler(new IdleHandler() {
 
-			@Override
-			public boolean queueIdle() {
-				if (mControlWindow != null && mVideoView.isShown()) {
-					mControlWindow.showAtLocation(mVideoView, Gravity.BOTTOM, 0, 0);
-					mControlWindow.update(0, 0, mScreenWidth, mControlHeight);
-				}
+            @Override
+            public boolean queueIdle() {
+                if (mControlWindow != null && mVideoView.isShown()) {
+                    mControlWindow.showAtLocation(mVideoView, Gravity.BOTTOM, 0, 0);
+                    mControlWindow.update(0, 0, mScreenWidth, mControlHeight);
+                }
 
-				return false;
-			}
-		});
+                return false;
+            }
+        });
 
-		mVideoView = (VideoView) findViewById(R.id.video_view);
-		mPauseButton = (Button) findViewById(R.id.pause_button);
+        mVideoView = (VideoView) findViewById(R.id.video_view);
+        mPauseButton = (Button) findViewById(R.id.pause_button);
 
-		mControlView = LayoutInflater.from(this).inflate(R.layout.video_controller, null);
-		mSeekBar = (SeekBar) mControlView.findViewById(R.id.seekbar);
-		mPreButton = (Button) mControlView.findViewById(R.id.previous_button);
-		mNextButton = (Button) mControlView.findViewById(R.id.next_button);
+        mControlView = LayoutInflater.from(this).inflate(R.layout.video_controller, null);
+        mSeekBar = (SeekBar) mControlView.findViewById(R.id.seekbar);
+        mPreButton = (Button) mControlView.findViewById(R.id.previous_button);
+        mNextButton = (Button) mControlView.findViewById(R.id.next_button);
 
-		mTotalDuration = (TextView) mControlView.findViewById(R.id.total_duration);
-		mNowDuration = (TextView) mControlView.findViewById(R.id.now_duration);
+        mTotalDuration = (TextView) mControlView.findViewById(R.id.total_duration);
+        mNowDuration = (TextView) mControlView.findViewById(R.id.now_duration);
 
-		mControlWindow = new PopupWindow(mControlView);
-	}
+        mControlWindow = new PopupWindow(mControlView);
+    }
 
-	@Override
-	public void initListener() {
-		mGestureDetector = new GestureDetector(this, new SimpleOnGestureListener() {
+    @Override
+    public void initListener() {
+        mGestureDetector = new GestureDetector(this, new SimpleOnGestureListener() {
 
-			@Override
-			public boolean onSingleTapUp(MotionEvent e) {
-				if (!mPaused) {
-					mVideoView.pause();
-					mPaused = !mPaused;
-					mPauseButton.setVisibility(View.VISIBLE);
-				}
-				return true;
-			}
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                if (!mPaused) {
+                    mVideoView.pause();
+                    mPaused = !mPaused;
+                    mPauseButton.setVisibility(View.VISIBLE);
+                }
+                return true;
+            }
 
-			@Override
-			public void onLongPress(MotionEvent e) {
+            @Override
+            public void onLongPress(MotionEvent e) {
 
-			}
+            }
 
-			@Override
-			public boolean onDoubleTap(MotionEvent e) {
-				return super.onDoubleTap(e);
-			}
-		});
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                return super.onDoubleTap(e);
+            }
+        });
 
-		mPauseButton.setOnClickListener(this);
-		mPreButton.setOnClickListener(this);
-		mNextButton.setOnClickListener(this);
-		mSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+        mPauseButton.setOnClickListener(this);
+        mPreButton.setOnClickListener(this);
+        mNextButton.setOnClickListener(this);
+        mSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
-			@Override
-			public void onStopTrackingTouch(SeekBar seekBar) {
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
 
-			}
+            }
 
-			@Override
-			public void onStartTrackingTouch(SeekBar seekBar) {
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
 
-			}
+            }
 
-			@Override
-			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-				if (fromUser) {
-					mVideoView.seekTo(progress);
-				}
-			}
-		});
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    mVideoView.seekTo(progress);
+                }
+            }
+        });
 
-		mVideoView.setOnPreparedListener(new OnPreparedListener() {
+        mVideoView.setOnPreparedListener(new OnPreparedListener() {
 
             @Override
             public void onPrepared(MediaPlayer mp) {
@@ -196,7 +198,7 @@ public class VideoPlayActivity extends BaseNoTitlebarAcitivity implements OnClic
             }
         });
 
-		mVideoView.setOnCompletionListener(new OnCompletionListener() {
+        mVideoView.setOnCompletionListener(new OnCompletionListener() {
 
             @Override
             public void onCompletion(MediaPlayer mp) {
@@ -206,112 +208,84 @@ public class VideoPlayActivity extends BaseNoTitlebarAcitivity implements OnClic
                 mPaused = true;
             }
         });
-	}
+    }
 
-	@Override
-	public void initDatas() {
-		String path = FileUtils.getVideoStorageDir().getAbsolutePath();
+    @Override
+    public void initDatas() {
+        String path = FileUtils.getVideoStorageDir().getAbsolutePath();
 
-		Uri uri = getIntent().getData();
-		if (uri != null) {
-			mVideoView.stopPlayback();
-			mVideoView.setVideoURI(uri);
-		}
+        Uri uri = getIntent().getData();
+        if (uri != null) {
+            mVideoView.stopPlayback();
+            mVideoView.setVideoURI(uri);
+        }
 
         position = getIntent().getIntExtra(Constants.EXTRA_VIDEO_POSITION, 0);
 
-		getVideoFile(mPlayList, new File(path));
+        getVideoFile(mPlayList, new File(path));
 
-		getScreenSize();
-	}
+        getScreenSize();
+    }
 
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		boolean result = mGestureDetector.onTouchEvent(event);
-		return result;
-	}
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        boolean result = mGestureDetector.onTouchEvent(event);
+        return result;
+    }
 
-	@Override
-	public void onClick(View v) {
-		if (v.getId() == R.id.previous_button) {
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.previous_button) {
             if (position > 0) {
                 position--;
                 mVideoView.setVideoURI(Uri.fromFile(mPlayList.get(position).getFile()));
             } else {
                 ToastUtils.showToast(R.string.video_start_alert);
             }
-		} else if (v.getId() == R.id.next_button) {
+        } else if (v.getId() == R.id.next_button) {
             if (position < mPlayList.size() - 1) {
                 position++;
                 mVideoView.setVideoURI(Uri.fromFile(mPlayList.get(position).getFile()));
             } else {
                 ToastUtils.showToast(R.string.video_end_alert);
             }
-		} else if (v.getId() == R.id.pause_button) {
-			if (mPaused) {
-				mVideoView.start();
-				mPaused = !mPaused;
-				mPauseButton.setVisibility(View.GONE);
-			}
-		}
-	}
+        } else if (v.getId() == R.id.pause_button) {
+            if (mPaused) {
+                mVideoView.start();
+                mPaused = !mPaused;
+                mPauseButton.setVisibility(View.GONE);
+            }
+        }
+    }
 
-	private void getVideoFile(final LinkedList<VideoEntity> list, File file) {
-//		file.listFiles(new FileFilter() {
-//
-//			@Override
-//			public boolean accept(File file) {
-//				String name = file.getName();
-//				int index = name.indexOf('.');
-//				if (index != -1) {
-//					name = name.substring(index);
-//					if (name.equalsIgnoreCase(".mp4") || name.equalsIgnoreCase(".3gp")) {
-//						MovieInfo movie = new MovieInfo();
-//						movie.displayName = file.getName();
-//						movie.path = file.getAbsolutePath();
-//						list.add(movie);
-//						return true;
-//					}
-//				} else if (file.isDirectory()) {
-//					getVideoFile(list, file);
-//				}
-//
-//				return false;
-//			}
-//		});
-
+    private void getVideoFile(final LinkedList<VideoEntity> list, File file) {
         DbHelper dbHelper = DbHelper.getDbHelper(VideoPlayActivity.this);
         list.addAll(dbHelper.getAllVideos());
-	}
+    }
 
-//	static class MovieInfo {
-//		String displayName;
-//		String path;
-//	}
+    private void getScreenSize() {
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        mScreenWidth = dm.widthPixels;
+        mScreenHeight = dm.heightPixels;
 
-	private void getScreenSize() {
-		DisplayMetrics dm = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(dm);
-		mScreenWidth = dm.widthPixels;
-		mScreenHeight = dm.heightPixels;
+        mControlHeight = mScreenHeight / 4;
+    }
 
-		mControlHeight = mScreenHeight / 4;
-	}
+    private void showController() {
+        mControlWindow.update(0, 0, mScreenWidth, mControlHeight);
+    }
 
-	private void showController() {
-		mControlWindow.update(0, 0, mScreenWidth, mControlHeight);
-	}
+    public void onBackPressed(View v) {
+        finish();
+    }
 
-	public void onBackPressed(View v) {
-		finish();
-	}
-
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		if (mControlWindow.isShowing()) {
-			mControlWindow.dismiss();
-		}
-	}
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mControlWindow.isShowing()) {
+            mControlWindow.dismiss();
+        }
+    }
 
 }

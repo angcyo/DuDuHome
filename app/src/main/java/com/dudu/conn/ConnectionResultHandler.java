@@ -3,6 +3,7 @@ package com.dudu.conn;
 import android.content.Context;
 
 import com.dudu.android.launcher.LauncherApplication;
+import com.dudu.android.launcher.utils.LogUtils;
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -19,30 +20,30 @@ public class ConnectionResultHandler {
 
     private Logger log;
 
-    public ConnectionResultHandler(){
+    public ConnectionResultHandler() {
         mContext = LauncherApplication.getContext().getApplicationContext();
         log = LoggerFactory.getLogger("net.conn.mina");
     }
 
-    public void init(){
+    public void init() {
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
     }
 
-    public void onEventBackgroundThread(ConnectionEvent.ReceivedMessage event){
+    public void onEventBackgroundThread(ConnectionEvent.ReceivedMessage event) {
         try {
             JSONObject jsonResult = new JSONObject(event.getResultJson());
 
             if (jsonResult.has("result") && jsonResult.has("resultCode") && jsonResult.has("resultDesc")) {
                 EventBus.getDefault().post(new ConnectionEvent.SendDatasResponse(jsonResult.getString("result"),
-                        jsonResult.getString("resultCode"),jsonResult.getString("resultDesc")));
+                        jsonResult.getString("resultCode"), jsonResult.getString("resultDesc")));
             }
             if (jsonResult.has("method")) {
                 String method = jsonResult.getString("method");
-                log.debug("method:{},resultCode{}",method,jsonResult.getString("resultCode"));
-                switch (method){
+                log.debug("method:{},resultCode{}", method, jsonResult.getString("resultCode"));
+                switch (method) {
                     case ConnMethod.METHOD_PORTALUPDATE:
-                      new PortalHandler().handlerUpdate(mContext,method,jsonResult.getString("url"),jsonResult.getString("group"));
+                        new PortalHandler().handlerUpdate(mContext, method, jsonResult.getString("url"), jsonResult.getString("group"));
                         break;
                     case ConnMethod.METHOD_TAKEPHOTO:
                         EventBus.getDefault().post(new ConnectionEvent.TakePhoto(jsonResult.getString("openid")));
@@ -58,14 +59,11 @@ public class ConnectionResultHandler {
                     case ConnMethod.METHOD_ACTIVATAIONSTATUS:
                         ActiveDevice.getInstance(mContext).handlerCheckActive(jsonResult);
                         break;
-
                 }
             }
-
-        } catch (Exception e1) {
-            e1.printStackTrace();
+        } catch (Exception e) {
+            LogUtils.e("ConnectionResultHandler", e.getMessage() + "");
         }
-
     }
 
 }

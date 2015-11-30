@@ -358,6 +358,9 @@ public class VoiceManager {
         }
     }
 
+    public void stopSpeaking() {
+        mSpeechSynthesizer.stopSpeaking();
+    }
 
     private SpeechUnderstanderListener mRecognizerListener = new SpeechUnderstanderListener() {
 
@@ -431,7 +434,7 @@ public class VoiceManager {
         public void onInit(int code) {
             log.debug("[voice][{}]InitListener:{}", log_step++, code);
             if (code != ErrorCode.SUCCESS) {
-                //TODO
+
             }
         }
     };

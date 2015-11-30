@@ -165,6 +165,8 @@ public class MainActivity extends BaseTitlebarActivity implements
         }
 
         super.onDestroy();
+
+        InitManager.getInstance(this).unInit();
     }
 
     @Override
@@ -191,7 +193,6 @@ public class MainActivity extends BaseTitlebarActivity implements
             case R.id.navigation_button:
 
                 NavigationClerk.getInstance().openNavi(NavigationClerk.OPEN_MANUAL);
-//                Utils.startThirdPartyApp(MainActivity.this, "com.autonavi.minimap");
                 break;
 
             case R.id.self_checking_container:

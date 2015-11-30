@@ -15,6 +15,7 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -81,7 +82,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
     private LayoutParams layoutParams;
 
-    private volatile boolean isRecording = false;
+    private volatile boolean mRecording = false;
 
     private SurfaceHolder surfaceHolder;
 
@@ -118,7 +119,10 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
     private boolean mCarDriving = false;
 
+    private boolean mPreparingMediarecorder = false;
+
     private Logger logger;
+
 
     //Back键定时消失的handler
     private Handler mBackDisappearHandler = new Handler() {
@@ -240,7 +244,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     }
 
     public void startRecord() {
-        if (isRecording) {
+        if (mRecording || mPreparingMediarecorder) {
             return;
         }
 
@@ -258,7 +262,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
             }
         }
 
-        isRecording = false;
+        mRecording = false;
 
         releaseMediaRecorder();
 
@@ -272,7 +276,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     }
 
     public void startRecordTimer() {
-        if (isRecording) {
+        if (mRecording) {
             return;
         }
 
@@ -347,7 +351,12 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
     private boolean prepareMediaRecorder() {
         logger.debug("开始初始化录像: prepareMediaRecorder");
-        camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
+        mPreparingMediarecorder = true;
+
+        if (camera == null) {
+            camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
+        }
+
         Camera.Parameters p = camera.getParameters();
         p.setPreviewFormat(PixelFormat.YCbCr_420_SP);
         p.setPictureSize(1280, 720);
@@ -387,7 +396,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         videoName = dateFormat.format(new Date()) + ".mp4";
 
         if (FileUtils.isTFlashCardExists() && mCarDriving) {
-            logger.debug("用户正在开车并且TFlashCard存在，录像正常...");
+            logger.debug("用户正在开车并且TFlashCard存在，设置录像输出目录： " + videoPath);
             mediaRecorder.setOutputFile(videoPath + File.separator + videoName);
         } else {
             logger.debug("开启相机预览模式...");
@@ -397,11 +406,35 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         try {
             mediaRecorder.prepare();
         } catch (Exception e) {
-            LogUtils.e(TAG, e.getMessage());
-            return false;
+            if (!handlePrepareRecorderException(e)) {
+                return false;
+            }
         }
 
         return true;
+    }
+
+    private boolean handlePrepareRecorderException(Exception e) {
+        logger.error("录像出错了： " + e.getMessage());
+        String message = e.getMessage();
+        if (!TextUtils.isEmpty(message)) {
+            if (message.contains("EROFS")) {
+                handler.post(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        ToastUtils.showToast(R.string.video_sdcard_broken);
+                    }
+                });
+
+                releaseMediaRecorder();
+                videoPath = FileUtils.getSdcardVideoStorageDir().getAbsolutePath();
+                prepareMediaRecorder();
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void releaseMediaRecorder() {
@@ -432,14 +465,14 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     }
 
     private void insertVideo(final String videoName) {
+        if (videoPath.contains(FileUtils.getSdPath())) {
+            return;
+        }
+
         new Thread(new Runnable() {
 
             @Override
             public void run() {
-                if (!FileUtils.isTFlashCardExists()) {
-                    return;
-                }
-
                 checkTFlashCardSpace();
 
                 try {
@@ -448,7 +481,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
                         insertVideo(file);
                     }
                 } catch (Exception e) {
-
+                    logger.error("存储录像失败了：{}", e.getMessage() + "");
                 }
             }
         }).start();
@@ -506,9 +539,11 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
                 mediaRecorder.start();
 
+                logger.debug("启动录像成功, 正在录像...");
+
                 EventBus.getDefault().post(new DeviceEvent.Video(DeviceEvent.ON));
 
-                isRecording = true;
+                mRecording = true;
             } else {
                 releaseMediaRecorder();
             }
@@ -516,6 +551,10 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
             return null;
         }
 
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            mPreparingMediarecorder = false;
+        }
     }
 
     private class TFlashCardReceiver extends BroadcastReceiver {
@@ -565,7 +604,6 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
                                 });
                         queue.add(multipartRequest);
                     }
-
                 }
 
             });
@@ -574,15 +612,9 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
     public void onEventBackgroundThread(BleOBD.CarStatus event) {
         if (event.getCarStatus() == BleOBD.CarStatus.CAR_OFFLINE) {
-              logger.debug("接收到熄火的消息...");
-//            mCarDriving = false;
-//            stopRecord();
-//            stopRecordTimer();
+            logger.debug("接收到熄火的消息...");
         } else if (event.getCarStatus() == BleOBD.CarStatus.CAR_ONLINE) {
             logger.debug("接收到点火的消息...");
-//            mCarDriving = true;
-//            startRecord();
-//            startRecordTimer();
         }
     }
 

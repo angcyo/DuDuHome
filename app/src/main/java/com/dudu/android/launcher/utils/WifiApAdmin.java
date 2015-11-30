@@ -1,6 +1,7 @@
 package com.dudu.android.launcher.utils;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 
@@ -251,6 +252,12 @@ public class WifiApAdmin {
 
         return false;
     }
+
+    public static void setMobileDataStatus(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+    }
+
 
     /**
      * wifi 密码设置后的回调

@@ -57,6 +57,10 @@ public class InitManager {
         checkBTFT();
     }
 
+    public void unInit() {
+        VoiceManager.getInstance().stopWakeup();
+    }
+
     /**
      * 开启语音对话框服务
      */

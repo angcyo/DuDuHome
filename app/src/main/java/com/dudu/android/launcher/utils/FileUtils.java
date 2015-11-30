@@ -151,6 +151,16 @@ public class FileUtils {
         return dir;
     }
 
+    public static File getSdcardVideoStorageDir() {
+        File dir = new File(getSdPath(), "/dudu/video");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        log.debug("VideoPath:{}", dir.getAbsolutePath());
+        return dir;
+    }
+
     public static String getMainDirName() {
         return "/dudu";
     }
