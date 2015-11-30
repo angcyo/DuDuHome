@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -54,6 +56,7 @@ public class Utils {
 
     /**
      * 判断当前是demo版本还是正式版
+     *
      * @param context
      * @return
      */
@@ -67,7 +70,7 @@ public class Utils {
                 return true;
             }
         } catch (PackageManager.NameNotFoundException e) {
-           LogUtils.e(TAG, e.getMessage() + "");
+            LogUtils.e(TAG, e.getMessage() + "");
         }
 
         return false;
@@ -98,6 +101,29 @@ public class Utils {
         }
     }
 
+    /**
+     * 检查用户是否已激活
+     * @param context
+     * @return
+     */
+    public static boolean checkUserStateIsActive(Context context) {
+        boolean flag = false;
+        //检查是否已激活
+        //接口连接代码，暂时先空下来
+        return flag;
+    }
+
+    public static boolean isNetworkConnected(Context context) {
+        if (context != null) {
+            ConnectivityManager mConnectivityManager = (ConnectivityManager) context
+                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+            if (mNetworkInfo != null) {
+                return mNetworkInfo.isAvailable();
+            }
+        }
+        return false;
+    }
 
     public static void checkSimCardState(Context context) {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);

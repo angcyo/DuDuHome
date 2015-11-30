@@ -79,6 +79,8 @@
     <string name="OBD_not_connect">OBD模块未正确连接</string>
     <string name="OBD_use_connect">请连接OBD后使用</string>
 
+    <string name="user_is_not_active">当前账号尚未激活</string>
+
     <string-array name="action_menu_list_select">
         <item>选择</item>
         <item>全选</item>

@@ -8,9 +8,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 
 import com.dudu.android.launcher.LauncherApplication;
+import com.dudu.android.launcher.service.CheckUserService;
 import com.dudu.android.launcher.service.FloatBackButtonService;
 import com.dudu.android.launcher.service.MonitorService;
 import com.dudu.android.launcher.service.NewMessageShowService;
+import com.dudu.android.launcher.utils.Constants;
+import com.dudu.android.launcher.utils.SharedPreferencesUtil;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.navi.NavigationManager;
@@ -73,6 +76,16 @@ public class InitManager {
          */
         Intent i = new Intent(mActivity, FloatBackButtonService.class);
         mActivity.startService(i);
+    }
+
+    /**
+     * 开启用户激活状态检查服务
+     */
+    private void startCheckUserService() {
+        if (!SharedPreferencesUtil.getBooleanValue(mActivity, Constants.KEY_USER_IS_ACTIVE, false)) {
+            CheckUserService service = CheckUserService.getInstance(mActivity);
+            service.startService();
+        }
     }
 
     /**
@@ -156,6 +169,8 @@ public class InitManager {
         logger.debug("[init][{}]打开热点", log_step++);
         WifiApAdmin.initWifiApState(mActivity);
 
+        logger.debug("[init][{}]打开用户激活状态检查", log_step++);
+        startCheckUserService();
 
         NavigationManager.getInstance(LauncherApplication.getContext()).initNaviManager();
     }

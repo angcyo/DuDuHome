@@ -154,6 +154,10 @@ public class Constants {
     public static final String KEY_FREE_ARRIVE_VALUE = "free_arrive_value";
     public static final String KEY_PORTAL_VERSION = "portal_version";
 
+	public static final String KEY_USER_ACTIVE_TIME = "key_user_active_time";
+
+	public static final String KEY_USER_IS_ACTIVE = "key_user_is_active";
+
 	public static final int ADDRESS_VIEW_COUNT = 4;
 
 }
