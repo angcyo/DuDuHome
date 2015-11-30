@@ -3,6 +3,7 @@ package com.dudu.monitor.valueobject;
 import android.location.Location;
 
 import com.amap.api.location.AMapLocation;
+import com.dudu.monitor.utils.TimeUtils;
 
 /**
  * Created by dengjun on 2015/11/26.
@@ -10,35 +11,37 @@ import com.amap.api.location.AMapLocation;
  */
 public class LocationInfo {
     /**经度  */
-    private double longitude;
+    private double lon;
     /**纬度  */
-    private double latitude;
+    private double lat;
     /**高程  */
     private double altitude;
     /**速度  */
-    private float speed;
+    private float speeds;
     /**方向  */
     private float direction;
     /** 精度*/
     private float accuracy;
     /** 时间*/
-    private String locTime;
+    private String createTime;
 
     private Integer type;		//类型 1.急加速 	2.急减速	3.急转弯	4.急变道	5.疲劳驾驶	6.发动机转速不匹配
 
-    private String obeId;
+//    private String obeId;
 
     public LocationInfo(Location location){
 
     }
 
     public LocationInfo(AMapLocation location){
-        longitude = location.getLongitude();
-        latitude = location.getLatitude();
+        lon = location.getLongitude();
+        lat = location.getLatitude();
         altitude = location.getAltitude();
-        speed = location.getSpeed();
+        speeds = location.getSpeed();
         direction = location.getBearing();
         accuracy = location.getAccuracy();
+        createTime = TimeUtils.dateLongFormatString(location.getTime(),
+                TimeUtils.format1);
     }
 
 
@@ -48,20 +51,20 @@ public class LocationInfo {
 
 
 
-    public double getLatitude() {
-        return latitude;
+    public double getLat() {
+        return lat;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
+    public void setLat(double lat) {
+        this.lat = lat;
     }
 
-    public double getLongitude() {
-        return longitude;
+    public double getLon() {
+        return lon;
     }
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+    public void setLon(double lon) {
+        this.lon = lon;
     }
 
     public double getAltitude() {
@@ -72,12 +75,12 @@ public class LocationInfo {
         this.altitude = altitude;
     }
 
-    public float getSpeed() {
-        return speed;
+    public float getSpeeds() {
+        return speeds;
     }
 
-    public void setSpeed(float speed) {
-        this.speed = speed;
+    public void setSpeeds(float speeds) {
+        this.speeds = speeds;
     }
 
     public float getDirection() {
@@ -88,12 +91,12 @@ public class LocationInfo {
         this.direction = direction;
     }
 
-    public String getLocTime() {
-        return locTime;
+    public String getCreateTime() {
+        return createTime;
     }
 
-    public void setLocTime(String locTime) {
-        this.locTime = locTime;
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 
     public float getAccuracy() {

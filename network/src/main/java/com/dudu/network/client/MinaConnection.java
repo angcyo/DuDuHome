@@ -4,17 +4,20 @@ import android.text.TextUtils;
 
 import com.dudu.network.interfaces.IConnectCallBack;
 import com.dudu.network.interfaces.IConnection;
+import com.dudu.network.utils.DuduLog;
 import com.dudu.network.valueobject.ConnectionParam;
 import com.dudu.network.valueobject.ConnectionState;
 
 import org.apache.mina.core.future.CloseFuture;
 import org.apache.mina.core.future.ConnectFuture;
+import org.apache.mina.core.future.IoFutureListener;
 import org.apache.mina.core.service.IoConnector;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
+import org.apache.mina.filter.firewall.ConnectionThrottleFilter;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -60,13 +63,16 @@ public class MinaConnection extends IoHandlerAdapter implements IConnection{
             // 添加业务逻辑处理器类
             connector.setHandler(this);
             ConnectFuture future = connector.connect(new InetSocketAddress(connectionParam.getHost(), connectionParam.getPort()));// 创建连接
-
+            log.info("开始连接网络");
             //如果不等待 网络连接过程异步
             future.awaitUninterruptibly(); // 等待连接创建完成
             session = future.getSession();
 
+//            future.addListener(new ConnectListener());
+
         }catch(Exception e){
             log.warn("连接异常", e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -107,6 +113,7 @@ public class MinaConnection extends IoHandlerAdapter implements IConnection{
     public void sessionOpened(IoSession session) throws Exception {
         log.debug("客户端会话打开");//当有新的连接打开的时候，该方法被调用。该方法在 sessionCreated之后被调用。
         isConnected = true;
+        this.session = session;
         if (iConnectCallBack != null){
             iConnectCallBack.onConnectionState(new ConnectionState(ConnectionState.CONNECTION_SUCCESS));
         }

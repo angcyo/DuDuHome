@@ -1,20 +1,18 @@
-package com.dudu.network.valueobject;
+package com.dudu.network.event;
+
+import com.dudu.network.valueobject.MessagePackage;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by dengjun on 2015/11/29.
- * Description :
+ * Created by dengjun on 2015/11/30.
+ * Description : 4.2.3 流量异常预警
  */
-public class GeneralResponse extends MessagePackage{
-    //消息ID
+public class DataExceptionAlarm extends MessagePackage {
     private String messageId;
-    //响应结果
-    private String resultCode;
-    //业务方法名
-    private String method;
-
+    private  int alarmLevel ;
+    private  String method;
 
     @Override
     public void setMessageId(String messageId) {
@@ -23,7 +21,7 @@ public class GeneralResponse extends MessagePackage{
 
     @Override
     public String getMessageId() {
-        return null;
+        return messageId;
     }
 
     @Override
@@ -41,12 +39,11 @@ public class GeneralResponse extends MessagePackage{
         try {
             JSONObject jsonObject = new JSONObject(messageJsonString);
             messageId = jsonObject.getString("messageId");
-            resultCode =  jsonObject.getString("resultCode");
+            alarmLevel =  jsonObject.getInt("alarmLevel");
             method = jsonObject.getString("method");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -54,6 +51,7 @@ public class GeneralResponse extends MessagePackage{
         return null;
     }
 
-
-
+    public int getAlarmLevel() {
+        return alarmLevel;
+    }
 }

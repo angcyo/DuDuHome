@@ -5,7 +5,10 @@ package com.dudu.network.valueobject;
  * Description :
  */
 public class ConnectionParam {
-    private String host = "119.29.65.127";
+//    private String host = "119.29.65.127";
+//   private int port = 8888;
+    //调试
+    private String host = "192.168.0.177";
     private int port = 8888;
     private int connectTimeout = 30*1000;
 

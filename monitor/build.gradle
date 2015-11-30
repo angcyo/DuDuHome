@@ -26,4 +26,5 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.12'
     compile 'de.greenrobot:eventbus:2.4.0'
     compile project(':scf4a')
+    compile project(':network')
 }

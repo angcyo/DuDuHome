@@ -47,8 +47,8 @@ public class LocationManage implements ILocationListener{
             currentLoction = (AMapLocation) locationInfo;
 
         }else if (locationInfo instanceof  LocationInfo){
-//            locationInfoList.add((LocationInfo)locationInfo);
-//            mCurLocation = (LocationInfo)locationInfo;
+            locationInfoList.add((LocationInfo)locationInfo);
+            mCurLocation = (LocationInfo)locationInfo;
         }
     }
 
