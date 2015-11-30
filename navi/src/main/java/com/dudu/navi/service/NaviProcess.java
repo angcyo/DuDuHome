@@ -20,17 +20,13 @@ import com.dudu.navi.entity.Navigation;
 import com.dudu.navi.event.NaviEvent;
 import com.dudu.navi.vauleObject.NavigationType;
 
-import org.scf4a.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
-import rx.Observable;
-import rx.functions.Action1;
 
 /**
  * Created by lxh on 2015/11/25.
@@ -155,7 +151,7 @@ public class NaviProcess {
                 @Override
                 public void onReCalculateRouteForYaw() {
 
-                    EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast("您已偏离路线",false));
+                    EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast("您已偏离路线", false));
                     log.debug("[{}] 步行或驾车导航时,出现偏航后需要重新计算路径", step++);
                 }
 
@@ -182,7 +178,7 @@ public class NaviProcess {
                 @Override
                 public void onGetNavigationText(int arg0, String arg1) {
                     log.debug("[{}] 导航播报信息", step++);
-                    EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast(arg1,false));
+                    EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast(arg1, false));
 
                 }
 

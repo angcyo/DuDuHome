@@ -28,6 +28,7 @@ import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.NaviSettingUtil;
 import com.dudu.android.launcher.utils.ViewAnimation;
 import com.dudu.map.AmapLocationChangeEvent;
+import com.dudu.map.NavigationClerk;
 import com.dudu.navi.NavigationManager;
 import com.dudu.navi.entity.Point;
 import com.dudu.navi.vauleObject.NavigationType;
@@ -316,7 +317,8 @@ AMapNaviViewListener{
 
 	@Override
 	public void onDestroy() {
-		NavigationManager.getInstance(this).existNavigation();
+		NavigationClerk.getInstance().existNavi();
+		VoiceManager.getInstance().clearMisUnderstandCount();
 		VoiceManager.getInstance().startSpeaking("导航结束", SemanticConstants.TTS_DO_NOTHING, false);
 		mAmapAMapNaviView.onDestroy();
 		super.onDestroy();

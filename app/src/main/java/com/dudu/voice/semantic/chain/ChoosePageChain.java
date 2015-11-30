@@ -41,8 +41,7 @@ public class ChoosePageChain extends SemanticChain {
 
     @Override
     public boolean doSemantic(String json) {
-        Activity activity = ActivitiesManager.getInstance().getTopActivity();
-        if(activity != null && activity instanceof LocationMapActivity){
+        if(NavigationClerk.getInstance().isShowAddress()){
             getPageType(json);
             if(type!=0){
                 mVoiceManager.startUnderstanding();

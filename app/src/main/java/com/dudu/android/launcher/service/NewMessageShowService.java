@@ -185,6 +185,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
             list.clear();
         }
         isShowWindow = false;
+        isShowAddress = false;
         mFloatWindow.setIsWindowShow(false);
         super.onDestroy();
     }
@@ -312,6 +313,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
                 pageIndex = page-1;
                 break;
         }
+        Log.d("lxh","choosePage ："+ pageIndex);
         addressList.setSelection(pageIndex * Constants.ADDRESS_VIEW_COUNT);
     }
 
@@ -390,7 +392,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
                 }
 
             }
-        }, 200);
+        }, 100);
     }
 
     @Override

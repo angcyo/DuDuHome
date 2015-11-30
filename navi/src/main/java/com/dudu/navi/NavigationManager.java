@@ -110,6 +110,7 @@ public class NavigationManager {
     }
 
     public void existNavigation() {
+        setSearchType(SearchType.SEARCH_DEFAULT);
         setNavigationType(NavigationType.DEFAULT);
         setIsNavigatining(false);
         NaviProcess.getInstance(mContext).destoryAmapNavi();

@@ -44,7 +44,7 @@ import de.greenrobot.event.EventBus;
  */
 public class NavigationClerk {
 
-    private static final int REMOVEWINDOW_TIME = 9 * 1000;
+    private static final int REMOVEWINDOW_TIME = 8 * 1000;
 
     private static NavigationClerk navigationClerk;
 
@@ -288,6 +288,7 @@ public class NavigationClerk {
 
     public void onEventMainThread(NaviEvent.SearchResult event) {
         disMissProgressDialog();
+        removeCallback();
         navigationManager.getLog().debug("----SearchResult: {}", navigationManager.getSearchType());
         if (event == NaviEvent.SearchResult.SUCCESS) {
             handlerPoiResult();
@@ -344,7 +345,6 @@ public class NavigationClerk {
     }
 
     public void handlerPoiResult() {
-        removeCallback();
         endPoint = null;
         choosepoiResult = null;
         switch (navigationManager.getSearchType()) {

@@ -44,11 +44,7 @@ public class ChoiseChain extends SemanticChain {
             type = TYPE_PAGE;
         else
             type = TYPE_NORMAL;
-
-        Activity topActivity = ActivitiesManager.getInstance().getTopActivity();
-
-        if (topActivity != null && (topActivity instanceof LocationMapActivity) &&
-                NavigationClerk.getInstance().isShowAddress()) {
+        if (NavigationClerk.getInstance().isShowAddress()) {
             mVoiceManager.startUnderstanding();
             NavigationClerk.getInstance().startChooseResult(choiseSize, type);
             return true;

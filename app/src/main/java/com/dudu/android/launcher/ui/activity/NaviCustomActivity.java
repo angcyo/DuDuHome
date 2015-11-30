@@ -30,6 +30,7 @@ import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.NaviSettingUtil;
 import com.dudu.android.launcher.utils.ViewAnimation;
 import com.dudu.map.AmapLocationChangeEvent;
+import com.dudu.map.NavigationClerk;
 import com.dudu.navi.NavigationManager;
 import com.dudu.navi.vauleObject.NavigationType;
 import com.dudu.voice.semantic.SemanticConstants;
@@ -346,7 +347,8 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
     @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
-        NavigationManager.getInstance(this).existNavigation();
+        NavigationClerk.getInstance().existNavi();
+        VoiceManager.getInstance().clearMisUnderstandCount();
         VoiceManager.getInstance().startSpeaking("导航结束",SemanticConstants.TTS_DO_NOTHING,false);
         try {
             mAmapAMapNaviView.onDestroy();
