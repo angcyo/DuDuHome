@@ -112,7 +112,7 @@ public class PortalUpdate {
             String groupName = portalAddress[0];
             String fileName = portalAddress[1];
 
-            handleUpdate(context, "", groupName, fileName);
+            handleUpdate(context, "", fileName, groupName);
         }
     }
 

@@ -3,11 +3,11 @@ package com.dudu.conn;
 import android.content.Context;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.SharedPreferencesUtil;
+import com.dudu.android.launcher.utils.WifiApAdmin;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,6 +50,24 @@ public class FlowMonitor {
         mMessageSender.synConfiguration();
     }
 
+    public void onSwitchFlowResult(JSONObject result) throws JSONException {
+        String resultCode = result.getString(ConnectionConstants.FIELD_RESULT_CODE);
+
+        if (ConnectionConstants.RESULT_CODE_SUCCESS.equals(resultCode)) {
+            if (result.isNull(ConnectionConstants.FIELD_TRAFFIC_CONTROL)) {
+                switch (result.getInt(ConnectionConstants.FIELD_TRAFFIC_CONTROL)) {
+                    case ConnectionConstants.RESULT_TRAFFIC_CONTROL_CLOSE:
+                        WifiApAdmin.closeWifiAp(mContext);
+                        break;
+
+                    case ConnectionConstants.RESULT_TRAFFIC_CONTROL_OPEN:
+                        WifiApAdmin.initWifiApState(mContext);
+                        break;
+                }
+            }
+        }
+    }
+
     public void onRemainingFlowResult(JSONObject result) throws JSONException {
         String resultCode = result.getString(ConnectionConstants.FIELD_RESULT_CODE);
         if (ConnectionConstants.RESULT_CODE_SUCCESS.equals(
@@ -63,69 +81,79 @@ public class FlowMonitor {
         if (ConnectionConstants.RESULT_CODE_SUCCESS.equals(
                 resultCode)) {
             if (!result.isNull(ConnectionConstants.FIELD_RESULT)) {
+
                 JSONObject object = result.getJSONObject(ConnectionConstants.FIELD_RESULT);
 
-                String portalVersion = object.getString(ConnectionConstants.FIELD_PORTAL_VERSION);
-                String portalAddress = object.getString(ConnectionConstants.FIELD_POTAL_ADDRESS);
-                if (!TextUtils.isEmpty(portalVersion)) {
-                    PortalUpdate.getInstance().updatePortal(mContext, portalVersion, portalAddress);
+                if (!object.isNull(ConnectionConstants.FIELD_PORTAL_VERSION) &&
+                        !object.isNull(ConnectionConstants.FIELD_PORTAL_ADDRESS)) {
+                    String portalVersion = object.getString(ConnectionConstants.FIELD_PORTAL_VERSION);
+                    String portalAddress = object.getString(ConnectionConstants.FIELD_PORTAL_ADDRESS);
+                    if (!TextUtils.isEmpty(portalVersion)) {
+                        PortalUpdate.getInstance().updatePortal(mContext, portalVersion, portalAddress);
+                    }
                 }
 
                 putStringValue(Constants.KEY_TRAFFICE_CONTROL,
-                        object.getString(ConnectionConstants.FIELD_TRAFFICE_CONTROL));
+                        ConnectionConstants.FIELD_TRAFFIC_CONTROL, object);
 
                 putStringValue(Constants.KEY_MONTH_MAX_VALUE,
-                        object.getString(ConnectionConstants.FIELD_MONTH_MAX_VALUE));
+                        ConnectionConstants.FIELD_MONTH_MAX_VALUE, object);
 
                 putStringValue(Constants.KEY_FREE_ADD_VALUE,
-                        object.getString(ConnectionConstants.FIELD_FREE_ADD_VALUE));
+                        ConnectionConstants.FIELD_FREE_ADD_VALUE, object);
 
                 putStringValue(Constants.KEY_DAILY_MAX_VALUE,
-                        object.getString(ConnectionConstants.FIELD_DAILY_MAX_VALUE));
+                        ConnectionConstants.FIELD_DAILY_MAX_VALUE, object);
 
                 putStringValue(Constants.KEY_UP_LIMIT_MAX_VALUE,
-                        object.getString(ConnectionConstants.FIELD_UP_LIMIT_MAX_VALUE));
+                        object.getString(ConnectionConstants.FIELD_UP_LIMIT_MAX_VALUE), object);
 
-                putStringValue(Constants.KEY_POTAL_ADDRESS,
-                        object.getString(ConnectionConstants.FIELD_POTAL_ADDRESS));
+                putStringValue(Constants.KEY_PORTAL_ADDRESS,
+                        ConnectionConstants.FIELD_PORTAL_ADDRESS, object);
 
                 putStringValue(Constants.KEY_DOWN_LIMIT_MAX_VALUE,
-                        object.getString(ConnectionConstants.FIELD_DOWN_LIMIT_MAX_VALUE));
+                        ConnectionConstants.FIELD_DOWN_LIMIT_MAX_VALUE, object);
 
                 putStringValue(Constants.KEY_LIFE_TYPE,
-                        object.getString(ConnectionConstants.FIELD_LIFE_TYPE));
+                        ConnectionConstants.FIELD_LIFE_TYPE, object);
 
                 putStringValue(Constants.KEY_UPLOAD_LIMIT,
-                        object.getString(ConnectionConstants.FIELD_UPLOAD_LIMIT));
+                        ConnectionConstants.FIELD_UPLOAD_LIMIT, object);
 
                 putStringValue(Constants.KEY_FREE_ADD_TIMES,
-                        object.getString(ConnectionConstants.FIELD_FREE_ADD_TIMES));
+                        ConnectionConstants.FIELD_FREE_ADD_TIMES, object);
 
                 putStringValue(Constants.KEY_REMAINING_FLOW,
-                        object.getString(ConnectionConstants.FIELD_REMAINING_FLOW));
+                        ConnectionConstants.FIELD_REMAINING_FLOW, object);
 
                 putStringValue(Constants.KEY_MONTH_MAX_VALUE,
-                        object.getString(ConnectionConstants.FIELD_MONTH_MAX_VALUE));
+                        object.getString(ConnectionConstants.FIELD_MONTH_MAX_VALUE), object);
 
                 putStringValue(Constants.KEY_MIDDLE_ARLAM_VALUE,
-                        object.getString(ConnectionConstants.FIELD_MIDDLE_ARLAM_VALUE));
+                        ConnectionConstants.FIELD_MIDDLE_ARLAM_VALUE, object);
 
                 putStringValue(Constants.KEY_HIGH_ARLAM_VALUE,
-                        object.getString(ConnectionConstants.FIELD_HIGH_ARLAM_VALUE));
+                        ConnectionConstants.FIELD_HIGH_ARLAM_VALUE, object);
 
                 putStringValue(Constants.KEY_LOW_ARLAM_VALUE,
-                        object.getString(ConnectionConstants.FIELD_LOW_ARLAM_VALUE));
+                        ConnectionConstants.FIELD_LOW_ARLAM_VALUE, object);
 
                 putStringValue(Constants.KEY_DOWNLOAD_LIMIT,
-                        object.getString(ConnectionConstants.FIELD_DOWNLOAD_LIMIT));
+                        ConnectionConstants.FIELD_DOWNLOAD_LIMIT, object);
 
                 putStringValue(Constants.KEY_FREE_ARRIVE_VALUE,
-                        object.getString(ConnectionConstants.FIELD_FREE_ARRIVE_VALUE));
+                        ConnectionConstants.FIELD_FREE_ARRIVE_VALUE, object);
             }
         }
     }
 
-    private void putStringValue(String key, String value) {
+    private void putStringValue(String key, String field, JSONObject object)
+            throws JSONException {
+        if (object.isNull(field)) {
+            return;
+        }
+
+        String value = object.getString(field);
         if (!TextUtils.isEmpty(value)) {
             SharedPreferencesUtil.putStringValue(mContext, key, value);
         }

@@ -36,6 +36,10 @@ public class ConnectionConstants {
 
     public static final String METHOD_SYNCONFIGURATION = "synConfiguration";          // 流量策略配置同步
 
+    public static final String METHOD_SWITCHFLOW = "switchFlow";
+
+    public static final String METHOD_DATAOVERSTEPALARM = "dataOverstepAlarm";
+
 
     /**
      * 后台接口返回码
@@ -44,6 +48,9 @@ public class ConnectionConstants {
 
     public static final String RESULT_CODE_FAILURE = "400"; // 操作失败
 
+    public static final int RESULT_TRAFFIC_CONTROL_CLOSE = 0;
+
+    public static final int RESULT_TRAFFIC_CONTROL_OPEN = 1;
 
     /**
      * 后台接口字段名称
@@ -52,7 +59,7 @@ public class ConnectionConstants {
 
     public static final String FIELD_RESULT = "result";
 
-    public static final String FIELD_TRAFFICE_CONTROL = "trafficControl";
+    public static final String FIELD_TRAFFIC_CONTROL = "trafficControl";
 
     public static final String FIELD_MONTH_MAX_VALUE = "monthMaxValue";
 
@@ -60,10 +67,9 @@ public class ConnectionConstants {
 
     public static final String FIELD_DAILY_MAX_VALUE = "dailyMaxValue";
 
-    public static final String FIELD_POTAL_ADDRESS = "upLimitMaxValue";
+    public static final String FIELD_PORTAL_ADDRESS = "portalAddress";
 
-    public static final String FIELD_UP_LIMIT_MAX_VALUE = "potalAddress";
-
+    public static final String FIELD_UP_LIMIT_MAX_VALUE = "upLimitMaxValue";
 
     public static final String FIELD_DOWN_LIMIT_MAX_VALUE = "downLimitMaxValue";
 

@@ -140,7 +140,7 @@ public class Constants {
     public static final String KEY_MONTH_MAX_VALUE = "month_max_value";
     public static final String KEY_FREE_ADD_VALUE = "free_add_value";
     public static final String KEY_DAILY_MAX_VALUE = "daily_max_value";
-    public static final String KEY_POTAL_ADDRESS = "potal_Address";
+    public static final String KEY_PORTAL_ADDRESS = "portal_Address";
     public static final String KEY_UP_LIMIT_MAX_VALUE = "up_Limit_Max_Value";
     public static final String KEY_DOWN_LIMIT_MAX_VALUE = "down_limit_Max_Value";
     public static final String KEY_LIFE_TYPE = "life_type";

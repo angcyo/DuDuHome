@@ -18,11 +18,8 @@ public class ConnectionResultHandler {
 
     private Context mContext;
 
-    private Logger log;
-
     public ConnectionResultHandler() {
-        mContext = LauncherApplication.getContext().getApplicationContext();
-        log = LoggerFactory.getLogger("net.conn.mina");
+        mContext = LauncherApplication.getContext();
     }
 
     public void init() {
@@ -43,7 +40,7 @@ public class ConnectionResultHandler {
                 switch (method) {
                     case ConnectionConstants.METHOD_PORTALUPDATE:
                         PortalUpdate.getInstance().handleUpdate(mContext, method,
-                                jsonResult.getString("url"), jsonResult.getString("group"));
+                                jsonResult.getString("url"), jsonResult.getString("group_name"));
                         break;
                     case ConnectionConstants.METHOD_TAKEPHOTO:
                         EventBus.getDefault().post(new ConnectionEvent.TakePhoto(jsonResult.getString("openid")));
@@ -64,6 +61,12 @@ public class ConnectionResultHandler {
                         break;
                     case ConnectionConstants.METHOD_SYNCONFIGURATION:
                         FlowMonitor.getInstance().onFlowConfigurationResult(jsonResult);
+                        break;
+                    case ConnectionConstants.METHOD_SWITCHFLOW:
+                        FlowMonitor.getInstance().onSwitchFlowResult(jsonResult);
+                        break;
+                    case ConnectionConstants.METHOD_DATAOVERSTEPALARM:
+
                         break;
                 }
             }

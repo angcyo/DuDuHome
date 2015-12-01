@@ -44,6 +44,10 @@ public class DialogUtils {
     }
 
     public static void showWithoutSimCardDialog(Context context) {
+        if (Utils.isDemoVersion(context)) {
+            return;
+        }
+
         if (mWithoutSimCardDialog != null && mWithoutSimCardDialog.isShowing()) {
             return;
         }
@@ -62,6 +66,10 @@ public class DialogUtils {
     }
 
     public static void showSimCardReplaceDialog(Context context) {
+        if (Utils.isDemoVersion(context)) {
+            return;
+        }
+
         if (mSimCardReplaceDialog != null && mSimCardReplaceDialog.isShowing()) {
             return;
         }

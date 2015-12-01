@@ -570,11 +570,12 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
                 mVideoCacheMaxSize = Float.parseFloat(FileUtils.fileByte2Mb(FileUtils.getTFlashCardSpace()));
             } else if (action.equals(Intent.ACTION_MEDIA_REMOVED)) {
-                videoPath = FileUtils.getVideoStorageDir().getAbsolutePath();
+
                 ToastUtils.showToast(R.string.video_sdcard_removed_alert);
+
+                videoPath = FileUtils.getSdcardVideoStorageDir().getAbsolutePath();
             }
         }
-
     }
 
     public void onEventBackgroundThread(final ConnectionEvent.TakePhoto takePhoto) {
