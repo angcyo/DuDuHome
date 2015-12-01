@@ -26,6 +26,7 @@ import com.amap.api.services.poisearch.PoiItemDetail;
 import com.amap.api.services.poisearch.PoiResult;
 import com.amap.api.services.poisearch.PoiSearch;
 import com.dudu.event.LocationChangeEvent;
+import com.dudu.map.AMapLocationHandler;
 import com.dudu.map.AMapNaviHandler;
 import com.dudu.utils.LocationUtils;
 
@@ -113,6 +114,7 @@ public class AgedMapActivity extends NoTitleActivity implements LocationSource, 
     @Override
     public void activate(OnLocationChangedListener onLocationChangedListener) {
         listener = onLocationChangedListener;
+        AMapLocationHandler.getInstance(this).init();
     }
 
     @Override

@@ -57,10 +57,13 @@ public class AgedModelMainActivity extends NoTitleBaseActivity implements AMapLo
         /**
          * 启动定位的监听事件
          * */
-        AMapLocationHandler.getInstance(this).init();
+
         /**
          * 设置天气的回调事件
+         *
          * */
+        com.dudu.android.hideapi.SystemPropertiesProxy.getInstance()
+                .set(this, "persist.sys.screen","on");
         locationManagerProxy = LocationManagerProxy.getInstance(this);
         locationManagerProxy.requestWeatherUpdates(LocationManagerProxy.WEATHER_TYPE_LIVE, this);
         handler = null;

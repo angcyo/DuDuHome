@@ -8,11 +8,11 @@ import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
+import com.amap.api.location.LocationProviderProxy;
 import com.dudu.event.LocationChangeEvent;
 import com.dudu.utils.LocationUtils;
 
@@ -41,7 +41,9 @@ public class AMapLocationHandler implements AMapLocationListener {
 
     public void init() {
         locationManagerProxy = LocationManagerProxy.getInstance(mContext);
-        locationManagerProxy.requestLocationData(LocationManagerProxy.NETWORK_PROVIDER, 3000, 10, this);//定位
+
+        locationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, 3000, 10, this);//定位
+
         if (checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -63,7 +65,6 @@ public class AMapLocationHandler implements AMapLocationListener {
          * */
         LocationUtils.getInstance(mContext).setCurrentCoordinate(latitude, longitude);
         EventBus.getDefault().post(new LocationChangeEvent(aMapLocation));
-        Log.v("ji..", "latitude:" + latitude);
     }
 
     @Override
