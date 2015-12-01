@@ -61,7 +61,7 @@ public class CheckUserService {
     public void checkUserStateIsActive() {
         if (Utils.isNetworkConnected(context)) {
             if (!Utils.checkUserStateIsActive(context)) {
-                Toast.makeText(context, context.getString(R.string.user_is_not_active), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, context.getString(R.string.user_is_not_active), Toast.LENGTH_SHORT).show();
             } else {
                 SharedPreferencesUtil.putBooleanValue(context, Constants.KEY_USER_IS_ACTIVE, true);
                 stopSendService();
