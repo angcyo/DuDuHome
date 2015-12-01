@@ -66,8 +66,10 @@ public class ConnectionResultHandler {
                         FlowMonitor.getInstance().onSwitchFlowResult(jsonResult);
                         break;
                     case ConnectionConstants.METHOD_DATAOVERSTEPALARM:
-
+                        FlowMonitor.getInstance().dataOverstepAlarm(jsonResult);
                         break;
+                    case ConnectionConstants.METHOD_DATAEXCEPTIONALARM:
+                        FlowMonitor.getInstance().dataExceptionAlarm(jsonResult);
                 }
             }
         } catch (Exception e) {

@@ -36,9 +36,11 @@ public class ConnectionConstants {
 
     public static final String METHOD_SYNCONFIGURATION = "synConfiguration";          // 流量策略配置同步
 
-    public static final String METHOD_SWITCHFLOW = "switchFlow";
+    public static final String METHOD_SWITCHFLOW = "switchFlow";                 // 流量控制开关
 
-    public static final String METHOD_DATAOVERSTEPALARM = "dataOverstepAlarm";
+    public static final String METHOD_DATAOVERSTEPALARM = "dataOverstepAlarm";          // 流量超限预警
+
+    public static final String METHOD_DATAEXCEPTIONALARM = "dataExceptionAlarm";          // 流量策略配置同步
 
 
     /**
@@ -51,6 +53,16 @@ public class ConnectionConstants {
     public static final int RESULT_TRAFFIC_CONTROL_CLOSE = 0;
 
     public static final int RESULT_TRAFFIC_CONTROL_OPEN = 1;
+
+    public static final int FIELD_ALARM_LEVEL_OPEN = 0;
+
+    public static final int FIELD_ALARM_LEVEL_ADVANCED_WARNING = 1;
+
+    public static final int FIELD_ALARM_LEVEL_INTERMEDIATE_WARNING = 2;
+
+    public static final int FIELD_ALARM_LEVEL_LOWLEVEL_WARNING = 3;
+
+    public static final int FIELD_ALARM_LEVEL_CLOSE = 4;
 
     /**
      * 后台接口字段名称
@@ -92,5 +104,8 @@ public class ConnectionConstants {
     public static final String FIELD_FREE_ARRIVE_VALUE = "freeArriveValue";
 
     public static final String FIELD_PORTAL_VERSION = "portalVersion";
+
+    public static final String FIELD_ALARM_LEVEL = "alarmLevel";
+
 
 }
