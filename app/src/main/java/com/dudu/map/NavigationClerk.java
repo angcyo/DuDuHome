@@ -616,7 +616,6 @@ public class NavigationClerk {
         }
         if (LauncherApplication.getContext().getRecordService() != null) {
             LauncherApplication.getContext().getRecordService().updatePreviewSize(1, 1);
-            LauncherApplication.getContext().getRecordService().setShowing(false);
         }
     }
 }

@@ -62,7 +62,8 @@ public class InitManager {
     }
 
     public void unInit() {
-        VoiceManager.getInstance().stopWakeup();
+        VoiceManager.getInstance().stopUnderstanding();
+        VoiceManager.getInstance().destroyWakeup();
     }
 
     /**

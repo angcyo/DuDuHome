@@ -41,8 +41,8 @@ import com.dudu.event.BleStateChange;
 import com.dudu.event.DeviceEvent;
 import com.dudu.init.InitManager;
 import com.dudu.map.NavigationClerk;
+import com.dudu.monitor.event.CarStatus;
 import com.dudu.navi.event.NaviEvent;
-import com.dudu.obd.BleOBD;
 import com.dudu.voice.semantic.VoiceManager;
 
 import org.slf4j.Logger;
@@ -91,6 +91,8 @@ public class MainActivity extends BaseTitlebarActivity implements
         initDate();
 
         initWeatherInfo();
+
+        VoiceManager.getInstance().startWakeup();
     }
 
     @Override
@@ -127,28 +129,26 @@ public class MainActivity extends BaseTitlebarActivity implements
     public void initListener() {
         mDiDiButton.setOnClickListener(this);
         mWlanButton.setOnClickListener(this);
-//        mWlanButton.setOnLongClickListener(new OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-//                if (!mRecordService.getisPreviewingOrRecording()) {
-//                    EventBus.getDefault().post(new BleOBD.CarStatus(BleOBD.CarStatus.CAR_ONLINE));
-//                } else {
-//                    EventBus.getDefault().post(new BleOBD.CarStatus(BleOBD.CarStatus.CAR_OFFLINE));
-//                }
-//                ToastUtils.showTip(!mRecordService.getisPreviewingOrRecording() ? "开火" : "熄火");
-//                return true;
-//            }
-//        });
+
+        mWlanButton.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                EventBus.getDefault().post(new CarStatus(CarStatus.CAR_ONLINE));
+                return true;
+            }
+        });
+
         mVideoButton.setOnClickListener(this);
         mNavigationButton.setOnClickListener(this);
         mDiDiButton.setOnLongClickListener(new OnLongClickListener() {
 
             @Override
             public boolean onLongClick(View v) {
-                Intent intent = new Intent();
-                intent.setComponent(new ComponentName("com.android.settings",
-                        "com.android.settings.Settings"));
-                startActivity(intent);
+//                Intent intent = new Intent();
+//                intent.setComponent(new ComponentName("com.android.settings",
+//                        "com.android.settings.Settings"));
+//                startActivity(intent);
+                EventBus.getDefault().post(new CarStatus(CarStatus.CAR_OFFLINE));
                 return true;
             }
         });
@@ -205,7 +205,6 @@ public class MainActivity extends BaseTitlebarActivity implements
                 break;
 
             case R.id.navigation_button:
-
                 NavigationClerk.getInstance().openNavi(NavigationClerk.OPEN_MANUAL);
                 break;
 

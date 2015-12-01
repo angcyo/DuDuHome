@@ -43,7 +43,6 @@ public class WhetherChain extends SemanticChain {
 
     @Override
     public boolean doSemantic(String json) {
-
         getActionType(json);
         SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
         if (!TextUtils.isEmpty(json)) {

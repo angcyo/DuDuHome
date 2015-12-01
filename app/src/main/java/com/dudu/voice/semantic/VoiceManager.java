@@ -147,6 +147,13 @@ public class VoiceManager {
         }
     }
 
+    public void destroyWakeup() {
+        log.debug("[voice][{}]销毁唤醒服务", log_step++);
+        if (mWakeuper != null) {
+            mWakeuper.destroy();
+        }
+    }
+
     private void registerWakeuper() {
         log.debug("[voice][{}]register Wakeup er", log_step++);
         StringBuffer params = new StringBuffer();

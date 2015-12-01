@@ -15,6 +15,7 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -69,7 +70,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
     private static final String TAG = "RecordBindService";
 
-    private static final int VIDEO_INTERVAL = 60 * 1000;
+    private static final int VIDEO_INTERVAL = 10 * 60 * 1000;
 
     private static final int DISAPPEAR_INTERVAL = 3000;
 
@@ -120,13 +121,11 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
     private Logger logger;
 
-    private boolean isPreviewingOrRecording = false;
+    private volatile boolean isPreviewingOrRecording = false;
 
     private volatile boolean isRecording = false;
 
     private boolean isPreviewing = false;
-
-    private boolean isShowing = false;
 
     private Camera.Parameters mCameraParams;
 
@@ -259,9 +258,11 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
         logger.debug("调用startRecord方法，开始启动录像...");
 
-
-
         prepareCamera();
+
+        if (Utils.isDemoVersion(this)) {
+            isDrivingCar = true;
+        }
 
         if (FileUtils.isTFlashCardExists() && isDrivingCar) {
             isPreviewingOrRecording = true;
@@ -278,12 +279,17 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
             return;
         }
 
+        isRecording = true;
+
         logger.debug("调用startMediaRecorder方法...");
 
         new MediaPrepareTask().execute();
     }
 
     public void stopRecord() {
+        if (!isPreviewingOrRecording) {
+            return;
+        }
 
         isPreviewingOrRecording = false;
         logger.debug("调用stopRecord方法，停止录像...");
@@ -300,10 +306,10 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         isRecording = false;
         logger.debug("调用createVideoFragment方法，生成录像片段...");
 
+        EventBus.getDefault().post(new DeviceEvent.Video(DeviceEvent.OFF));
+
         if (mediaRecorder != null) {
             try {
-                EventBus.getDefault().post(new DeviceEvent.Video(DeviceEvent.OFF));
-
                 mediaRecorder.stop();
             } catch (Exception e) {
                 logger.error("录像关闭出错了: " + e.getMessage());
@@ -388,11 +394,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        if (camera != null) {
-            camera.stopPreview();
-            camera.release();
-            camera = null;
-        }
+
     }
 
     public void prepareCamera() {
@@ -411,6 +413,9 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
             public void onError(int error, Camera camera) {
                 logger.error("相机出错了： " + error);
                 isRecording = false;
+
+                isPreviewingOrRecording = false;
+
                 releaseCamera();
 
                 releaseMediaRecorder();
@@ -463,10 +468,27 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
             mediaRecorder.prepare();
         } catch (Exception e) {
             logger.error("准备录像出错: " + e.getMessage());
+            handlePrepareException(e);
             return false;
         }
 
         return true;
+    }
+
+    private void handlePrepareException(Exception e) {
+        logger.error("录像出错了： " + e.getMessage());
+        String message = e.getMessage();
+        if (!TextUtils.isEmpty(message)) {
+            if (message.contains("EROFS")) {
+                handler.post(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        ToastUtils.showToast(R.string.video_sdcard_broken);
+                    }
+                });
+            }
+        }
     }
 
 
@@ -599,7 +621,11 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
                 isRecording = true;
             } else {
-                releaseMediaRecorder();
+                stopRecord();
+
+                prepareCamera();
+
+                doStartPreview();
             }
 
             return null;
@@ -620,22 +646,18 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
                 videoPath = FileUtils.getVideoStorageDir().getAbsolutePath();
 
                 mVideoCacheMaxSize = Float.parseFloat(FileUtils.fileByte2Mb(FileUtils.getTFlashCardSpace()));
-                if (isPreviewingOrRecording) {
-                    startMediaRecorder();
 
-                    startRecordTimer();
-                }
+                startRecord();
             } else if (action.equals(Intent.ACTION_MEDIA_REMOVED)) {
                 logger.debug("TFlashCard拔出...");
 
                 ToastUtils.showToast(R.string.video_sdcard_removed_alert);
-                if (isDrivingCar && isRecording) {
-                    stopRecord();
 
-                    prepareCamera();
+                stopRecord();
 
-                    doStartPreview();
-                }
+                prepareCamera();
+
+                doStartPreview();
             }
         }
     }
@@ -677,19 +699,20 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     public void onEventBackgroundThread(CarStatus event) {
         if (event.getCarStatus() == CarStatus.CAR_OFFLINE) {
             logger.debug("接收到熄火的消息...");
-            isDrivingCar = false;
-            stopRecord();
-            if (isShowing) {
-                prepareCamera();
-                doStartPreview();
-            }
 
+            isDrivingCar = false;
+
+            stopRecord();
+
+            prepareCamera();
+
+            doStartPreview();
         } else if (event.getCarStatus() == CarStatus.CAR_ONLINE) {
             logger.debug("接收到点火的消息...");
-            isDrivingCar = true;
-            startMediaRecorder();
 
-            startRecordTimer();
+            isDrivingCar = true;
+
+            startRecord();
         }
     }
 
@@ -698,18 +721,6 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
                 R.anim.back_key_disappear : R.anim.back_key_appear, this);
         ViewAnimation.startAnimation(localVideo, localVideo.getVisibility() == View.VISIBLE ?
                 R.anim.camera_image_disappear : R.anim.camera_image_apear, this);
-    }
-
-    public void setShowing(boolean isShowing) {
-        this.isShowing = isShowing;
-    }
-
-    public void setisPreviewingOrRecording(boolean isPreviewingOrRecording) {
-        this.isPreviewingOrRecording = isPreviewingOrRecording;
-    }
-
-    public boolean getisPreviewingOrRecording() {
-        return isPreviewingOrRecording;
     }
 
 }
