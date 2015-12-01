@@ -1,7 +1,5 @@
 package com.dudu.android.launcher.ui.activity;
 
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -157,7 +155,6 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         viewOptions.setNaviViewTopic(mThemeStle);// 设置导航界面主题样式
         viewOptions.setTrafficLayerEnabled(true);
         viewOptions.setTrafficLine(true);
-        viewOptions.setTrafficBarEnabled(true);
         viewOptions.setLeaderLineEnabled(Color.RED);
         mAmapAMapNaviView.setViewOptions(viewOptions);
         mAmapAMapNaviView.getMap().setTrafficEnabled(true);
@@ -347,7 +344,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
     @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
-        NavigationClerk.getInstance().existNavi();
+        NavigationManager.getInstance(this).existNavigation();
         VoiceManager.getInstance().clearMisUnderstandCount();
         VoiceManager.getInstance().startSpeaking("导航结束",SemanticConstants.TTS_DO_NOTHING,false);
         try {

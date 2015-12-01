@@ -287,7 +287,6 @@ public class NavigationClerk {
     }
 
     public void onEventMainThread(NaviEvent.SearchResult event) {
-        disMissProgressDialog();
         removeCallback();
         navigationManager.getLog().debug("----SearchResult: {}", navigationManager.getSearchType());
         if (event == NaviEvent.SearchResult.SUCCESS) {
@@ -295,6 +294,7 @@ public class NavigationClerk {
         } else {
             navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
         }
+        disMissProgressDialog();
     }
 
     public void onEventBackgroundThread(NaviEvent.ChangeSemanticType event) {
@@ -315,7 +315,6 @@ public class NavigationClerk {
 
     public void onEventMainThread(NavigationType event) {
         removeCallback();
-        disMissProgressDialog();
         if (navigationManager.isNavigatining())
             return;
         switch (event) {
@@ -341,6 +340,7 @@ public class NavigationClerk {
         }
         navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
         intentActivity();
+        disMissProgressDialog();
 
     }
 
@@ -602,7 +602,7 @@ public class NavigationClerk {
                 | Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(standIntent);
         if (isMapActivity()) {
-            topActivity.finish();
+            ActivitiesManager.getInstance().closeTargetActivity(LocationMapActivity.class);
         }
         if(LauncherApplication.getContext().getRecordService()!=null){
             LauncherApplication.getContext().getRecordService().updatePreviewSize(1, 1);

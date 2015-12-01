@@ -12,6 +12,7 @@ import com.dudu.android.launcher.ui.dialog.BluetoothAlertDialog;
 import com.dudu.android.launcher.utils.TimeUtils;
 import com.dudu.android.libble.BleConnectMain;
 import com.dudu.event.BleStateChange;
+import com.duu.bluetooth.SppConnectMain;
 
 import org.scf4a.ConnSession;
 import org.scf4a.Event;
@@ -58,6 +59,8 @@ public class BleOBD {
 
     private Context mContext;
 
+    private boolean isConnected = false;
+
     public BleOBD() {
         readL1 = new PrefixReadL1();
         log = LoggerFactory.getLogger("ble.odb.old");
@@ -72,7 +75,7 @@ public class BleOBD {
         EventBus.getDefault().unregister(readL1);
         EventBus.getDefault().register(readL1);
         EventBus.getDefault().post(new Event.StartScanner());
-        obdCollectionList = new ArrayList<OBDData>();
+        obdCollectionList = new ArrayList<>();
         driveBehaviorHappendListener = DriveBehaviorHappend.getInstance().getListener();
         mContext = context;
     }
@@ -108,12 +111,14 @@ public class BleOBD {
 
     public void onEvent(Event.Disconnected event){
         log.debug("ble Disconnected");
+        isConnected = false;
         EventBus.getDefault().post(new BleStateChange(BleStateChange.BLEDISCONNECTED));
-        Observable.timer(10, TimeUnit.SECONDS)
+        Observable.timer(1, TimeUnit.MINUTES)
                     .subscribe(new Action1<Long>() {
                         @Override
                         public void call(Long aLong) {
-                            EventBus.getDefault().post(new Event.StartScanner());
+                            if(!isConnected)
+                                 EventBus.getDefault().post(new Event.StartScanner());
                         }
                     });
 
@@ -121,6 +126,7 @@ public class BleOBD {
 
     public void onEvent(Event.BTConnected event){
         log.debug("ble BTConnected");
+        isConnected = true;
         EventBus.getDefault().post(new BleStateChange(BleStateChange.BLECONNECTED));
     }
 

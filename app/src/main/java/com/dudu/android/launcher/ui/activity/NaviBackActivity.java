@@ -317,7 +317,7 @@ AMapNaviViewListener{
 
 	@Override
 	public void onDestroy() {
-		NavigationClerk.getInstance().existNavi();
+		NavigationManager.getInstance(this).existNavigation();
 		VoiceManager.getInstance().clearMisUnderstandCount();
 		VoiceManager.getInstance().startSpeaking("导航结束", SemanticConstants.TTS_DO_NOTHING, false);
 		mAmapAMapNaviView.onDestroy();

@@ -3,7 +3,6 @@ package com.dudu.voice.semantic.chain;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.amap.api.navi.AMapNavi;
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.utils.CommonAddressUtil;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
@@ -16,12 +15,8 @@ import com.dudu.navi.vauleObject.CommonAddressType;
 import com.dudu.navi.vauleObject.NaviDriveMode;
 import com.dudu.navi.vauleObject.NavigationType;
 import com.dudu.voice.semantic.SemanticConstants;
-import com.dudu.voice.semantic.SemanticType;
-import com.dudu.voice.semantic.engine.SemanticProcessor;
 
 import org.json.JSONObject;
-
-import de.greenrobot.event.EventBus;
 
 
 public class CommonAddressChain extends SemanticChain{

@@ -18,7 +18,7 @@ import de.greenrobot.event.EventBus;
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class BleScanner {
 
-    public static final int SCAN_PERIOD = 5000;  // 扫描时间
+    public static final int SCAN_PERIOD = 2;  // 扫描时间
     private Logger log;
 
     private String mName;
@@ -83,7 +83,6 @@ public class BleScanner {
             //noinspection deprecation
             if (!mBluetoothAdapter.startLeScan(/*serviceUuids, */mLeScanCallback)) {
                 log.error("startLeScan fail!");
-                EventBus.getDefault().post(new Event.Disconnected(Event.ErrorCode.ScanInvokeFail));
             }
         }
     }

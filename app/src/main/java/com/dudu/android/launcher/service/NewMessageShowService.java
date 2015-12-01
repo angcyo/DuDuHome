@@ -17,6 +17,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.bean.WindowMessageEntity;
 import com.dudu.android.launcher.ui.adapter.RouteSearchAdapter;
@@ -32,7 +33,6 @@ import com.dudu.android.launcher.utils.FloatWindow.FloatVoiceChangeCallBack;
 import com.dudu.android.launcher.utils.FloatWindow.MessageShowCallBack;
 import com.dudu.android.launcher.utils.FloatWindow.RemoveFloatWindowCallBack;
 import com.dudu.android.launcher.utils.FloatWindow.StrategyChooseCallBack;
-import com.dudu.navi.entity.PoiResultInfo;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.SemanticType;
 import com.dudu.voice.semantic.VoiceManager;

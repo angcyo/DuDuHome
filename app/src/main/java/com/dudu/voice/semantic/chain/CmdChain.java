@@ -1,14 +1,12 @@
 package com.dudu.voice.semantic.chain;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.bean.CmdEntity;
 import com.dudu.android.launcher.bean.CmdSlots;
-import com.dudu.android.launcher.ui.activity.LocationMapActivity;
 import com.dudu.android.launcher.ui.activity.MainActivity;
 import com.dudu.android.launcher.ui.activity.OBDCheckingActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
@@ -20,7 +18,6 @@ import com.dudu.android.launcher.utils.GsonUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.map.NavigationClerk;
-import com.dudu.navi.NavigationManager;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.SemanticType;
 import com.dudu.voice.semantic.engine.SemanticProcessor;

@@ -391,4 +391,5 @@ public class BleManager {
     public void setAuth(final boolean auth) {
         this.isAuth = auth;
     }
+
 }

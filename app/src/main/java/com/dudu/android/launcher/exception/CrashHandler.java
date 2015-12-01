@@ -62,7 +62,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
 
 			@Override
 			public void run() {
-				String fileName = "crash-" + TimeUtils.format(TimeUtils.format1)
+				String fileName = "crash-" + TimeUtils.format(TimeUtils.format5)
 						+ ".txt";
 				try {
 					Writer info = new StringWriter();

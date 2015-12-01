@@ -78,6 +78,9 @@ public class OBDDataService extends Service implements
     private Gson gson;
 
     private com.dudu.monitor.Monitor mMonitor;
+
+    private PodOBD podOBD;
+
     /**
      * 采集数据线程 30s 将所有数据风封装到JSONArray里
      */
@@ -188,6 +191,8 @@ public class OBDDataService extends Service implements
         log.debug("odbservice startCommand");
         bleOBD = new BleOBD();
         bleOBD.initOBD(this);
+//        podOBD = new PodOBD();
+//        podOBD.init(this);
         DriveBehaviorHappend.getInstance().setListener(this);
         try {
             if (conn != null && !isOpen && !conn.isAlive()) {

@@ -66,4 +66,5 @@ dependencies {
     compile 'com.github.PhilJay:MPAndroidChart:v2.1.6'
     compile project(':navi')
     compile project(':monitor')
+    compile project(':bluetooth')
 }

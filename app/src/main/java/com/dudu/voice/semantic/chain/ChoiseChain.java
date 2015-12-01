@@ -1,9 +1,5 @@
 package com.dudu.voice.semantic.chain;
 
-import android.app.Activity;
-
-import com.dudu.android.launcher.ui.activity.LocationMapActivity;
-import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.ChoiseUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.map.NavigationClerk;
