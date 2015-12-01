@@ -106,7 +106,6 @@ public class CmdChain extends SemanticChain {
             case Constants.KAIQI:
                 if (mApplication.getRecordService() != null) {
                     mApplication.getRecordService().startRecord();
-                    mApplication.getRecordService().startRecordTimer();
                 }
 
                 Intent intent = new Intent();

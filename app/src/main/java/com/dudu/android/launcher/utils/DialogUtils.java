@@ -5,6 +5,7 @@ import android.view.WindowManager;
 
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.dialog.ErrorMessageDialog;
+import com.dudu.voice.semantic.VoiceManager;
 
 /**
  * Created by Administrator on 2015/11/25.
@@ -26,6 +27,7 @@ public class DialogUtils {
             return;
         }
 
+        VoiceManager.getInstance().stopWakeup();
         mOBDErrorDialog = new ErrorMessageDialog(context, R.string.obd_checking_unconnected,
                 R.drawable.obd_checking_icon);
         mOBDErrorDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_PHONE);
@@ -38,6 +40,7 @@ public class DialogUtils {
         }
 
         if (mOBDErrorDialog != null && mOBDErrorDialog.isShowing()) {
+            VoiceManager.getInstance().startWakeup();
             mOBDErrorDialog.dismiss();
             mOBDErrorDialog = null;
         }

@@ -47,6 +47,7 @@ import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.IllegalFormatCodePointException;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -173,15 +174,13 @@ public class MainActivity extends BaseTitlebarActivity implements
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.video_button:
-//                mRecordService.startRecord();
-//                mRecordService.startRecordTimer();
-                mRecordService.prepareCamera();
-                mRecordService.doStartPreview();
+                mRecordService.startRecord();
                 startActivity(new Intent(MainActivity.this, VideoActivity.class));
                 break;
 
             case R.id.didi_button:
-                Utils.startThirdPartyApp(MainActivity.this, "com.sdu.didi.gsui", R.string.error_no_didi);
+                Utils.startThirdPartyApp(MainActivity.this, "com.sdu.didi.gsui",
+                        R.string.error_no_didi);
                 break;
 
             case R.id.wlan_button:

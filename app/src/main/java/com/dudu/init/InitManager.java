@@ -162,7 +162,6 @@ public class InitManager {
         logger.debug("[init][{}]启动OBD服务", log_step++);
         startOBDService();
 
-
         logger.debug("[init][{}]检查sim卡状态", log_step++);
         Utils.checkSimCardState(mActivity);
 
