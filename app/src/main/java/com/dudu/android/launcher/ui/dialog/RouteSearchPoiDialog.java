@@ -43,7 +43,6 @@ public class RouteSearchPoiDialog extends Dialog implements
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Log.d("lxh","------RouteSearchPoiDialog onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.routesearch_list_poi);
 		adapter = new RouteSearchAdapter(this.context);

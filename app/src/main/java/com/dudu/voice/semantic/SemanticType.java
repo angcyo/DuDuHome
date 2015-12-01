@@ -7,5 +7,6 @@ public enum SemanticType {
     NORMAL,
     CAR_CHECKING,
     NAVIGATION,
-    MAP_CHOISE
+    MAP_CHOISE,
+    WETHER
 }

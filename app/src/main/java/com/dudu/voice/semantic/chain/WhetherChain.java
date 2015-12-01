@@ -45,7 +45,7 @@ public class WhetherChain extends SemanticChain {
     public boolean doSemantic(String json) {
 
         getActionType(json);
-
+        SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
         if (!TextUtils.isEmpty(json)) {
 
             switch (actionType) {

@@ -70,6 +70,8 @@ public class SearchProcess {
     private List<PoiResultInfo> poiResultList = new ArrayList<>();
     private AMapLocation cur_location;
 
+    private boolean hasResult;
+
     public SearchProcess(Context context) {
         this.mContext = context;
         geocoderSearch = new GeocodeSearch(context);
@@ -115,7 +117,7 @@ public class SearchProcess {
     }
 
     private void doSearch(String keyword) {
-
+            hasResult = false;
         if (!TextUtils.isEmpty(keyword)) {
             query = new PoiSearch.Query(keyword, "", cityCode);
             query.setPageSize(20);// 设置每页最多返回多少条poi item
@@ -127,6 +129,18 @@ public class SearchProcess {
             }
             poiSearch.setOnPoiSearchListener(onPoiSearchListener);
             poiSearch.searchPOIAsyn();
+            Observable.timer(30, TimeUnit.SECONDS)
+                    .subscribe(new Action1<Long>() {
+                        @Override
+                        public void call(Long aLong) {
+                            if (!hasResult) {
+                                EventBus.getDefault().
+                                        post(new NaviEvent.NaviVoiceBroadcast("抱歉，搜索失败，请稍检查网络", true));
+                                EventBus.getDefault().post(NaviEvent.SearchResult.FAIL);
+                            }
+
+                        }
+                    });
         } else {
             String playText = "您好，关键字有误，请重新输入";
             EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast(playText, true));
@@ -171,6 +185,7 @@ public class SearchProcess {
             ResourceManager.getInstance(mContext).getPoiResultList().clear();
 
             if (code == 0) {
+                hasResult = true;
                 if (poiResult != null && poiResult.getQuery() != null) {
                     // 取得搜索到的poiitems有多少页
                     poiItems = poiResult.getPois();// 取得第一页的poiitem数据，页数从数字0开始

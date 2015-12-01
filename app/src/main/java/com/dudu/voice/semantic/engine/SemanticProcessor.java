@@ -11,6 +11,7 @@ import com.dudu.voice.semantic.state.MapChoiseState;
 import com.dudu.voice.semantic.state.NavigationState;
 import com.dudu.voice.semantic.state.NormalState;
 import com.dudu.voice.semantic.state.SemanticState;
+import com.dudu.voice.semantic.state.WhetherState;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,8 @@ public class SemanticProcessor {
     private NavigationState mNavigationState;
 
     private MapChoiseState mMapChoiseState;
+
+    private WhetherState mWhetherState;
 
     /**
      * 如果没有匹配到链对象，则使用默认链对象处理。
@@ -184,6 +187,11 @@ public class SemanticProcessor {
                 mSemanticState = mMapChoiseState;
 
                 break;
+            case WETHER:
+                log.debug("设置当前语义类型为是否...");
+                VoiceManager.getInstance().setShowMessageWindow(true);
+                mSemanticState = mWhetherState;
+                break;
         }
 
         mDefaultChain = mSemanticState.getDefaultChain();
@@ -197,6 +205,8 @@ public class SemanticProcessor {
         mMapChoiseState = new MapChoiseState();
 
         mCarCheckingState = new CarCheckingState();
+
+        mWhetherState = new WhetherState();
 
         mSemanticState = mNormaState;
     }

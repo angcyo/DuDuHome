@@ -18,6 +18,7 @@
          android:visibility="gone"
          android:divider="@android:color/white"
          android:dividerHeight="1dip"
+         android:focusable="true"
          android:layout_marginLeft="200dp"/>
      <ListView
         android:id="@+id/message_listview"

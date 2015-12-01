@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -82,9 +83,11 @@ public class NavigationClerk {
 
         @Override
         public void run() {
-            FloatWindowUtil.removeFloatWindow();
-            VoiceManager.getInstance().stopUnderstanding();
-            if(navigationManager.getNavigationType()!=NavigationType.DEFAULT)
+            if (navigationManager.getSearchType() == SearchType.SEARCH_DEFAULT){
+                FloatWindowUtil.removeFloatWindow();
+                VoiceManager.getInstance().stopUnderstanding();
+            }
+            if (navigationManager.getNavigationType() != NavigationType.DEFAULT)
                 navigationManager.setIsNavigatining(true);
         }
     };
@@ -199,6 +202,7 @@ public class NavigationClerk {
 
 
     public void searchControl(String semantic, String service, String keyword, SearchType type) {
+        Log.d("lxh","-----searchControl:"+navigationManager.getSearchType());
         if (navigationManager.getSearchType() == SearchType.SEARCH_COMMONADDRESS)
             type = SearchType.SEARCH_COMMONPLACE;
         navigationManager.setSearchType(type);
@@ -243,18 +247,18 @@ public class NavigationClerk {
         navigationManager.search();
     }
 
-    private boolean isNaviActivity(){
+    private boolean isNaviActivity() {
         topActivity = ActivitiesManager.getInstance().getTopActivity();
-        if(navigationManager.isNavigatining()){
-            switch (navigationManager.getNavigationType()){
+        if (navigationManager.isNavigatining()) {
+            switch (navigationManager.getNavigationType()) {
                 case NAVIGATION:
-                    if(!(topActivity instanceof NaviCustomActivity)){
+                    if (!(topActivity instanceof NaviCustomActivity)) {
                         intentClass = NaviCustomActivity.class;
                     }
                     intentActivity();
                     return true;
                 case BACKNAVI:
-                    if(!(topActivity instanceof NaviBackActivity)){
+                    if (!(topActivity instanceof NaviBackActivity)) {
                         intentClass = NaviBackActivity.class;
                     }
                     intentActivity();
@@ -357,12 +361,14 @@ public class NavigationClerk {
                     }
                 }, 200);
                 removeWindow(REMOVEWINDOW_TIME);
+                navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
                 break;
             case SEARCH_PLACE_LOCATION:
                 String playText = "您好，" + navigationManager.getKeyword() + "的位置为："
                         + navigationManager.getPoiResultList().get(0).getAddressDetial();
                 VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_START_UNDERSTANDING, true);
                 removeWindow(REMOVEWINDOW_TIME);
+                navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
                 return;
             case SEARCH_NEAREST:
                 SemanticProcessor.getProcessor().switchSemanticType(
@@ -370,6 +376,7 @@ public class NavigationClerk {
                 endPoint = new Point(navigationManager.getPoiResultList().get(0).getLatitude(),
                         navigationManager.getPoiResultList().get(0).getLongitude());
                 showStrategyMethod(0);
+                navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
                 return;
             default:
                 SemanticProcessor.getProcessor().switchSemanticType(
@@ -379,13 +386,12 @@ public class NavigationClerk {
                 if (isManual) {
                     EventBus.getDefault().post(MapResultShow.ADDRESS);
                 } else {
-
                     showAddressByVoice();
                 }
                 break;
 
         }
-        navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
+
     }
 
     private void initWaitingDialog(String message) {
@@ -491,9 +497,12 @@ public class NavigationClerk {
         CommonAddressUtil.setCommonLocation(addType,
                 mContext, choosePoint.getLatitude(), choosePoint.getLongitude());
         VoiceManager.getInstance().stopUnderstanding();
+        FloatWindowUtil.removeFloatWindow();
         VoiceManager.getInstance().startSpeaking("添加" + choosePoint.getAddressTitle() + "为" + addType + "地址成功！",
                 SemanticConstants.TTS_DO_NOTHING, true);
+        navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
         removeWindow(REMOVEWINDOW_TIME);
+
 
     }
 
@@ -604,7 +613,7 @@ public class NavigationClerk {
         if (isMapActivity()) {
             ActivitiesManager.getInstance().closeTargetActivity(LocationMapActivity.class);
         }
-        if(LauncherApplication.getContext().getRecordService()!=null){
+        if (LauncherApplication.getContext().getRecordService() != null) {
             LauncherApplication.getContext().getRecordService().updatePreviewSize(1, 1);
         }
     }

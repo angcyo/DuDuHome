@@ -160,7 +160,12 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         search_enter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                endLocationLL.setVisibility(View.VISIBLE);
+
+                if (View.VISIBLE == endLocationLL.getVisibility())
+                    endLocationLL.setVisibility(View.GONE);
+                else
+                    endLocationLL.setVisibility(View.VISIBLE);
+
             }
         });
         search_edit.setOnEditorActionListener(new TextView.OnEditorActionListener() {

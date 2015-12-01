@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
@@ -63,14 +64,13 @@ public class RouteSearchAdapter extends BaseAdapter {
 				.findViewById(R.id.poiAddress);
 		int size = position + 1;
 		PoiName.setText(size + "." + mPoiItems.get(position).getAddressTitle());
-		String address = null;
+		String address;
 		if (mPoiItems.get(position).getAddressDetial() != null) {
 			address = mPoiItems.get(position).getAddressDetial();
 		} else {
 			address = "中国";
 		}
 		poiAddress.setText("地址:" + address);
-
 		TextView startNaviBT = (TextView) convertView
 				.findViewById(R.id.startNaviBT);
 		if(type==1)

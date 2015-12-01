@@ -76,9 +76,9 @@ public class NavigationChain extends SemanticChain {
                    case Constants.NAVI_TRAFFIC_BROADCAST:
                        openTraffic();
                        break;
-                   case Constants.RERURN_JOURNEY:
-                       goBack();
-                       break;
+//                   case Constants.RERURN_JOURNEY:
+//                       goBack();
+//                       break;
                }
 
            }
@@ -99,9 +99,9 @@ public class NavigationChain extends SemanticChain {
             case Constants.NAVI_TRAFFIC_BROADCAST:
                 openTraffic();
                 break;
-            case Constants.RERURN_JOURNEY:
-                goBack();
-                break;
+//            case Constants.RERURN_JOURNEY:
+//                goBack();
+//                break;
         }
     }
 

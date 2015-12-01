@@ -57,7 +57,7 @@ AMapNaviViewListener{
 	private Handler mHandler;
 	private boolean needBack;
 
-
+	private String playText;
 
 	@Override
 	public int initContentView() {
@@ -119,7 +119,6 @@ AMapNaviViewListener{
 		viewOptions.setNaviNight(mDayNightFlag);// 设置导航是否为黑夜模式
 		viewOptions.setReCalculateRouteForYaw(mDeviationFlag);// 设置导偏航是否重算
 		viewOptions.setReCalculateRouteForTrafficJam(mJamFlag);// 设置交通拥挤是否重算
-		viewOptions.setTrafficInfoUpdateEnabled(true);// 设置是否更新路况
 		viewOptions.setCameraInfoUpdateEnabled(mCameraFlag);// 设置摄像头播报
 		viewOptions.setScreenAlwaysBright(mScreenFlag);// 设置屏幕常亮情况
 		viewOptions.setNaviViewTopic(mThemeStle);// 设置导航界面主题样式
@@ -155,11 +154,20 @@ AMapNaviViewListener{
     }
     // 路况播报
     public void trafficInfo(){
-    	if(mAmapAMapNaviView!=null&&mAmapAMapNaviView.getViewOptions()!=null){
-    		FloatWindowUtil.removeFloatWindow();
-    		mAmapAMapNaviView.getViewOptions().setTrafficInfoUpdateEnabled(true);
-    		VoiceManager.getInstance().startSpeaking("路况播报已打开", SemanticConstants.TTS_DO_NOTHING);
-    	}
+
+		if (mAmapAMapNaviView != null && mAmapAMapNaviView.getViewOptions() != null) {
+			FloatWindowUtil.removeFloatWindow();
+			playText = "路况播报已打开";
+			if (mAmapAMapNaviView.getViewOptions().isTrafficInfoUpdateEnabled()){
+				playText = "已经为您打开路况播报";
+			}else{
+				AMapNaviViewOptions viewOptions = new AMapNaviViewOptions();
+				viewOptions.setTrafficInfoUpdateEnabled(true);
+				mAmapAMapNaviView.setViewOptions(viewOptions);
+			}
+
+			VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_DO_NOTHING);
+		}
     }
     // 关闭路况播报
     public void closeTraffic(){

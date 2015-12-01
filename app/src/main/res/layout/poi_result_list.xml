@@ -31,13 +31,14 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
-            android:singleLine="true"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:ellipsize="marquee"
-            android:scrollHorizontally="true"/>
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-        <TextView
+        <com.dudu.android.launcher.ui.view.MTextView
             android:id="@+id/poiAddress"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -45,9 +46,10 @@
             android:layout_marginTop="5dp"
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
-            android:singleLine="true"
             android:textColor="@color/white"
             android:textSize="14sp"
+            android:singleLine="true"
+            android:ellipsize="marquee"
             android:scrollHorizontally="true"/>
 
     </LinearLayout>
