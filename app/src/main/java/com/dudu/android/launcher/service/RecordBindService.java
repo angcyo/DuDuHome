@@ -1,4 +1,4 @@
-﻿package com.dudu.android.launcher.service;
+package com.dudu.android.launcher.service;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
