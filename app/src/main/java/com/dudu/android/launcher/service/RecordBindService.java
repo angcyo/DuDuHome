@@ -360,6 +360,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         }
         mCameraParams = camera.getParameters();
         mCameraParams.setPreviewFormat(PixelFormat.YCbCr_420_SP);
+        mCameraParams.setPreviewSize(854, 480);
         mCameraParams.setPictureSize(1280, 720);
         camera.setParameters(mCameraParams);
     }
