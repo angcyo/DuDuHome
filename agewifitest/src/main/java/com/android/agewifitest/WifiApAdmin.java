@@ -1,8 +1,9 @@
-package com.dudu.utils;
+package com.android.agewifitest;
 
 import android.content.Context;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
+import android.util.Log;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,20 +99,12 @@ public class WifiApAdmin {
         }
 
         log_init.debug("5s后打开热点");
-        rx.Observable.timer(5, TimeUnit.SECONDS)
+   rx.Observable.timer(5, TimeUnit.SECONDS)
                 .subscribe(new Action1<Long>() {
-                    @Override
-                    public void call(final Long aLong) {
-                        if (Utils.isTaxiVersion()) {
-                            startWifiAp(context, DEFAULT_SSID, "", null);
-                        } else {
-                            if (SharedPreferencesUtil.getBooleanValue(context, KEY_WIFI_AP_STATE, false)) {
-                                String ssid = SharedPreferencesUtil.getStringValue(context, KEY_WIFI_AP_SSID, DEFAULT_SSID);
-                                String password = SharedPreferencesUtil.getStringValue(context, KEY_WIFI_AP_PASSWORD, DEFAULT_PASSWORD);
-                                startWifiAp(context, ssid, password, null);
-                            }
-                        }
-                    }
+                   @Override
+                   public void call(final Long aLong) {
+                        startWifiAp(context, DEFAULT_SSID, "", null);
+                   }
                 });
 
         return true;
@@ -203,6 +196,7 @@ public class WifiApAdmin {
                         "setWifiApEnabled", WifiConfiguration.class, boolean.class);
                 setWifiApEnabled.invoke(mWifiManager, null, false);
                 SharedPreferencesUtil.putBooleanValue(context, KEY_WIFI_AP_STATE, false);
+                Log.v("lll","关闭热点成功");
             } catch (Exception e) {
                 log_init.debug("反射关闭热点异常", e);
             }
@@ -221,6 +215,7 @@ public class WifiApAdmin {
             method.setAccessible(true);
             return (Boolean) method.invoke(mWifiManager);
         } catch (Exception e) {
+            Log.v("lll","反射查询热点异常");
             log_init.debug("反射查询热点异常", e);
         }
 

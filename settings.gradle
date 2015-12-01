@@ -1,2 +1,3 @@
+include ':agedmodel', ':agewifitest', ':agebluetest'
 include ':app', ':libble', ':scf4a', ':navi', ':hideapi',':monitor', ':network'
 

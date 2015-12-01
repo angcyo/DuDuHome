@@ -1,0 +1,144 @@
+<configuration>
+    <property name="LOG_DIR" value="/sdcard/logback"/>
+
+    <!-- Create a logcat appender -->
+    <appender name="LOGCAT" class="ch.qos.logback.classic.android.LogcatAppender">
+        <encoder>
+            <pattern>[%file:%line] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="EMAIL" class="ch.qos.logback.classic.net.SMTPAppender">
+        <cyclicBufferTracker class="ch.qos.logback.core.spi.CyclicBufferTracker">
+            <!-- send 10 log entries per email -->
+            <bufferSize>1000</bufferSize>
+        </cyclicBufferTracker>
+        <smtpHost>smtp.163.com</smtpHost>
+        <smtpPort>465</smtpPort>
+        <SSL>true</SSL>
+        <username>review_site@163.com</username>
+        <password>nvxirhslwminqaup</password>
+        <to>sean.du@dudu.tm</to>
+        <to>Zack.lo@dudu.tm</to>
+        <from>review_site@163.com</from>
+        <subject>%date{yyyyMMdd'T'HH:mm:ss.SSS}; %msg%n</subject>
+        <layout class="ch.qos.logback.classic.html.HTMLLayout"/>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/log.today.txt</file>
+        <encoder>
+            <pattern>%date [%thread] %-5level %logger{36} [%file:%line] - %msg%n</pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/log.%d.txt</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="FILE_NET" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/log_net.today.txt</file>
+        <encoder>
+            <pattern>%date [%thread] %-5level %logger{36} [%file:%line] - %msg%n</pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/log_net.%d.txt</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="FILE_GPS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/log_gps.today.txt</file>
+        <encoder>
+            <pattern>%date [%thread] %-5level %logger{36} [%file:%line] - %msg%n</pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/log_gps.%d.txt</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="FILE_VOICE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/log_voice.today.txt</file>
+        <encoder>
+            <pattern>%date [%thread] %-5level %logger{36} [%file:%line] - %msg%n</pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/log_voice.%d.txt</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="FILE_BLE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/log_ble.today.txt</file>
+        <encoder>
+            <pattern>%date [%thread] %-5level %logger{36} [%file:%line] - %msg%n</pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/log_ble.%d.txt</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="FILE_OBD" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/log_obd.today.txt</file>
+        <encoder>
+            <pattern>%date [%thread] %-5level %logger{36} [%file:%line] - %msg%n</pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/log_obd.%d.txt</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="FILE_INIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/log_init.today.txt</file>
+        <encoder>
+            <pattern>%date [%thread] %-5level %logger{36} [%file:%line] - %msg%n</pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/log_init.%d.txt</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <logger name="init" level="DEBUG">
+        <appender-ref ref="FILE_INIT"/>
+        <appender-ref ref="EMAIL"/>
+    </logger>
+
+    <logger name="ble" level="DEBUG">
+        <appender-ref ref="FILE_BLE"/>
+    </logger>
+
+    <logger name="obd" level="DEBUG">
+        <appender-ref ref="FILE_OBD"/>
+    </logger>
+
+    <logger name="net.conn" level="DEBUG">
+        <appender-ref ref="FILE_NET"/>
+    </logger>
+
+    <logger name="lbs" level="DEBUG">
+        <appender-ref ref="FILE_GPS"/>
+    </logger>
+
+    <logger name="voice" level="DEBUG">
+        <appender-ref ref="FILE_VOICE"/>
+    </logger>
+
+    <logger name="cache.persist" level="DEBUG">
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <root level="DEBUG">
+        <appender-ref ref="LOGCAT"/>
+    </root>
+</configuration>
