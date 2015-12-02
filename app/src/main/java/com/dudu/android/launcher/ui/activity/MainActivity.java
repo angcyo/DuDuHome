@@ -32,6 +32,7 @@ import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
 import com.dudu.android.launcher.utils.DialogUtils;
 import com.dudu.android.launcher.utils.LocationUtils;
+import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
@@ -40,6 +41,7 @@ import com.dudu.event.DeviceEvent;
 import com.dudu.init.InitManager;
 import com.dudu.map.NavigationClerk;
 import com.dudu.navi.event.NaviEvent;
+import com.dudu.obd.BleOBD;
 import com.dudu.voice.semantic.VoiceManager;
 
 import org.slf4j.Logger;
@@ -47,7 +49,6 @@ import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.IllegalFormatCodePointException;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -125,6 +126,18 @@ public class MainActivity extends BaseTitlebarActivity implements
     public void initListener() {
         mDiDiButton.setOnClickListener(this);
         mWlanButton.setOnClickListener(this);
+//        mWlanButton.setOnLongClickListener(new OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View v) {
+//                if (!mRecordService.getisPreviewingOrRecording()) {
+//                    EventBus.getDefault().post(new BleOBD.CarStatus(BleOBD.CarStatus.CAR_ONLINE));
+//                } else {
+//                    EventBus.getDefault().post(new BleOBD.CarStatus(BleOBD.CarStatus.CAR_OFFLINE));
+//                }
+//                ToastUtils.showTip(!mRecordService.getisPreviewingOrRecording() ? "开火" : "熄火");
+//                return true;
+//            }
+//        });
         mVideoButton.setOnClickListener(this);
         mNavigationButton.setOnClickListener(this);
         mDiDiButton.setOnLongClickListener(new OnLongClickListener() {
@@ -179,8 +192,7 @@ public class MainActivity extends BaseTitlebarActivity implements
                 break;
 
             case R.id.didi_button:
-                Utils.startThirdPartyApp(MainActivity.this, "com.sdu.didi.gsui",
-                        R.string.error_no_didi);
+                Utils.startThirdPartyApp(MainActivity.this, "com.sdu.didi.gsui", R.string.error_no_didi);
                 break;
 
             case R.id.wlan_button:

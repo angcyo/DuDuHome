@@ -120,9 +120,13 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
     private Logger logger;
 
+    private boolean isPreviewingOrRecording = false;
+
     private volatile boolean isRecording = false;
 
-    boolean isPreviewing = false;
+    private boolean isPreviewing = false;
+
+    private boolean isShowing = false;
 
     private Camera.Parameters mCameraParams;
 
@@ -249,13 +253,18 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
      * 开始预览或者录像
      */
     public void startRecord() {
-        if (isRecording || isPreviewing) {
+        if (isPreviewingOrRecording) {
             return;
         }
+
+        logger.debug("调用startRecord方法，开始启动录像...");
+
+
 
         prepareCamera();
 
         if (FileUtils.isTFlashCardExists() && isDrivingCar) {
+            isPreviewingOrRecording = true;
             startMediaRecorder();
 
             startRecordTimer();
@@ -269,14 +278,19 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
             return;
         }
 
+        logger.debug("调用startMediaRecorder方法...");
+
         new MediaPrepareTask().execute();
     }
 
     public void stopRecord() {
 
-        createVideoFragment();
+        isPreviewingOrRecording = false;
+        logger.debug("调用stopRecord方法，停止录像...");
 
         stopRecordTimer();
+
+        createVideoFragment();
     }
 
     /**
@@ -284,6 +298,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
      */
     private void createVideoFragment() {
         isRecording = false;
+        logger.debug("调用createVideoFragment方法，生成录像片段...");
 
         if (mediaRecorder != null) {
             try {
@@ -373,7 +388,11 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-
+        if (camera != null) {
+            camera.stopPreview();
+            camera.release();
+            camera = null;
+        }
     }
 
     public void prepareCamera() {
@@ -449,7 +468,6 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
         return true;
     }
-
 
 
     /**
@@ -602,20 +620,22 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
                 videoPath = FileUtils.getVideoStorageDir().getAbsolutePath();
 
                 mVideoCacheMaxSize = Float.parseFloat(FileUtils.fileByte2Mb(FileUtils.getTFlashCardSpace()));
+                if (isPreviewingOrRecording) {
+                    startMediaRecorder();
 
-                startMediaRecorder();
-
-                startRecordTimer();
+                    startRecordTimer();
+                }
             } else if (action.equals(Intent.ACTION_MEDIA_REMOVED)) {
                 logger.debug("TFlashCard拔出...");
 
                 ToastUtils.showToast(R.string.video_sdcard_removed_alert);
+                if (isDrivingCar && isRecording) {
+                    stopRecord();
 
-                stopRecord();
+                    prepareCamera();
 
-                prepareCamera();
-
-                doStartPreview();
+                    doStartPreview();
+                }
             }
         }
     }
@@ -657,8 +677,19 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     public void onEventBackgroundThread(CarStatus event) {
         if (event.getCarStatus() == CarStatus.CAR_OFFLINE) {
             logger.debug("接收到熄火的消息...");
+            isDrivingCar = false;
+            stopRecord();
+            if (isShowing) {
+                prepareCamera();
+                doStartPreview();
+            }
+
         } else if (event.getCarStatus() == CarStatus.CAR_ONLINE) {
             logger.debug("接收到点火的消息...");
+            isDrivingCar = true;
+            startMediaRecorder();
+
+            startRecordTimer();
         }
     }
 
@@ -667,6 +698,18 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
                 R.anim.back_key_disappear : R.anim.back_key_appear, this);
         ViewAnimation.startAnimation(localVideo, localVideo.getVisibility() == View.VISIBLE ?
                 R.anim.camera_image_disappear : R.anim.camera_image_apear, this);
+    }
+
+    public void setShowing(boolean isShowing) {
+        this.isShowing = isShowing;
+    }
+
+    public void setisPreviewingOrRecording(boolean isPreviewingOrRecording) {
+        this.isPreviewingOrRecording = isPreviewingOrRecording;
+    }
+
+    public boolean getisPreviewingOrRecording() {
+        return isPreviewingOrRecording;
     }
 
 }

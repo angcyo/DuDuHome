@@ -31,6 +31,7 @@ public class VideoActivity extends BaseNoTitlebarAcitivity {
         public void handleMessage(Message msg) {
             if (mRecordService != null) {
                 mRecordService.updatePreviewSize(1, 1);
+                mRecordService.setShowing(false);
             }
         }
     };
@@ -55,6 +56,7 @@ public class VideoActivity extends BaseNoTitlebarAcitivity {
             mRecordService = application.getRecordService();
             if (mRecordService != null) {
                 mRecordService.updatePreviewSize(854, 480);
+                mRecordService.setShowing(true);
             }
         }
     }
@@ -64,6 +66,7 @@ public class VideoActivity extends BaseNoTitlebarAcitivity {
         super.onStop();
         if (mRecordService != null) {
             mRecordService.updatePreviewSize(1, 1);
+            mRecordService.setShowing(false);
         }
     }
 
