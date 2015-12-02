@@ -192,8 +192,10 @@ public class AgedMapActivity extends NoTitleActivity implements LocationSource, 
                             .getSearchSuggestionCitys();// 当搜索不到poiitem数据时，会返回含有搜索关键字的城市信息
                     if (poiItems != null && poiItems.size() > 0) {
                         StringBuffer sb = new StringBuffer();
+                        String newline = "\n";
                         for (int j = 0; j < poiItems.size(); j++) {
-                            sb.append(poiItems.get(j).getSnippet() + "\n");
+                            sb.append(poiItems.get(j).getSnippet());
+                            sb.append(newline);
                         }
                         Log.v("ji..", sb.toString());
                         handlerPoiResult();

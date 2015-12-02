@@ -192,16 +192,19 @@ public class StrategyChoiseDialog extends Dialog {
 
         @Override
         public void onDriveRouteSearched(DriveRouteResult result, int arg1) {
-
+            String fastest = "速度最快";
+            String shortest = "距离最短";
+            String kilometer = "千米";
+            String meter = "米";
             for (int i = 0; i < result.getPaths().size(); i++) {
                 DrivePath path = result.getPaths().get(i);
                 String strategy = path.getStrategy();
                 float d = path.getDistance();
-                String dstr = d >= 1000 ? d / 1000 + "千米" : d + "米";
-                if (strategy.equals("速度最快")) {
+                String dstr = d >= 1000 ? d / 1000 + kilometer : d + meter;
+                if (strategy.equals(fastest)) {
                     tv_distance_1.setText(dstr);
                 }
-                if (strategy.equals("距离最短")) {
+                if (strategy.equals(shortest)) {
                     tv_distance_3.setText(dstr);
                 }
             }

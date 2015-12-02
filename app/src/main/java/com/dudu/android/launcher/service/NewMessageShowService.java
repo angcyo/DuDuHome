@@ -50,7 +50,7 @@ import java.util.List;
  */
 public class NewMessageShowService extends Service implements MessageShowCallBack, AddressShowCallBack,
         StrategyChooseCallBack, FloatVoiceChangeCallBack,
-        AddressListItemClickCallback, RemoveFloatWindowCallBack, CreateFloatWindowCallBack,FloatWindow.ChooseAddressPageCallBack {
+        AddressListItemClickCallback, RemoveFloatWindowCallBack, CreateFloatWindowCallBack, FloatWindow.ChooseAddressPageCallBack {
 
     private FloatWindow mFloatWindow;
 
@@ -233,7 +233,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
     //消息显示
     @Override
     public void showMessage(String message, String type) {
-        if(isShowAddress)
+        if (isShowAddress)
             return;
         try {
             if (TextUtils.isEmpty(message))
@@ -285,9 +285,9 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
     }
 
     @Override
-    public void choosePage(int type,int page) {
+    public void choosePage(int type, int page) {
 
-        switch (type){
+        switch (type) {
             case ChoosePageChain.NEXT_PAGE:
                 if (pageIndex > 5) {
                     VoiceManager.getInstance().startSpeaking("已经是最后一页", SemanticConstants.TTS_DO_NOTHING, false);
@@ -296,27 +296,26 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
                 pageIndex++;
                 break;
             case ChoosePageChain.LAST_PAGE:
-                if(pageIndex <= 0){
+                if (pageIndex <= 0) {
                     VoiceManager.getInstance().startSpeaking("已经是第一页", SemanticConstants.TTS_DO_NOTHING, false);
                     return;
                 }
                 pageIndex--;
                 break;
             case ChoosePageChain.CHOOSE_PAGE:
-                if(pageIndex > 5)
+                if (pageIndex > 5)
                     return;
-                if(page > 5|| page < 1){
+                if (page > 5 || page < 1) {
                     VoiceManager.getInstance().stopUnderstanding();
-                    VoiceManager.getInstance().startSpeaking("选择错误，请重新选择",SemanticConstants.TTS_START_UNDERSTANDING,false);
+                    VoiceManager.getInstance().startSpeaking("选择错误，请重新选择", SemanticConstants.TTS_START_UNDERSTANDING, false);
                     return;
                 }
-                pageIndex = page-1;
+                pageIndex = page - 1;
                 break;
         }
-        Log.d("lxh","choosePage ："+ pageIndex);
+        Log.d("lxh", "choosePage ：" + pageIndex);
         addressList.setSelection(pageIndex * Constants.ADDRESS_VIEW_COUNT);
     }
-
 
 
     class MessageAdapter extends BaseAdapter {
@@ -344,15 +343,34 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder holder;
             WindowMessageEntity message = list.get(position);
-            if (FloatWindow.MESSAGE_IN.equalsIgnoreCase(message.getType())) {
-                convertView = View.inflate(mContext, R.layout.list_message_item_left, null);
-            } else if (FloatWindow.MESSAGE_OUT.equalsIgnoreCase(message.getType())) {
-                convertView = View.inflate(mContext, R.layout.list_message_item_right, null);
+            if (convertView == null) {
+                holder = new ViewHolder();
+                convertView = View.inflate(mContext, R.layout.list_message_item_layout, null);
+                holder.leftView = convertView.findViewById(R.id.list_message_item_left);
+                holder.rightView = convertView.findViewById(R.id.list_message_item_right);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder)convertView.getTag();
             }
-            TextView tv_chatcontent = (TextView) convertView.findViewById(R.id.tv_chatcontent);
-            tv_chatcontent.setText(message.getContent());
+            if (FloatWindow.MESSAGE_IN.equalsIgnoreCase(message.getType())) {
+                holder.leftView.setVisibility(View.VISIBLE);
+                holder.rightView.setVisibility(View.GONE);
+                TextView tv_chatcontent = (TextView) holder.leftView.findViewById(R.id.tv_chatcontent);
+                tv_chatcontent.setText(message.getContent());
+            } else if (FloatWindow.MESSAGE_OUT.equalsIgnoreCase(message.getType())) {
+                holder.leftView.setVisibility(View.GONE);
+                holder.rightView.setVisibility(View.VISIBLE);
+                TextView tv_chatcontent = (TextView) holder.rightView.findViewById(R.id.tv_chatcontent);
+                tv_chatcontent.setText(message.getContent());
+            }
             return convertView;
+        }
+
+        class ViewHolder {
+            View leftView;
+            View rightView;
         }
 
     }
