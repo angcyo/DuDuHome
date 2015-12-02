@@ -484,7 +484,7 @@ public class VoiceManager {
                         break;
                 }
             } else {
-                log.debug("[voice][{}]语音合成结果:{}", log_step++, speechError.getErrorDescription());
+                log.debug("[voice][{}]语音合出错:{}", log_step++, speechError.getErrorDescription());
             }
         }
 
