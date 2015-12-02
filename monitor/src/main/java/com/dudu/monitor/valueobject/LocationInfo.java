@@ -42,6 +42,7 @@ public class LocationInfo {
         accuracy = location.getAccuracy();
         createTime = TimeUtils.dateLongFormatString(location.getTime(),
                 TimeUtils.format1);
+        type = 0;
     }
 
 

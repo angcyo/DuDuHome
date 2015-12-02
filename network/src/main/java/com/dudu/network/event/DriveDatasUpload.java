@@ -21,6 +21,7 @@ public class DriveDatasUpload extends MessagePackage{
         this.obeId = obeId;
         messageId = Bicker.getBusinessCode(BusinessMessageEnum.OBD_DATA.getCode());
         flamountData = flamountDataJsonObject;
+        method = MessageMethod.DRIVEDATAS;
     }
 
     @Override

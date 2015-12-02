@@ -2,11 +2,18 @@ package com.dudu.monitor.service;
 
 import android.content.Context;
 
+import com.dudu.monitor.repo.ActiveDeviceManage;
+import com.dudu.monitor.repo.ObdManage;
 import com.dudu.monitor.repo.SensorManage;
 import com.dudu.monitor.repo.location.LocationManage;
+import com.dudu.monitor.valueobject.FlamoutData;
 import com.dudu.monitor.valueobject.LocationInfo;
+import com.dudu.monitor.valueobject.ObdData;
 import com.dudu.network.NetworkManage;
+import com.dudu.network.event.ActiveDevice;
+import com.dudu.network.event.DriveDatasUpload;
 import com.dudu.network.event.LocationInfoUpload;
+import com.dudu.network.event.ObdDatasUpload;
 import com.dudu.network.utils.DeviceIDUtil;
 import com.dudu.network.utils.DuduLog;
 import com.google.gson.Gson;
@@ -14,7 +21,8 @@ import com.google.gson.Gson;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.scf4a.Event;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -30,15 +38,24 @@ public class SendService {
     private Gson gson;
     private String obdId = "";
 
+    private Logger log;
+    private Context mContext;
+
     private Thread sendServiceThread = new Thread(){
         @Override
         public void run() {
-            DuduLog.d("monitor 发送服务");
+            log.info("monitor 发送服务");
             try {
+                activeDevice();
+
                 sendLocationInfo();
+
+                sendObdData();
+
+                sendFlamoutData();
             }catch (Exception e){
                 e.printStackTrace();
-                DuduLog.e("monitor发送服务异常", e);
+                log.error("monitor-发送服务异常" + e);
             }
         }
     };
@@ -47,10 +64,12 @@ public class SendService {
         sendServiceThreadPool = Executors.newScheduledThreadPool(1);
         gson =  new Gson();
         obdId = DeviceIDUtil.getIMEI(context);
+        mContext = context;
+        log = LoggerFactory.getLogger("monitor");
     }
 
     public void startSendService(){
-        sendServiceThreadPool.scheduleAtFixedRate(sendServiceThread, 5, 30, TimeUnit.SECONDS);
+        sendServiceThreadPool.scheduleAtFixedRate(sendServiceThread, 10, 30, TimeUnit.SECONDS);
     }
 
     public void stopSendService(){
@@ -60,7 +79,7 @@ public class SendService {
         }
     }
 
-
+    //发送位置数据
     private void sendLocationInfo(){
         if (LocationManage.getInstance().getLocationInfoList().size() == 0)
             return;
@@ -80,7 +99,63 @@ public class SendService {
             }
             LocationManage.getInstance().getLocationInfoList().clear();
         }catch (JSONException e) {
-            DuduLog.e("monitor-发送位置信息异常", e);
+            log.error("monitor-发送位置信息异常：" + e);
+        }
+    }
+
+    //发送obd数据
+    private void sendObdData(){
+        if (ObdManage.getInstance().getObdDataList().size() == 0)
+            return;
+        log.info("monitor-发送obd信息");
+        JSONArray obdDataArray = new JSONArray();
+        try{
+            for (int i = 0; i < ObdManage.getInstance().getObdDataList().size(); i++){
+                ObdData obdData = ObdManage.getInstance().getObdDataList().get(i);
+//                log.debug("monitor-obd数据："+ gson.toJson(obdData).toString());
+                if (obdData != null){
+                    obdDataArray.put(i,new JSONObject(gson.toJson(obdData)));
+                }
+            }
+            if (obdDataArray != null){
+                NetworkManage.getInstance().sendMessage(new ObdDatasUpload(obdId,obdDataArray));
+            }
+            ObdManage.getInstance().getObdDataList().clear();
+        }catch (JSONException e) {
+            log.error("monitor-发送obd数据异常" + e);
+//            DuduLog.e("monitor-发送obd数据异常", e);
+        }
+    }
+
+    //发送熄火数据
+    private  void sendFlamoutData(){
+        if (ObdManage.getInstance().getFlamoutData() != null){
+            log.info("monitor-发送obd-熄火-信息");
+            LocationInfo locationInfo = new LocationInfo(LocationManage.getInstance().getCurrentLoction());
+            JSONArray locationInfoArray = new JSONArray();
+            try{
+                if (locationInfo != null){
+                    locationInfoArray.put(new JSONObject(gson.toJson(locationInfo)));
+                }
+                if (locationInfoArray != null){
+                    NetworkManage.getInstance().sendMessage(new LocationInfoUpload(obdId, locationInfoArray));
+                }
+
+                NetworkManage.getInstance().sendMessage(new DriveDatasUpload(obdId,
+                        new JSONObject(gson.toJson(ObdManage.getInstance().getFlamoutData()))));
+                ObdManage.getInstance().setFlamoutData(null);
+            }catch (JSONException e) {
+                log.error("monitor-发送obd-熄火-信息 异常："+ e);
+            }
+        }
+    }
+
+    //设备激活
+    private void activeDevice(){
+        log.info("monitor-检查设备是否需要激活");
+        if (ActiveDeviceManage.getInstance(mContext).getActiveFlag() != ActiveDeviceManage.ACTIVE_OK){
+            log.info("monitor-发送-设备激活-----信息");
+            NetworkManage.getInstance().sendMessage(new ActiveDevice(mContext));
         }
     }
 }

@@ -122,7 +122,7 @@
         <appender-ref ref="FILE_OBD"/>
     </logger>
 
-    <logger name="net.conn" level="DEBUG">
+    <logger name="network" level="DEBUG">
         <appender-ref ref="FILE_NET"/>
     </logger>
 
@@ -135,6 +135,14 @@
     </logger>
 
     <logger name="cache.persist" level="DEBUG">
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <logger name="monitor" level="DEBUG">
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <logger name="service" level="DEBUG">
         <appender-ref ref="FILE"/>
     </logger>
 

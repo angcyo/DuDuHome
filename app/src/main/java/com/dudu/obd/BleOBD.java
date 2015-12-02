@@ -12,6 +12,7 @@ import com.dudu.android.launcher.ui.dialog.BluetoothAlertDialog;
 import com.dudu.android.launcher.utils.TimeUtils;
 import com.dudu.android.libble.BleConnectMain;
 import com.dudu.event.BleStateChange;
+import com.dudu.monitor.event.CarStatus;
 import com.duu.bluetooth.SppConnectMain;
 
 import org.scf4a.ConnSession;
@@ -76,7 +77,7 @@ public class BleOBD {
         EventBus.getDefault().register(readL1);
         EventBus.getDefault().post(new Event.StartScanner());
         obdCollectionList = new ArrayList<>();
-        driveBehaviorHappendListener = DriveBehaviorHappend.getInstance().getListener();
+//        driveBehaviorHappendListener = DriveBehaviorHappend.getInstance().getListener();
         mContext = context;
     }
 
@@ -96,7 +97,7 @@ public class BleOBD {
         final String devAddr = mBluetoothDevice.getAddress();
     }
 
-    public void onEventBackgroundThread(EventRead.L1ReadDone event) {
+    /*public void onEventBackgroundThread(EventRead.L1ReadDone event) {
         final byte[] data = event.getData();
 
         try {
@@ -106,7 +107,7 @@ public class BleOBD {
             log.error("OBD Parse exception", e);
             e.printStackTrace();
         }
-    }
+    }*/
 
 
     public void onEvent(Event.Disconnected event){
@@ -244,7 +245,7 @@ public class BleOBD {
         }
     }
 
-    public static class CarStatus {
+   /* public static class CarStatus {
         public static final int CAR_OFFLINE = 0;
         public static final int CAR_ONLINE = 1;
         private int carStatus;
@@ -254,7 +255,7 @@ public class BleOBD {
         public int getCarStatus(){
             return carStatus;
         }
-    }
+    }*/
 
 
 

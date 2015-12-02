@@ -18,6 +18,7 @@ import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.navi.NavigationManager;
 import com.dudu.obd.OBDDataService;
+import com.dudu.service.MainService;
 import com.dudu.voice.semantic.VoiceManager;
 
 import org.slf4j.Logger;
@@ -94,7 +95,7 @@ public class InitManager {
     private void startOBDService() {
         com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mActivity,
                 "persist.sys.gps", "start");
-        Intent intent = new Intent(mActivity, OBDDataService.class);
+        Intent intent = new Intent(mActivity, MainService.class);
         mActivity.startService(intent);
     }
 

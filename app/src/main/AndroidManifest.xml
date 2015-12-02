@@ -143,6 +143,7 @@
         <service android:name="com.dudu.obd.OBDDataService" />
         <service android:name=".service.FloatBackButtonService"/>
         <service android:name=".service.MonitorService"/>
+        <service android:name="com.dudu.service.MainService"/>
 
 
 

@@ -18,6 +18,7 @@ import com.dudu.conn.ConnectionEvent;
 import com.dudu.conn.SendMessage;
 import com.dudu.fdfs.fastdfs.test.Monitor;
 import com.dudu.map.AmapLocationHandler;
+import com.dudu.monitor.event.CarStatus;
 import com.dudu.obd.gsensor.MotionData;
 import com.google.gson.Gson;
 
@@ -413,10 +414,10 @@ public class OBDDataService extends Service implements
         }, 4 * 60 * 60 * 1000);
     }
 
-    public void onEventBackgroundThread(BleOBD.CarStatus event) {
+    public void onEventBackgroundThread(CarStatus event) {
         carState = event.getCarStatus();
         log.debug("onEvent CarStatus:{}", carState);
-        if (carState == BleOBD.CarStatus.CAR_ONLINE){
+        if (carState == CarStatus.CAR_ONLINE){
             noticeFating();
         }else{
 

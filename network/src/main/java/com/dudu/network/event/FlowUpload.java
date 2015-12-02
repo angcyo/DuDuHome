@@ -1,7 +1,10 @@
 package com.dudu.network.event;
 
+import android.content.Context;
+
 import com.dudu.network.utils.Bicker;
 import com.dudu.network.utils.BusinessMessageEnum;
+import com.dudu.network.utils.DeviceIDUtil;
 import com.dudu.network.valueobject.MessagePackage;
 
 import org.json.JSONException;
@@ -20,8 +23,8 @@ public class FlowUpload extends MessagePackage {
     private float usedFlow;
     private String createTime;
 
-    public FlowUpload(String obeId, float usedFlow, String createTime) {
-        this.obeId = obeId;
+    public FlowUpload(Context context, float usedFlow, String createTime) {
+        this.obeId = DeviceIDUtil.getVersionName(context);
         this.usedFlow = usedFlow;
         this.createTime = createTime;
         messageId = Bicker.getBusinessCode(BusinessMessageEnum.FLOW_DATA.getCode());

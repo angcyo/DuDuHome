@@ -1,7 +1,10 @@
 package com.dudu.network.event;
 
+import android.content.Context;
+
 import com.dudu.network.utils.Bicker;
 import com.dudu.network.utils.BusinessMessageEnum;
+import com.dudu.network.utils.DeviceIDUtil;
 import com.dudu.network.valueobject.MessagePackage;
 
 import org.json.JSONException;
@@ -16,8 +19,8 @@ public class GetFlow extends MessagePackage {
     private String obeId;
     private String method;
 
-    public GetFlow(String obeId) {
-        this.obeId = obeId;
+    public GetFlow(Context context) {
+        this.obeId = DeviceIDUtil.getVersionName(context);
         messageId = Bicker.getBusinessCode(BusinessMessageEnum.GET_FLOW_DATA.getCode());
         method = MessageMethod.GETFLOW;
     }

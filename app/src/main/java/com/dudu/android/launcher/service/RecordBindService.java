@@ -47,6 +47,7 @@ import com.dudu.conn.ConnectionEvent;
 import com.dudu.event.DeviceEvent;
 import com.dudu.http.MultipartRequest;
 import com.dudu.http.MultipartRequestParams;
+import com.dudu.monitor.event.CarStatus;
 import com.dudu.obd.BleOBD;
 
 import org.slf4j.Logger;
@@ -653,10 +654,10 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         }
     }
 
-    public void onEventBackgroundThread(BleOBD.CarStatus event) {
-        if (event.getCarStatus() == BleOBD.CarStatus.CAR_OFFLINE) {
+    public void onEventBackgroundThread(CarStatus event) {
+        if (event.getCarStatus() == CarStatus.CAR_OFFLINE) {
             logger.debug("接收到熄火的消息...");
-        } else if (event.getCarStatus() == BleOBD.CarStatus.CAR_ONLINE) {
+        } else if (event.getCarStatus() == CarStatus.CAR_ONLINE) {
             logger.debug("接收到点火的消息...");
         }
     }

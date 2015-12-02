@@ -1,7 +1,10 @@
 package com.dudu.network.event;
 
+import android.content.Context;
+
 import com.dudu.network.utils.Bicker;
 import com.dudu.network.utils.BusinessMessageEnum;
+import com.dudu.network.utils.DeviceIDUtil;
 import com.dudu.network.valueobject.MessagePackage;
 
 import org.json.JSONException;
@@ -17,9 +20,9 @@ public class FlowSynConfiguration extends MessagePackage {
     private String obeId;
     private String method;
 
-    public FlowSynConfiguration(String obeId) {
+    public FlowSynConfiguration(Context context) {
         messageId = Bicker.getBusinessCode(BusinessMessageEnum.SYNCONFIGURATION_DATA.getCode());
-        this.obeId = obeId;
+        this.obeId = DeviceIDUtil.getVersionName(context);
         method = MessageMethod.SYNCONFIGURATION;
     }
 

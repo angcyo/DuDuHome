@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
+
 import static android.support.v4.content.PermissionChecker.checkSelfPermission;
 
 /**
@@ -59,6 +61,7 @@ public class AmapLocation implements AMapLocationListener, ILocation{
                 // 卫星状态改变
                 case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
 //                    log.debug("卫星状态改变");
+                    EventBus.getDefault().post(locationManager.getGpsStatus(null));
                     break;
                 // 定位启动
                 case GpsStatus.GPS_EVENT_STARTED:
@@ -132,6 +135,10 @@ public class AmapLocation implements AMapLocationListener, ILocation{
 
         if (mILocationListener != null){
             mILocationListener.onLocationResult(location);
+        }
+        LocationInfo locationInfo = new LocationInfo(location);
+        if (mILocationListener != null) {
+            mILocationListener.onLocationResult(locationInfo);
         }
 
         handlerGPS(location);
