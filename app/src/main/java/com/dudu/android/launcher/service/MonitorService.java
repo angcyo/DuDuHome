@@ -149,8 +149,11 @@ public class MonitorService extends Service {
  * */
     private void refreshFlowData(){
         float primaryRemainingFlow=Float.parseFloat(SharedPreferencesUtil.getStringValue(MonitorService.this, Constants.KEY_REMAINING_FLOW,"0"));
-        float timelyRemainingFlow=primaryRemainingFlow-mMobileTotalRx-mMobileTotalTx;
-        SharedPreferencesUtil.putStringValue(MonitorService.this,Constants.KEY_REMAINING_FLOW,String.valueOf(timelyRemainingFlow));
+        if (primaryRemainingFlow!=0){
+            float timelyRemainingFlow=primaryRemainingFlow-mMobileTotalRx-mMobileTotalTx;
+            SharedPreferencesUtil.putStringValue(MonitorService.this,Constants.KEY_REMAINING_FLOW,String.valueOf(timelyRemainingFlow));
+        }
+
     }
 
 }

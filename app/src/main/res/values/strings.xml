@@ -81,6 +81,13 @@
 
     <string name="user_is_not_active">当前账号尚未激活</string>
 
+    <string name="use_flow_normal">流量使用正常</string>
+    <string name="use_flow_low_alarm">流量低级预警</string>
+    <string name="use_flow_middle_alarm">流量中级预警</string>
+    <string name="use_flow_high_alarm">流量高级预警</string>
+    <string name="use_close_flow">关闭流量</string>
+
+
     <string-array name="action_menu_list_select">
         <item>选择</item>
         <item>全选</item>
