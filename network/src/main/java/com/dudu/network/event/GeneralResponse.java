@@ -96,7 +96,7 @@ public class GeneralResponse extends MessagePackage {
             case MessageMethod.UPDATEPORTAL:
                 messageId = Bicker.getBusinessCode(BusinessMessageEnum.UPDATE_PORTAL.getCode());
                 break;
-            case MessageMethod.logs:
+            case MessageMethod.LOGS:
                 messageId = Bicker.getBusinessCode(BusinessMessageEnum.UPDATE_LOGS.getCode());
                 break;
             default:

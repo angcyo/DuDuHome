@@ -136,10 +136,10 @@ public class AmapLocation implements AMapLocationListener, ILocation{
         if (mILocationListener != null){
             mILocationListener.onLocationResult(location);
         }
-        LocationInfo locationInfo = new LocationInfo(location);
+        /*LocationInfo locationInfo = new LocationInfo(location);
         if (mILocationListener != null) {
             mILocationListener.onLocationResult(locationInfo);
-        }
+        }*/
 
         handlerGPS(location);
         // 更新preLocation

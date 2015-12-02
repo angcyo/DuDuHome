@@ -13,6 +13,7 @@ import com.dudu.network.event.LocationInfoUpload;
 import com.dudu.network.event.LogSend;
 import com.dudu.network.event.MessageMethod;
 import com.dudu.network.event.PortalUpdateRes;
+import com.dudu.network.event.RebootDevice;
 import com.dudu.network.event.SwitchFlow;
 import com.dudu.network.event.UpdatePortal;
 import com.dudu.network.utils.DuduLog;
@@ -92,8 +93,10 @@ public class MessageHandler {
                 case MessageMethod.UPDATEPORTAL:
                     proUpdatePortalMessage(messageJsonObject);
                     break;
-                case MessageMethod.logs:
+                case MessageMethod.LOGS:
                     proLogsMessage(messageJsonObject);
+                    break;
+                case MessageMethod.REBOOTDEVICE:
                     break;
                 default:
                     DuduLog.e("network-收到错误的网络消息--------");
@@ -246,6 +249,13 @@ public class MessageHandler {
 
         DuduLog.i("network-发出LogSend事件");
         EventBus.getDefault().post(logSend);
+    }
+
+    private void proRebootDeviceMessage(JSONObject messageJsonObject){
+        RebootDevice rebootDevice = new RebootDevice();
+        rebootDevice.createFromJsonString(messageJsonObject.toString());
+        DuduLog.i("network-发出RebootDevice事件");
+        EventBus.getDefault().post(rebootDevice);
     }
 
     public void init(){
