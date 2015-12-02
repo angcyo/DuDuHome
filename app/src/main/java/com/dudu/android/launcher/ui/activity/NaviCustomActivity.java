@@ -26,6 +26,7 @@ import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.NaviSettingUtil;
+import com.dudu.android.launcher.utils.TimeUtils;
 import com.dudu.android.launcher.utils.ViewAnimation;
 import com.dudu.map.AmapLocationChangeEvent;
 import com.dudu.map.NavigationClerk;
@@ -156,6 +157,9 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         viewOptions.setTrafficLayerEnabled(true);
         viewOptions.setTrafficLine(true);
         viewOptions.setLeaderLineEnabled(Color.RED);
+        int time = Integer.parseInt(TimeUtils.format(TimeUtils.format6));
+        if(time>18)
+            viewOptions.setNaviNight(true);
         mAmapAMapNaviView.setViewOptions(viewOptions);
         mAmapAMapNaviView.getMap().setTrafficEnabled(true);
 

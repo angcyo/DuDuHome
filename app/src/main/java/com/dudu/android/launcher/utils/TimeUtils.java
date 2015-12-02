@@ -19,6 +19,7 @@ public class TimeUtils {
 	/** 格式定义 yyyyMMddHHmmss */
 	public static String format3 = "yyyy-MM-ddHH:mm:ss";
 	public static String format5 = "yyyy-MM-dd HHmmss";
+	public static String format6 = "HH";
     
 	/**
 	 * 获得当前时间的格式化输出

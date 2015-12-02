@@ -86,7 +86,8 @@
             android:name=".ui.activity.NaviCustomActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.TitleBar" />
+            android:theme="@style/Theme.TitleBar"
+            />
         <activity
             android:name=".ui.activity.NaviBackActivity"
             android:launchMode="singleInstance"

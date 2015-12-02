@@ -9,10 +9,13 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.NaviPara;
 import com.amap.api.navi.AMapNavi;
 import com.amap.api.navi.AMapNaviListener;
+import com.amap.api.navi.model.AMapLaneInfo;
+import com.amap.api.navi.model.AMapNaviCross;
 import com.amap.api.navi.model.AMapNaviInfo;
 import com.amap.api.navi.model.AMapNaviLocation;
 import com.amap.api.navi.model.NaviInfo;
 import com.amap.api.navi.model.NaviLatLng;
+import com.autonavi.tbt.TrafficFacilityInfo;
 import com.dudu.monitor.Monitor;
 import com.dudu.navi.NavigationManager;
 import com.dudu.navi.Util.NaviUtils;
@@ -77,6 +80,7 @@ public class NaviProcess {
         log.debug("initNaviListener");
         AMapNavi.getInstance(mContext).setAMapNaviListener(getAMapNaviListener());
         AMapNavi.getInstance(mContext).startGPS();
+        AMapNavi.getInstance(mContext).setDetectedMode(1);
     }
 
     public void destoryAmapNavi() {
@@ -134,8 +138,6 @@ public class NaviProcess {
 
     private AMapNaviListener getAMapNaviListener() {
         if (mAmapNaviListener == null) {
-
-
             mAmapNaviListener = new AMapNaviListener() {
 
                 @Override
@@ -226,6 +228,31 @@ public class NaviProcess {
                 @Override
                 public void onNaviInfoUpdate(NaviInfo arg0) {
                     log.debug("[{}] 当驾车或者步行实时导航或者模拟导航有位置变化时", step++);
+                }
+
+                @Override
+                public void OnUpdateTrafficFacility(TrafficFacilityInfo trafficFacilityInfo) {
+
+                }
+
+                @Override
+                public void showCross(AMapNaviCross aMapNaviCross) {
+
+                }
+
+                @Override
+                public void hideCross() {
+
+                }
+
+                @Override
+                public void showLaneInfo(AMapLaneInfo[] aMapLaneInfos, byte[] bytes, byte[] bytes1) {
+
+                }
+
+                @Override
+                public void hideLaneInfo() {
+
                 }
             };
         }

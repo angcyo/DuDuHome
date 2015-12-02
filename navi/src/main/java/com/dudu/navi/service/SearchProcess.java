@@ -14,18 +14,15 @@ import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.amap.api.services.geocoder.RegeocodeResult;
-import com.amap.api.services.poisearch.PoiItemDetail;
 import com.amap.api.services.poisearch.PoiResult;
 import com.amap.api.services.poisearch.PoiSearch;
 import com.dudu.monitor.Monitor;
 import com.dudu.monitor.utils.LocationUtils;
 import com.dudu.navi.NavigationManager;
 import com.dudu.navi.R;
-import com.dudu.navi.entity.Navigation;
 import com.dudu.navi.entity.PoiResultInfo;
 import com.dudu.navi.event.NaviEvent;
 import com.dudu.navi.repo.ResourceManager;
-import com.dudu.navi.vauleObject.NavigationType;
 import com.dudu.navi.vauleObject.SearchType;
 
 import java.util.ArrayList;
@@ -129,7 +126,7 @@ public class SearchProcess {
             }
             poiSearch.setOnPoiSearchListener(onPoiSearchListener);
             poiSearch.searchPOIAsyn();
-            Observable.timer(30, TimeUnit.SECONDS)
+            Observable.timer(20, TimeUnit.SECONDS)
                     .subscribe(new Action1<Long>() {
                         @Override
                         public void call(Long aLong) {
@@ -214,10 +211,6 @@ public class SearchProcess {
 
         }
 
-        @Override
-        public void onPoiItemDetailSearched(PoiItemDetail poiItemDetail, int i) {
-
-        }
     };
 
     private GeocodeSearch.OnGeocodeSearchListener geocodeSearchListener = new GeocodeSearch.OnGeocodeSearchListener() {

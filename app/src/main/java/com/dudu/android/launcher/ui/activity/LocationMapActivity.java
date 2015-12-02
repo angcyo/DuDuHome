@@ -210,6 +210,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     @Override
     protected void onResume() {
         super.onResume();
+        mapView.onResume();
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
         getLocation();
@@ -296,6 +297,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         if (mHandler != null && getLocatinRunable != null) {
             mHandler.removeCallbacks(getLocatinRunable);
         }
+        mapView.onPause();
         super.onPause();
     }
 
@@ -383,4 +385,10 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
             strategyDialog.dismiss();
     }
 
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
+    }
 }

@@ -202,7 +202,7 @@ public class NavigationClerk {
 
 
     public void searchControl(String semantic, String service, String keyword, SearchType type) {
-        Log.d("lxh","-----searchControl:"+navigationManager.getSearchType());
+        navigationManager.getLog().debug("-----searchControl:"+navigationManager.getSearchType());
         if (navigationManager.getSearchType() == SearchType.SEARCH_COMMONADDRESS)
             type = SearchType.SEARCH_COMMONPLACE;
         navigationManager.setSearchType(type);
