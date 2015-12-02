@@ -63,7 +63,7 @@ public class MinaConnection extends IoHandlerAdapter implements IConnection{
             // 添加业务逻辑处理器类
             connector.setHandler(this);
             ConnectFuture future = connector.connect(new InetSocketAddress(connectionParam.getHost(), connectionParam.getPort()));// 创建连接
-            log.info("开始连接网络");
+            log.info("开始连接网络："+ "IP："+connectionParam.getHost()+"  Port："+connectionParam.getPort());
             //如果不等待 网络连接过程异步
             future.awaitUninterruptibly(); // 等待连接创建完成
             session = future.getSession();

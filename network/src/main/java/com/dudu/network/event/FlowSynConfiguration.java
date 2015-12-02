@@ -22,7 +22,7 @@ public class FlowSynConfiguration extends MessagePackage {
 
     public FlowSynConfiguration(Context context) {
         messageId = Bicker.getBusinessCode(BusinessMessageEnum.SYNCONFIGURATION_DATA.getCode());
-        this.obeId = DeviceIDUtil.getVersionName(context);
+        this.obeId = DeviceIDUtil.getIMEI(context);
         method = MessageMethod.SYNCONFIGURATION;
     }
 

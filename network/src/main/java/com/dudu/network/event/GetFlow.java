@@ -20,7 +20,7 @@ public class GetFlow extends MessagePackage {
     private String method;
 
     public GetFlow(Context context) {
-        this.obeId = DeviceIDUtil.getVersionName(context);
+        this.obeId = DeviceIDUtil.getIMEI(context);
         messageId = Bicker.getBusinessCode(BusinessMessageEnum.GET_FLOW_DATA.getCode());
         method = MessageMethod.GETFLOW;
     }

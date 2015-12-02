@@ -24,7 +24,7 @@ public class FlowUpload extends MessagePackage {
     private String createTime;
 
     public FlowUpload(Context context, float usedFlow, String createTime) {
-        this.obeId = DeviceIDUtil.getVersionName(context);
+        this.obeId = DeviceIDUtil.getIMEI(context);
         this.usedFlow = usedFlow;
         this.createTime = createTime;
         messageId = Bicker.getBusinessCode(BusinessMessageEnum.FLOW_DATA.getCode());
