@@ -70,7 +70,11 @@ public class FlowMonitor {
         String resultCode = result.getString(ConnectionConstants.FIELD_RESULT_CODE);
         if (ConnectionConstants.RESULT_CODE_SUCCESS.equals(
                 resultCode)) {
-
+            if (!result.isNull(ConnectionConstants.FIELD_RESULT)) {
+                JSONObject object=result.getJSONObject(ConnectionConstants.FIELD_RESULT);
+                putStringValue(Constants.KEY_REMAINING_FLOW,
+                        ConnectionConstants.FIELD_REMAINING_FLOW, object);
+            }
         }
     }
 

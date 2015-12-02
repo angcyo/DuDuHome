@@ -8,7 +8,8 @@ import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.db.DbHelper;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.view.TasksCompletedView;
-
+import com.dudu.android.launcher.utils.Constants;
+import com.dudu.android.launcher.utils.SharedPreferencesUtil;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 
@@ -25,7 +26,9 @@ public class WifiActivity extends BaseTitlebarActivity {
 
     private DecimalFormat mDecimalFormat = new DecimalFormat("0.00");
 
-    private float mTotalFlow = 500;
+    private float mTotalFlow = 0;
+
+    private float remainingFlow= 0;
 
     @Override
     public int initContentView() {
@@ -53,8 +56,10 @@ public class WifiActivity extends BaseTitlebarActivity {
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH) + 1;
 
-        float usedFlow = mDbHelper.calculateForMonth(year, month, 1) / 1024;
-        float remainingFlow = mTotalFlow - usedFlow;
+       float usedFlow = mDbHelper.calculateForMonth(year, month, 1) / 1024;
+        //float remainingFlow = mTotalFlow - usedFlow;
+        remainingFlow = Float.parseFloat(SharedPreferencesUtil.getStringValue(this, Constants.KEY_REMAINING_FLOW, "400"));
+        mTotalFlow=remainingFlow+usedFlow;
 
         mUsedFlowView.setText(getString(R.string.used_flow, mDecimalFormat.format(usedFlow)));
 

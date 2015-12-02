@@ -10,7 +10,9 @@ import android.net.TrafficStats;
 import android.os.IBinder;
 
 import com.dudu.android.launcher.db.DbHelper;
+import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.LogUtils;
+import com.dudu.android.launcher.utils.SharedPreferencesUtil;
 import com.dudu.conn.FlowMonitor;
 import com.dudu.conn.SendMessage;
 
@@ -102,7 +104,7 @@ public class MonitorService extends Service {
 
                         mMobileTotalRx += dw;
                         mMobileTotalTx += up;
-
+                        refreshFlowData();
                         float totalFlow = mMobileTotalRx + mMobileTotalTx;
 
                         mFlowMonitor.sendFlowMessage(totalFlow, mFormat.format(date));
@@ -141,6 +143,14 @@ public class MonitorService extends Service {
         }
 
         mMonitorThread = null;
+    }
+/**
+ * 更新SharedPreferences里面的剩余流量的数据
+ * */
+    private void refreshFlowData(){
+        float primaryRemainingFlow=Float.parseFloat(SharedPreferencesUtil.getStringValue(MonitorService.this, Constants.KEY_REMAINING_FLOW,"0"));
+        float timelyRemainingFlow=primaryRemainingFlow-mMobileTotalRx-mMobileTotalTx;
+        SharedPreferencesUtil.putStringValue(MonitorService.this,Constants.KEY_REMAINING_FLOW,String.valueOf(timelyRemainingFlow));
     }
 
 }

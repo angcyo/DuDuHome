@@ -36,6 +36,7 @@ import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
+import com.dudu.conn.FlowMonitor;
 import com.dudu.event.BleStateChange;
 import com.dudu.event.DeviceEvent;
 import com.dudu.init.InitManager;
@@ -380,6 +381,7 @@ public class MainActivity extends BaseTitlebarActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+        FlowMonitor.getInstance().queryFlowInfo();
         EventBus.getDefault().post(NaviEvent.FloatButtonEvent.HIDE);
     }
 
