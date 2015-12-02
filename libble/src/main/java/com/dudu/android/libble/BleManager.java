@@ -350,6 +350,7 @@ public class BleManager {
         }
         if (!mNotifyEnabled) {
             log.error("CharacteristicNotification not enabled");
+            EventBus.getDefault().post(new Event.DisConnect(Event.ConnectType.BLE));
             return;
         }
         final byte[] data = characteristic.getValue();
