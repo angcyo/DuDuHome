@@ -292,6 +292,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         NavigationClerk.getInstance().setIsManual(true);
         SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
         navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
+        NavigationClerk.getInstance().setIsManual(false);
         if (mHandler != null && getLocatinRunable != null) {
             mHandler.removeCallbacks(getLocatinRunable);
         }

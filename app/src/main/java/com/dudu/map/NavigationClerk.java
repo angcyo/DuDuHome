@@ -492,12 +492,13 @@ public class NavigationClerk {
      * @param choosePoint
      */
     private void addCommonAddress(PoiResultInfo choosePoint) {
+        FloatWindowUtil.removeFloatWindow();
         String addType = navigationManager.getCommonAddressType().getName();
         CommonAddressUtil.setCommonAddress(addType, mContext, choosePoint.getAddressTitle());
         CommonAddressUtil.setCommonLocation(addType,
                 mContext, choosePoint.getLatitude(), choosePoint.getLongitude());
         VoiceManager.getInstance().stopUnderstanding();
-        FloatWindowUtil.removeFloatWindow();
+
         VoiceManager.getInstance().startSpeaking("添加" + choosePoint.getAddressTitle() + "为" + addType + "地址成功！",
                 SemanticConstants.TTS_DO_NOTHING, true);
         navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);

@@ -31,6 +31,7 @@ import com.dudu.map.AmapLocationChangeEvent;
 import com.dudu.map.NavigationClerk;
 import com.dudu.navi.NavigationManager;
 import com.dudu.navi.vauleObject.NavigationType;
+import com.dudu.navi.vauleObject.SearchType;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
 
