@@ -32,11 +32,9 @@ import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
 import com.dudu.android.launcher.utils.DialogUtils;
 import com.dudu.android.launcher.utils.LocationUtils;
-import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
-import com.dudu.conn.FlowMonitor;
 import com.dudu.event.BleStateChange;
 import com.dudu.event.DeviceEvent;
 import com.dudu.init.InitManager;
@@ -91,8 +89,6 @@ public class MainActivity extends BaseTitlebarActivity implements
         initDate();
 
         initWeatherInfo();
-
-        VoiceManager.getInstance().startWakeup();
     }
 
     @Override
@@ -144,10 +140,10 @@ public class MainActivity extends BaseTitlebarActivity implements
 
             @Override
             public boolean onLongClick(View v) {
-//                Intent intent = new Intent();
-//                intent.setComponent(new ComponentName("com.android.settings",
-//                        "com.android.settings.Settings"));
-//                startActivity(intent);
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName("com.android.settings",
+                        "com.android.settings.Settings"));
+                startActivity(intent);
                 EventBus.getDefault().post(new CarStatus(CarStatus.CAR_OFFLINE));
                 return true;
             }

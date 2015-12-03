@@ -97,7 +97,7 @@ public class VoiceManager {
         mContext = LauncherApplication.mApplication;
         log = LoggerFactory.getLogger("voice.manager");
         log_step = 0;
-        log.debug("[voice][{}]new Instance", log_step++);
+        log.debug("[voice][{}]初始化语音manager...", log_step++);
 
         StringBuffer param = new StringBuffer();
         param.append("appid=" + Constants.XUFEIID);
@@ -128,9 +128,14 @@ public class VoiceManager {
      * 开始启动唤醒服务
      */
     public void startWakeup() {
-        log.debug("[voice][{}]开始启动唤醒服务", log_step++);
+        log.debug("[voice][{}]开始启动唤醒服务...", log_step++);
         mWakeuper = VoiceWakeuper.getWakeuper();
         if (mWakeuper != null) {
+            if (mWakeuper.isListening()) {
+                log.debug("重复启动唤醒服务...");
+                return;
+            }
+
             mWakeuper.setParameter(SpeechConstant.IVW_THRESHOLD, "0:"
                     + Constants.VOICE_WAKEUP_CURTHRESH);
             mWakeuper.setParameter(SpeechConstant.IVW_SST, "wakeup");
