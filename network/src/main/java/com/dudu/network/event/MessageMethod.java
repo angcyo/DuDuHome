@@ -26,7 +26,7 @@ public class MessageMethod {
     public static final String DATAEXCEPTIONALARM = "dataExceptionAlarm"; // 4.2.2 流量超限预警
     public static final String UPDATEPORTAL = "updatePortal";      //4.3.1 更新Portal
     public static final String LOGS = "logs";                  // 上传logs
-    public static final String REBOOTDEVICE = "reboot";                  // 重启设备
+    public static final String REBOOTDEVICE = "rebootDevice";                  // 重启设备
 
 
 

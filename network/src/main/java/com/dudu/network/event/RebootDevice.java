@@ -13,6 +13,8 @@ public class RebootDevice extends MessagePackage {
     private String messageId;
     private String method;
 
+    private String reboot;
+
     private boolean rebootDeviceFlag = false;
 
 
@@ -43,9 +45,11 @@ public class RebootDevice extends MessagePackage {
             JSONObject jsonObject = new JSONObject(messageJsonString);
             messageId = jsonObject.getString("messageId");
             method = jsonObject.getString("method");
+            reboot=jsonObject.getString("reboot");
+          if (reboot.equals("1")){
+             rebootDeviceFlag= true;
+          }
 
-
-            rebootDeviceFlag= true;
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -1,10 +1,13 @@
 package com.dudu.monitor.repo;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 
 import com.dudu.network.event.ActiveDeviceRes;
 import com.dudu.network.event.CheckDeviceActiveRes;
+import com.dudu.network.event.RebootDevice;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,5 +76,18 @@ public class ActiveDeviceManage{
         if(checkDeviceActiveRes.isActive()){
             setActiveFlag(ACTIVE_OK);
         }
+    }
+
+    /**
+     * 接受重启的命令
+     * */
+    public void onEventBackgroundThread(RebootDevice rebootDevice){
+        if (rebootDevice.isRebootDeviceFlag()){
+            reboot();
+        }
+    }
+
+    private void reboot() {
+        com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.boot", "reboot");
     }
 }

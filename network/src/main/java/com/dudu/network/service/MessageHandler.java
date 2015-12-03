@@ -97,6 +97,7 @@ public class MessageHandler {
                     proLogsMessage(messageJsonObject);
                     break;
                 case MessageMethod.REBOOTDEVICE:
+                    proRebootDeviceMessage(messageJsonObject);
                     break;
                 default:
                     DuduLog.e("network-收到错误的网络消息--------");

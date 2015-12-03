@@ -31,7 +31,7 @@ public class WifiActivity extends BaseTitlebarActivity {
 
     private float remainingFlow= 0;
 
-    private static final String DEFAULT_FLOW_VALUE="1024";
+    private static final String DEFAULT_FLOW_VALUE="1024000";
 
     @Override
     public int initContentView() {
