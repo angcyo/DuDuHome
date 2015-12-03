@@ -2,24 +2,30 @@ package com.dudu.obd;
 
 import android.content.Context;
 
+import com.dudu.android.launcher.utils.Utils;
+
 /**
  * Created by lxh on 2015/12/3.
  */
 public class ObdInit {
-    public static final int INIT_BLEOBD = 0;
 
-    public static final int INIT_PODOBD = 1;
 
-    public static void initOBD(int type,Context context){
+    public static void initOBD(Context context){
 
-        switch (type){
-            case INIT_BLEOBD:
+        switch (Utils.getOBDType(context)){
+            case "thread":
                 BleOBD bleOBD = new BleOBD();
                 bleOBD.initOBD(context);
                 break;
-            case INIT_PODOBD:
+            case "pod":
                 PodOBD podOBD = new PodOBD();
                 podOBD.init(context);
+                break;
+            case "xfa":
+                break;
+            default:
+                BleOBD bleOBD2 = new BleOBD();
+                bleOBD2.initOBD(context);
                 break;
         }
 

@@ -31,7 +31,6 @@ import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
 import com.dudu.android.launcher.utils.DialogUtils;
-import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
@@ -40,6 +39,7 @@ import com.dudu.event.DeviceEvent;
 import com.dudu.init.InitManager;
 import com.dudu.map.NavigationClerk;
 import com.dudu.monitor.event.CarStatus;
+import com.dudu.monitor.utils.LocationUtils;
 import com.dudu.navi.event.NaviEvent;
 import com.dudu.voice.semantic.VoiceManager;
 
@@ -189,7 +189,7 @@ public class MainActivity extends BaseTitlebarActivity implements
                 break;
 
             case R.id.didi_button:
-                Utils.startThirdPartyApp(MainActivity.this, "com.sdu.didi.gsui", R.string.error_no_didi);
+                Utils.openJD(this);
                 break;
 
             case R.id.wlan_button:

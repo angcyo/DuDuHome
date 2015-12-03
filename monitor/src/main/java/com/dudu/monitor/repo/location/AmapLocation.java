@@ -89,8 +89,7 @@ public class AmapLocation implements AMapLocationListener, ILocation{
                 LocationProviderProxy.AMapNetwork, 2000, 10, this);
 
         locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
-        if (checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-            locationManager.addGpsStatusListener(getGpsStatuslistener);
+
     }
 
     @Override
@@ -124,10 +123,12 @@ public class AmapLocation implements AMapLocationListener, ILocation{
         if (location.hasSpeed() && location.getSpeed() > 0)
             location.setSpeed(location.getSpeed() * 36 / 10);
         if (isFirstLoc) {
+            if (checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+                locationManager.addGpsStatusListener(getGpsStatuslistener);
             Bundle locBundle = location.getExtras();
             if (locBundle != null) {
-
                 LocationUtils.getInstance(mContext).setCurrentCitycode(locBundle.getString("citycode"));
+                LocationUtils.getInstance(mContext).setCurrentLocation(location.getLatitude(),location.getLongitude());
                 last_Location = location;
                 isFirstLoc = false;
             }

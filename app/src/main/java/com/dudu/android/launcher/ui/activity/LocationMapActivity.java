@@ -1,7 +1,6 @@
 package com.dudu.android.launcher.ui.activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -32,27 +31,19 @@ import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.ui.dialog.RouteSearchPoiDialog;
 import com.dudu.android.launcher.ui.dialog.StrategyChoiseDialog;
-import com.dudu.android.launcher.ui.dialog.WaitingDialog;
 import com.dudu.android.launcher.ui.view.CleanableCompletaTextView;
-import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.FloatWindowUtil;
-import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.ViewAnimation;
 import com.dudu.event.MapResultShow;
-import com.dudu.map.AmapLocationChangeEvent;
 import com.dudu.map.NavigationClerk;
 import com.dudu.monitor.Monitor;
-import com.dudu.monitor.repo.location.AmapLocation;
+import com.dudu.monitor.utils.LocationUtils;
 import com.dudu.navi.NavigationManager;
 import com.dudu.navi.entity.Navigation;
 import com.dudu.navi.entity.PoiResultInfo;
 import com.dudu.navi.entity.Point;
-import com.dudu.navi.event.NaviEvent;
 import com.dudu.navi.vauleObject.NavigationType;
 import com.dudu.navi.vauleObject.SearchType;
-import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.SemanticType;
-import com.dudu.voice.semantic.VoiceManager;
 import com.dudu.voice.semantic.engine.SemanticProcessor;
 
 import org.slf4j.Logger;
@@ -200,6 +191,8 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     }
 
     private void searchManual() {
+        if(TextUtils.isEmpty(search_edit.getText().toString()))
+            return;
         navigationManager.setKeyword(search_edit.getText().toString());
         navigationManager.setSearchType(SearchType.SEARCH_PLACE);
         NavigationClerk.getInstance().setIsManual(true);

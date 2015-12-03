@@ -81,7 +81,7 @@ public class NavigationClerk {
 
         @Override
         public void run() {
-            if (navigationManager.getSearchType() == SearchType.SEARCH_DEFAULT){
+            if (navigationManager.getSearchType() == SearchType.SEARCH_DEFAULT) {
                 isShowAddress = false;
                 FloatWindowUtil.removeFloatWindow();
                 VoiceManager.getInstance().stopUnderstanding();
@@ -149,25 +149,25 @@ public class NavigationClerk {
     }
 
     private boolean openActivity(int openType) {
-        navigationManager.getLog().debug("openActivity {},{}",isShowAddress,navigationManager.isNavigatining());
-        if(isShowAddress)
+        navigationManager.getLog().debug("openActivity {},{}", isShowAddress, navigationManager.isNavigatining());
+        if (isShowAddress)
             return false;
-        if(navigationManager.isNavigatining()){
-          switch (navigationManager.getNavigationType()){
-              case NAVIGATION:
-                  intentClass = NaviCustomActivity.class;
-                  break;
-              case BACKNAVI:
-                  intentClass = NaviBackActivity.class;
-                  break;
-          }
+        if (navigationManager.isNavigatining()) {
+            switch (navigationManager.getNavigationType()) {
+                case NAVIGATION:
+                    intentClass = NaviCustomActivity.class;
+                    break;
+                case BACKNAVI:
+                    intentClass = NaviBackActivity.class;
+                    break;
+            }
             FloatWindowUtil.removeFloatWindow();
-        }else{
-            if(!isMapActivity()){
+        } else {
+            if (!isMapActivity()) {
                 intentClass = LocationMapActivity.class;
-                if(openType==OPEN_VOICE)
+                if (openType == OPEN_VOICE)
                     navigationManager.setSearchType(SearchType.OPEN_NAVI);
-            }else{
+            } else {
                 return false;
             }
         }
@@ -176,10 +176,11 @@ public class NavigationClerk {
     }
 
 
-    private Activity getTopActivity(){
-      Activity topActivity = ActivitiesManager.getInstance().getTopActivity();
+    private Activity getTopActivity() {
+        Activity topActivity = ActivitiesManager.getInstance().getTopActivity();
         return topActivity;
     }
+
     private boolean isMapActivity() {
 
         return (getTopActivity() != null && getTopActivity() instanceof LocationMapActivity);
@@ -210,36 +211,48 @@ public class NavigationClerk {
     }
 
     public void doSearch() {
+        String msg;
+        String playText = "正在搜索" + navigationManager.getKeyword() + ",请稍后";
+        boolean isShow = false;
         if (!navigationManager.isNavigatining() && !isMapActivity()) {
             intentClass = LocationMapActivity.class;
             intentActivity();
             return;
         }
         isNaviActivity();
-        String msg;
         switch (navigationManager.getSearchType()) {
             case SEARCH_DEFAULT:
                 return;
-            case SEARCH_PLACE:
-            case SEARCH_PLACE_LOCATION:
             case SEARCH_NEARBY:
             case SEARCH_NEAREST:
+            case SEARCH_PLACE:
+            case SEARCH_PLACE_LOCATION:
             case SEARCH_COMMONPLACE:
                 if (TextUtils.isEmpty(navigationManager.getKeyword())) {
                     VoiceManager.getInstance().startSpeaking("关键字有误，请重新输入！",
                             SemanticConstants.TTS_START_UNDERSTANDING, true);
                     return;
                 }
+
                 msg = "正在搜索:" + navigationManager.getKeyword();
                 if (Constants.CURRENT_POI.equals(navigationManager.getKeyword())) {
                     navigationManager.setSearchType(SearchType.SEARCH_CUR_LOCATION);
                     msg = "正在获取当前位置信息";
+                    playText = "正在获取您的当前位置,请稍后";
+                    isShow = true;
                 }
+                VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_DO_NOTHING, isShow);
                 showProgressDialog(msg);
                 break;
 
         }
-        navigationManager.search();
+        mhandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                navigationManager.search();
+            }
+        }, 2000);
+
     }
 
     private boolean isNaviActivity() {
@@ -320,10 +333,14 @@ public class NavigationClerk {
             case NAVIGATION:
                 navigationManager.setNavigationType(NavigationType.NAVIGATION);
                 intentClass = NaviCustomActivity.class;
+                if (isMapActivity())
+                    ActivitiesManager.getInstance().closeTargetActivity(LocationMapActivity.class);
                 break;
             case BACKNAVI:
                 navigationManager.setNavigationType(NavigationType.BACKNAVI);
                 intentClass = NaviBackActivity.class;
+                if (isMapActivity())
+                    ActivitiesManager.getInstance().closeTargetActivity(LocationMapActivity.class);
                 break;
             case CALCULATEERROR:
                 navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
@@ -435,7 +452,7 @@ public class NavigationClerk {
     public void showAddressByVoice() {
 
         VoiceManager.getInstance().startSpeaking(
-                "请选择列表中的地址", SemanticConstants.TTS_START_UNDERSTANDING, true);
+                "为您找到以下地址，请选择第几个", SemanticConstants.TTS_START_UNDERSTANDING, true);
         FloatWindowUtil.showAddress(
                 new AdapterView.OnItemClickListener() {
                     @Override
@@ -519,6 +536,8 @@ public class NavigationClerk {
         VoiceManager.getInstance().stopUnderstanding();
         VoiceManager.getInstance().clearMisUnderstandCount();
         String playText = "请选择路线优先策略。";
+        if (navigationManager.getSearchType() == SearchType.SEARCH_NEAREST)
+            playText = "已经为您找到最近的" + navigationManager.getKeyword() + ",请选择路线优先策略";
         VoiceManager.getInstance().startSpeaking(playText,
                 SemanticConstants.TTS_START_UNDERSTANDING, false);
         FloatWindowUtil.showStrategy(
@@ -578,6 +597,7 @@ public class NavigationClerk {
     public void startNavigation(Navigation navigation) {
 
         showProgressDialog("路径规划中...");
+        VoiceManager.getInstance().startSpeaking("路径规划中，请稍后...", SemanticConstants.TTS_DO_NOTHING, false);
         if (NaviUtils.getOpenMode(mContext) == OpenMode.OUTSIDE) {
             LauncherApplication.getContext().setReceivingOrder(true);
         }

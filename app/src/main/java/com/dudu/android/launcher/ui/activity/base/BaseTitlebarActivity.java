@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
-import android.media.Image;
 import android.os.Bundle;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
@@ -17,10 +16,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dudu.android.launcher.R;
-import com.dudu.android.launcher.utils.LocationUtils;
-import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.NetworkUtils;
 import com.dudu.event.DeviceEvent;
+import com.dudu.monitor.Monitor;
 
 import java.util.Iterator;
 
@@ -164,7 +162,7 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
             mSatellite++;
         }
 
-        if (mSatellite > 0 && (!LocationUtils.getInstance(this).getLocProvider().equals("lbs"))) {
+        if (mSatellite > 0 && (!Monitor.getInstance(this).getCurrentLocation().getProvider().equals("lbs"))) {
             mGpsSignalImage.setBackgroundResource(R.drawable.gps_signal_normal);
         } else {
             mGpsSignalImage.setBackgroundResource(R.drawable.gps_signal_error);

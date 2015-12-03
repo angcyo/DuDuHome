@@ -17,6 +17,7 @@ import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.GsonUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
+import com.dudu.android.launcher.utils.Utils;
 import com.dudu.map.NavigationClerk;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.SemanticType;
@@ -123,18 +124,7 @@ public class CmdChain extends SemanticChain {
 
     private void handleOrderCmd() {
         FloatWindowUtil.removeFloatWindow();
-        Intent intent;
-        PackageManager packageManager = mApplication.getPackageManager();
-        intent = packageManager.getLaunchIntentForPackage("com.sdu.didi.gsui");
-        if (intent != null) {
-            mApplication.setReceivingOrder(true);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                    | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
-                    | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            mApplication.startActivity(intent);
-        } else {
-            ToastUtils.showToast("您还没安装滴滴客户端，请先安装滴滴出行客户端");
-        }
+        Utils.openJD(mApplication);
     }
 
     private void handleBackCmd() {

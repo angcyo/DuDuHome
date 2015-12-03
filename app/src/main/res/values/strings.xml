@@ -11,6 +11,7 @@
     <string name="temperature_degree">度</string>
     <string name="weather_turn">转</string>
     <string name="error_no_didi">暂时未开通此功能，请等待开通后再试!</string>
+    <string name="error_no_uber">您没有安装Uber客户端，请先安装滴滴客户端</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="error_network">搜索失败,请检查网络连接！</string>

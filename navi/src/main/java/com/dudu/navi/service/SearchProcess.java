@@ -132,7 +132,7 @@ public class SearchProcess {
                         public void call(Long aLong) {
                             if (!hasResult) {
                                 EventBus.getDefault().
-                                        post(new NaviEvent.NaviVoiceBroadcast("抱歉，搜索失败，请稍检查网络", true));
+                                        post(new NaviEvent.NaviVoiceBroadcast("抱歉，搜索失败，请检查网络", true));
                                 EventBus.getDefault().post(NaviEvent.SearchResult.FAIL);
                             }
 

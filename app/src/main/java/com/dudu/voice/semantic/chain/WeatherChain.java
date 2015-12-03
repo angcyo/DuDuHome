@@ -1,8 +1,6 @@
 package com.dudu.voice.semantic.chain;
 
-import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.bean.WeatherEntity;
@@ -10,9 +8,9 @@ import com.dudu.android.launcher.bean.WeatherSlots;
 import com.dudu.android.launcher.utils.CmdType;
 import com.dudu.android.launcher.utils.GsonUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
-import com.dudu.android.launcher.utils.LocationUtils;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.TimeUtils;
+import com.dudu.monitor.utils.LocationUtils;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.TextUnderstander;

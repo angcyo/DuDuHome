@@ -47,12 +47,10 @@ public class MainService extends Service {
         networkManage = NetworkManage.getInstance();
         networkManage.init();
 
-        ObdInit.initOBD(ObdInit.INIT_PODOBD,this);
+        ObdInit.initOBD(this);
 
         monitor = Monitor.getInstance(this);
         monitor.startWork();
-
-
 
         flowManage = FlowManage.getInstance(this);
 
@@ -62,8 +60,6 @@ public class MainService extends Service {
 
         calculation = Calculation.getInstance(this);
         calculation.init();
-
-
 
     }
 

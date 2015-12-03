@@ -147,4 +147,59 @@ public class Utils {
         }
     }
 
+
+    public static String getOBDType(Context context) {
+        PackageInfo packageInfo ;
+        String obd = "";
+        try {
+            packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(),
+                    PackageManager.GET_CONFIGURATIONS);
+            String versionName = packageInfo.versionName;
+            if (versionName.contains("thread")) {
+               obd = "thread";
+            }else if(versionName.contains("pod")){
+                obd = "pod";
+            }else if(versionName.contains("xfa")){
+                obd = "xfa";
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            LogUtils.e(TAG, e.getMessage() + "");
+        }
+
+        return obd;
+    }
+
+    public static String getJDType(Context context) {
+        PackageInfo packageInfo ;
+        String jd = "didi";
+        try {
+            packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(),
+                    PackageManager.GET_CONFIGURATIONS);
+            String versionName = packageInfo.versionName;
+            if (versionName.contains("didi")) {
+                jd = "didi";
+            }else if(versionName.contains("uber")){
+                jd = "uber";
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            LogUtils.e(TAG, e.getMessage() + "");
+        }
+
+        return jd;
+    }
+
+    public static void openJD(Context context){
+        switch (getJDType(context)){
+
+            case "didi":
+                startThirdPartyApp(context, "com.sdu.didi.gsui", R.string.error_no_didi);
+                break;
+            case "uber":
+                startThirdPartyApp(context,"com.ubercab.driver",R.string.error_no_uber);
+                break;
+            default:
+                startThirdPartyApp(context, "com.sdu.didi.gsui", R.string.error_no_didi);
+                break;
+        }
+    }
 }
