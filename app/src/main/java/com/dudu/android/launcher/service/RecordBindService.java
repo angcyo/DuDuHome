@@ -125,6 +125,8 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
     private volatile boolean isRecording = false;
 
+    private boolean isShowing = false;
+
     private boolean isPreviewing = false;
 
     private Camera.Parameters mCameraParams;
@@ -258,6 +260,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
         logger.debug("调用startRecord方法，开始启动录像...");
 
+
         prepareCamera();
 
         if (Utils.isDemoVersion(this)) {
@@ -325,15 +328,18 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         releaseCamera();
 
         insertVideo(videoName);
+
     }
 
     public void startRecordTimer() {
+        logger.debug("开始recorderTimer");
         timer = new Timer();
 
         timerTask = new TimerTask() {
 
             @Override
             public void run() {
+                logger.debug("TimerTask节点，开始录像");
                 createVideoFragment();
 
                 startMediaRecorder();
@@ -419,6 +425,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
                 releaseCamera();
 
                 releaseMediaRecorder();
+                startRecord();
             }
         });
     }
@@ -654,10 +661,11 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
                 ToastUtils.showToast(R.string.video_sdcard_removed_alert);
 
                 stopRecord();
+				if (isShowing) {
+                	prepareCamera();
 
-                prepareCamera();
-
-                doStartPreview();
+                	doStartPreview();
+				}
             }
         }
     }
@@ -721,5 +729,14 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         ViewAnimation.startAnimation(localVideo, localVideo.getVisibility() == View.VISIBLE ?
                 R.anim.camera_image_disappear : R.anim.camera_image_apear, this);
     }
+
+    public void setShowing(boolean isShowing) {
+        this.isShowing = isShowing;
+    }
+
+    public boolean getisPreviewingOrRecording() {
+        return isPreviewingOrRecording;
+    }
+
 
 }
