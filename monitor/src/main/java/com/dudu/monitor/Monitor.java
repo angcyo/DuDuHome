@@ -90,5 +90,4 @@ public class Monitor {
     public float getCurRpm(){
         return mObdManage.getCurRpm();
     }
-
 }

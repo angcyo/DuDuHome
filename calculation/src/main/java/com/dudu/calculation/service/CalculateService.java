@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 
 import com.dudu.calculation.valueobject.DriveBehaviorType;
 import com.dudu.monitor.Monitor;
+import com.dudu.monitor.event.CarDriveSpeedState;
 import com.dudu.monitor.event.CarStatus;
 import com.dudu.monitor.valueobject.LocationInfo;
 import com.dudu.monitor.valueobject.SensorData;
@@ -40,58 +41,14 @@ public class CalculateService {
 
     private int carState;
 
-    //计算急转弯线程
+    //计算线程
     private Thread calculateThread = new Thread(){
         @Override
         public void run() {
-            log.debug("calculateThread");
+//            log.debug("calculateThread");
             try {
                 calclulateHardturn();
 
-
-             /*   List<SensorData> acceSensorDataList = Monitor.getInstance(mContext).getSensorDataList(Sensor.TYPE_ACCELEROMETER);
-                if (!acceSensorDataList.isEmpty()){
-                    float x_sum = 0;
-                    for (int i = 0; i < acceSensorDataList.size(); i++) {
-                        x_sum += acceSensorDataList.get(i).mX;
-                    }
-                    float avg_x = Math.abs(x_sum / (acceSensorDataList.size())); // 加速度传感器的X轴平均值
-                    // 速度大于0 x轴方向的绝对值大雨0.5则认为发生了急转弯
-                    if (Monitor.getInstance(mContext).getCurSpeed() > 0 && avg_x >= 0.5) {
-                        LocationInfo locationInfo = new LocationInfo(Monitor.getInstance(mContext).getCurrentLocation());
-                        if (locationInfo.getAltitude() == 0)//滤除为0的坐标
-                            return;
-                        locationInfo.setType(DriveBehaviorType.TYPE_HARDTURN);
-                        try {
-                            driveLocationInfoArray.put(new JSONObject(gson.toJson(locationInfo)));
-//                            log.debug("driveLocationInfoArray.length() = "+driveLocationInfoArray.length());
-                            if (driveLocationInfoArray.length() == 30)
-                            {
-                                NetworkManage.getInstance().sendMessage(new LocationInfoUpload(mContext, driveLocationInfoArray));
-                                driveLocationInfoArray = null;
-                                driveLocationInfoArray = new JSONArray();
-                            }
-
-                        } catch (JSONException e) {
-                            log.error("异常 {}",e);
-                        }
-                    }
-                    acceSensorDataList.clear();
-                }
-
-                List<SensorData> gSensorDataList = Monitor.getInstance(mContext).getSensorDataList(Sensor.TYPE_GYROSCOPE);
-                if (!gSensorDataList.isEmpty()){
-                   *//* float x_sum = 0;
-                    for (int i = 0; i < gSensorDataList.size(); i++) {
-                        x_sum += gSensorDataList.get(i).mX;
-                    }
-                    float avg_x = Math.abs(x_sum / (gSensorDataList.size())); // 加速度传感器的X轴平均值
-                    // 速度大于0 x轴方向的绝对值大雨0.5则认为发生了急转弯
-                    if (Monitor.getInstance(mContext).getCurSpeed() > 0 && avg_x >= 0.5) {
-
-                    }*//*
-                    gSensorDataList.clear();
-                }*/
             } catch (Exception e) {
                 log.error("异常 {}",e);
             }
@@ -134,6 +91,7 @@ public class CalculateService {
             }
             float avg_x = Math.abs(x_sum / (acceSensorDataList.size())); // 加速度传感器的X轴平均值
             // 速度大于0 x轴方向的绝对值大雨0.5则认为发生了急转弯
+//            log.debug("avg_x = "+ avg_x);
             if (Monitor.getInstance(mContext).getCurSpeed() > 0 && avg_x >= 0.5) {
                 putLocationInfo(getAndSetTypeLocationInfo(DriveBehaviorType.TYPE_HARDTURN));
             }
@@ -158,20 +116,20 @@ public class CalculateService {
     //获取当前位置，并且设置驾驶行为类型
     private LocationInfo getAndSetTypeLocationInfo(int driveBehaviorType){
         LocationInfo locationInfo = new LocationInfo(Monitor.getInstance(mContext).getCurrentLocation());
-        if (locationInfo.getAltitude() == 0)//滤除为0的坐标
+        if (locationInfo.getLon() == 0)//滤除为0的坐标
             return null;
         locationInfo.setType(driveBehaviorType);
         return locationInfo;
     }
 
-    //把数据放到driveLocationInfoArray
+    //把数据放到driveLocationInfoArray，数据满30个就发送
     private void putLocationInfo(LocationInfo locationInfo){
         try {
             if (locationInfo == null)
                 return;
 
             driveLocationInfoArray.put(new JSONObject(gson.toJson(locationInfo)));
-//                            log.debug("driveLocationInfoArray.length() = "+driveLocationInfoArray.length());
+//            log.debug("driveLocationInfoArray.length() = " + driveLocationInfoArray.length());
             if (driveLocationInfoArray.length() == 30)//满30个数据才给服务器发
             {
                 NetworkManage.getInstance().sendMessage(new LocationInfoUpload(mContext, driveLocationInfoArray));
@@ -184,9 +142,10 @@ public class CalculateService {
     }
 
 
+
     public void onEventBackgroundThread(CarStatus event) {
         carState = event.getCarStatus();
-        log.debug("onEvent CarStatus:{}", carState);
+        log.info("onEvent CarStatus:{}", carState);
         if (carState == CarStatus.CAR_ONLINE){
             log.info("车辆运行");
             calculateThreadPool.schedule(fatigueDrivingThread, 4*60*60, TimeUnit.SECONDS);//4个小时
@@ -195,13 +154,39 @@ public class CalculateService {
         }
     }
 
+    //处理疲劳驾驶
     Thread fatigueDrivingThread = new Thread(){
         @Override
         public void run() {
-            if(carState == 1)
-                calculateThreadPool.schedule(fatigueDrivingThread, 15 * 60, TimeUnit.SECONDS);//15分钟
-            log.info("车辆运行超过4小时，疲劳驾驶");
-            putLocationInfo(getAndSetTypeLocationInfo(DriveBehaviorType.TYPE_FATIGUEDRIVING));
+            try {
+                if(carState == 1)
+                    calculateThreadPool.schedule(fatigueDrivingThread, 15 * 60, TimeUnit.SECONDS);//15分钟
+                log.info("车辆运行超过4小时，疲劳驾驶");
+                putLocationInfo(getAndSetTypeLocationInfo(DriveBehaviorType.TYPE_FATIGUEDRIVING));
+            } catch (Exception e) {
+                log.error("异常 {}", e);
+            }
         }
     };
+
+
+    public void onEventBackgroundThread(CarDriveSpeedState carDriveSpeedState) {
+        try {
+            switch (carDriveSpeedState.getSpeedState()){
+                case DriveBehaviorType.TYPE_HARDACCL:
+                    putLocationInfo(getAndSetTypeLocationInfo(DriveBehaviorType.TYPE_HARDACCL));
+                    break;
+                case DriveBehaviorType.TYPE_HARDBRAK:
+                    putLocationInfo(getAndSetTypeLocationInfo(DriveBehaviorType.TYPE_HARDBRAK));
+                    break;
+                case DriveBehaviorType.TYPE_MISMATCH:
+                    putLocationInfo(getAndSetTypeLocationInfo(DriveBehaviorType.TYPE_MISMATCH));
+                    break;
+                default:
+                    break;
+            }
+        } catch (Exception e) {
+            log.error("异常 {}", e);
+        }
+    }
 }

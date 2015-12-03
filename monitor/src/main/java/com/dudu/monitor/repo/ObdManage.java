@@ -1,5 +1,6 @@
 package com.dudu.monitor.repo;
 
+import com.dudu.monitor.event.CarDriveSpeedState;
 import com.dudu.monitor.event.CarStatus;
 import com.dudu.monitor.valueobject.FlamoutData;
 import com.dudu.monitor.valueobject.ObdData;
@@ -34,6 +35,8 @@ public class ObdManage {
 
     private boolean isNotice_start = false;
     private boolean isNotice_flamout = false;
+
+    private int acc_spd, break_spd;
 
     public static  ObdManage getInstance(){
         if (instance == null){
@@ -93,10 +96,25 @@ public class ObdManage {
             log.info("monitor- 发送CarStatus(CarStatus.CAR_ONLINE))事件");
             EventBus.getDefault().post(new CarStatus(CarStatus.CAR_ONLINE));
         }
+
+        if (obdData.misMatch()){
+            EventBus.getDefault().post(new CarDriveSpeedState(6));
+        }
     }
 
     private void parseTotalData(String obdDataString){
+        String[] obdDataStringArray = obdDataString.split(",");
+        int acc = Integer.parseInt(new String(obdDataStringArray[9]));
+        if(acc > acc_spd){
+            EventBus.getDefault().post(new CarDriveSpeedState(1));
+        }
+        acc_spd = acc;
 
+        int b_spd = Integer.parseInt(new String(obdDataStringArray[10].trim()));
+        if(b_spd > break_spd){
+            EventBus.getDefault().post(new CarDriveSpeedState(2));
+        }
+        break_spd = b_spd;
     }
 
     private void parseFlamoutData(String obdDataString){
