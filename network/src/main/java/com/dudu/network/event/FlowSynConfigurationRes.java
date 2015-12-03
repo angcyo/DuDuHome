@@ -16,20 +16,20 @@ public class FlowSynConfigurationRes extends MessagePackage{
     //响应结果
     private String resultCode = "";
 
-    private float uploadLimit;
-    private int trafficControl;
-    private float downloadLimit;
-    private  int lifeType;
-    private float upLimitMaxValue;
-    private float  downLimitMaxValue;
-    private float  dailyMaxValue;
-    private float  monthMaxValue;
-    private int  highArlamValue;
-    private int  middleArlamValue;
-    private int  lowArlamValue;
-    private float  freeArriveValue;
-    private float  freeAddValue;
-    private int freeAddTimes;
+    private String uploadLimit;
+    private String trafficControl;
+    private String downloadLimit;
+    private String lifeType;
+    private String upLimitMaxValue;
+    private String  downLimitMaxValue;
+    private String  dailyMaxValue;
+    private String  monthMaxValue;
+    private String  highArlamValue;
+    private String  middleArlamValue;
+    private String  lowArlamValue;
+    private String  freeArriveValue;
+    private String  freeAddValue;
+    private String freeAddTimes;
 //    private float  remainingFlow;
     private String  portalVersion;
     private String portalAddress;
@@ -62,23 +62,24 @@ public class FlowSynConfigurationRes extends MessagePackage{
             resultCode =  jsonObject.getString("resultCode");
             method = jsonObject.getString("method");
 
+            if (!jsonObject.has("result"))
+                return;
             JSONObject result = new JSONObject(jsonObject.getString("result"));
 
-            uploadLimit = Float.valueOf(result.getString("uploadLimit"));
-            trafficControl = Integer.valueOf(result.getString("trafficControl"));
-            downloadLimit = Float.valueOf(result.getString("downloadLimit"));
-            lifeType = Integer.valueOf(result.getString("lifeType"));
-            upLimitMaxValue = Float.valueOf(result.getString("upLimitMaxValue"));
-            downLimitMaxValue = Float.valueOf(result.getString("downLimitMaxValue"));
-            dailyMaxValue = Float.valueOf(result.getString("dailyMaxValue"));
-            monthMaxValue = Float.valueOf(result.getString("monthMaxValue"));
-            highArlamValue = Integer.valueOf(result.getString("highArlamValue"));
-            middleArlamValue = Integer.valueOf(result.getString("middleArlamValue"));
-            lowArlamValue = Integer.valueOf(result.getString("lowArlamValue"));
-            freeArriveValue = Float.valueOf(result.getString("freeArriveValue"));
-            freeAddValue = Float.valueOf(result.getString("freeAddValue"));
-            freeAddTimes = Integer.valueOf(result.getString("freeAddTimes"));
-//            remainingFlow = Float.valueOf(result.getString("remainingFlow"));
+            uploadLimit = result.getString("uploadLimit");
+            trafficControl = result.getString("trafficControl");
+            downloadLimit = result.getString("downloadLimit");
+            lifeType = result.getString("lifeType");
+            upLimitMaxValue = result.getString("upLimitMaxValue");
+            downLimitMaxValue = result.getString("downLimitMaxValue");
+            dailyMaxValue = result.getString("dailyMaxValue");
+            monthMaxValue = result.getString("monthMaxValue");
+            highArlamValue = result.getString("highArlamValue");
+            middleArlamValue = result.getString("middleArlamValue");
+            lowArlamValue = result.getString("lowArlamValue");
+            freeArriveValue = result.getString("freeArriveValue");
+            freeAddValue = result.getString("freeAddValue");
+            freeAddTimes = result.getString("freeAddTimes");
             portalVersion = result.getString("portalVersion");
             portalAddress = result.getString("portalAddress");
 
@@ -93,71 +94,67 @@ public class FlowSynConfigurationRes extends MessagePackage{
     }
 
 
-    public float getUploadLimit() {
+    public String getUploadLimit() {
         return uploadLimit;
     }
 
-    public int getTrafficControl() {
+    public String getTrafficControl() {
         return trafficControl;
     }
 
-    public float getDownloadLimit() {
+    public String getDownloadLimit() {
         return downloadLimit;
     }
 
-    public int getLifeType() {
+    public String getLifeType() {
         return lifeType;
     }
 
-    public float getUpLimitMaxValue() {
+    public String getUpLimitMaxValue() {
         return upLimitMaxValue;
     }
 
-    public float getDownLimitMaxValue() {
+    public String getDownLimitMaxValue() {
         return downLimitMaxValue;
     }
 
-    public float getDailyMaxValue() {
+    public String getDailyMaxValue() {
         return dailyMaxValue;
     }
 
-    public float getMonthMaxValue() {
+    public String getMonthMaxValue() {
         return monthMaxValue;
     }
 
-    public int getHighArlamValue() {
+    public String getHighArlamValue() {
         return highArlamValue;
     }
 
-    public int getMiddleArlamValue() {
+    public String getMiddleArlamValue() {
         return middleArlamValue;
     }
 
-    public int getLowArlamValue() {
+    public String getLowArlamValue() {
         return lowArlamValue;
     }
 
-    public float getFreeArriveValue() {
+    public String getFreeArriveValue() {
         return freeArriveValue;
     }
 
-    public float getFreeAddValue() {
+    public String getFreeAddValue() {
         return freeAddValue;
     }
 
-    public int getFreeAddTimes() {
+    public String getFreeAddTimes() {
         return freeAddTimes;
     }
-
-    /*public float getRemainingFlow() {
-        return remainingFlow;
-    }*/
 
     public String getPortalVersion() {
         return portalVersion;
     }
 
-    public String getPotalAddress() {
+    public String getPortalAddress() {
         return portalAddress;
     }
 }

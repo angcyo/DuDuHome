@@ -44,7 +44,7 @@ public class Monitor {
     private Monitor(Context context){
         mContext = context;
         mLocationManage = LocationManage.getInstance();
-//        mSensorManage = SensorManage.getInstance(context);
+        mSensorManage = SensorManage.getInstance(context);
         mObdManage = ObdManage.getInstance();
         activeDeviceManage = ActiveDeviceManage.getInstance(mContext);
         mSendService = new SendService(mContext);
@@ -57,7 +57,7 @@ public class Monitor {
 
     public void stopWork(){
         mLocationManage.stopLocation();
-//        mSensorManage.release();
+        mSensorManage.release();
         mObdManage.release();
         mSendService.stopSendService();
     }

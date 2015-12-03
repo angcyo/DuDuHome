@@ -34,6 +34,8 @@ public class LocationInfo {
     }
 
     public LocationInfo(AMapLocation location){
+        if(location == null)
+            return;
         lon = location.getLongitude();
         lat = location.getLatitude();
         altitude = location.getAltitude();

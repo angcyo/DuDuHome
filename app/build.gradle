@@ -67,4 +67,5 @@ dependencies {
     compile project(':navi')
     compile project(':monitor')
     compile project(':bluetooth')
+    compile project(':calculation')
 }

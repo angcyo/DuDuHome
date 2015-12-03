@@ -78,58 +78,58 @@ public class FlowManage {
      */
     public void onEventBackgroundThread(FlowSynConfigurationRes flowSynConfigurationRes) {
         String portalVersion = flowSynConfigurationRes.getPortalVersion();
-        String portalAddress = flowSynConfigurationRes.getPotalAddress();
+        String portalAddress = flowSynConfigurationRes.getPortalAddress();
         if (!TextUtils.isEmpty(portalVersion)) {
             PortalUpdate.getInstance(mContext).updatePortal(mContext, portalVersion, portalAddress);
         }
 
         SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_TRAFFICE_CONTROL,
-                String.valueOf(flowSynConfigurationRes.getTrafficControl()));
+                flowSynConfigurationRes.getTrafficControl());
 
         SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_MONTH_MAX_VALUE,
-                String.valueOf(flowSynConfigurationRes.getMonthMaxValue()));
+                flowSynConfigurationRes.getMonthMaxValue());
 
         SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_FREE_ADD_VALUE,
-                String.valueOf(flowSynConfigurationRes.getFreeAddValue()));
+                flowSynConfigurationRes.getFreeAddValue());
 
         SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_DAILY_MAX_VALUE,
-                String.valueOf(flowSynConfigurationRes.getDailyMaxValue()));
+                flowSynConfigurationRes.getDailyMaxValue());
 
         SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_UP_LIMIT_MAX_VALUE,
-                String.valueOf(flowSynConfigurationRes.getUpLimitMaxValue()));
+                flowSynConfigurationRes.getUpLimitMaxValue());
 
         SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_PORTAL_ADDRESS,
-                String.valueOf(flowSynConfigurationRes.getPotalAddress()));
+                flowSynConfigurationRes.getPortalAddress());
 
         SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_PORTAL_VERSION,
-                String.valueOf(flowSynConfigurationRes.getPortalVersion()));
+                flowSynConfigurationRes.getPortalVersion());
 
         SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_DOWN_LIMIT_MAX_VALUE,
-                String.valueOf(flowSynConfigurationRes.getDownLimitMaxValue()));
+                flowSynConfigurationRes.getDownLimitMaxValue());
 
         SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_LIFE_TYPE,
-                String.valueOf(flowSynConfigurationRes.getLifeType()));
+                flowSynConfigurationRes.getLifeType());
 
         SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_UPLOAD_LIMIT,
-                String.valueOf(flowSynConfigurationRes.getUploadLimit()));
+                flowSynConfigurationRes.getUploadLimit());
 
         SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_FREE_ADD_TIMES,
-                String.valueOf(flowSynConfigurationRes.getFreeAddTimes()));
+                flowSynConfigurationRes.getFreeAddTimes());
 
         SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_MIDDLE_ARLAM_VALUE,
-                String.valueOf(flowSynConfigurationRes.getMiddleArlamValue()));
+                flowSynConfigurationRes.getMiddleArlamValue());
 
         SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_HIGH_ARLAM_VALUE,
-                String.valueOf(flowSynConfigurationRes.getHighArlamValue()));
+                flowSynConfigurationRes.getHighArlamValue());
 
         SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_LOW_ARLAM_VALUE,
-                String.valueOf(flowSynConfigurationRes.getLowArlamValue()));
+                flowSynConfigurationRes.getLowArlamValue());
 
         SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_DOWNLOAD_LIMIT,
-                String.valueOf(flowSynConfigurationRes.getDownloadLimit()));
+                flowSynConfigurationRes.getDownloadLimit());
 
         SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_FREE_ARRIVE_VALUE,
-                String.valueOf(flowSynConfigurationRes.getFreeArriveValue()));
+                flowSynConfigurationRes.getFreeArriveValue());
 
     }
 

@@ -1,7 +1,10 @@
 package com.dudu.network.event;
 
+import android.content.Context;
+
 import com.dudu.network.utils.Bicker;
 import com.dudu.network.utils.BusinessMessageEnum;
+import com.dudu.network.utils.DeviceIDUtil;
 import com.dudu.network.valueobject.MessagePackage;
 
 import org.json.JSONArray;
@@ -23,6 +26,13 @@ public class LocationInfoUpload extends MessagePackage{
     public LocationInfoUpload(String obeId, JSONArray locationInfoJsonArray) {
         messageId = Bicker.getBusinessCode(BusinessMessageEnum.GPS_DATA.getCode());
         this.obeId = obeId;
+        lals = locationInfoJsonArray;
+        method = MessageMethod.COORDINATES;
+    }
+
+    public LocationInfoUpload(Context context, JSONArray locationInfoJsonArray) {
+        messageId = Bicker.getBusinessCode(BusinessMessageEnum.GPS_DATA.getCode());
+        this.obeId = DeviceIDUtil.getIMEI(context);
         lals = locationInfoJsonArray;
         method = MessageMethod.COORDINATES;
     }

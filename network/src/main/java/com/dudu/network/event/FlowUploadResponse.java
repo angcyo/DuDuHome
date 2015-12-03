@@ -46,7 +46,8 @@ public class FlowUploadResponse extends MessagePackage{
             messageId = jsonObject.getString("messageId");
             resultCode =  jsonObject.getString("resultCode");
             method = jsonObject.getString("method");
-            remainingFlow = Float.valueOf(new JSONObject(jsonObject.getString("result")).getString("remainingFlow"));
+            if (jsonObject.has("result"))
+                remainingFlow = Float.valueOf(new JSONObject(jsonObject.getString("result")).getString("remainingFlow"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -59,7 +60,8 @@ public class FlowUploadResponse extends MessagePackage{
             sendJsonObject.put("messageId", messageId);
             sendJsonObject.put("resultCode", resultCode);
             sendJsonObject.put("method", method);
-            sendJsonObject.put("result", String.valueOf(remainingFlow));
+
+            sendJsonObject.put("result", new JSONObject().put("remainingFlow", String.valueOf(remainingFlow)));
         } catch (JSONException e) {
             e.printStackTrace();
         }
