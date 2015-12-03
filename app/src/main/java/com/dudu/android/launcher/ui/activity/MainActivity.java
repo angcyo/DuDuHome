@@ -380,7 +380,6 @@ public class MainActivity extends BaseTitlebarActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        FlowMonitor.getInstance().queryFlowInfo();
         EventBus.getDefault().post(NaviEvent.FloatButtonEvent.HIDE);
     }
 

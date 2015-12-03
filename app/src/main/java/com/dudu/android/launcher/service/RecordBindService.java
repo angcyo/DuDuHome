@@ -689,7 +689,6 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
                                 });
                         queue.add(multipartRequest);
                     }
-
                 }
 
             });

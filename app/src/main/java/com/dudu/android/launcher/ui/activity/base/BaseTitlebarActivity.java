@@ -78,18 +78,16 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
             @Override
             public void onDataConnectionStateChanged(int state, int networkType) {
                 super.onDataConnectionStateChanged(state, networkType);
-                LogUtils.e(TAG, "networkType: " + networkType);
             }
 
             @Override
             public void onSignalStrengthsChanged(SignalStrength signalStrength) {
                 super.onSignalStrengthsChanged(signalStrength);
-                LogUtils.e(TAG, "networkType: " + signalStrength);
                 try {
                     int level = (int) signalStrength.getClass().getMethod("getLevel").
                             invoke(signalStrength);
                     if (level != mSignalLevel) {
-                        setSimLevel(level);
+                        setSimLevel(level + 1);
                     }
                 } catch (Exception e) {
                     // ignore
