@@ -2,6 +2,7 @@ package com.dudu.conn;
 
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -12,22 +13,54 @@ import com.dudu.android.launcher.utils.DeviceIDUtil;
 import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.http.MultipartRequest;
 import com.dudu.http.MultipartRequestParams;
+import com.dudu.network.event.LogSend;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Administrator on 2015/11/16.
  */
 public class SendLogs {
     private RequestQueue queue;
+    private static SendLogs instance = null;
     private static final String DUDU_FOLDER = "/sdcard/dudu";
     private static final String CRASH_FOLDER = "/sdcard/dudu/crash";
     private static final String LOGBACK_FOLDER = "/sdcard/logback";
     private static final String TMP_FOLDER = "/sdcard/dudu/tmp";
     public static final String LOGS_NAME = "logs.zip";
+    private Context mContext;
+    private Logger log;
 
-    public void logsSend(final Context context, final String url) {
-        queue = Volley.newRequestQueue(context);
+    public static SendLogs getInstance(Context context) {
+        if (instance == null) {
+            synchronized (SendLogs.class) {
+                if (instance == null) {
+                    instance = new SendLogs(context);
+                }
+            }
+        }
+        return instance;
+    }
+
+    public SendLogs(Context context) {
+        EventBus.getDefault().unregister(this);
+        EventBus.getDefault().register(this);
+        log = LoggerFactory.getLogger("SendLogs");
+        mContext = context;
+    }
+    /**
+     * Logs上传处理处理
+     *
+     */
+    public void onEventBackgroundThread(LogSend logSend) {
+        final String url = logSend.getUrl();
+        Log.v("FlowManage", url);
+        queue = Volley.newRequestQueue(mContext);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -36,8 +69,8 @@ public class SendLogs {
                     FileUtils.copyFolder(CRASH_FOLDER, LOGBACK_FOLDER);
                 }
                 try {
-                    File dirFile=new File(DUDU_FOLDER,"tmp");
-                    if (!dirFile.exists()){
+                    File dirFile = new File(DUDU_FOLDER, "tmp");
+                    if (!dirFile.exists()) {
                         dirFile.mkdirs();
                     }
                     FileUtils.zipFolder(LOGBACK_FOLDER, TMP_FOLDER + "/" + LOGS_NAME);
@@ -47,7 +80,7 @@ public class SendLogs {
                 File file = new File(TMP_FOLDER, LOGS_NAME);
                 MultipartRequestParams multiPartParams = new MultipartRequestParams();
                 multiPartParams.put("upload_logs", file, LOGS_NAME);
-                multiPartParams.put("obeId", DeviceIDUtil.getIMEI(context));
+                multiPartParams.put("obeId", DeviceIDUtil.getIMEI(mContext));
                 MultipartRequest multipartRequest = new MultipartRequest
                         (Request.Method.POST, multiPartParams, url, new Response.Listener<String>() {
 
@@ -65,5 +98,9 @@ public class SendLogs {
                 queue.add(multipartRequest);
             }
         }).start();
+    }
+    public void release(){
+        EventBus.getDefault().unregister(this);
+        instance = null;
     }
 }

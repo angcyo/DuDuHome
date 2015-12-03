@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.net.TrafficStats;
 import android.os.IBinder;
@@ -13,8 +14,9 @@ import com.dudu.android.launcher.db.DbHelper;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.SharedPreferencesUtil;
-import com.dudu.conn.FlowMonitor;
-import com.dudu.conn.SendMessage;
+import com.dudu.network.NetworkManage;
+import com.dudu.network.event.FlowSynConfiguration;
+import com.dudu.network.event.FlowUpload;
 
 
 public class MonitorService extends Service {
@@ -35,7 +37,7 @@ public class MonitorService extends Service {
 
     private boolean mMonitoring = true;
 
-    private FlowMonitor mFlowMonitor;
+    private Context mContext;
 
     private SimpleDateFormat mFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
             Locale.getDefault());
@@ -50,7 +52,7 @@ public class MonitorService extends Service {
         super.onCreate();
 
         mDbHelper = DbHelper.getDbHelper(MonitorService.this);
-        mFlowMonitor = FlowMonitor.getInstance();
+        mContext=this;
 
         mOldMobileRx = TrafficStats.getMobileRxBytes() / 1024;
         mOldMobileTx = TrafficStats.getMobileTxBytes() / 1024;
@@ -59,7 +61,8 @@ public class MonitorService extends Service {
         mMonitorThread.setPriority(Thread.NORM_PRIORITY - 1);
         mMonitorThread.start();
 
-        mFlowMonitor.synFlowConfiguration();
+        NetworkManage.getInstance().sendMessage(new FlowSynConfiguration(this));
+
     }
 
 
@@ -106,9 +109,7 @@ public class MonitorService extends Service {
                         mMobileTotalTx += up;
                         refreshFlowData();
                         float totalFlow = mMobileTotalRx + mMobileTotalTx;
-
-                        mFlowMonitor.sendFlowMessage(totalFlow, mFormat.format(date));
-
+                        NetworkManage.getInstance().sendMessage(new FlowUpload(mContext, totalFlow, mFormat.format(date)));
                         mDbHelper.updateFlow(mMobileTotalRx, mMobileTotalTx, 1, date);
                     } else {
                         mDbHelper.insertFlow(mMobileTotalTx, mMobileTotalRx, 1, date);
@@ -144,16 +145,13 @@ public class MonitorService extends Service {
 
         mMonitorThread = null;
     }
-/**
- * 更新SharedPreferences里面的剩余流量的数据
- * */
+    /**
+     * 更新SharedPreferences里面的剩余流量的数据
+     * */
     private void refreshFlowData(){
         float primaryRemainingFlow=Float.parseFloat(SharedPreferencesUtil.getStringValue(MonitorService.this, Constants.KEY_REMAINING_FLOW,"0"));
-        if (primaryRemainingFlow!=0){
-            float timelyRemainingFlow=primaryRemainingFlow-mMobileTotalRx-mMobileTotalTx;
-            SharedPreferencesUtil.putStringValue(MonitorService.this,Constants.KEY_REMAINING_FLOW,String.valueOf(timelyRemainingFlow));
-        }
-
+        float timelyRemainingFlow=primaryRemainingFlow-mMobileTotalRx-mMobileTotalTx;
+        SharedPreferencesUtil.putStringValue(MonitorService.this,Constants.KEY_REMAINING_FLOW,String.valueOf(timelyRemainingFlow));
     }
 
 }

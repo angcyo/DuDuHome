@@ -39,8 +39,8 @@ public class ConnectionResultHandler {
                 String method = jsonResult.getString("method");
                 switch (method) {
                     case ConnectionConstants.METHOD_PORTALUPDATE:
-                        PortalUpdate.getInstance().handleUpdate(mContext, method,
-                                jsonResult.getString("url"), jsonResult.getString("group_name"));
+//                        PortalUpdate.getInstance().handleUpdate(mContext, method,
+//                                jsonResult.getString("url"), jsonResult.getString("group_name"));
                         break;
                     case ConnectionConstants.METHOD_TAKEPHOTO:
                         EventBus.getDefault().post(new ConnectionEvent.TakePhoto(jsonResult.getString("openid")));
@@ -51,7 +51,7 @@ public class ConnectionResultHandler {
                         ActiveDevice.getInstance(mContext).handlerActiveDeviceResult(jsonResult);
                         break;
                     case ConnectionConstants.METHOD_LOGBANC:
-                        new SendLogs().logsSend(mContext, jsonResult.getString("url"));
+//                        new SendLogs().logsSend(mContext, jsonResult.getString("url"));
                         break;
                     case ConnectionConstants.METHOD_ACTIVATAIONSTATUS:
                         ActiveDevice.getInstance(mContext).handlerCheckActive(jsonResult);

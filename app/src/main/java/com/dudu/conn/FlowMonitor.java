@@ -91,7 +91,7 @@ public class FlowMonitor {
                     String portalVersion = object.getString(ConnectionConstants.FIELD_PORTAL_VERSION);
                     String portalAddress = object.getString(ConnectionConstants.FIELD_PORTAL_ADDRESS);
                     if (!TextUtils.isEmpty(portalVersion)) {
-                        PortalUpdate.getInstance().updatePortal(mContext, portalVersion, portalAddress);
+                        PortalUpdate.getInstance(mContext).updatePortal(mContext, portalVersion, portalAddress);
                     }
                 }
 

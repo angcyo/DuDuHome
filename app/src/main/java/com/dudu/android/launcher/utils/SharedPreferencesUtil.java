@@ -24,9 +24,11 @@ public class SharedPreferencesUtil {
     }
 
     public static void putStringValue(Context context, String key, String value) {
-        SharedPreferences.Editor editor = getDefaultSharedPreferences(context).edit();
-        editor.putString(key, value);
-        editor.commit();
+        if (!value.isEmpty()) {
+            SharedPreferences.Editor editor = getDefaultSharedPreferences(context).edit();
+            editor.putString(key, value);
+            editor.commit();
+        }
     }
 
     public static String getStringValue(Context context, String key, String defValue) {

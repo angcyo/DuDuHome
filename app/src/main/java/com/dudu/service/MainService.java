@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import com.dudu.conn.FlowManage;
+import com.dudu.conn.PortalUpdate;
+import com.dudu.conn.SendLogs;
 import com.dudu.monitor.Monitor;
 import com.dudu.network.NetworkManage;
 import com.dudu.obd.BleOBD;
@@ -21,6 +24,9 @@ public class MainService extends Service{
     private Monitor monitor;
     private BleOBD bleOBD;
     private Logger log;
+    private FlowManage flowManage;
+    private SendLogs sendLogs;
+    private PortalUpdate portalUpdate;
 
     @Override
     public void onCreate() {
@@ -37,6 +43,12 @@ public class MainService extends Service{
 
         bleOBD = new BleOBD();
         bleOBD.initOBD(this);
+
+        flowManage=FlowManage.getInstance(this);
+
+        sendLogs=SendLogs.getInstance(this);
+
+        portalUpdate=PortalUpdate.getInstance(this);
     }
 
     @Override
@@ -45,6 +57,9 @@ public class MainService extends Service{
         log.info("关闭主服务------------");
         monitor.stopWork();
         networkManage.release();
+        flowManage.release();
+        sendLogs.release();
+        portalUpdate.release();
     }
 
     @Override

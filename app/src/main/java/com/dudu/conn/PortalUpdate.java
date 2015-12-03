@@ -9,16 +9,21 @@ import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.SharedPreferencesUtil;
 import com.dudu.fdfs.common.MyException;
 import com.dudu.fdfs.fastdfs.FileProcessUtil;
+import com.dudu.network.event.UpdatePortal;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import de.greenrobot.event.EventBus;
+
 /**
  * Created by lxh on 2015/11/7.
  */
 public class PortalUpdate {
-
     public static final String FDFS_CLIEND_NAME = "fdfs_client.conf";
     public static final String NODOGSPLASH_NAME = "nodogsplash";
     public static final String TEMP_ZIP_FOLDER_NAME = "temp_zip";
@@ -26,29 +31,63 @@ public class PortalUpdate {
     public static final String HTDOCS_ZIP_NAME = "htdocs.zip";
     public static final String TEMP_ZIP_NAME = "temp.zip";
     private static final String TAG = "PortalUpdate";
+    private Context mContext;
+    private Logger log;
+    private static PortalUpdate instance = null;
 
-    private static PortalUpdate mInstance;
-
-    public static PortalUpdate getInstance() {
-        if (mInstance == null) {
-            mInstance = new PortalUpdate();
+    public static PortalUpdate getInstance(Context context) {
+        if (instance == null) {
+            synchronized (PortalUpdate.class) {
+                if (instance == null) {
+                    instance = new PortalUpdate(context);
+                }
+            }
         }
-
-        return mInstance;
+        return instance;
     }
 
-    private PortalUpdate() {
-
+    public PortalUpdate(Context context) {
+        EventBus.getDefault().unregister(this);
+        EventBus.getDefault().register(this);
+        log = LoggerFactory.getLogger("PortalUpdate");
+        mContext = context;
     }
 
     /**
-     * @param context 上下文
-     * @param method  方法名
-     * @param url     下载地址
-     * @param group   下载方式
-     *  后台发送指令，通知Portal更新
+     * PortalUpdate更新处理
+     *
+     * @return
      */
-    public void handleUpdate(final Context context, String method, final String url, final String group) {
+    public void onEventBackgroundThread(UpdatePortal updateportal) {
+        Log.v("FlowManage", "开始");
+        String group = updateportal.getGroup_name();
+        String url = updateportal.getUrl();
+        refreshPortal(group, url);
+        Log.v("FlowManage", "portalUpdateRes");
+    }
+
+    public void updatePortal(Context context, String version, String address) {
+        String localVersion = SharedPreferencesUtil.getStringValue(context, Constants.KEY_PORTAL_VERSION, "0");
+        if (!version.equals(localVersion)) {
+            String[] portalAddress = address.split(",");
+            String groupName = portalAddress[0];
+            String fileName = portalAddress[1];
+            refreshPortal(fileName, groupName);
+        }
+    }
+
+    private void updatePortalVersion(Context context) {
+        try {
+            int version = Integer.valueOf(SharedPreferencesUtil.getStringValue(context,
+                    Constants.KEY_PORTAL_VERSION, "0"));
+            SharedPreferencesUtil.putStringValue(context, Constants.KEY_PORTAL_VERSION,
+                    String.valueOf(version + 1));
+        } catch (NumberFormatException e) {
+            // ignore
+        }
+    }
+
+    private void refreshPortal(final String group, final String url) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -73,7 +112,7 @@ public class PortalUpdate {
                     if (!fdfsFile.exists()) {
                         fdfsFile.createNewFile();
                     }
-                    InputStream isAsset = context.getAssets().open(FDFS_CLIEND_NAME);
+                    InputStream isAsset = mContext.getAssets().open(FDFS_CLIEND_NAME);
                     if (FileUtils.copyFileToSd(isAsset, fdfsFile)) {
                         String path = fdfsFile.getAbsolutePath();
                         //请求网络，下载压缩文件到指定路径下
@@ -88,43 +127,25 @@ public class PortalUpdate {
                     }
                     if (result == 0) {
                         //如果返回的结果为0的话，则下载成功
-                        File zipPath = new File(zipDirFile.getPath(),TEMP_ZIP_NAME);
+                        File zipPath = new File(zipDirFile.getPath(), TEMP_ZIP_NAME);
                         if (zipPath.exists()) {
                             //解压文件
-                            FileUtils.upZipFile(zipPath,dirFile.getPath());
+                            FileUtils.upZipFile(zipPath, dirFile.getPath());
 
-                            updatePortalVersion(context);
+                            updatePortalVersion(mContext);
                         }
                     }
                 } catch (IOException e) {
                     LogUtils.e(TAG, e.toString());
                 } catch (MyException e) {
-                    LogUtils.e(TAG,e.toString());
+                    LogUtils.e(TAG, e.toString());
                 }
             }
         }).start();
     }
 
-    public void updatePortal(Context context, String version, String address) {
-        String localVersion = SharedPreferencesUtil.getStringValue(context, Constants.KEY_PORTAL_VERSION, "0");
-        if (!version.equals(localVersion)) {
-            String [] portalAddress = address.split(",");
-            String groupName = portalAddress[0];
-            String fileName = portalAddress[1];
-
-            handleUpdate(context, "", fileName, groupName);
-        }
+    public void release() {
+        EventBus.getDefault().unregister(this);
+        instance = null;
     }
-
-    private void updatePortalVersion(Context context) {
-        try {
-            int version = Integer.valueOf(SharedPreferencesUtil.getStringValue(context,
-                    Constants.KEY_PORTAL_VERSION, "0"));
-            SharedPreferencesUtil.putStringValue(context, Constants.KEY_PORTAL_VERSION,
-                    String.valueOf(version + 1));
-        } catch (NumberFormatException e) {
-            // ignore
-        }
-    }
-
 }
