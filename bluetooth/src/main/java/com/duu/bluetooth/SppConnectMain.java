@@ -3,8 +3,15 @@ package com.duu.bluetooth;
 import android.content.Context;
 
 import org.scf4a.Event;
+import org.scf4a.EventWrite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.functions.Action1;
 
 
 public class SppConnectMain {
@@ -14,7 +21,10 @@ public class SppConnectMain {
     private Context mContext;
     private SppManager sppManager;
 
+    private Logger log;
+
     private SppConnectMain() {
+        log = LoggerFactory.getLogger("obd.pod.spp");
     }
 
     public static SppConnectMain getInstance() {
@@ -22,6 +32,7 @@ public class SppConnectMain {
     }
 
     public void onEvent(Event.StartScanner event) {
+        log.debug("pod obd StartScanner");
         if (null == sppScanner) {
             sppScanner = new SppScanner(mContext);
         }
@@ -31,9 +42,24 @@ public class SppConnectMain {
         } else {
             sppScanner.startScan();
         }
+        Observable.timer(2, TimeUnit.MINUTES)
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        if (sppManager.getState() != SppManager.STATE_CONNECTED){
+                            log.debug("spp scan time out");
+                            sppScanner.stopScan();
+                            sppScanner.broadRegister = false;
+                            EventBus.getDefault().post(new
+                                    Event.Disconnected(Event.ErrorCode.ScanInvokeFail));
+                        }
+
+                    }
+                });
     }
 
     public void onEvent(Event.StopScanner event) {
+        log.debug("pod obd StopScanner");
         sppScanner.stopScan();
         sppScanner.broadRegister = false;
     }
@@ -60,5 +86,10 @@ public class SppConnectMain {
 
     public void unRegister() {
         EventBus.getDefault().unregister(ourInstance);
+    }
+
+    public void onEvent(EventWrite.Data2Write event) {
+        log.debug("pod obd Data2Write {}", event.data);
+        sppManager.write(event.data);
     }
 }

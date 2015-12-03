@@ -8,6 +8,7 @@ import com.duu.bluetooth.SppConnectMain;
 
 import org.scf4a.Event;
 import org.scf4a.EventRead;
+import org.scf4a.EventWrite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,13 +23,13 @@ import rx.functions.Action1;
  */
 public class PodOBD {
     private Logger log;
-
     private Context mContext;
     public PodOBD(){
         log = LoggerFactory.getLogger("obd.pod.spp");
     }
 
     public void init(Context context){
+        log.debug("pod obd init");
         mContext = context;
         SppConnectMain.getInstance().init(context);
         EventBus.getDefault().unregister(this);
@@ -43,7 +44,7 @@ public class PodOBD {
         EventBus.getDefault().post(new Event.Connect(device.getAddress(), Event.ConnectType.SPP, false));
     }
 
-    public void onEventBackgroundThread(EventRead.L1ReadDone event) {
+    public void onEventBackgroundThread(EventRead.L0ReadDone event) {
         final byte[] data = event.getData();
         try {
             log.debug("Receive OBD Data: = {}", new String(data, "UTF-8"));
@@ -57,7 +58,7 @@ public class PodOBD {
 
         log.debug("spp bluetooth Disconnected");
         EventBus.getDefault().post(new BleStateChange(BleStateChange.BLEDISCONNECTED));
-        Observable.timer(10, TimeUnit.SECONDS)
+        Observable.timer(1, TimeUnit.MINUTES)
                 .subscribe(new Action1<Long>() {
                     @Override
                     public void call(Long aLong) {
@@ -69,5 +70,12 @@ public class PodOBD {
     public void onEvent(Event.BTConnected event){
         log.debug("spp bluetooth BTConnected");
         EventBus.getDefault().post(new BleStateChange(BleStateChange.BLECONNECTED));
+        EventBus.getDefault().post(new EventWrite.Data2Write(getSenddata(), EventWrite.TYPE.Data));
+    }
+
+    private byte[] getSenddata(){
+        log.debug(" pod obd getSenddata");
+        byte[] data = {'A','T','I',0x0D};
+        return data;
     }
 }

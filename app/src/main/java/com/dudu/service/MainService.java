@@ -14,6 +14,8 @@ import com.dudu.calculation.Calculation;
 import com.dudu.monitor.Monitor;
 import com.dudu.network.NetworkManage;
 import com.dudu.obd.BleOBD;
+import com.dudu.obd.ObdInit;
+import com.dudu.obd.PodOBD;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +25,9 @@ import org.slf4j.LoggerFactory;
  * Created by dengjun on 2015/12/2.
  * Description :
  */
-public class MainService extends Service{
+public class MainService extends Service {
     private NetworkManage networkManage;
     private Monitor monitor;
-    private BleOBD bleOBD;
     private Logger log;
 
     private FlowManage flowManage;
@@ -46,21 +47,23 @@ public class MainService extends Service{
         networkManage = NetworkManage.getInstance();
         networkManage.init();
 
+        ObdInit.initOBD(ObdInit.INIT_PODOBD,this);
+
         monitor = Monitor.getInstance(this);
         monitor.startWork();
 
-        bleOBD = new BleOBD();
-        bleOBD.initOBD(this);
 
 
-        flowManage=FlowManage.getInstance(this);
+        flowManage = FlowManage.getInstance(this);
 
-        sendLogs=SendLogs.getInstance(this);
+        sendLogs = SendLogs.getInstance(this);
 
-        portalUpdate=PortalUpdate.getInstance(this);
+        portalUpdate = PortalUpdate.getInstance(this);
 
         calculation = Calculation.getInstance(this);
         calculation.init();
+
+
 
     }
 

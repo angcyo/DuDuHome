@@ -104,7 +104,13 @@ AMapNaviViewListener{
 	@Override
 	public void initDatas() {
 		mHandler = new Handler();
-
+		mHandler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				ViewAnimation.startAnimation(back_button, back_button.getVisibility() == View.VISIBLE
+						? R.anim.back_key_disappear : R.anim.back_key_appear, NaviBackActivity.this);
+			}
+		}, 3000);
 	}
 
 	/**
@@ -128,13 +134,7 @@ AMapNaviViewListener{
 		mAmapAMapNaviView.setViewOptions(viewOptions);
 		mAmapAMapNaviView.getMap().setTrafficEnabled(true);
 
-		mHandler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				ViewAnimation.startAnimation(back_button, back_button.getVisibility() == View.VISIBLE
-						? R.anim.back_key_disappear : R.anim.back_key_appear, NaviBackActivity.this);
-			}
-		}, 3000);
+
 
 		mAmapAMapNaviView.getMap().setOnMapClickListener(new AMap.OnMapClickListener() {
 			@Override

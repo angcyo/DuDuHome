@@ -69,8 +69,6 @@ public class NavigationClerk {
 
     private boolean isShowAddress = false;
 
-    private Activity topActivity;
-
     private Handler mhandler;
 
     private PoiResultInfo choosepoiResult;
@@ -84,6 +82,7 @@ public class NavigationClerk {
         @Override
         public void run() {
             if (navigationManager.getSearchType() == SearchType.SEARCH_DEFAULT){
+                isShowAddress = false;
                 FloatWindowUtil.removeFloatWindow();
                 VoiceManager.getInstance().stopUnderstanding();
             }
@@ -150,44 +149,40 @@ public class NavigationClerk {
     }
 
     private boolean openActivity(int openType) {
-
-        switch (navigationManager.getNavigationType()) {
-            case NAVIGATION:
-                FloatWindowUtil.removeFloatWindow();
-                intentClass = NaviCustomActivity.class;
-                break;
-            case BACKNAVI:
-                FloatWindowUtil.removeFloatWindow();
-                intentClass = NaviCustomActivity.class;
-                break;
-            case DEFAULT:
-                if (isMapActivity()) {
-                    isSearching();
-                }
-                if (openType == OPEN_VOICE)
-                    navigationManager.setSearchType(SearchType.OPEN_NAVI);
+        navigationManager.getLog().debug("openActivity {},{}",isShowAddress,navigationManager.isNavigatining());
+        if(isShowAddress)
+            return false;
+        if(navigationManager.isNavigatining()){
+          switch (navigationManager.getNavigationType()){
+              case NAVIGATION:
+                  intentClass = NaviCustomActivity.class;
+                  break;
+              case BACKNAVI:
+                  intentClass = NaviBackActivity.class;
+                  break;
+          }
+            FloatWindowUtil.removeFloatWindow();
+        }else{
+            if(!isMapActivity()){
                 intentClass = LocationMapActivity.class;
-                break;
+                if(openType==OPEN_VOICE)
+                    navigationManager.setSearchType(SearchType.OPEN_NAVI);
+            }else{
+                return false;
+            }
         }
-
         intentActivity();
         return true;
     }
 
-    private boolean isSearching() {
-        SearchType type = navigationManager.getSearchType();
-        if (type == SearchType.OPEN_NAVI || type == SearchType.SEARCH_DEFAULT) {
-            navigationManager.setSearchType(SearchType.OPEN_NAVI);
-            navigationManager.search();
-            return true;
-        } else {
-            return false;
-        }
-    }
 
+    private Activity getTopActivity(){
+      Activity topActivity = ActivitiesManager.getInstance().getTopActivity();
+        return topActivity;
+    }
     private boolean isMapActivity() {
-        topActivity = ActivitiesManager.getInstance().getTopActivity();
-        return (topActivity != null && topActivity instanceof LocationMapActivity);
+
+        return (getTopActivity() != null && getTopActivity() instanceof LocationMapActivity);
     }
 
     public void existNavi() {
@@ -202,7 +197,7 @@ public class NavigationClerk {
 
 
     public void searchControl(String semantic, String service, String keyword, SearchType type) {
-        navigationManager.getLog().debug("-----searchControl:"+navigationManager.getSearchType());
+
         if (navigationManager.getSearchType() == SearchType.SEARCH_COMMONADDRESS)
             type = SearchType.SEARCH_COMMONPLACE;
         navigationManager.setSearchType(type);
@@ -248,17 +243,17 @@ public class NavigationClerk {
     }
 
     private boolean isNaviActivity() {
-        topActivity = ActivitiesManager.getInstance().getTopActivity();
+
         if (navigationManager.isNavigatining()) {
             switch (navigationManager.getNavigationType()) {
                 case NAVIGATION:
-                    if (!(topActivity instanceof NaviCustomActivity)) {
+                    if (!(getTopActivity() instanceof NaviCustomActivity)) {
                         intentClass = NaviCustomActivity.class;
                     }
                     intentActivity();
                     return true;
                 case BACKNAVI:
-                    if (!(topActivity instanceof NaviBackActivity)) {
+                    if (!(getTopActivity() instanceof NaviBackActivity)) {
                         intentClass = NaviBackActivity.class;
                     }
                     intentActivity();
@@ -438,6 +433,7 @@ public class NavigationClerk {
     }
 
     public void showAddressByVoice() {
+
         VoiceManager.getInstance().startSpeaking(
                 "请选择列表中的地址", SemanticConstants.TTS_START_UNDERSTANDING, true);
         FloatWindowUtil.showAddress(
@@ -606,14 +602,10 @@ public class NavigationClerk {
     }
 
     private void intentActivity() {
-        topActivity = ActivitiesManager.getInstance().getTopActivity();
         Intent standIntent = new Intent(mContext, intentClass);
         standIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                 | Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(standIntent);
-        if (isMapActivity()) {
-            ActivitiesManager.getInstance().closeTargetActivity(LocationMapActivity.class);
-        }
         if (LauncherApplication.getContext().getRecordService() != null) {
             LauncherApplication.getContext().getRecordService().updatePreviewSize(1, 1);
         }

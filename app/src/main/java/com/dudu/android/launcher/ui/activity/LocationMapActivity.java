@@ -293,6 +293,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         NavigationClerk.getInstance().setIsManual(true);
         SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
         navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
+        NavigationClerk.getInstance().setIsShowAddress(false);
         NavigationClerk.getInstance().setIsManual(false);
         if (mHandler != null && getLocatinRunable != null) {
             mHandler.removeCallbacks(getLocatinRunable);
@@ -305,6 +306,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     protected void onDestroy() {
         navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
         NavigationClerk.getInstance().setIsManual(false);
+        NavigationClerk.getInstance().setIsShowAddress(false);
         if (mapView != null) {
             mapView.onDestroy();
             mapView = null;

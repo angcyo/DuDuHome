@@ -80,10 +80,10 @@ public class LocationFilter {
 	
 	/**
 	 * 第二阶段过滤(不包含速度过滤)
-	 * @param lat
-	 * @param lon
-	 * @param radius
-	 * @param direction
+	 * @param
+	 * @param
+	 * @param
+	 * @param
 	 * @return
 	 */
 	public static boolean checkStageTwo(float lastSpeed, float currSpeed, String lastTime, String currTime) {
@@ -125,8 +125,8 @@ public class LocationFilter {
 	
 	/**
 	 * 该方法用来根据起止点的经纬度计算两点间的距离
-	 * @param s_location
-	 * @param e_location
+	 * @param
+	 * @param
 	 * @return 两点之间的距离（单位为km） double
 	 */
 	public static double getDistance(double lat_s, double lon_s, double lat_e, double lon_e) {

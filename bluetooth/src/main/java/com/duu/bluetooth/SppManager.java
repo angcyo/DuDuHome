@@ -19,10 +19,6 @@ import de.greenrobot.event.EventBus;
 
 /**
  * 通过蓝牙连接的BluetoothService
- *
- * @version 1.0
- *          <p/>
- *          Created by zhanghuan on 15-6-20
  */
 public class SppManager {
 
@@ -66,7 +62,7 @@ public class SppManager {
             case STATE_CONNECTED:
                 log.debug("onReceive connected to device");
                 EventBus.getDefault().post(new Event.SPPInitOutStream(mmOutStream));
-                EventBus.getDefault().post(new Event.BTConnected(remoteDevice.getName(),remoteDevice.getAddress()));
+                EventBus.getDefault().post(new Event.BTConnected(remoteDevice.getName(), remoteDevice.getAddress()));
                 break;
             default:
                 log.debug("onReceive Disconnect from device,error : ConnectInvokeFail");
@@ -87,7 +83,7 @@ public class SppManager {
      * session in listening (server) mode. Called by the Activity onResume()
      */
     public synchronized void start() {
-        log.debug("start");
+        log.debug("SppManager start");
 
         if (mConnectThread != null) {
             log.debug("Cancel any thread attempting to make a connection");

@@ -66,7 +66,7 @@ public class OBDDataService extends Service implements
     private float revolution = 0;
     private Logger log;
 
-    private BleOBD bleOBD;
+//    private BleOBD bleOBD;
 
     private AmapLocationHandler amapLocationHandler;
 
@@ -190,10 +190,10 @@ public class OBDDataService extends Service implements
 
 
         log.debug("odbservice startCommand");
-        bleOBD = new BleOBD();
-        bleOBD.initOBD(this);
-//        podOBD = new PodOBD();
-//        podOBD.init(this);
+//        bleOBD = new BleOBD();
+//        bleOBD.initOBD(this);
+        podOBD = new PodOBD();
+        podOBD.init(this);
         DriveBehaviorHappend.getInstance().setListener(this);
         try {
             if (conn != null && !isOpen && !conn.isAlive()) {
@@ -211,18 +211,18 @@ public class OBDDataService extends Service implements
         }
         activeDevice();
 
-        if (dataCollectionThread == null) {
-            dataCollectionThread = new Thread();
-        }
-        if (!dataCollectionThread.isAlive()) {
-            dataCollectionThread.start();
-        }
-        if (dataSendThread == null) {
-            dataSendThread = new Thread();
-        }
-        if (!dataSendThread.isAlive()) {
-            dataSendThread.start();
-        }
+//        if (dataCollectionThread == null) {
+//            dataCollectionThread = new Thread();
+//        }
+//        if (!dataCollectionThread.isAlive()) {
+//            dataCollectionThread.start();
+//        }
+//        if (dataSendThread == null) {
+//            dataSendThread = new Thread();
+//        }
+//        if (!dataSendThread.isAlive()) {
+//            dataSendThread.start();
+//        }
 
         mMonitor = com.dudu.monitor.Monitor.getInstance(this);
         mMonitor.startWork();
@@ -303,27 +303,27 @@ public class OBDDataService extends Service implements
     // 发送熄火数据
     private void sendFlameOutData() {
 
-        if (bleOBD.getFlamoutData() != null) {
-            log.debug("sendFlameOutData");
-            last_Location = amapLocationHandler.getLast_Location();
-            if (last_Location != null) {
-                MyGPSData flameOutgps = new MyGPSData(last_Location.getLatitude(),
-                        last_Location.getLongitude(), last_Location.getSpeed(),
-                        last_Location.getAltitude(), last_Location.getBearing(),
-                        TimeUtils.dateLongFormatString(last_Location.getTime(),
-                                TimeUtils.format1), last_Location.getAccuracy(), 0);
-
-                JSONArray positionAry = new JSONArray();
-                try {
-                    positionAry.put(new JSONObject(gson.toJson(flameOutgps)));
-
-                    sendMessage.sendFlameOutData(bleOBD.getFlamoutData(), positionAry);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }
+//        if (bleOBD.getFlamoutData() != null) {
+//            log.debug("sendFlameOutData");
+//            last_Location = amapLocationHandler.getLast_Location();
+//            if (last_Location != null) {
+//                MyGPSData flameOutgps = new MyGPSData(last_Location.getLatitude(),
+//                        last_Location.getLongitude(), last_Location.getSpeed(),
+//                        last_Location.getAltitude(), last_Location.getBearing(),
+//                        TimeUtils.dateLongFormatString(last_Location.getTime(),
+//                                TimeUtils.format1), last_Location.getAccuracy(), 0);
+//
+//                JSONArray positionAry = new JSONArray();
+//                try {
+//                    positionAry.put(new JSONObject(gson.toJson(flameOutgps)));
+//
+//                    sendMessage.sendFlameOutData(bleOBD.getFlamoutData(), positionAry);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//        }
 
 
     }
@@ -381,23 +381,23 @@ public class OBDDataService extends Service implements
     private void putOBDData() {
         log.debug("putOBDData");
 
-        if (bleOBD != null && !bleOBD.getObdCollectionList().isEmpty()) {
-            JSONArray jsArr = new JSONArray();
-            for (int i = 0; i < bleOBD.getObdCollectionList().size(); i++) {
-                OBDData obdData = bleOBD.getObdCollectionList().get(i);
-                if (obdData != null) {
-                    try {
-                        jsArr.put(new JSONObject(gson.toJson(obdData)));
-                    } catch (JSONException e) {
-
-                        log.error("putOBDData error ", e);
-
-                    }
-                }
-            }
-            postOBDDataArr.add(jsArr);
-            bleOBD.getObdCollectionList().clear();
-        }
+//        if (bleOBD != null && !bleOBD.getObdCollectionList().isEmpty()) {
+//            JSONArray jsArr = new JSONArray();
+//            for (int i = 0; i < bleOBD.getObdCollectionList().size(); i++) {
+//                OBDData obdData = bleOBD.getObdCollectionList().get(i);
+//                if (obdData != null) {
+//                    try {
+//                        jsArr.put(new JSONObject(gson.toJson(obdData)));
+//                    } catch (JSONException e) {
+//
+//                        log.error("putOBDData error ", e);
+//
+//                    }
+//                }
+//            }
+//            postOBDDataArr.add(jsArr);
+//            bleOBD.getObdCollectionList().clear();
+//        }
 
     }
 

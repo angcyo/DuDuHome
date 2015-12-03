@@ -33,7 +33,7 @@ public class SppScanner {
     public SppScanner(Context context) {
         this.mContext = context;
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
-        log = LoggerFactory.getLogger("ble.scan");
+        log = LoggerFactory.getLogger("obd.spp.scan");
         this.name = "OBDII";
     }
 
