@@ -1,8 +1,8 @@
 package com.dudu.network.event;
 
+import com.dudu.network.utils.StringTools;
 import com.dudu.network.valueobject.MessagePackage;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,7 +30,6 @@ public class FlowSynConfigurationRes extends MessagePackage{
     private String  freeArriveValue;
     private String  freeAddValue;
     private String freeAddTimes;
-//    private float  remainingFlow;
     private String  portalVersion;
     private String portalAddress;
 
@@ -66,22 +65,22 @@ public class FlowSynConfigurationRes extends MessagePackage{
                 return;
             JSONObject result = new JSONObject(jsonObject.getString("result"));
 
-            uploadLimit = result.getString("uploadLimit");
-            trafficControl = result.getString("trafficControl");
-            downloadLimit = result.getString("downloadLimit");
-            lifeType = result.getString("lifeType");
-            upLimitMaxValue = result.getString("upLimitMaxValue");
-            downLimitMaxValue = result.getString("downLimitMaxValue");
-            dailyMaxValue = result.getString("dailyMaxValue");
-            monthMaxValue = result.getString("monthMaxValue");
-            highArlamValue = result.getString("highArlamValue");
-            middleArlamValue = result.getString("middleArlamValue");
-            lowArlamValue = result.getString("lowArlamValue");
-            freeArriveValue = result.getString("freeArriveValue");
-            freeAddValue = result.getString("freeAddValue");
-            freeAddTimes = result.getString("freeAddTimes");
-            portalVersion = result.getString("portalVersion");
-            portalAddress = result.getString("portalAddress");
+            uploadLimit= StringTools.GetStringValue("uploadLimit", result);
+            trafficControl= StringTools.GetStringValue("trafficControl", result);
+            downloadLimit= StringTools.GetStringValue("downloadLimit", result);
+            lifeType= StringTools.GetStringValue("lifeType", result);
+            upLimitMaxValue= StringTools.GetStringValue("upLimitMaxValue", result);
+            downLimitMaxValue= StringTools.GetStringValue("downLimitMaxValue", result);
+            dailyMaxValue= StringTools.GetStringValue("dailyMaxValue", result);
+            monthMaxValue= StringTools.GetStringValue("monthMaxValue", result);
+            highArlamValue= StringTools.GetStringValue("highArlamValue", result);
+            middleArlamValue= StringTools.GetStringValue("middleArlamValue", result);
+            lowArlamValue= StringTools.GetStringValue("lowArlamValue", result);
+            freeArriveValue= StringTools.GetStringValue("freeArriveValue", result);
+            freeAddValue= StringTools.GetStringValue("freeAddValue", result);
+            freeAddTimes= StringTools.GetStringValue("freeAddTimes", result);
+            portalVersion= StringTools.GetStringValue("portalVersion", result);
+            portalAddress= StringTools.GetStringValue("portalAddress", result);
 
         } catch (JSONException e) {
             e.printStackTrace();

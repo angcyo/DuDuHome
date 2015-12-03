@@ -24,7 +24,7 @@ public class SharedPreferencesUtil {
     }
 
     public static void putStringValue(Context context, String key, String value) {
-        if (!value.isEmpty()) {
+        if (value != null) {
             SharedPreferences.Editor editor = getDefaultSharedPreferences(context).edit();
             editor.putString(key, value);
             editor.commit();

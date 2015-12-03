@@ -32,22 +32,23 @@ public class FlowManage {
     private Logger log;
     private List<FlowManage> flowDataList;
 
-    public static FlowManage getInstance(Context context){
-        if (instance == null){
-            synchronized (FlowManage.class){
-                if (instance == null){
+    public static FlowManage getInstance(Context context) {
+        if (instance == null) {
+            synchronized (FlowManage.class) {
+                if (instance == null) {
                     instance = new FlowManage(context);
                 }
             }
         }
         return instance;
     }
+
     public FlowManage(Context context) {
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
 
         log = LoggerFactory.getLogger("FlowManage");
-        mContext=context;
+        mContext = context;
         flowDataList = new ArrayList<>();
     }
 
@@ -57,7 +58,7 @@ public class FlowManage {
      * @return
      */
     public void onEventBackgroundThread(GetFlowResponse getFlowResponse) {
-        float remianFlow= getFlowResponse.getRemainingFlow();
+        float remianFlow = getFlowResponse.getRemainingFlow();
         SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_REMAINING_FLOW, String.valueOf(remianFlow));
     }
 
@@ -67,7 +68,7 @@ public class FlowManage {
      * @return
      */
     public void onEventBackgroundThread(FlowUploadResponse flowUploadResponse) {
-        float remianFlow= flowUploadResponse.getRemainingFlow();
+        float remianFlow = flowUploadResponse.getRemainingFlow();
         SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_REMAINING_FLOW, String.valueOf(remianFlow));
     }
 
@@ -77,60 +78,66 @@ public class FlowManage {
      * @return
      */
     public void onEventBackgroundThread(FlowSynConfigurationRes flowSynConfigurationRes) {
-        String portalVersion = flowSynConfigurationRes.getPortalVersion();
-        String portalAddress = flowSynConfigurationRes.getPortalAddress();
-        if (!TextUtils.isEmpty(portalVersion)) {
-            PortalUpdate.getInstance(mContext).updatePortal(mContext, portalVersion, portalAddress);
+        try {
+            String portalVersion = flowSynConfigurationRes.getPortalVersion();
+            String portalAddress = flowSynConfigurationRes.getPortalAddress();
+            if (!TextUtils.isEmpty(portalVersion)) {
+                PortalUpdate.getInstance(mContext).updatePortal(mContext, portalVersion, portalAddress);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        try {
+            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_TRAFFICE_CONTROL,
+                    flowSynConfigurationRes.getTrafficControl());
 
-        SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_TRAFFICE_CONTROL,
-                flowSynConfigurationRes.getTrafficControl());
+            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_MONTH_MAX_VALUE,
+                    flowSynConfigurationRes.getMonthMaxValue());
 
-        SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_MONTH_MAX_VALUE,
-                flowSynConfigurationRes.getMonthMaxValue());
+            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_FREE_ADD_VALUE,
+                    flowSynConfigurationRes.getFreeAddValue());
 
-        SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_FREE_ADD_VALUE,
-                flowSynConfigurationRes.getFreeAddValue());
+            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_DAILY_MAX_VALUE,
+                    flowSynConfigurationRes.getDailyMaxValue());
 
-        SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_DAILY_MAX_VALUE,
-                flowSynConfigurationRes.getDailyMaxValue());
+            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_UP_LIMIT_MAX_VALUE,
+                    flowSynConfigurationRes.getUpLimitMaxValue());
 
-        SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_UP_LIMIT_MAX_VALUE,
-                flowSynConfigurationRes.getUpLimitMaxValue());
+            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_PORTAL_ADDRESS,
+                    flowSynConfigurationRes.getPortalAddress());
 
-        SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_PORTAL_ADDRESS,
-                flowSynConfigurationRes.getPortalAddress());
+            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_PORTAL_VERSION,
+                    flowSynConfigurationRes.getPortalVersion());
 
-        SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_PORTAL_VERSION,
-                flowSynConfigurationRes.getPortalVersion());
+            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_DOWN_LIMIT_MAX_VALUE,
+                    flowSynConfigurationRes.getDownLimitMaxValue());
 
-        SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_DOWN_LIMIT_MAX_VALUE,
-                flowSynConfigurationRes.getDownLimitMaxValue());
+            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_LIFE_TYPE,
+                    flowSynConfigurationRes.getLifeType());
 
-        SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_LIFE_TYPE,
-                flowSynConfigurationRes.getLifeType());
+            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_UPLOAD_LIMIT,
+                    flowSynConfigurationRes.getUploadLimit());
 
-        SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_UPLOAD_LIMIT,
-                flowSynConfigurationRes.getUploadLimit());
+            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_FREE_ADD_TIMES,
+                    flowSynConfigurationRes.getFreeAddTimes());
 
-        SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_FREE_ADD_TIMES,
-                flowSynConfigurationRes.getFreeAddTimes());
+            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_MIDDLE_ARLAM_VALUE,
+                    flowSynConfigurationRes.getMiddleArlamValue());
 
-        SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_MIDDLE_ARLAM_VALUE,
-                flowSynConfigurationRes.getMiddleArlamValue());
+            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_HIGH_ARLAM_VALUE,
+                    flowSynConfigurationRes.getHighArlamValue());
 
-        SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_HIGH_ARLAM_VALUE,
-                flowSynConfigurationRes.getHighArlamValue());
+            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_LOW_ARLAM_VALUE,
+                    flowSynConfigurationRes.getLowArlamValue());
 
-        SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_LOW_ARLAM_VALUE,
-                flowSynConfigurationRes.getLowArlamValue());
+            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_DOWNLOAD_LIMIT,
+                    flowSynConfigurationRes.getDownloadLimit());
 
-        SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_DOWNLOAD_LIMIT,
-                flowSynConfigurationRes.getDownloadLimit());
-
-        SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_FREE_ARRIVE_VALUE,
-                flowSynConfigurationRes.getFreeArriveValue());
-
+            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_FREE_ARRIVE_VALUE,
+                    flowSynConfigurationRes.getFreeArriveValue());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -190,11 +197,13 @@ public class FlowManage {
                 break;
         }
     }
+
     public List<FlowManage> getObdDataList() {
         return flowDataList;
     }
+
     /* 释放资源*/
-    public void release(){
+    public void release() {
         EventBus.getDefault().unregister(this);
         instance = null;
     }
