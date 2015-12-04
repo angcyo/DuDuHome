@@ -3,6 +3,8 @@ package com.duu.bluetooth;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.os.Build;
+import android.util.Log;
 
 import org.scf4a.Event;
 import org.scf4a.EventRead;
@@ -40,6 +42,8 @@ public class SppManager {
     private OutputStream mmOutStream = null;
 
     private static final int MAX_SIZE = 256;
+
+    private String mac;
 
     public SppManager() {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -183,10 +187,11 @@ public class SppManager {
         private final BluetoothSocket mmSocket;
         private String mSocketType;
 
-        public ConnectThread(String macAddr, boolean secure) {
+        public ConnectThread(final String macAddr, boolean secure) {
             remoteDevice = mAdapter.getRemoteDevice(macAddr);
             BluetoothSocket tmp = null;
             mSocketType = secure ? "Secure" : "Insecure";
+            mac = macAddr;
             try {
                 if (secure) {
                     tmp = remoteDevice.createRfcommSocketToServiceRecord(
@@ -202,11 +207,38 @@ public class SppManager {
         }
 
         public void run() {
-            log.info( "BEGIN mConnectThread SocketType = {}" , mSocketType);
-            setName("ConnectThread" + mSocketType);
-            mAdapter.cancelDiscovery();
+            log.info("BEGIN mConnectThread SocketType = {}", mSocketType);
+            if (mAdapter.isDiscovering()) {
+                mAdapter.cancelDiscovery();
+            }
+
+            BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+            BluetoothDevice btDevice = btAdapter.getRemoteDevice(mac);
+            log.info("BondState--->{}", btDevice.getBondState());
+
+            if (btDevice.getBondState() != BluetoothDevice.BOND_BONDED) {
+                try {
+                    ClsUtils.setPin(btDevice.getClass(), btDevice, "1234"); // 手机和蓝牙采集器配对
+                    ClsUtils.createBond(btDevice.getClass(), btDevice);
+                    log.info("BondState createBond--->");
+                } catch (Exception e) {
+                    log.info("ClsUtils{}", e.toString());
+                }
+            } else {
+                try {
+                    ClsUtils.createBond(btDevice.getClass(), btDevice);
+                    ClsUtils.setPin(btDevice.getClass(), btDevice, "1234"); // 手机和蓝牙采集器配对
+                    ClsUtils.createBond(btDevice.getClass(), btDevice);
+                    log.info("BondState  createBond--->");
+                } catch (Exception e) {
+                    log.info("ClsUtils {}", e.toString());
+                }
+            }
+
             try {
+
                 mmSocket.connect();
+
             } catch (IOException e) {
                 try {
                     mmSocket.close();

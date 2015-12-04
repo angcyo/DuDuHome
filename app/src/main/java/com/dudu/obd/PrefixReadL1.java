@@ -17,7 +17,6 @@ public class PrefixReadL1 {
     private byte[] mResponseData;
     private LinkedList<EventRead.L0ReadDone> fifo;
     private volatile boolean processing;
-
     public PrefixReadL1() {
         mResponseDataOffset = 0;
         processing = false;

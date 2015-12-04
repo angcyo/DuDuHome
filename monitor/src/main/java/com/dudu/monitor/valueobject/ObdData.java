@@ -31,6 +31,41 @@ public class ObdData {
     }
 
 
+    public ObdData(String xfaOBD,int flag){
+
+        String[] obdStr = xfaOBD.split(";");
+        for (int i = 0; i < obdStr.length; i++) {
+            String s = obdStr[i];
+            if (obdStr[i].startsWith("SS")) {
+
+            } else if (s.startsWith("S")) {
+                speed = Integer.parseInt((s.substring(1, s.length())));
+
+            } else if (s.startsWith("V")) {
+                batteryVoltage = Float.parseFloat(s.substring(1, s.length()));
+            } else if (s.startsWith("R")) {
+
+                engineSpeed = Float.parseFloat(s.substring(1, s.length()));
+            } else if (s.startsWith("XH") || s.startsWith("YH")) {
+
+            } else if (s.startsWith("XM") || s.startsWith("YM")) {
+                curon = Float.parseFloat(s.substring(2, s.length()));
+            } else if (s.startsWith("O")) {
+                engLoad = Float.parseFloat(s.substring(1, s.length()));
+            } else if (s.startsWith("L")) {
+                // 剩余油量
+
+
+            } else if (s.startsWith("C")) {
+                // 冷却液温度
+
+            }
+        }
+        createTime = TimeUtils.dateLongFormatString(System.currentTimeMillis(), TimeUtils.format1);
+        runState = 1;
+
+    }
+
     // 转速不匹配判定
     public boolean misMatch() {
         boolean first = speed < 30 && engineSpeed > 3000;

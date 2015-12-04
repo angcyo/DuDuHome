@@ -28,8 +28,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.functions.Action1;
 
 /**
  * Created by lxh on 2015/11/25.
@@ -58,6 +61,7 @@ public class NaviProcess {
 
     private AMapLocation cur_location;
 
+    private boolean isSucess = false;
     public NaviProcess(Context context) {
         this.mContext = context;
         log = LoggerFactory.getLogger("lbs.navi");
@@ -116,6 +120,8 @@ public class NaviProcess {
     }
 
     private int calculateInside(Navigation navigation) {
+        log.debug("-----calculateInside");
+        isSucess = false;
         cur_location = Monitor.getInstance(mContext).getCurrentLocation();
         NavigationManager.getInstance(mContext).setIsNavigatining(false);
         int code = CALCULATEERROR;
@@ -133,6 +139,16 @@ public class NaviProcess {
                 code = CALCULATEERROR;
             }
         }
+        Observable.timer(30, TimeUnit.SECONDS)
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        if (!isSucess) {
+                            EventBus.getDefault().post(NavigationType.CALCULATEERROR);
+                        }
+
+                    }
+                });
         return code;
     }
 
@@ -192,6 +208,7 @@ public class NaviProcess {
                 @Override
                 public void onCalculateRouteSuccess() {
                     log.debug("[{}] 步行或者驾车路径规划成功", step++);
+                    isSucess = true;
                     EventBus.getDefault().post(navigationType);
 
                 }

@@ -84,11 +84,9 @@ public class SearchProcess {
 
     public void search(String keyword) {
         searchType = NavigationManager.getInstance(mContext).getSearchType();
-        cur_location = Monitor.getInstance(mContext).getCurrentLocation();
+        latLonPoint = new LatLonPoint(LocationUtils.getInstance(mContext).getCurrentLocation()[0], LocationUtils.getInstance(mContext).getCurrentLocation()[1]);
         NavigationManager.getInstance(mContext).getLog().debug("开始搜索{}", searchType);
-        if (cur_location != null) {
-            locBundle = cur_location.getExtras();
-            latLonPoint = new LatLonPoint(cur_location.getLatitude(), cur_location.getLongitude());
+        if (latLonPoint != null) {
             cityCode = LocationUtils.getInstance(mContext).getCurrentCityCode();
             switch (searchType) {
                 case SEARCH_DEFAULT:
@@ -110,11 +108,22 @@ public class SearchProcess {
 
             }
         }
+        Observable.timer(25, TimeUnit.SECONDS)
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        if (!hasResult) {
+                            EventBus.getDefault().
+                                    post(new NaviEvent.NaviVoiceBroadcast("抱歉，搜索失败，请检查网络", true));
+                            EventBus.getDefault().post(NaviEvent.SearchResult.FAIL);
+                        }
 
+                    }
+                });
     }
 
     private void doSearch(String keyword) {
-            hasResult = false;
+        hasResult = false;
         if (!TextUtils.isEmpty(keyword)) {
             query = new PoiSearch.Query(keyword, "", cityCode);
             query.setPageSize(20);// 设置每页最多返回多少条poi item
@@ -126,18 +135,7 @@ public class SearchProcess {
             }
             poiSearch.setOnPoiSearchListener(onPoiSearchListener);
             poiSearch.searchPOIAsyn();
-            Observable.timer(20, TimeUnit.SECONDS)
-                    .subscribe(new Action1<Long>() {
-                        @Override
-                        public void call(Long aLong) {
-                            if (!hasResult) {
-                                EventBus.getDefault().
-                                        post(new NaviEvent.NaviVoiceBroadcast("抱歉，搜索失败，请检查网络", true));
-                                EventBus.getDefault().post(NaviEvent.SearchResult.FAIL);
-                            }
 
-                        }
-                    });
         } else {
             String playText = "您好，关键字有误，请重新输入";
             EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast(playText, true));
@@ -148,7 +146,12 @@ public class SearchProcess {
 
     public void getCur_locationDesc() {
         NavigationManager.getInstance(mContext).setSearchType(SearchType.SEARCH_CUR_LOCATION);
-        if (locProvider != null && locProvider.equals("lbs")) {
+        cur_location = Monitor.getInstance(mContext).getCurrentLocation();
+        if (cur_location != null) {
+            locProvider = cur_location.getProvider();
+            locBundle = cur_location.getExtras();
+        }
+        if (locProvider != null && locBundle != null) {
             cur_locationDesc = locBundle.getString("desc");
             cityCode = locBundle.getString("citycode");
             String playText = "您好，您现在在" + cur_locationDesc;
@@ -226,6 +229,7 @@ public class SearchProcess {
                             + "附近";
                     ResourceManager.getInstance(mContext).setCur_locationDesc(cur_locationDesc);
                     isGetCurdesc = true;
+                    hasResult = true;
                     if (isGetCurdesc)
                         EventBus.getDefault().post(NaviEvent.SearchResult.SUCCESS);
 

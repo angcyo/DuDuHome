@@ -212,7 +212,7 @@ public class NavigationClerk {
 
     public void doSearch() {
         String msg;
-        String playText = "正在搜索" + navigationManager.getKeyword() + ",请稍后";
+        String playText = "正在搜索" + navigationManager.getKeyword();
         boolean isShow = false;
         if (!navigationManager.isNavigatining() && !isMapActivity()) {
             intentClass = LocationMapActivity.class;
@@ -339,12 +339,11 @@ public class NavigationClerk {
             case BACKNAVI:
                 navigationManager.setNavigationType(NavigationType.BACKNAVI);
                 intentClass = NaviBackActivity.class;
-                if (isMapActivity())
-                    ActivitiesManager.getInstance().closeTargetActivity(LocationMapActivity.class);
                 break;
             case CALCULATEERROR:
+                disMissProgressDialog();
                 navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
-                VoiceManager.getInstance().startSpeaking("路径规划出错，请检查网络", SemanticConstants.TTS_DO_NOTHING, true);
+                VoiceManager.getInstance().startSpeaking("路径规划出错，请稍后再试", SemanticConstants.TTS_DO_NOTHING, true);
                 removeWindow(REMOVEWINDOW_TIME);
                 return;
             case NAVIGATION_END:
@@ -626,6 +625,7 @@ public class NavigationClerk {
         standIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                 | Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(standIntent);
+        ActivitiesManager.getInstance().closeTargetActivity(LocationMapActivity.class);
         if (LauncherApplication.getContext().getRecordService() != null) {
             LauncherApplication.getContext().getRecordService().updatePreviewSize(1, 1);
         }

@@ -27,7 +27,6 @@ import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.NaviSettingUtil;
 import com.dudu.android.launcher.utils.TimeUtils;
 import com.dudu.android.launcher.utils.ViewAnimation;
-import com.dudu.map.AmapLocationChangeEvent;
 import com.dudu.monitor.utils.LocationUtils;
 import com.dudu.navi.NavigationManager;
 import com.dudu.navi.vauleObject.NavigationType;
@@ -93,9 +92,6 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 
     }
 
-    public void onEventMainThread(AmapLocationChangeEvent event) {
-
-    }
 
 
     @Override

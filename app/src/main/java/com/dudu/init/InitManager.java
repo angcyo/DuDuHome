@@ -17,7 +17,6 @@ import com.dudu.android.launcher.utils.SharedPreferencesUtil;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.navi.NavigationManager;
-import com.dudu.obd.OBDDataService;
 import com.dudu.service.MainService;
 import com.dudu.voice.semantic.VoiceManager;
 

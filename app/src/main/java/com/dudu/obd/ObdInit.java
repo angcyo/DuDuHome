@@ -22,6 +22,8 @@ public class ObdInit {
                 podOBD.init(context);
                 break;
             case "xfa":
+                XfaOBD xfaOBD = new XfaOBD();
+                xfaOBD.initXfaOBD(context);
                 break;
             default:
                 BleOBD bleOBD2 = new BleOBD();

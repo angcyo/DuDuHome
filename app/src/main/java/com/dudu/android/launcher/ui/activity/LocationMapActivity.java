@@ -1,6 +1,7 @@
 package com.dudu.android.launcher.ui.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -143,8 +144,8 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                startActivity(new Intent(LocationMapActivity.this,MainActivity.class));
                 finish();
-
             }
         });
 
@@ -259,7 +260,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                         poiOverlay.addToMap();
                         poiOverlay.zoomToSpan();
                         break;
-
                 }
                 showAddressManual();
                 break;

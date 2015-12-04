@@ -7,7 +7,8 @@ import android.util.Log;
 
 import com.dudu.android.launcher.utils.DeviceIDUtil;
 import com.dudu.android.launcher.utils.Encrypt;
-import com.dudu.obd.FlamoutData;
+
+import com.dudu.monitor.valueobject.FlamoutData;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -127,10 +128,10 @@ public class SendMessage {
      * @return
      */
     public boolean sendFlameOutData(FlamoutData flameoutData,JSONArray gpsDatas){
-        flameoutData.setObeId(obeId);
-        flameoutData.setMethod(ConnectionConstants.METHOD_FLAMEOUTDATA);
-        sendData(gson.toJson(flameoutData),true);
-        sendGPSDatas(gpsDatas);
+//        flameoutData.setObeId(obeId);
+//        flameoutData.setMethod(ConnectionConstants.METHOD_FLAMEOUTDATA);
+//        sendData(gson.toJson(flameoutData),true);
+//        sendGPSDatas(gpsDatas);
         return conn.isAlive();
     }
 

@@ -2,6 +2,8 @@ package com.dudu.monitor.valueobject;
 
 import com.dudu.monitor.utils.TimeUtils;
 
+import java.math.BigDecimal;
+
 /**
  * Created by dengjun on 2015/11/26.
  * Description :
@@ -33,6 +35,45 @@ public class FlamoutData {
         createTime = TimeUtils.dateLongFormatString(
                 System.currentTimeMillis(), TimeUtils.format1);
         power = 0;
+    }
+
+    public FlamoutData(String flamoutDataString,int flag){
+
+        String[] flamout = flamoutDataString.split(";");
+        for (int i = 0; i < flamout.length; i++) {
+            String s = flamout[i];
+            String s_value = s.split(":")[1].toString();
+            if (s.startsWith("AVGSPD")) {
+                // 平均速度
+            } else if (s.startsWith("MAXRPM")) {
+                maxrpm = Integer.parseInt(s_value);
+            } else if (s.startsWith("MINRPM")) {
+               minrpm = Integer.parseInt(s_value);
+            } else if (s.startsWith("MAXSPD")) {
+                maxspd = Integer.parseInt(s_value);
+            } else if (s.startsWith("MAXACL")) {
+                maxacl = Integer.parseInt(s_value);
+            } else if (s.startsWith("MILE-T")) {
+                mileT = Float.parseFloat(s_value);
+            } else if (s.startsWith("FUEL-T")) {
+                fuelT = Float.parseFloat(s_value);
+            } else if (s.startsWith("MILES")) {
+                miles = Float.parseFloat(s_value);
+            } else if (s.startsWith("FUELS")) {
+                fuels = Float.parseFloat(s_value);
+
+            } else if (s.startsWith("TIMES")) {
+                times = new BigDecimal(s_value).setScale(0,
+                        BigDecimal.ROUND_HALF_UP).intValue();
+            } else if (s.startsWith("STARTS")) {
+                starts = Integer.parseInt(s_value);
+            } else if (s.startsWith("POWER")) {
+                power = 0;
+            }
+        }
+        createTime = TimeUtils.dateLongFormatString(
+                System.currentTimeMillis(), TimeUtils.format1);
+
     }
 
 

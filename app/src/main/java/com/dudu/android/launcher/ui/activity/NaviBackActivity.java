@@ -24,7 +24,6 @@ import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.NaviSettingUtil;
 import com.dudu.android.launcher.utils.ViewAnimation;
-import com.dudu.map.AmapLocationChangeEvent;
 import com.dudu.navi.NavigationManager;
 import com.dudu.navi.vauleObject.NavigationType;
 import com.dudu.voice.semantic.SemanticConstants;
@@ -72,9 +71,7 @@ AMapNaviViewListener{
 
 	}
 
-	public void onEventMainThread(AmapLocationChangeEvent event){
 
-	}
 	@Override
 	public void initListener() {
 		back_button.setOnClickListener(new OnClickListener() {

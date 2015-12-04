@@ -33,7 +33,6 @@ public class NavigationChain extends SemanticChain {
 
     private  Bundle mBundle = null;
 
-    private boolean isNavi  = false;
 
     @Override
     public boolean matchSemantic(String service) {
