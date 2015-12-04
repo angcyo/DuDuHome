@@ -43,6 +43,11 @@ public class GeneralResponse extends MessagePackage {
     }
 
     @Override
+    public String getMethod() {
+        return method;
+    }
+
+    @Override
     public boolean isNeedWaitResponse() {
         return false;
     }
@@ -77,6 +82,10 @@ public class GeneralResponse extends MessagePackage {
         return sendJsonObject.toString();
     }
 
+    @Override
+    public boolean isNeedCache() {
+        return false;
+    }
 
 
     private void proMethod(String method){

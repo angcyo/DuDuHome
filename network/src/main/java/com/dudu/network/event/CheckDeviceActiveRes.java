@@ -31,6 +31,11 @@ public class CheckDeviceActiveRes extends MessagePackage{
     }
 
     @Override
+    public String getMethod() {
+        return method;
+    }
+
+    @Override
     public boolean isNeedWaitResponse() {
         return false;
     }
@@ -61,6 +66,11 @@ public class CheckDeviceActiveRes extends MessagePackage{
     @Override
     public String toJsonString() {
         return null;
+    }
+
+    @Override
+    public boolean isNeedCache() {
+        return false;
     }
 
     public boolean isActive() {

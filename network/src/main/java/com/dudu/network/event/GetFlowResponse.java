@@ -32,6 +32,11 @@ public class GetFlowResponse extends MessagePackage{
     }
 
     @Override
+    public String getMethod() {
+        return method;
+    }
+
+    @Override
     public boolean isNeedWaitResponse() {
         return false;
     }
@@ -66,6 +71,11 @@ public class GetFlowResponse extends MessagePackage{
             e.printStackTrace();
         }
         return sendJsonObject.toString();
+    }
+
+    @Override
+    public boolean isNeedCache() {
+        return false;
     }
 
     public float getRemainingFlow(){

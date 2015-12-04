@@ -21,7 +21,8 @@ public class LocationInfoUpload extends MessagePackage{
     private JSONArray lals;
     private String method;
 
-
+    public LocationInfoUpload() {
+    }
 
     public LocationInfoUpload(String obeId, JSONArray locationInfoJsonArray) {
         messageId = Bicker.getBusinessCode(BusinessMessageEnum.GPS_DATA.getCode());
@@ -45,6 +46,11 @@ public class LocationInfoUpload extends MessagePackage{
     @Override
     public String getMessageId() {
         return messageId;
+    }
+
+    @Override
+    public String getMethod() {
+        return method;
     }
 
     @Override
@@ -82,5 +88,10 @@ public class LocationInfoUpload extends MessagePackage{
             e.printStackTrace();
         }
         return sendJsonObject.toString();
+    }
+
+    @Override
+    public boolean isNeedCache() {
+        return true;
     }
 }

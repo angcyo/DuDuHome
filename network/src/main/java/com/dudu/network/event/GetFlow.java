@@ -19,6 +19,10 @@ public class GetFlow extends MessagePackage {
     private String obeId;
     private String method;
 
+
+    public GetFlow() {
+    }
+
     public GetFlow(Context context) {
         this.obeId = DeviceIDUtil.getIMEI(context);
         messageId = Bicker.getBusinessCode(BusinessMessageEnum.GET_FLOW_DATA.getCode());
@@ -33,6 +37,11 @@ public class GetFlow extends MessagePackage {
     @Override
     public String getMessageId() {
         return messageId;
+    }
+
+    @Override
+    public String getMethod() {
+        return method;
     }
 
     @Override
@@ -68,5 +77,10 @@ public class GetFlow extends MessagePackage {
             e.printStackTrace();
         }
         return sendJsonObject.toString();
+    }
+
+    @Override
+    public boolean isNeedCache() {
+        return true;
     }
 }

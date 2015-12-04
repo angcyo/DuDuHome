@@ -31,6 +31,11 @@ public class PortalUpdate extends MessagePackage{
     }
 
     @Override
+    public String getMethod() {
+        return method;
+    }
+
+    @Override
     public boolean isNeedWaitResponse() {
         return true;
     }
@@ -61,5 +66,10 @@ public class PortalUpdate extends MessagePackage{
             e.printStackTrace();
         }
         return sendJsonObject.toString();
+    }
+
+    @Override
+    public boolean isNeedCache() {
+        return false;
     }
 }

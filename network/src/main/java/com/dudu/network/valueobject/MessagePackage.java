@@ -13,6 +13,8 @@ public abstract class MessagePackage{
 
     //获取消息ID
     public abstract  String getMessageId();
+    //获取method字段
+    public abstract String getMethod();
 
     /*
     * 标识此包数据发送后是否需要等待响应，目前处理方式发送后不等待响应
@@ -28,4 +30,7 @@ public abstract class MessagePackage{
 
     //具体业务数据编码成json格式的消息字符串
     public abstract String toJsonString();
+
+    //标记消息包发送失败的时候，是否需要缓存数据，待网络恢复再次发送
+    public abstract boolean isNeedCache();
 }

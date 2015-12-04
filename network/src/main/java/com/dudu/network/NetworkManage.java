@@ -36,6 +36,7 @@ public class NetworkManage {
         networkService.release();
     }
 
+    //此发送方法把数据丢到阻塞队列里面，最好不要放在UI线程中运行
     public void sendMessage(MessagePackage messagePackage){
         networkService.sendMessage(messagePackage);
     }

@@ -23,6 +23,9 @@ public class FlowUpload extends MessagePackage {
     private float usedFlow;
     private String createTime;
 
+    public FlowUpload() {
+    }
+
     public FlowUpload(Context context, float usedFlow, String createTime) {
         this.obeId = DeviceIDUtil.getIMEI(context);
         this.usedFlow = usedFlow;
@@ -39,6 +42,11 @@ public class FlowUpload extends MessagePackage {
     @Override
     public String getMessageId() {
         return messageId;
+    }
+
+    @Override
+    public String getMethod() {
+        return method;
     }
 
     @Override
@@ -78,5 +86,10 @@ public class FlowUpload extends MessagePackage {
             e.printStackTrace();
         }
         return sendJsonObject.toString();
+    }
+
+    @Override
+    public boolean isNeedCache() {
+        return true;
     }
 }

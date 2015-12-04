@@ -17,6 +17,10 @@ public class DriveDatasUpload extends MessagePackage{
     private JSONObject flamountData;
     private String method;
 
+
+    public DriveDatasUpload() {
+    }
+
     public DriveDatasUpload(String obeId, JSONObject flamountDataJsonObject) {
         this.obeId = obeId;
         messageId = Bicker.getBusinessCode(BusinessMessageEnum.OBD_DATA.getCode());
@@ -35,6 +39,11 @@ public class DriveDatasUpload extends MessagePackage{
     }
 
     @Override
+    public String getMethod() {
+        return method;
+    }
+
+    @Override
     public boolean isNeedWaitResponse() {
         return true;
     }
@@ -46,7 +55,39 @@ public class DriveDatasUpload extends MessagePackage{
 
     @Override
     public void createFromJsonString(String messageJsonString) {
+        try {
+            JSONObject jsonObject = new JSONObject(messageJsonString);
+            messageId = jsonObject.getString("messageId");
+            obeId =  jsonObject.getString("obeId");
+            method = jsonObject.getString("method");
 
+            flamountData = new JSONObject();
+            flamountData.put("maxrpm", jsonObject.getString("maxrpm"));
+            flamountData.put("minrpm", jsonObject.getString("minrpm"));
+            flamountData.put("maxspd", jsonObject.getString("maxspd"));
+            flamountData.put("avgspd", jsonObject.getString("avgspd"));
+            flamountData.put("maxacl", jsonObject.getString("maxacl"));
+
+            flamountData.put("mileT", jsonObject.getString("mileT"));//协议中是浮点，后面再敲定
+            flamountData.put("fuelT", jsonObject.getString("fuelT"));
+            flamountData.put("miles", jsonObject.getString("miles"));
+            flamountData.put("fuels", jsonObject.getString("fuels"));
+
+            flamountData.put("times", jsonObject.getString("times"));
+            flamountData.put("starts", jsonObject.getString("starts"));
+            flamountData.put("power", jsonObject.getString("power"));
+
+            flamountData.put("createTime", jsonObject.getString("createTime"));
+
+            flamountData.put("hotCarTime", jsonObject.getString("hotCarTime"));
+            flamountData.put("idleTime", jsonObject.getString("idleTime"));
+
+            flamountData.put("idleFuelConsumption", jsonObject.getString("idleFuelConsumption"));//协议中是浮点，后面再敲定
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -57,31 +98,36 @@ public class DriveDatasUpload extends MessagePackage{
             sendJsonObject.put("obeId", obeId);
             sendJsonObject.put("method", method);
 
-            sendJsonObject.put("maxrpm", flamountData.getInt("maxrpm"));
-            sendJsonObject.put("minrpm", flamountData.getInt("minrpm"));
-            sendJsonObject.put("maxspd", flamountData.getInt("maxspd"));
-            sendJsonObject.put("avgspd", flamountData.getInt("avgspd"));
-            sendJsonObject.put("maxacl", flamountData.getInt("maxacl"));
+            sendJsonObject.put("maxrpm", flamountData.getString("maxrpm"));
+            sendJsonObject.put("minrpm", flamountData.getString("minrpm"));
+            sendJsonObject.put("maxspd", flamountData.getString("maxspd"));
+            sendJsonObject.put("avgspd", flamountData.getString("avgspd"));
+            sendJsonObject.put("maxacl", flamountData.getString("maxacl"));
 
-            sendJsonObject.put("mileT", flamountData.getDouble("mileT"));//协议中是浮点，后面再敲定
-            sendJsonObject.put("fuelT", flamountData.getDouble("fuelT"));
-            sendJsonObject.put("miles", flamountData.getDouble("miles"));
-            sendJsonObject.put("fuels", flamountData.getDouble("fuels"));
+            sendJsonObject.put("mileT", flamountData.getString("mileT"));//协议中是浮点，后面再敲定
+            sendJsonObject.put("fuelT", flamountData.getString("fuelT"));
+            sendJsonObject.put("miles", flamountData.getString("miles"));
+            sendJsonObject.put("fuels", flamountData.getString("fuels"));
 
-            sendJsonObject.put("times", flamountData.getInt("times"));
-            sendJsonObject.put("starts", flamountData.getInt("starts"));
-            sendJsonObject.put("power", flamountData.getInt("power"));
+            sendJsonObject.put("times", flamountData.getString("times"));
+            sendJsonObject.put("starts", flamountData.getString("starts"));
+            sendJsonObject.put("power", flamountData.getString("power"));
 
             sendJsonObject.put("createTime", flamountData.getString("createTime"));
 
-            sendJsonObject.put("hotCarTime", flamountData.getInt("hotCarTime"));
-            sendJsonObject.put("idleTime", flamountData.getInt("idleTime"));
+            sendJsonObject.put("hotCarTime", flamountData.getString("hotCarTime"));
+            sendJsonObject.put("idleTime", flamountData.getString("idleTime"));
 
-            sendJsonObject.put("idleFuelConsumption", flamountData.getDouble("idleFuelConsumption"));//协议中是浮点，后面再敲定
+            sendJsonObject.put("idleFuelConsumption", flamountData.getString("idleFuelConsumption"));//协议中是浮点，后面再敲定
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return sendJsonObject.toString();
+    }
+
+    @Override
+    public boolean isNeedCache() {
+        return true;
     }
 }

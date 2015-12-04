@@ -64,6 +64,11 @@ public class ActiveDevice extends MessagePackage{
     }
 
     @Override
+    public String getMethod() {
+        return method;
+    }
+
+    @Override
     public boolean isNeedWaitResponse() {
         return true;
     }
@@ -90,6 +95,11 @@ public class ActiveDevice extends MessagePackage{
     public String toJsonString() {
         JSONObject jsonObject = new JSONObject(activemap);
         return jsonObject.toString();
+    }
+
+    @Override
+    public boolean isNeedCache() {
+        return false;
     }
 
 

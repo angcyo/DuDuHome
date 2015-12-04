@@ -14,8 +14,12 @@ import com.dudu.calculation.Calculation;
 import com.dudu.monitor.Monitor;
 import com.dudu.network.NetworkManage;
 import com.dudu.obd.BleOBD;
+
 import com.dudu.obd.ObdInit;
 import com.dudu.obd.PodOBD;
+
+import com.dudu.storage.Storage;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +40,7 @@ public class MainService extends Service {
 
     private Calculation calculation;
 
+    private Storage storage;
 
     @Override
     public void onCreate() {
@@ -61,6 +66,8 @@ public class MainService extends Service {
         calculation = Calculation.getInstance(this);
         calculation.init();
 
+        storage = Storage.getInstance();
+        storage.init();
     }
 
     @Override
@@ -76,6 +83,7 @@ public class MainService extends Service {
 
         calculation.release();
 
+        storage.release();
     }
 
     @Override

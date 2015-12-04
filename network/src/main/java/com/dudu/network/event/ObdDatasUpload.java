@@ -18,6 +18,10 @@ public class ObdDatasUpload extends MessagePackage{
     private JSONArray obds;
     private String method;
 
+
+    public ObdDatasUpload() {
+    }
+
     public ObdDatasUpload(String obeId, JSONArray obdDataJsonArray) {
         messageId = Bicker.getBusinessCode(BusinessMessageEnum.OBD_DATA.getCode());
         this.obeId = obeId;
@@ -33,6 +37,11 @@ public class ObdDatasUpload extends MessagePackage{
     @Override
     public String getMessageId() {
         return messageId;
+    }
+
+    @Override
+    public String getMethod() {
+        return method;
     }
 
     @Override
@@ -70,5 +79,10 @@ public class ObdDatasUpload extends MessagePackage{
             e.printStackTrace();
         }
         return sendJsonObject.toString();
+    }
+
+    @Override
+    public boolean isNeedCache() {
+        return true;
     }
 }
