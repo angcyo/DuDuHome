@@ -23,8 +23,8 @@ android {
         applicationId "com.dudu.android.launcher"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 1104
-        versionName "T-1.1.4-demo-thread"
+        versionCode 1105
+        versionName "T-1.1.5-didi-thread-demo"
     }
     buildTypes {
         release {
