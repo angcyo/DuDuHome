@@ -23,7 +23,7 @@ public class MonitorService extends Service {
 
     private static final String TAG = "MonitorService";
 
-    private static final int WAKE_INTERVAL_MS = 20000;
+    private static final int WAKE_INTERVAL_MS = 15000;
 
     private DbHelper mDbHelper;
 
@@ -108,7 +108,7 @@ public class MonitorService extends Service {
                         mMobileTotalRx += dw;
                         mMobileTotalTx += up;
                         refreshFlowData();
-                        float totalFlow = mMobileTotalRx + mMobileTotalTx;
+                        float totalFlow = mDeltaRx + mDeltaTx;
                         NetworkManage.getInstance().sendMessage(new FlowUpload(mContext, totalFlow, mFormat.format(date)));
                         mDbHelper.updateFlow(mMobileTotalRx, mMobileTotalTx, 1, date);
                     } else {
