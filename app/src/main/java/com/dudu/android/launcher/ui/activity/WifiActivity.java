@@ -11,6 +11,8 @@ import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.view.TasksCompletedView;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.SharedPreferencesUtil;
+import com.dudu.android.launcher.utils.WifiApAdmin;
+
 import java.text.DecimalFormat;
 import java.util.Calendar;
 
@@ -94,6 +96,7 @@ public class WifiActivity extends BaseTitlebarActivity {
             }else {
                 //关闭流量
                 message=getString(R.string.use_close_flow);
+                WifiApAdmin.closeWifiAp(mContext);
             }
             showFlowToast(message);
             mTaskCompleteView.setProgress(progress);

@@ -157,6 +157,10 @@ public class Constants {
     public static final String KEY_DOWNLOAD_LIMIT = "down_load_limit";
     public static final String KEY_FREE_ARRIVE_VALUE = "free_arrive_value";
     public static final String KEY_PORTAL_VERSION = "portal_version";
+	public static final String KEY_CLOSER_ARLAM_VALUE = "closeArlamValue";
+	public static final String KEY_FLOW_FREQUENCY = "flowFrequency";
+	public static final String KEY_GPS_FREQUENCU = "gpsFrequency";
+	public static final String KEY_PORTAL_COUNT_FREQUENCY = "portalCountFrequency";
 
 	public static final String KEY_USER_ACTIVE_TIME = "key_user_active_time";
 

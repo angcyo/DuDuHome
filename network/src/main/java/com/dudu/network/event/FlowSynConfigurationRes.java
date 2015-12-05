@@ -94,10 +94,10 @@ public class FlowSynConfigurationRes extends MessagePackage{
             portalAddress= StringTools.GetStringValue("portalAddress", result);
 
             //20151205加入新的字段
-            String closeArlamValue = StringTools.GetStringValue("closeArlamValue", result);
-            String flowFrequency = StringTools.GetStringValue("flowFrequency", result);
-            String gpsFrequency = StringTools.GetStringValue("gpsFrequency", result);
-            String portalCountFrequency = StringTools.GetStringValue("portalCountFrequency", result);
+            closeArlamValue = StringTools.GetStringValue("closeArlamValue", result);
+            flowFrequency = StringTools.GetStringValue("flowFrequency", result);
+            gpsFrequency = StringTools.GetStringValue("gpsFrequency", result);
+            portalCountFrequency = StringTools.GetStringValue("portalCountFrequency", result);
         } catch (JSONException e) {
             e.printStackTrace();
         }

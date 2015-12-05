@@ -23,7 +23,7 @@ public class MonitorService extends Service {
 
     private static final String TAG = "MonitorService";
 
-    private static final int WAKE_INTERVAL_MS = 5000;
+    private static int WAKE_INTERVAL_MS = 30 * 000;
 
     private DbHelper mDbHelper;
 
@@ -50,9 +50,11 @@ public class MonitorService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
         mDbHelper = DbHelper.getDbHelper();
-        mContext=this;
+
+        mContext = this;
+
+        WAKE_INTERVAL_MS = Integer.valueOf(SharedPreferencesUtil.getStringValue(mContext, Constants.KEY_FLOW_FREQUENCY, "30000")) * 1000;
 
         mOldMobileRx = TrafficStats.getMobileRxBytes() / 1024;
         mOldMobileTx = TrafficStats.getMobileTxBytes() / 1024;
@@ -146,13 +148,14 @@ public class MonitorService extends Service {
 
         mMonitorThread = null;
     }
+
     /**
      * 更新SharedPreferences里面的剩余流量的数据
-     * */
-    private void refreshFlowData(){
-        float primaryRemainingFlow=Float.parseFloat(SharedPreferencesUtil.getStringValue(MonitorService.this, Constants.KEY_REMAINING_FLOW,"0"));
-        float timelyRemainingFlow=primaryRemainingFlow-mMobileTotalRx-mMobileTotalTx;
-        SharedPreferencesUtil.putStringValue(MonitorService.this,Constants.KEY_REMAINING_FLOW,String.valueOf(timelyRemainingFlow));
+     */
+    private void refreshFlowData() {
+        float primaryRemainingFlow = Float.parseFloat(SharedPreferencesUtil.getStringValue(MonitorService.this, Constants.KEY_REMAINING_FLOW, "0"));
+        float timelyRemainingFlow = primaryRemainingFlow - mMobileTotalRx - mMobileTotalTx;
+        SharedPreferencesUtil.putStringValue(MonitorService.this, Constants.KEY_REMAINING_FLOW, String.valueOf(timelyRemainingFlow));
     }
 
 }

@@ -2,11 +2,10 @@ package com.dudu.monitor.service;
 
 import android.content.Context;
 
+import com.dudu.android.hideapi.SystemPropertiesProxy;
 import com.dudu.monitor.repo.ActiveDeviceManage;
 import com.dudu.monitor.repo.ObdManage;
-import com.dudu.monitor.repo.SensorManage;
 import com.dudu.monitor.repo.location.LocationManage;
-import com.dudu.monitor.valueobject.FlamoutData;
 import com.dudu.monitor.valueobject.LocationInfo;
 import com.dudu.monitor.valueobject.ObdData;
 import com.dudu.network.NetworkManage;
@@ -14,6 +13,7 @@ import com.dudu.network.event.ActiveDevice;
 import com.dudu.network.event.DriveDatasUpload;
 import com.dudu.network.event.LocationInfoUpload;
 import com.dudu.network.event.ObdDatasUpload;
+import com.dudu.network.event.Portal;
 import com.dudu.network.utils.DeviceIDUtil;
 import com.dudu.network.utils.DuduLog;
 import com.google.gson.Gson;
@@ -53,6 +53,8 @@ public class SendService {
                 sendObdData();
 
                 sendFlamoutData();
+
+                sendPortalCount();
             }catch (Exception e){
                 e.printStackTrace();
                 log.error("monitor-发送服务异常" + e);
@@ -157,5 +159,12 @@ public class SendService {
             log.info("monitor-发送-设备激活-----信息");
             NetworkManage.getInstance().sendMessage(new ActiveDevice(mContext));
         }
+    }
+
+    //发送portal弹出次数
+    private void sendPortalCount() {
+        SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.nodog", "views");
+        String portalCount = SystemPropertiesProxy.getInstance().get("persist.sys.views", "0");
+        NetworkManage.getInstance().sendMessage(new Portal(mContext,portalCount));
     }
 }

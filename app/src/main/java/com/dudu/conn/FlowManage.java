@@ -3,7 +3,9 @@ package com.dudu.conn;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.SharedPreferencesUtil;
 import com.dudu.android.launcher.utils.WifiApAdmin;
@@ -135,6 +137,18 @@ public class FlowManage {
 
             SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_FREE_ARRIVE_VALUE,
                     flowSynConfigurationRes.getFreeArriveValue());
+
+            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_CLOSER_ARLAM_VALUE,
+                    flowSynConfigurationRes.getCloseArlamValue());
+
+            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_FLOW_FREQUENCY,
+                    flowSynConfigurationRes.getFlowFrequency());
+
+            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_GPS_FREQUENCU,
+                    flowSynConfigurationRes.getGpsFrequency());
+
+            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_PORTAL_COUNT_FREQUENCY,
+                    flowSynConfigurationRes.getPortalCountFrequency());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -166,18 +180,24 @@ public class FlowManage {
         switch (dataOverstepAlarm.getAlarmLevel()) {
             case ConnectionConstants.FIELD_ALARM_LEVEL_OPEN:
                 //   0:正常
+                EventBus.getDefault().post(new Port(mContext.getString(R.string.use_flow_normal)));
                 break;
             case ConnectionConstants.FIELD_ALARM_LEVEL_ADVANCED_WARNING:
                 //   1:高级预警   当前剩余值<最大阀值10%
+                EventBus.getDefault().post(new Port(mContext.getString(R.string.use_flow_low_alarm)));
                 break;
             case ConnectionConstants.FIELD_ALARM_LEVEL_INTERMEDIATE_WARNING:
                 //   2:中级预警    当前剩余值<最大阀值15%
+                EventBus.getDefault().post(new Port(mContext.getString(R.string.use_flow_middle_alarm)));
                 break;
             case ConnectionConstants.FIELD_ALARM_LEVEL_LOWLEVEL_WARNING:
                 //   3:低级预警    当前剩余值<最大阀值20%
+                EventBus.getDefault().post(new Port(mContext.getString(R.string.use_flow_high_alarm)));
                 break;
             case ConnectionConstants.FIELD_ALARM_LEVEL_CLOSE:
                 //   4:关闭        当前剩余值<最大阀值5%
+                EventBus.getDefault().post(new Port(mContext.getString(R.string.use_close_flow)));
+                WifiApAdmin.closeWifiAp(mContext);
                 break;
         }
     }
@@ -191,9 +211,11 @@ public class FlowManage {
         switch (dataExceptionAlarm.getAlarmLevel()) {
             case ConnectionConstants.FIELD_ALARM_LEVEL_OPEN:
                 //   0:正常
+                WifiApAdmin.initWifiApState(mContext);
                 break;
             case 1:
                 //   1:关闭（后台说的是关闭）
+                WifiApAdmin.closeWifiAp(mContext);
                 break;
         }
     }
@@ -206,5 +228,15 @@ public class FlowManage {
     public void release() {
         EventBus.getDefault().unregister(this);
         instance = null;
+    }
+    public void onEventMainThread(Port port){
+        Toast.makeText(mContext, port.data, Toast.LENGTH_SHORT).show();
+    }
+
+    public class Port{
+        String data;
+        public Port(String data){
+            this.data = data;
+        }
     }
 }
