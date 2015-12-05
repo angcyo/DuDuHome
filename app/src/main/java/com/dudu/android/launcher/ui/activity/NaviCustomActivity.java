@@ -86,13 +86,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         setAmapNaviViewOptions();
         back_button = (Button) findViewById(R.id.back_button);
         log = LoggerFactory.getLogger("lbs.navi");
-        EventBus.getDefault().unregister(this);
-        EventBus.getDefault().register(this);
-
-
     }
-
-
 
     @Override
     public void initListener() {
