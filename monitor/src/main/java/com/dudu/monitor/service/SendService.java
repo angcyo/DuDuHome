@@ -164,6 +164,11 @@ public class SendService {
     //发送portal弹出次数
     private void sendPortalCount() {
         SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.nodog", "views");
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         String portalCount = SystemPropertiesProxy.getInstance().get("persist.sys.views", "0");
         NetworkManage.getInstance().sendMessage(new Portal(mContext,portalCount));
     }
