@@ -64,6 +64,20 @@ public class FileUtils {
         return dir;
     }
 
+    /**
+     * 获取录像存储目录
+     */
+    public static File getAudeoStorageDir() {
+        File dir = new File(getStorageDir(), "/audio");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        FileUtils.makeNoMediaFile(dir);
+        log.debug("VideoPath:{}", dir.getAbsolutePath());
+        return dir;
+    }
+
     public static void clearVideoFolder() {
         new Thread(new Runnable() {
             @Override

@@ -3,6 +3,7 @@ package com.dudu.android.launcher.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 
 /**
  * SharedPreferences工具类
@@ -24,7 +25,7 @@ public class SharedPreferencesUtil {
     }
 
     public static void putStringValue(Context context, String key, String value) {
-        if (value != null) {
+        if (!TextUtils.isEmpty(value)) {
             SharedPreferences.Editor editor = getDefaultSharedPreferences(context).edit();
             editor.putString(key, value);
             editor.commit();

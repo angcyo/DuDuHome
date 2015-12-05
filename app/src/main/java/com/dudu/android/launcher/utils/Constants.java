@@ -134,6 +134,10 @@ public class Constants {
 	// 广播常量
 	public static final String VIDEO_PREVIEW_BROADCAST = "broadcast_video_preview";
 
+	public static final String VOICE_START_LISTENING = "voice_start_listening";
+
+	public static final String VOICE_STOP_LISTENING = "voice_stop_listening";
+
     // SharePreference常量
     public static final String KEY_SIM_CARD_SERIAL_NUMBER = "sim_card_serial_number";
     public static final String KEY_TRAFFICE_CONTROL = "traffice_control";

@@ -58,6 +58,7 @@ public class InitManager {
         }
 
         checkBTFT();
+
     }
 
     public void unInit() {
@@ -149,7 +150,7 @@ public class InitManager {
     private void initAfterBTFT() {
 
         logger.debug("[init][{}]开启语音监听", log_step++);
-        VoiceManager.getInstance().startWakeup();
+//        VoiceManager.getInstance().startWakeup();
 
         logger.debug("[init][{}]打开蓝牙", log_step++);
         openBlueTooth();

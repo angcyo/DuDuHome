@@ -87,6 +87,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
     private Logger log_init;
 
+    private Context mContext;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -320,10 +321,9 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
     class MessageAdapter extends BaseAdapter {
 
-        Context mContext;
 
         public MessageAdapter(Context context) {
-            this.mContext = context;
+            mContext = context;
         }
 
         @Override
@@ -352,7 +352,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
                 holder.rightView = convertView.findViewById(R.id.list_message_item_right);
                 convertView.setTag(holder);
             } else {
-                holder = (ViewHolder)convertView.getTag();
+                holder = (ViewHolder) convertView.getTag();
             }
             if (FloatWindow.MESSAGE_IN.equalsIgnoreCase(message.getType())) {
                 holder.leftView.setVisibility(View.VISIBLE);
@@ -403,6 +403,10 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
                     isShowWindow = false;
                     isShowAddress = false;
                     mFloatWindow.setIsWindowShow(false);
+                    VoiceManager.getInstance().stopWakeup();
+                    VoiceManager.getInstance().destroyWakeup();
+                    Intent intent = new Intent(Constants.VOICE_START_LISTENING);
+                    sendBroadcast(intent);
                     if (!list.isEmpty())
                         list.clear();
                 } catch (Exception e) {
@@ -410,7 +414,9 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
                 }
 
             }
-        }, 100);
+        }
+
+                , 100);
     }
 
     @Override

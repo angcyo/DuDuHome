@@ -40,7 +40,7 @@ public class DialogUtils {
         }
 
         if (mOBDErrorDialog != null && mOBDErrorDialog.isShowing()) {
-            VoiceManager.getInstance().startWakeup();
+//            VoiceManager.getInstance().startWakeup();
             mOBDErrorDialog.dismiss();
             mOBDErrorDialog = null;
         }

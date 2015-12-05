@@ -1,6 +1,10 @@
 package com.dudu.voice.semantic;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -12,6 +16,7 @@ import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FloatWindow;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
+import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.NetworkUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.voice.semantic.engine.SemanticProcessor;
@@ -32,6 +37,11 @@ import com.iflytek.cloud.util.ResourceUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by 赵圣琪 on 2015/10/27.
@@ -74,6 +84,11 @@ public class VoiceManager {
 
     private int log_step;
 
+    private static boolean isListening = false;
+
+    private SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss",
+            Locale.getDefault());
+
     private Runnable mRemoveFloatWindow = new Runnable() {
         @Override
         public void run() {
@@ -105,7 +120,7 @@ public class VoiceManager {
         param.append(SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC);
         SpeechUtility.createUtility(mContext, param.toString());
 
-        registerWakeuper();
+//        registerWakeuper();
 
         log.debug("[voice][{}]set SpeechUnderstander Listener", log_step++);
         mSpeechUnderstander = SpeechUnderstander.createUnderstander(mContext,
@@ -114,6 +129,7 @@ public class VoiceManager {
         setTtsParameter();
 
         mHandler = new Handler();
+
     }
 
     public void clearMisUnderstandCount() {
@@ -141,6 +157,26 @@ public class VoiceManager {
             mWakeuper.setParameter(SpeechConstant.IVW_SST, "wakeup");
             mWakeuper.setParameter(SpeechConstant.KEEP_ALIVE, "1");
             mWakeuper.startListening(mWakeuperListener);
+            isListening = true;
+        }
+
+    }
+
+    public void startLinteningBroadcast(Context context) {
+        Intent intent = new Intent(Constants.VOICE_START_LISTENING);
+        try {
+            context.sendBroadcast(intent);
+        } catch (ActivityNotFoundException exception) {
+            log.error(exception.toString());
+        }
+    }
+
+    public void stopLinteningBroadcast(Context context) {
+        Intent intent = new Intent(Constants.VOICE_STOP_LISTENING);
+        try {
+            context.sendBroadcast(intent);
+        } catch (ActivityNotFoundException exception) {
+            log.error(exception.toString());
         }
     }
 
@@ -149,6 +185,15 @@ public class VoiceManager {
         mWakeuper = VoiceWakeuper.getWakeuper();
         if (mWakeuper != null) {
             mWakeuper.stopListening();
+            isListening = false;
+        }
+    }
+
+    public static boolean isWakeup() {
+        if(mInstance!=null) {
+            return isListening;
+        }else{
+            return false;
         }
     }
 
@@ -156,6 +201,10 @@ public class VoiceManager {
         log.debug("[voice][{}]销毁唤醒服务", log_step++);
         if (mWakeuper != null) {
             mWakeuper.destroy();
+        }
+
+        if (mSpeechUnderstander != null) {
+            mSpeechUnderstander.destroy();
         }
     }
 
@@ -187,7 +236,7 @@ public class VoiceManager {
 
         public void onResult(WakeuperResult result) {
             log.debug("[voice][{}]语音唤醒监听器:{}", log_step++, result.getResultString());
-            startVoiceService();
+//            startVoiceService();
         }
 
         public void onError(SpeechError error) {
@@ -209,6 +258,13 @@ public class VoiceManager {
 
     };
 
+    public void startVoiceLineter(){
+
+        registerWakeuper();
+        startWakeup();
+        startVoiceService();
+    }
+
     public void startVoiceService() {
         log.debug("[voice][{}]startVoiceService", log_step++);
         mMisunderstandCount = 0;
@@ -220,6 +276,7 @@ public class VoiceManager {
         }
 
         startSpeaking(Constants.WAKEUP_WORDS, SemanticConstants.TTS_START_UNDERSTANDING);
+
     }
 
     public void removeFloatCallback() {
@@ -252,7 +309,7 @@ public class VoiceManager {
 
         mSpeechUnderstander.cancel();
 
-        startWakeup();
+//        startWakeup();
     }
 
     /**
@@ -483,7 +540,7 @@ public class VoiceManager {
                 log.debug("[voice][{}]语音合成完成,下一步:{},连续出错次数:{}", log_step++, mSynthesizerType, mMisunderstandCount);
                 switch (mSynthesizerType) {
                     case SemanticConstants.TTS_START_WAKEUP:
-                        startWakeup();
+//                        startWakeup();
                         break;
                     case SemanticConstants.TTS_START_UNDERSTANDING:
                         if (mMisunderstandCount >= MISUNDERSTAND_REPEAT_COUNT) {
@@ -505,5 +562,9 @@ public class VoiceManager {
 
         }
     };
+
+    public void setIsListening(boolean isListening){
+        this.isListening = isListening;
+    }
 
 }

@@ -58,7 +58,7 @@ public class WhetherChain extends SemanticChain {
                 case NO_TWO:
                 case NO_THREE:
                     FloatWindowUtil.removeFloatWindow();
-                    mVoiceManager.startWakeup();
+//                    mVoiceManager.startWakeup();
                     break;
             }
 

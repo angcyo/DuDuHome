@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -86,6 +88,8 @@ public class MainActivity extends BaseTitlebarActivity implements
 
         InitManager.getInstance(this).init();
 
+
+
         initDate();
 
         initWeatherInfo();
@@ -129,7 +133,12 @@ public class MainActivity extends BaseTitlebarActivity implements
         mWlanButton.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                EventBus.getDefault().post(new CarStatus(CarStatus.CAR_ONLINE));
+                if (!mRecordService.getisPreviewingOrRecording()) {
+                    EventBus.getDefault().post(new CarStatus(CarStatus.CAR_ONLINE));
+                } else {
+                    EventBus.getDefault().post(new CarStatus(CarStatus.CAR_OFFLINE));
+                }
+                ToastUtils.showTip(!mRecordService.getisPreviewingOrRecording() ? "开火" : "熄火");
                 return true;
             }
         });
@@ -209,10 +218,26 @@ public class MainActivity extends BaseTitlebarActivity implements
                 break;
 
             case R.id.voice_button:
-                VoiceManager.getInstance().startVoiceService();
+                VoiceManager.getInstance().setIsListening(true);
+                mRecordService.resetVoice();
+                VoiceManager.getInstance().startVoiceLineter();
                 break;
         }
     }
+
+    Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 1:
+                    VoiceManager.getInstance().startVoiceLineter();
+                    break;
+                case 2:
+                    startCameraAndCloseListener();
+                    break;
+            }
+        }
+    };
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -248,6 +273,7 @@ public class MainActivity extends BaseTitlebarActivity implements
                 mRecordService = ((RecordBindService.MyBinder) service).getService();
                 ((LauncherApplication) getApplicationContext())
                         .setRecordService(mRecordService);
+                sendStartCameraMessage();
             }
         };
 
@@ -377,6 +403,23 @@ public class MainActivity extends BaseTitlebarActivity implements
     protected void onResume() {
         super.onResume();
         EventBus.getDefault().post(NaviEvent.FloatButtonEvent.HIDE);
+    }
+
+    private void sendStartCameraMessage(){
+        handler.sendEmptyMessageDelayed(2, 3000);
+        log_init.error("[main][{}]startCameraAndCloseListener", log_step++);
+
+    }
+
+    private void startCameraAndCloseListener(){
+        try {
+
+            VoiceManager.getInstance().stopWakeup();
+            VoiceManager.getInstance().destroyWakeup();
+        }catch (Exception e){
+
+        }
+        mRecordService.startRecord();
     }
 
 }
