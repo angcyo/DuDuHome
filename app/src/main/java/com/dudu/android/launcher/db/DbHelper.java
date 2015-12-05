@@ -74,12 +74,8 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public static DbHelper getDbHelper() {
-        return getDbHelper(LauncherApplication.getContext());
-    }
-
-    public static DbHelper getDbHelper(Context context) {
         if (mDbHelper == null) {
-            mDbHelper = new DbHelper(context);
+            mDbHelper = new DbHelper(LauncherApplication.getContext());
         }
         return mDbHelper;
     }

@@ -57,7 +57,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:src="@drawable/signal_0" />
+            android:src="@drawable/signal_0"
+            android:visibility="gone"/>
     </LinearLayout>
 
 </RelativeLayout>

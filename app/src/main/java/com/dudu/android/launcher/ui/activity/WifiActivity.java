@@ -45,7 +45,7 @@ public class WifiActivity extends BaseTitlebarActivity {
         mUsedFlowView = (TextView) findViewById(R.id.used_text);
         mRemainingFlowView = (TextView) findViewById(R.id.remaining_flow_text);
 
-        mDbHelper = DbHelper.getDbHelper(WifiActivity.this);
+        mDbHelper = DbHelper.getDbHelper();
     }
 
     @Override

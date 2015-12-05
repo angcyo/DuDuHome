@@ -259,7 +259,7 @@ public class VideoPlayActivity extends BaseNoTitlebarAcitivity implements OnClic
     }
 
     private void getVideoFile(final LinkedList<VideoEntity> list, File file) {
-        DbHelper dbHelper = DbHelper.getDbHelper(VideoPlayActivity.this);
+        DbHelper dbHelper = DbHelper.getDbHelper();
         list.addAll(dbHelper.getAllVideos());
     }
 

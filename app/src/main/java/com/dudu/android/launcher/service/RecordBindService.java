@@ -163,7 +163,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
         windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
 
-        dbHelper = DbHelper.getDbHelper(RecordBindService.this);
+        dbHelper = DbHelper.getDbHelper();
 
         videoView = LayoutInflater.from(this).inflate(R.layout.video_main, null, false);
         surfaceView = (SurfaceView) videoView.findViewById(R.id.surfaceView);

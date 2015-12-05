@@ -33,6 +33,7 @@
     <string name="theme_pink">可爱粉</string>
     <string name="theme_white">简约白</string>
     <string name="gps">GPS</string>
+    <string name="no_4g_signal">无网络信号</string>
 
     <string name="routeshow">线路展示</string>
     <string name="routeinfo_1">全程 </string>

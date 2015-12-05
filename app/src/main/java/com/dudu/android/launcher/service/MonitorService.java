@@ -23,7 +23,7 @@ public class MonitorService extends Service {
 
     private static final String TAG = "MonitorService";
 
-    private static final int WAKE_INTERVAL_MS = 15000;
+    private static final int WAKE_INTERVAL_MS = 5000;
 
     private DbHelper mDbHelper;
 
@@ -51,7 +51,7 @@ public class MonitorService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        mDbHelper = DbHelper.getDbHelper(MonitorService.this);
+        mDbHelper = DbHelper.getDbHelper();
         mContext=this;
 
         mOldMobileRx = TrafficStats.getMobileRxBytes() / 1024;
@@ -99,6 +99,7 @@ public class MonitorService extends Service {
                 mMobileTotalTx += mDeltaTx;
 
                 if (mMobileTotalRx != 0 || mMobileTotalTx != 0) {
+                    LogUtils.v(TAG, "上传流量到数据库...");
                     Date date = new Date();
 
                     if (mDbHelper.checkRecord(1, date)) {

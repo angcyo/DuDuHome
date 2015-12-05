@@ -69,6 +69,11 @@ public class DBManager {
 	public static DBManager getInstance(Context mContext){
 		if (null == dbConn) {
 			dbConn = new DBManager(mContext);
+
+
+
+
+
 		}
 		return dbConn;
 	}

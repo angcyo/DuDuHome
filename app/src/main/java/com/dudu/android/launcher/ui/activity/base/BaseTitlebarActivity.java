@@ -143,11 +143,11 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String type = NetworkUtils.getCurrentNetworkType(mContext);
-            mSignalTextView.setText(type);
-
-            if (type.equals("2G") || type.equals("3G") || type.equals("4G")) {
+            if (type.equals("4G")) {
+                mSignalTextView.setText(type);
                 mSignalImage.setVisibility(View.VISIBLE);
             } else {
+                mSignalTextView.setText(R.string.no_4g_signal);
                 mSignalImage.setVisibility(View.GONE);
             }
         }
