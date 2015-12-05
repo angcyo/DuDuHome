@@ -1,5 +1,8 @@
 package com.dudu.monitor.valueobject;
 
+import android.text.TextUtils;
+import android.util.Log;
+
 import com.dudu.monitor.utils.TimeUtils;
 
 /**
@@ -7,31 +10,33 @@ import com.dudu.monitor.utils.TimeUtils;
  * Description :
  */
 public class ObdData {
-    private int speed;					    //车速
-    private String createTime;					//采集时间
-    private float engLoad;			 		//发动机负荷
-    private float engCoolant;		  		//发动机冷却液
+    private int speed;                        //车速
+    private String createTime;                    //采集时间
+    private float engLoad;                    //发动机负荷
+    private float engCoolant;                //发动机冷却液
 
-    private float curon;				 	//瞬时油耗
-    private float engineSpeed;				 	//发动机转速
-    private float batteryVoltage;			    	//电瓶电压
-    private int runState;		   		 	//汽车当前运行状态（1：运行 0：熄火）
+    private float curon;                    //瞬时油耗
+    private float engineSpeed;                    //发动机转速
+    private float batteryVoltage;                    //电瓶电压
+    private int runState;                    //汽车当前运行状态（1：运行 0：熄火）
 
     public ObdData(String realTimeObdData) {
-        String[] realTimeDataArray = realTimeObdData.split(",");
+        if (!TextUtils.isEmpty(realTimeObdData)) {
+            String[] realTimeDataArray = realTimeObdData.split(",");
 
-        batteryVoltage = Float.parseFloat(realTimeDataArray[0].split("=")[1]);
-        engineSpeed = Float.parseFloat(realTimeDataArray[1]);
-        speed = Integer.parseInt(realTimeDataArray[2]);
-        engCoolant = Float.parseFloat(realTimeDataArray[3]);
-        engLoad = Float.parseFloat(realTimeDataArray[4]);
-        curon = Float.parseFloat(realTimeDataArray[5]);
-        createTime = TimeUtils.dateLongFormatString(System.currentTimeMillis(), TimeUtils.format1);
-        runState = 1;
+            batteryVoltage = Float.parseFloat(realTimeDataArray[1]);
+            engineSpeed = Float.parseFloat(realTimeDataArray[2]);
+            speed = Integer.parseInt(realTimeDataArray[3]);
+            engCoolant = Float.parseFloat(realTimeDataArray[4]);
+            engLoad = Float.parseFloat(realTimeDataArray[5]);
+            curon = Float.parseFloat(realTimeDataArray[6]);
+            createTime = TimeUtils.dateLongFormatString(System.currentTimeMillis(), TimeUtils.format1);
+            runState = 1;
+        }
     }
 
 
-    public ObdData(String xfaOBD,int flag){
+    public ObdData(String xfaOBD, int flag) {
 
         String[] obdStr = xfaOBD.split(";");
         for (int i = 0; i < obdStr.length; i++) {

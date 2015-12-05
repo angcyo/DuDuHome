@@ -26,8 +26,8 @@ public class ObdInit {
                 xfaOBD.initXfaOBD(context);
                 break;
             default:
-                BleOBD bleOBD2 = new BleOBD();
-                bleOBD2.initOBD(context);
+                PodOBD podOBD2 = new PodOBD();
+                podOBD2.init(context);
                 break;
         }
 

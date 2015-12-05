@@ -50,6 +50,7 @@ public class SppScanner {
                 if (btDevice != null) {
                     //把蓝牙设备添加到list集合，重复的不添加
                     if(btDevice.getName()!=null&&btDevice.getName().equals(name)){
+                        log.debug("find device ");
                         EventBus.getDefault().post(new Event.BackScanResult(btDevice));
                     }
                 }

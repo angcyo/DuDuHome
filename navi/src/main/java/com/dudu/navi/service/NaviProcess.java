@@ -146,7 +146,6 @@ public class NaviProcess {
                         if (!isSucess) {
                             EventBus.getDefault().post(NavigationType.CALCULATEERROR);
                         }
-
                     }
                 });
         return code;

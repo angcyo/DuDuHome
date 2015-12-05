@@ -66,8 +66,7 @@ AMapNaviViewListener{
 		mAmapAMapNaviView.setAMapNaviViewListener(this);
 		setAmapNaviViewOptions();
 		back_button = (Button) findViewById(R.id.back_button);
-		EventBus.getDefault().unregister(this);
-		EventBus.getDefault().register(this);
+
 
 	}
 

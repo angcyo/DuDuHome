@@ -3,6 +3,7 @@ package com.duu.bluetooth;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 
@@ -15,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.UUID;
 
 import de.greenrobot.event.EventBus;
@@ -45,10 +48,12 @@ public class SppManager {
 
     private String mac;
 
-    public SppManager() {
+    private Context mContext;
+    public SppManager(Context context) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mState = STATE_NONE;
         log = LoggerFactory.getLogger("obd.pod.spp");
+        this.mContext = context;
     }
 
     private synchronized void setState(int state) {
@@ -172,6 +177,7 @@ public class SppManager {
 
 
     private void connectionFailed() {
+        log.debug("sppManager connectionFailed");
         SppManager.this.start();
     }
 
@@ -179,12 +185,13 @@ public class SppManager {
      * Indicate that the connection was lost and notify the UI Activity.
      */
     private void connectionLost() {
+        log.debug("sppManager connectionLost");
         SppManager.this.start();
     }
 
 
     private class ConnectThread extends Thread {
-        private final BluetoothSocket mmSocket;
+        private BluetoothSocket mmSocket;
         private String mSocketType;
 
         public ConnectThread(final String macAddr, boolean secure) {
@@ -200,6 +207,7 @@ public class SppManager {
                     tmp = remoteDevice.createInsecureRfcommSocketToServiceRecord(
                             MY_UUID_SECURE);
                 }
+
             } catch (IOException e) {
                 log.warn("Socket Type: " + mSocketType + "create() failed", e);
             }
@@ -212,37 +220,39 @@ public class SppManager {
                 mAdapter.cancelDiscovery();
             }
 
-            BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-            BluetoothDevice btDevice = btAdapter.getRemoteDevice(mac);
-            log.info("BondState--->{}", btDevice.getBondState());
-
-            if (btDevice.getBondState() != BluetoothDevice.BOND_BONDED) {
+            /*if (remoteDevice.getBondState() != BluetoothDevice.BOND_BONDED) {
                 try {
-                    ClsUtils.setPin(btDevice.getClass(), btDevice, "1234"); // 手机和蓝牙采集器配对
-                    ClsUtils.createBond(btDevice.getClass(), btDevice);
+                    ClsUtils.setPin(remoteDevice.getClass(), remoteDevice, "1234"); // 手机和蓝牙采集器配对
+                    ClsUtils.createBond(remoteDevice.getClass(), remoteDevice);
                     log.info("BondState createBond--->");
                 } catch (Exception e) {
                     log.info("ClsUtils{}", e.toString());
                 }
             } else {
                 try {
-                    ClsUtils.createBond(btDevice.getClass(), btDevice);
-                    ClsUtils.setPin(btDevice.getClass(), btDevice, "1234"); // 手机和蓝牙采集器配对
-                    ClsUtils.createBond(btDevice.getClass(), btDevice);
+                    ClsUtils.createBond(remoteDevice.getClass(), remoteDevice);
+                    ClsUtils.setPin(remoteDevice.getClass(), remoteDevice, "1234"); // 手机和蓝牙采集器配对
+                    ClsUtils.createBond(remoteDevice.getClass(), remoteDevice);
                     log.info("BondState  createBond--->");
                 } catch (Exception e) {
                     log.info("ClsUtils {}", e.toString());
                 }
-            }
-
+            }*/
             try {
-
                 mmSocket.connect();
-
             } catch (IOException e) {
+                log.warn("unable to connect：", e);
+
                 try {
-                    mmSocket.close();
-                } catch (IOException e2) {
+//                    log.debug("mmSocket  close");
+//                    mmSocket.close();
+                    Class<?>[] paramTypes = new Class<?>[] {Integer.TYPE};
+                    Method m = remoteDevice.getClass().getMethod("createRfcommSocket", paramTypes);
+                    Object[] params = new Object[] {Integer.valueOf(1)};
+                    mmSocket  = (BluetoothSocket) m.invoke(remoteDevice, params);
+                    Thread.sleep(500);
+                    mmSocket.connect();
+                } catch (Exception e2) {
                     log.warn("unable to close() " + mSocketType +
                             " socket during connection failure", e2);
                 }
@@ -252,6 +262,7 @@ public class SppManager {
             synchronized (SppManager.this) {
                 mConnectThread = null;
             }
+            BluetoothMacUtil.saveMac(mContext,mac);
             connected(mmSocket, mSocketType);
         }
 
@@ -296,7 +307,6 @@ public class SppManager {
                 } catch (Exception e) {
                     log.warn("disconnected", e);
                     connectionLost();
-                    SppManager.this.start();
                 }
             }
         }

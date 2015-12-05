@@ -24,8 +24,10 @@ import rx.functions.Action1;
 public class PodOBD {
     private Logger log;
     private Context mContext;
+    private PrefixReadL1 readL1;
     public PodOBD(){
         log = LoggerFactory.getLogger("obd.pod.spp");
+        readL1 = new PrefixReadL1();
     }
 
     public void init(Context context){
@@ -34,6 +36,8 @@ public class PodOBD {
         SppConnectMain.getInstance().init(context);
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
+        EventBus.getDefault().unregister(readL1);
+        EventBus.getDefault().register(readL1);
         EventBus.getDefault().post(new Event.StartScanner());
     }
 
@@ -44,15 +48,15 @@ public class PodOBD {
         EventBus.getDefault().post(new Event.Connect(device.getAddress(), Event.ConnectType.SPP, false));
     }
 
-    public void onEventBackgroundThread(EventRead.L0ReadDone event) {
-        final byte[] data = event.getData();
-        try {
-            log.debug("Receive OBD Data: = {}", new String(data, "UTF-8"));
-        } catch (Exception e) {
-            log.error("OBD Parse exception", e);
-            e.printStackTrace();
-        }
-    }
+//    public void onEventBackgroundThread(EventRead.L1ReadDone event) {
+//        final byte[] data = event.getData();
+//        try {
+//            log.debug("Receive OBD Data: = {}", new String(data, "UTF-8"));
+//        } catch (Exception e) {
+//            log.error("OBD Parse exception", e);
+//            e.printStackTrace();
+//        }
+//    }
 
     public void onEvent(Event.Disconnected event){
 
@@ -70,12 +74,6 @@ public class PodOBD {
     public void onEvent(Event.BTConnected event){
         log.debug("spp bluetooth BTConnected");
         EventBus.getDefault().post(new BleStateChange(BleStateChange.BLECONNECTED));
-        EventBus.getDefault().post(new EventWrite.Data2Write(getSenddata(), EventWrite.TYPE.Data));
     }
 
-    private byte[] getSenddata(){
-        log.debug(" pod obd getSenddata");
-        byte[] data = {'A','T','I',0x0D};
-        return data;
-    }
 }

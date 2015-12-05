@@ -1,6 +1,7 @@
 package com.duu.bluetooth;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import org.scf4a.Event;
 import org.scf4a.EventWrite;
@@ -33,6 +34,14 @@ public class SppConnectMain {
 
     public void onEvent(Event.StartScanner event) {
         log.debug("pod obd StartScanner");
+
+        if(!TextUtils.isEmpty(BluetoothMacUtil.getMac(mContext))){
+
+            onEvent(new Event.Connect(BluetoothMacUtil.getMac(mContext),
+                    Event.ConnectType.SPP, false));
+            return;
+        }
+
         if (null == sppScanner) {
             sppScanner = new SppScanner(mContext);
         }
@@ -65,12 +74,14 @@ public class SppConnectMain {
     }
 
     public void onEvent(Event.Connect event) {
+        log.debug("pod obd connect");
         if (event.getType() == Event.ConnectType.SPP) {
             sppManager.connect(event.getMac(), true);
         }
     }
 
     public void onEvent(Event.DisConnect event) {
+        log.debug("pod obd DisConnect");
         if (event.getType() == Event.ConnectType.SPP) {
             sppManager.stop();
         }
@@ -80,7 +91,7 @@ public class SppConnectMain {
         mContext = context;
         EventBus.getDefault().register(ourInstance);
         if (null == sppManager) {
-            sppManager = new SppManager();
+            sppManager = new SppManager(mContext);
         }
     }
 

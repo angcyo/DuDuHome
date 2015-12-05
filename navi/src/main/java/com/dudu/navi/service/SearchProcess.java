@@ -153,31 +153,37 @@ public class SearchProcess {
         }
         if (locProvider != null && locBundle != null) {
             cur_locationDesc = locBundle.getString("desc");
-            cityCode = locBundle.getString("citycode");
-            String playText = "您好，您现在在" + cur_locationDesc;
-            ResourceManager.getInstance(mContext).setCur_locationDesc(playText);
-            EventBus.getDefault().post(NaviEvent.SearchResult.SUCCESS);
+            if(!TextUtils.isEmpty(cur_locationDesc)){
+                String playText = "您好，您现在在" + cur_locationDesc;
+                ResourceManager.getInstance(mContext).setCur_locationDesc(playText);
+                EventBus.getDefault().post(NaviEvent.SearchResult.SUCCESS);
+            }else {
+                getCurLocation();
+            }
+
         } else {
-            RegeocodeQuery query = new RegeocodeQuery(latLonPoint, 200,
-                    GeocodeSearch.AMAP);
-            geocoderSearch.getFromLocationAsyn(query);
 
-            Observable.timer(15, TimeUnit.SECONDS)
-                    .subscribe(new Action1<Long>() {
-                        @Override
-                        public void call(Long aLong) {
-                            if (!isGetCurdesc) {
-                                EventBus.getDefault().
-                                        post(new NaviEvent.NaviVoiceBroadcast("抱歉，暂时无法获取到您的详细位置，请稍后再试", true));
-                                EventBus.getDefault().post(NaviEvent.SearchResult.FAIL);
-                            }
-
-                        }
-                    });
-
+            getCurLocation();
         }
     }
+    private void getCurLocation(){
+        RegeocodeQuery query = new RegeocodeQuery(latLonPoint, 200,
+                GeocodeSearch.AMAP);
+        geocoderSearch.getFromLocationAsyn(query);
 
+        Observable.timer(15, TimeUnit.SECONDS)
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        if (!isGetCurdesc) {
+                            EventBus.getDefault().
+                                    post(new NaviEvent.NaviVoiceBroadcast("抱歉，暂时无法获取到您的详细位置，请稍后再试", true));
+                            EventBus.getDefault().post(NaviEvent.SearchResult.FAIL);
+                        }
+
+                    }
+                });
+    }
     private PoiSearch.OnPoiSearchListener onPoiSearchListener = new PoiSearch.OnPoiSearchListener() {
 
         @Override

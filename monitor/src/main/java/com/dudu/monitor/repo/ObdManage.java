@@ -1,5 +1,7 @@
 package com.dudu.monitor.repo;
 
+import android.text.TextUtils;
+
 import com.dudu.monitor.event.CarDriveSpeedState;
 import com.dudu.monitor.event.CarStatus;
 import com.dudu.monitor.event.XfaOBDEvent;
@@ -62,13 +64,12 @@ public class ObdManage {
     }
 
     public void onEventBackgroundThread(EventRead.L1ReadDone event) {
-        final byte[] obdData = event.getData();
+        final byte[] data = event.getData();
         try {
-            String obdDataString = new String(obdData, "UTF-8");
-            log.debug("monitor- 收到obd数据: ", obdDataString);
-            parseOBDData(obdDataString);
+            log.debug("monitor Receive OBD Data: = {}", new String(data, "UTF-8"));
+            parseOBDData(new String(data, "UTF-8"));
         } catch (Exception e) {
-            log.error("monitor-OBD数据解析异常", e);
+            log.error("monitor OBD Parse exception", e);
             e.printStackTrace();
         }
     }
@@ -82,24 +83,28 @@ public class ObdManage {
 
 
     private void parseOBDData(String obdDataString) {
-        if (obdDataString.startsWith(REALTIME)) {
-            parseRealtimeData(obdDataString);
+        if(!TextUtils.isEmpty(obdDataString)){
+            if (obdDataString.startsWith(REALTIME)) {
+                parseRealtimeData(obdDataString);
 
-        } else if (obdDataString.startsWith(TOTALDATA)) {
-            parseTotalData(obdDataString);
+            } else if (obdDataString.startsWith(TOTALDATA)) {
+                parseTotalData(obdDataString);
 
-        } else if (obdDataString.startsWith(FLAMOUT)) {
-            parseFlamoutData(obdDataString);
+            } else if (obdDataString.startsWith(FLAMOUT)) {
 
+                parseFlamoutData(obdDataString);
+
+            }
         }
+
     }
 
     private void parseRealtimeData(String obdDataString) {
         ObdData obdData;
         if (isxfaOBd)
-            obdData = new ObdData(obdDataString);
+            obdData = new ObdData(obdDataString,1);
         else
-            obdData = new ObdData(obdDataString, 1);
+            obdData = new ObdData(obdDataString);
 
         curSpeed = obdData.getSpeed();
         curRpm = obdData.getEngineSpeed();
@@ -119,21 +124,24 @@ public class ObdManage {
     }
 
     private void parseTotalData(String obdDataString) {
-        String[] obdDataStringArray = obdDataString.split(",");
-        int acc = Integer.parseInt(new String(obdDataStringArray[9]));
-        if (acc > acc_spd) {
-            EventBus.getDefault().post(new CarDriveSpeedState(1));
-        }
-        acc_spd = acc;
+        if (!TextUtils.isEmpty(obdDataString)) {
+            String[] obdDataStringArray = obdDataString.split(",");
+            int acc = Integer.parseInt(new String(obdDataStringArray[9]));
+            if (acc > acc_spd) {
+                EventBus.getDefault().post(new CarDriveSpeedState(1));
+            }
+            acc_spd = acc;
 
-        int b_spd = Integer.parseInt(new String(obdDataStringArray[10].trim()));
-        if (b_spd > break_spd) {
-            EventBus.getDefault().post(new CarDriveSpeedState(2));
+            int b_spd = Integer.parseInt(new String(obdDataStringArray[10].trim()));
+            if (b_spd > break_spd) {
+                EventBus.getDefault().post(new CarDriveSpeedState(2));
+            }
+            break_spd = b_spd;
         }
-        break_spd = b_spd;
     }
 
     private void parseFlamoutData(String obdDataString) {
+        log.info(" parseFlamoutData {}", obdDataString);
         if (isxfaOBd)
             flamoutData = new FlamoutData(obdDataString, 1);
         else
