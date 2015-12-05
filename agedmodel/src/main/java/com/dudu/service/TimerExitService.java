@@ -31,5 +31,10 @@ public class TimerExitService extends Service {
                 }
             }).start();
         }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_STICKY;
     }
+}
 

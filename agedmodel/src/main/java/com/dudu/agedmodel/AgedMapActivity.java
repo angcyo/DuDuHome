@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.widget.EditText;
+
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.LocationSource;
@@ -48,7 +49,7 @@ public class AgedMapActivity extends NoTitleActivity implements LocationSource, 
     private List<PoiItem> poiItems = null;
     private LocationSource.OnLocationChangedListener listener;
     private Handler handler = new MyHandler();
-    private static final String NEAR_ADDRESS="附近的湘菜馆";
+    private static final String NEAR_ADDRESS = "附近的湘菜馆";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +115,6 @@ public class AgedMapActivity extends NoTitleActivity implements LocationSource, 
     @Override
     public void activate(OnLocationChangedListener onLocationChangedListener) {
         listener = onLocationChangedListener;
-        AMapLocationHandler.getInstance(this).init();
     }
 
     @Override
@@ -227,8 +227,11 @@ public class AgedMapActivity extends NoTitleActivity implements LocationSource, 
         @Override
         public void handleMessage(Message msg) {
             AMapNaviHandler.getInstance(AgedMapActivity.this).initNavigationHandle();
-            double[] destination = {poiItems.get(0).getLatLonPoint().getLatitude(), poiItems.get(0).getLatLonPoint().getLongitude()};
-            AMapNaviHandler.getInstance(AgedMapActivity.this).startNavi(destination);
+            if (poiItems.size() > 0) {
+                double[] destination = {poiItems.get(0).getLatLonPoint().getLatitude(), poiItems.get(0).getLatLonPoint().getLongitude()};
+                AMapNaviHandler.getInstance(AgedMapActivity.this).startNavi(destination);
+            }
+
         }
 
         ;

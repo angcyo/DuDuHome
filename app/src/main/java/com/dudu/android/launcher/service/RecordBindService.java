@@ -290,6 +290,22 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         new MediaPrepareTask().execute();
     }
 
+    public void stopAndReleaseCamera() {
+        if (camera != null) {
+                try {
+
+                    //camera.setPreviewCallback(null);
+                    camera.lock();
+                    camera.stopPreview();
+                    camera.release();
+                    camera = null;
+                } catch (Exception e) {
+                    logger.error("相机释放出错了：" + e.getMessage());
+
+                }
+            }
+    }
+
     public void stopRecord() {
         if (!isPreviewingOrRecording) {
             return;
@@ -306,7 +322,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     /**
      * 生成10分钟的视频片段
      */
-    private void createVideoFragment() {
+    public void createVideoFragment() {
         isRecording = false;
         logger.debug("调用createVideoFragment方法，生成录像片段...");
 
@@ -330,6 +346,14 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
         insertVideo(videoName);
 
+    }
+
+    public void stopCamera() {
+        isPreviewingOrRecording = false;
+
+        stopRecordTimer();
+
+        createVideoFragment();
     }
 
     public void startRecordTimer() {
@@ -537,15 +561,18 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     private void releaseMediaRecorder() {
         if (mediaRecorder != null) {
             try {
+
                 mediaRecorder.reset();
                 mediaRecorder.release();
                 logger.debug("关闭录像");
                 mediaRecorder = null;
                 if (camera != null) {
+
                     camera.lock();
                 }
 
             } catch (Exception e) {
+
                 e.printStackTrace();
             }
         }
@@ -763,6 +790,10 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
             startRecord();
 
         }
+    }
+    public void stopRecordService(){
+        releaseMediaRecorder();
+        releaseCamera();
     }
 
     private void toggleAnimation() {

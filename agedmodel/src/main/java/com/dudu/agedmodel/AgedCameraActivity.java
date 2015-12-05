@@ -96,7 +96,10 @@ public class AgedCameraActivity extends NoTitleActivity implements SurfaceHolder
         /**
          * 设置录像的相关参数
          * */
-        camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
+        if (camera==null){
+            camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
+
+        }
         Camera.Parameters p = camera.getParameters();
         p.setPreviewFormat(PixelFormat.YCbCr_420_SP);
         p.setPictureSize(1280, 720);

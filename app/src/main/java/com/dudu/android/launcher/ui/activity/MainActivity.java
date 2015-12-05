@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -33,10 +34,14 @@ import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
 import com.dudu.android.launcher.utils.DialogUtils;
+
+import com.dudu.android.launcher.utils.SharedPreferencesUtil;
+
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
+import com.dudu.android.launcher.utils.cache.AgedContacts;
 import com.dudu.event.BleStateChange;
 import com.dudu.event.DeviceEvent;
 import com.dudu.init.InitManager;
@@ -49,6 +54,7 @@ import com.dudu.voice.semantic.VoiceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -88,7 +94,6 @@ public class MainActivity extends BaseTitlebarActivity implements
         initVideoService();
 
         InitManager.getInstance(this).init();
-
 
 
         initDate();
@@ -134,12 +139,16 @@ public class MainActivity extends BaseTitlebarActivity implements
         mWlanButton.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (!mRecordService.getisPreviewingOrRecording()) {
-                    EventBus.getDefault().post(new CarStatus(CarStatus.CAR_ONLINE));
-                } else {
-                    EventBus.getDefault().post(new CarStatus(CarStatus.CAR_OFFLINE));
-                }
-                ToastUtils.showTip(!mRecordService.getisPreviewingOrRecording() ? "开火" : "熄火");
+
+//                if (!mRecordService.getisPreviewingOrRecording()) {
+//                    EventBus.getDefault().post(new CarStatus(CarStatus.CAR_ONLINE));
+//                } else {
+//                    EventBus.getDefault().post(new CarStatus(CarStatus.CAR_OFFLINE));
+//                }
+//                ToastUtils.showTip(!mRecordService.getisPreviewingOrRecording() ? "开火" : "熄火");
+
+                EventBus.getDefault().post(new CarStatus(CarStatus.CAR_ONLINE));
+                proceedAgeTest();
                 return true;
             }
         });
@@ -150,11 +159,19 @@ public class MainActivity extends BaseTitlebarActivity implements
 
             @Override
             public boolean onLongClick(View v) {
+
+               /* Intent intent = new Intent();
+                intent.setComponent(new ComponentName("com.android.settings",
+                        "com.android.settings.Settings"));
+                startActivity(intent);*/
+                EventBus.getDefault().post(new CarStatus(CarStatus.CAR_OFFLINE));
+
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName("com.android.settings",
                         "com.android.settings.Settings"));
                 startActivity(intent);
-                EventBus.getDefault().post(new CarStatus(CarStatus.CAR_OFFLINE));
+
+
                 return true;
             }
         });
@@ -226,10 +243,10 @@ public class MainActivity extends BaseTitlebarActivity implements
         }
     }
 
-    Handler handler = new Handler(){
+    Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case 1:
                     VoiceManager.getInstance().startVoiceLineter();
                     break;
@@ -406,21 +423,45 @@ public class MainActivity extends BaseTitlebarActivity implements
         EventBus.getDefault().post(NaviEvent.FloatButtonEvent.HIDE);
     }
 
-    private void sendStartCameraMessage(){
+    private void sendStartCameraMessage() {
         handler.sendEmptyMessageDelayed(2, 3000);
         log_init.error("[main][{}]startCameraAndCloseListener", log_step++);
 
     }
 
-    private void startCameraAndCloseListener(){
+    private void startCameraAndCloseListener() {
         try {
 
             VoiceManager.getInstance().stopWakeup();
             VoiceManager.getInstance().destroyWakeup();
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         mRecordService.startRecord();
+    }
+
+    private void proceedAgeTest() {
+        boolean agedModel = SharedPreferencesUtil.getBooleanValue(mContext, AgedContacts.AGEDMODEL_NAME, false);
+        long currentCount = SharedPreferencesUtil.getLongValue(mContext, AgedContacts.AGEDTEST_COUNT, 0);
+        if (currentCount <= 1) {
+            if (!agedModel) {
+                File file = new File(AgedContacts.AGEDMODEL_APK_DIR, AgedContacts.AGEDMODEL_APK);
+                if (file.exists()) {
+                    SharedPreferencesUtil.putBooleanValue(mContext, AgedContacts.AGEDMODEL_NAME, true);
+                    mRecordService.stopCamera();
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setDataAndType(Uri.parse(AgedContacts.FILE_NAME + file.toString()), AgedContacts.APPLICATION_NAME);
+                    startActivity(intent);
+                }
+            } else {
+                SharedPreferencesUtil.putBooleanValue(mContext, AgedContacts.AGEDMODEL_NAME, false);
+                SharedPreferencesUtil.putLongValue(mContext, AgedContacts.AGEDTEST_COUNT, currentCount + 1);
+                Uri packageURI = Uri.parse(AgedContacts.PACKAGE_NAME);
+                Intent uninstallIntent = new Intent(Intent.ACTION_DELETE, packageURI);
+                startActivity(uninstallIntent);
+            }
+        }
     }
 
 }
