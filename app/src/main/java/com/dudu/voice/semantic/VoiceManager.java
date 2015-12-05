@@ -8,6 +8,7 @@ import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 
 import com.dudu.android.hideapi.SystemPropertiesProxy;
@@ -76,7 +77,12 @@ public class VoiceManager {
      */
     private int mMisunderstandCount = 0;
 
-    private Handler mHandler;
+    private Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            opening = false;
+        }
+    };
 
     private boolean mShowMessageWindow = true;
 
@@ -85,6 +91,8 @@ public class VoiceManager {
     private int log_step;
 
     private static boolean isListening = false;
+
+    private boolean opening = false;
 
     private SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss",
             Locale.getDefault());
@@ -565,6 +573,15 @@ public class VoiceManager {
 
     public void setIsListening(boolean isListening){
         this.isListening = isListening;
+    }
+
+    public void setOpening(){
+        this.opening = true;
+        mHandler.sendEmptyMessageDelayed(1,500);
+    }
+
+    public boolean getOpening(){
+        return opening;
     }
 
 }

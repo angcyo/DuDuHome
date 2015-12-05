@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -33,6 +34,7 @@ import com.dudu.android.launcher.utils.FloatWindow.FloatVoiceChangeCallBack;
 import com.dudu.android.launcher.utils.FloatWindow.MessageShowCallBack;
 import com.dudu.android.launcher.utils.FloatWindow.RemoveFloatWindowCallBack;
 import com.dudu.android.launcher.utils.FloatWindow.StrategyChooseCallBack;
+import com.dudu.event.ListenerResetEvent;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.SemanticType;
 import com.dudu.voice.semantic.VoiceManager;
@@ -44,6 +46,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * 消息弹框Window管理服务
@@ -79,8 +83,6 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
     private boolean isShowWindow = false;
 
-    private Handler mHandler;
-
     private boolean isShowAddress = false;
 
     private int pageIndex = 0;
@@ -88,6 +90,8 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
     private Logger log_init;
 
     private Context mContext;
+
+    private boolean removeHasCalled = false;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -105,7 +109,6 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
     }
 
     private void init() {
-        mHandler = new Handler();
         initWindow();
         mFloatWindow = FloatWindow.getInstance();
 
@@ -164,6 +167,21 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
         });
     }
 
+
+    private Handler mHandler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+            if (removeHasCalled == true) {
+                log_init.debug("三秒内没有重新打开窗口");
+                EventBus.getDefault().post(new ListenerResetEvent(ListenerResetEvent.LISTENER_OFF));
+                removeHasCalled = false;
+            }else{
+                log_init.debug("三秒内没有已经被打开窗口");
+            }
+        }
+    };
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -198,6 +216,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
         if (!isShowWindow) {
             if (windowManager != null && floatWindowLayout != null && windowParams != null) {
                 windowManager.addView(floatWindowLayout, windowParams);
+                showWindowCallback();
             }
         }
         if (messageList != null)
@@ -218,6 +237,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
         if (!isShowWindow) {
             if (windowManager != null && floatWindowLayout != null && windowParams != null) {
                 windowManager.addView(floatWindowLayout, windowParams);
+                showWindowCallback();
             }
         }
         if (messageList != null)
@@ -242,6 +262,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
             if (!isShowWindow) {
                 if (windowManager != null && floatWindowLayout != null && windowParams != null) {
                     windowManager.addView(floatWindowLayout, windowParams);
+                    showWindowCallback();
                 }
             }
             if (addressList != null)
@@ -396,23 +417,16 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                try {
-                    if (floatWindowLayout != null && windowManager != null && isShowWindow) {
-                        windowManager.removeView(floatWindowLayout);
-                    }
-                    isShowWindow = false;
-                    isShowAddress = false;
-                    mFloatWindow.setIsWindowShow(false);
-                    VoiceManager.getInstance().stopWakeup();
-                    VoiceManager.getInstance().destroyWakeup();
-                    Intent intent = new Intent(Constants.VOICE_START_LISTENING);
-                    sendBroadcast(intent);
-                    if (!list.isEmpty())
-                        list.clear();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                if (floatWindowLayout != null && windowManager != null && isShowWindow) {
+                    removeHasCalled = true;
+                    mHandler.sendEmptyMessageDelayed(1, 3000);
+                    windowManager.removeView(floatWindowLayout);
                 }
-
+                isShowWindow = false;
+                isShowAddress = false;
+                mFloatWindow.setIsWindowShow(false);
+                if (!list.isEmpty())
+                    list.clear();
             }
         }
 
@@ -421,13 +435,28 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
     @Override
     public void createFloatWindow() {
+        log_init.debug("打开窗口");
         if (!isShowWindow) {
             if (windowManager != null && floatWindowLayout != null && windowParams != null) {
                 windowManager.addView(floatWindowLayout, windowParams);
+                showWindowCallback();
             }
         }
 
         isShowWindow = true;
+    }
+
+    private void showWindowCallback(){
+        log_init.debug("打开窗口");
+        if (removeHasCalled == false) {
+            log_init.debug("三秒内被打开窗口");
+            if(!VoiceManager.getInstance().getOpening()) {
+                EventBus.getDefault().post(new ListenerResetEvent(ListenerResetEvent.LISTENER_ON));
+            }
+        }else{
+            mHandler.removeMessages(1);
+        }
+        removeHasCalled = false;
     }
 
 }

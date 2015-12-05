@@ -197,6 +197,10 @@ public class SemanticProcessor {
         mDefaultChain = mSemanticState.getDefaultChain();
     }
 
+    public SemanticState getCuSemanticState() {
+        return mSemanticState;
+    }
+
     private void initSemanticStates() {
         mNormaState = new NormalState();
 

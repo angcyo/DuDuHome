@@ -132,6 +132,14 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     private Camera.Parameters mCameraParams;
 
     private AudioManager audiomanager;
+
+    /**
+     * 录像开始错误重试次数，
+     * 最多重试3次，
+     * 录像开始成功则置0
+     */
+    private int mRecorderStartErrorTimes = 0;
+
     //Back键定时消失的handler
     private Handler mBackDisappearHandler = new Handler() {
         @Override
@@ -227,6 +235,8 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_MEDIA_MOUNTED);
         intentFilter.addAction(Intent.ACTION_MEDIA_REMOVED);
+        intentFilter.addAction(Constants.VOICE_START_LISTENING);
+        intentFilter.addAction(Constants.VOICE_STOP_LISTENING);
         intentFilter.addDataScheme("file");
         registerReceiver(mTFlashCardReceiver, intentFilter);
     }
@@ -667,18 +677,31 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         @Override
         protected Void doInBackground(Void... params) {
             logger.debug("开启录像初始化线程: MediaPrepareTask");
-            if (prepared) {
-                mediaRecorder.start();
+            try {
+                if (prepared) {
+                    try {
+                        mediaRecorder.start();
+                        EventBus.getDefault().post(new DeviceEvent.Video(DeviceEvent.ON));
+                        isRecording = true;
+                        mRecorderStartErrorTimes = 0;
+                    } catch (Exception e) {
+                        if (mRecorderStartErrorTimes < 2) {
+                            handler.sendEmptyMessageDelayed(RESTART_RECORD_ONLY, 5000);
+                            mRecorderStartErrorTimes++;
+                        }else{
+                            logger.error("开启录像异常三次都不成功", e);
+                        }
+                        logger.error("开启录像异常", e);
+                    }
+                } else {
+                    stopRecord();
 
-                EventBus.getDefault().post(new DeviceEvent.Video(DeviceEvent.ON));
+                    prepareCamera();
 
-                isRecording = true;
-            } else {
-                stopRecord();
-
-                prepareCamera();
-
-                doStartPreview();
+                    doStartPreview();
+                }
+            } catch (Exception e) {
+                logger.error(e.getStackTrace().toString());
             }
 
             return null;
@@ -712,9 +735,9 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
                     doStartPreview();
                 }
-            } else if(action.equals(Constants.VOICE_STOP_LISTENING)||action.equals(Constants.VOICE_START_LISTENING)){
-                logger.error("接收广播，开启录像");
-                handler.sendEmptyMessageDelayed(1, 3000);
+            } else if (action.equals(Constants.VOICE_STOP_LISTENING) || action.equals(Constants.VOICE_START_LISTENING)) {
+                logger.debug("接收广播，开启录像");
+                handler.sendEmptyMessageDelayed(RESTART_RECORD_WITH_TIMER, 3000);
             }
         }
     }
@@ -752,14 +775,23 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         }
     }
 
-    private Handler handler = new Handler(){
+    private static final int RESTART_RECORD_WITH_TIMER = 1;
+
+    private static final int RESTART_RECORD_ONLY = 2;
+
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
-                case 1:
-                stopRecord();
-                startRecord();
-                break;
+            switch (msg.what) {
+                case RESTART_RECORD_WITH_TIMER:
+                    stopRecord();
+                    startRecord();
+                    break;
+                case RESTART_RECORD_ONLY:
+                    logger.debug("recoder.start重试");
+                    createVideoFragment();
+                    startMediaRecorder();
+                    break;
             }
         }
     };
