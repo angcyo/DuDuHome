@@ -34,10 +34,7 @@ import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
 import com.dudu.android.launcher.utils.DialogUtils;
-
 import com.dudu.android.launcher.utils.SharedPreferencesUtil;
-
-import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
@@ -46,7 +43,6 @@ import com.dudu.event.BleStateChange;
 import com.dudu.event.DeviceEvent;
 import com.dudu.init.InitManager;
 import com.dudu.map.NavigationClerk;
-import com.dudu.monitor.event.CarStatus;
 import com.dudu.monitor.utils.LocationUtils;
 import com.dudu.navi.event.NaviEvent;
 import com.dudu.voice.semantic.VoiceManager;
@@ -91,10 +87,10 @@ public class MainActivity extends BaseTitlebarActivity implements
         log_step = 0;
         super.onCreate(savedInstanceState);
 
-        initVideoService();
 
-        InitManager.getInstance(this).init();
-
+        if (InitManager.getInstance(this).init()) {
+            initVideoService();
+        }
 
         initDate();
 
@@ -147,7 +143,7 @@ public class MainActivity extends BaseTitlebarActivity implements
 //                }
 //                ToastUtils.showTip(!mRecordService.getisPreviewingOrRecording() ? "开火" : "熄火");
 
-                EventBus.getDefault().post(new CarStatus(CarStatus.CAR_ONLINE));
+//                EventBus.getDefault().post(new CarStatus(CarStatus.CAR_ONLINE));
                 proceedAgeTest();
                 return true;
             }
@@ -164,13 +160,12 @@ public class MainActivity extends BaseTitlebarActivity implements
                 intent.setComponent(new ComponentName("com.android.settings",
                         "com.android.settings.Settings"));
                 startActivity(intent);*/
-                EventBus.getDefault().post(new CarStatus(CarStatus.CAR_OFFLINE));
+//                EventBus.getDefault().post(new CarStatus(CarStatus.CAR_OFFLINE));
 
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName("com.android.settings",
                         "com.android.settings.Settings"));
                 startActivity(intent);
-
 
                 return true;
             }

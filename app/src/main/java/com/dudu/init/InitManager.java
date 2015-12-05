@@ -51,14 +51,13 @@ public class InitManager {
         return mInstance;
     }
 
-    public void init() {
+    public boolean init() {
         if (Utils.isDemoVersion(mActivity)) {
             initAfterBTFT();
-            return;
+            return true;
         }
 
-        checkBTFT();
-
+        return checkBTFT();
     }
 
     public void unInit() {
@@ -122,7 +121,7 @@ public class InitManager {
     /**
      * 工厂检测
      */
-    private void checkBTFT() {
+    private boolean checkBTFT() {
         SystemPropertiesProxy sps = SystemPropertiesProxy.getInstance();
         boolean need_bt = !"1".equals(sps.get("persist.sys.bt", "0"));
         boolean need_ft = !"1".equals(sps.get("persist.sys.ft", "0"));
@@ -132,10 +131,12 @@ public class InitManager {
         if ((need_bt || need_ft) && intent != null) {
             //close wifi ap for ft test
             WifiApAdmin.closeWifiAp(mActivity);
+
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                     | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
                     | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             mActivity.startActivity(intent);
+            return false;
         } else {
             // 关闭ADB调试端口
             if (!Utils.isDemoVersion(mActivity)) {
@@ -144,12 +145,13 @@ public class InitManager {
             }
 
             initAfterBTFT();
+            return true;
         }
     }
 
     private void initAfterBTFT() {
 
-        logger.debug("[init][{}]开启语音监听", log_step++);
+//        logger.debug("[init][{}]开启语音监听", log_step++);
 //        VoiceManager.getInstance().startWakeup();
 
         logger.debug("[init][{}]打开蓝牙", log_step++);
