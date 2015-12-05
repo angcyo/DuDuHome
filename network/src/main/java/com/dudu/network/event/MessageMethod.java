@@ -17,7 +17,7 @@ public class MessageMethod {
     public static final String SYNCONFIGURATION = "synConfiguration";// 33.4.3 流量策略配置同步
     public static final String LOGSUPLOAD = "logsUpload";                     // 3.6.1 发送日志文件
     public static final String PORTALUPDATE = "portalupdate";      //portal更新
-
+    public static final String PORTAL= "portal";      //portal更新
 
     //设备被动接收消息
     public static final String ACCESS = "access";                          // 接人指令  GPS（微信接口）

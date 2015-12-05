@@ -33,6 +33,12 @@ public class FlowSynConfigurationRes extends MessagePackage{
     private String  portalVersion;
     private String portalAddress;
 
+    //20151205加入新的字段
+    private String closeArlamValue;
+    private String flowFrequency;
+    private String gpsFrequency;
+    private String portalCountFrequency;
+
     @Override
     public void setMessageId(String messageId) {
 
@@ -87,6 +93,11 @@ public class FlowSynConfigurationRes extends MessagePackage{
             portalVersion= StringTools.GetStringValue("portalVersion", result);
             portalAddress= StringTools.GetStringValue("portalAddress", result);
 
+            //20151205加入新的字段
+            String closeArlamValue = StringTools.GetStringValue("closeArlamValue", result);
+            String flowFrequency = StringTools.GetStringValue("flowFrequency", result);
+            String gpsFrequency = StringTools.GetStringValue("gpsFrequency", result);
+            String portalCountFrequency = StringTools.GetStringValue("portalCountFrequency", result);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -165,5 +176,21 @@ public class FlowSynConfigurationRes extends MessagePackage{
 
     public String getPortalAddress() {
         return portalAddress;
+    }
+
+    public String getCloseArlamValue() {
+        return closeArlamValue;
+    }
+
+    public String getFlowFrequency() {
+        return flowFrequency;
+    }
+
+    public String getGpsFrequency() {
+        return gpsFrequency;
+    }
+
+    public String getPortalCountFrequency() {
+        return portalCountFrequency;
     }
 }

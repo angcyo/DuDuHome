@@ -8,28 +8,21 @@ import com.dudu.network.valueobject.ConnectionParam;
 import com.dudu.network.valueobject.ConnectionState;
 import com.dudu.network.valueobject.MessagePackage;
 import com.dudu.storage.Storage;
-import com.dudu.storage.core.IReadCallBack;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Created by dengjun on 2015/11/28.
- * Description :
+ * Description :  网络服务，处理消息发送，消息接收，网络不通时保存需要保存的消息
  */
 public class NetworkService implements IConnectCallBack {
     //阻塞队列，用于存放要发送的消息
@@ -90,7 +83,7 @@ public class NetworkService implements IConnectCallBack {
                     if (iConnection.isConnected()) {
                         sendMessageReal(messagePackageToSend);
                         if (messagePackageToSend.isNeedWaitResponse())
-                            waitResponse();
+                            waitResponse();//等待响应
                     }
                 } catch (Exception e) {
                     log.error("异常:" + e);

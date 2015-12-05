@@ -42,6 +42,7 @@ public class MessageHandler {
         mNetworkService = networkService;
     }
 
+    //处理收到的消息
     public void processReceivedMessage(JSONObject messageJsonObject){
         try {
             switch (messageJsonObject.getString("method")){
@@ -74,6 +75,9 @@ public class MessageHandler {
                     break;
                 case MessageMethod.PORTALUPDATE:
                     proPortalUpdateRes(messageJsonObject);
+                    break;
+                case MessageMethod.PORTAL:
+                    proGeneralResponse(messageJsonObject);
                     break;
 
 
@@ -199,6 +203,11 @@ public class MessageHandler {
 
         DuduLog.i("network-发出PortalUpdateRes事件");
         EventBus.getDefault().post(portalUpdateRes);
+    }
+
+    //
+    private void proPortalRes(JSONObject messageJsonObject){
+
     }
 
 
