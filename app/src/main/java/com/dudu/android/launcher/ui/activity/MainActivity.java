@@ -33,6 +33,7 @@ import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
 import com.dudu.android.launcher.utils.DialogUtils;
+import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
