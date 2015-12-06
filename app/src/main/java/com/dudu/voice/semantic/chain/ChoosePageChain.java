@@ -43,8 +43,7 @@ public class ChoosePageChain extends SemanticChain {
             getPageType(json);
             if(type!=0){
                 mVoiceManager.startUnderstanding();
-                NavigationClerk.getInstance().choosePage(type);
-                return  true;
+                return  NavigationClerk.getInstance().choosePage(type);
             }
         }
 

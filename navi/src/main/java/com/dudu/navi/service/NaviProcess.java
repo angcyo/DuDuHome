@@ -139,7 +139,7 @@ public class NaviProcess {
                 code = CALCULATEERROR;
             }
         }
-        Observable.timer(30, TimeUnit.SECONDS)
+        Observable.timer(20, TimeUnit.SECONDS)
                 .subscribe(new Action1<Long>() {
                     @Override
                     public void call(Long aLong) {
@@ -214,9 +214,7 @@ public class NaviProcess {
 
                 @Override
                 public void onCalculateRouteFailure(int arg0) {
-                    log.debug("[{}] 步行或者驾车路径规划失败", step++);
-                    navigationType = NavigationType.CALCULATEERROR;
-                    EventBus.getDefault().post(navigationType);
+
                 }
 
                 @Override

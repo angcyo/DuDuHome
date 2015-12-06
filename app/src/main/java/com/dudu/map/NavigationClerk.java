@@ -81,13 +81,8 @@ public class NavigationClerk {
 
         @Override
         public void run() {
-            if (navigationManager.getSearchType() == SearchType.SEARCH_DEFAULT) {
-                isShowAddress = false;
-                FloatWindowUtil.removeFloatWindow();
-                VoiceManager.getInstance().stopUnderstanding();
-            }
-            if (navigationManager.getNavigationType() != NavigationType.DEFAULT)
-                navigationManager.setIsNavigatining(true);
+            FloatWindowUtil.removeFloatWindow();
+            VoiceManager.getInstance().stopUnderstanding();
         }
     };
 
@@ -294,8 +289,6 @@ public class NavigationClerk {
                 }
             }
         }
-
-
     }
 
     public void onEventMainThread(NaviEvent.SearchResult event) {
@@ -371,15 +364,15 @@ public class NavigationClerk {
                                 SemanticConstants.TTS_START_UNDERSTANDING, true);
                     }
                 }, 200);
-                removeWindow(REMOVEWINDOW_TIME);
                 navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
+                removeWindow(REMOVEWINDOW_TIME);
                 break;
             case SEARCH_PLACE_LOCATION:
                 String playText = "您好，" + navigationManager.getKeyword() + "的位置为："
                         + navigationManager.getPoiResultList().get(0).getAddressDetial();
                 VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_START_UNDERSTANDING, true);
-                removeWindow(REMOVEWINDOW_TIME);
                 navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
+                removeWindow(REMOVEWINDOW_TIME);
                 return;
             case SEARCH_NEAREST:
                 SemanticProcessor.getProcessor().switchSemanticType(
@@ -616,8 +609,13 @@ public class NavigationClerk {
     }
 
     public void removeWindow(int t) {
-        if (navigationManager.isNavigatining())
-            mhandler.postDelayed(removeWindowRunnable, REMOVEWINDOW_TIME);
+        if (navigationManager.getNavigationType() != NavigationType.DEFAULT) {
+            navigationManager.setIsNavigatining(true);
+            if (navigationManager.getSearchType() == SearchType.SEARCH_DEFAULT) {
+                isShowAddress = false;
+                mhandler.postDelayed(removeWindowRunnable, REMOVEWINDOW_TIME);
+            }
+        }
     }
 
     private void intentActivity() {
