@@ -132,16 +132,13 @@ public class InitManager {
             //close wifi ap for ft test
             WifiApAdmin.closeWifiAp(mActivity);
 
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                    | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
-                    | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mActivity.startActivity(intent);
             return false;
         } else {
             // 关闭ADB调试端口
             if (!Utils.isDemoVersion(mActivity)) {
-                com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mActivity,
-                        "persist.sys.usb.config", "charging");
+                com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mActivity, "persist.sys.usb.config", "charging");
             }
 
             initAfterBTFT();
