@@ -163,9 +163,9 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
         }
 
         if (mSatellite > 0 && (!Monitor.getInstance(this).getCurrentLocation().getProvider().equals("lbs"))) {
-            mGpsSignalImage.setBackgroundResource(R.drawable.gps_signal_normal);
+            mGpsSignalImage.setImageResource(R.drawable.gps_signal_normal);
         } else {
-            mGpsSignalImage.setBackgroundResource(R.drawable.gps_signal_error);
+            mGpsSignalImage.setImageResource(R.drawable.gps_signal_error);
         }
     }
 

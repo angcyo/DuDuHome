@@ -60,7 +60,7 @@ public class AmapLocation implements AMapLocationListener, ILocation{
                     break;
                 // 卫星状态改变
                 case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
-//                    log.debug("卫星状态改变");
+                    log.trace("卫星状态改变");
                     EventBus.getDefault().post(locationManager.getGpsStatus(null));
                     break;
                 // 定位启动
