@@ -52,12 +52,8 @@ public class InitManager {
     }
 
     public boolean init() {
-        if (Utils.isDemoVersion(mActivity)) {
-            initAfterBTFT();
-            return true;
-        }
-
-        return checkBTFT();
+        initOthers();
+        return true;
     }
 
     public void unInit() {
@@ -119,12 +115,12 @@ public class InitManager {
     }
 
     /**
-     * 工厂检测
+     * 工厂检测,暂不做检测
      */
     private boolean checkBTFT() {
-//        SystemPropertiesProxy sps = SystemPropertiesProxy.getInstance();
-//        boolean need_bt = !"1".equals(sps.get("persist.sys.bt", "0"));
-//        boolean need_ft = !"1".equals(sps.get("persist.sys.ft", "0"));
+        SystemPropertiesProxy sps = SystemPropertiesProxy.getInstance();
+        boolean need_bt = !"1".equals(sps.get("persist.sys.bt", "0"));
+        boolean need_ft = !"1".equals(sps.get("persist.sys.ft", "0"));
         Intent intent;
         PackageManager packageManager = mActivity.getPackageManager();
         intent = packageManager.getLaunchIntentForPackage("com.qualcomm.factory");
@@ -136,17 +132,16 @@ public class InitManager {
             mActivity.startActivity(intent);
             return false;
         } else {
-            // 关闭ADB调试端口
-            if (!Utils.isDemoVersion(mActivity)) {
-                com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mActivity, "persist.sys.usb.config", "charging");
-            }
-
-            initAfterBTFT();
+            initOthers();
             return true;
         }
     }
 
-    private void initAfterBTFT() {
+    private void initOthers() {
+        // 关闭ADB调试端口
+        if (!Utils.isDemoVersion(mActivity)) {
+            com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mActivity, "persist.sys.usb.config", "charging");
+        }
 
 //        logger.debug("[init][{}]开启语音监听", log_step++);
 //        VoiceManager.getInstance().startWakeup();

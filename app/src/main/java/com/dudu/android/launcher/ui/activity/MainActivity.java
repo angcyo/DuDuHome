@@ -422,6 +422,8 @@ public class MainActivity extends BaseTitlebarActivity implements
             com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.nodog", "stop");
             //关闭热点
             WifiApAdmin.closeWifiAp(mActivity);
+            //关闭录像
+            mRecordService.stopCamera();
             PackageManager packageManager = MainActivity.this.getPackageManager();
             startActivity(new Intent(packageManager.getLaunchIntentForPackage("com.qualcomm.factory")));
         }
