@@ -242,19 +242,11 @@ public class SppManager {
                 mmSocket.connect();
             } catch (IOException e) {
                 log.warn("unable to connect：", e);
-
                 try {
-//                    log.debug("mmSocket  close");
-//                    mmSocket.close();
-                    Class<?>[] paramTypes = new Class<?>[] {Integer.TYPE};
-                    Method m = remoteDevice.getClass().getMethod("createRfcommSocket", paramTypes);
-                    Object[] params = new Object[] {Integer.valueOf(1)};
-                    mmSocket  = (BluetoothSocket) m.invoke(remoteDevice, params);
-                    Thread.sleep(500);
-                    mmSocket.connect();
-                } catch (Exception e2) {
+                    mmSocket.close();
+                } catch (IOException e1) {
                     log.warn("unable to close() " + mSocketType +
-                            " socket during connection failure", e2);
+                            " socket during connection failure", e1);
                 }
                 connectionFailed();
                 return;
@@ -335,4 +327,15 @@ public class SppManager {
         }
     }
 
+    public void disableBluetooth(){
+        if(mAdapter!=null&&mAdapter.enable()){
+            mAdapter.disable();
+        }
+    }
+
+    public void enableBluetooth(){
+        if(mAdapter!=null&&!mAdapter.isEnabled()){
+            mAdapter.enable();
+        }
+    }
 }

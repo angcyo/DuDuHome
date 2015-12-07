@@ -48,25 +48,23 @@ public class PodOBD {
         EventBus.getDefault().post(new Event.Connect(device.getAddress(), Event.ConnectType.SPP, false));
     }
 
-//    public void onEventBackgroundThread(EventRead.L1ReadDone event) {
-//        final byte[] data = event.getData();
-//        try {
-//            log.debug("Receive OBD Data: = {}", new String(data, "UTF-8"));
-//        } catch (Exception e) {
-//            log.error("OBD Parse exception", e);
-//            e.printStackTrace();
-//        }
-//    }
-
     public void onEvent(Event.Disconnected event){
 
         log.debug("spp bluetooth Disconnected");
         EventBus.getDefault().post(new BleStateChange(BleStateChange.BLEDISCONNECTED));
-        Observable.timer(1, TimeUnit.MINUTES)
+        EventBus.getDefault().post(new Event.BluetoothDisable());
+        Observable.timer(10, TimeUnit.SECONDS)
                 .subscribe(new Action1<Long>() {
                     @Override
                     public void call(Long aLong) {
-                        EventBus.getDefault().post(new Event.StartScanner());
+                        EventBus.getDefault().post(new Event.BluetoothEnable());
+                        Observable.timer(10, TimeUnit.SECONDS)
+                                .subscribe(new Action1<Long>() {
+                                    @Override
+                                    public void call(Long aLong) {
+                                        EventBus.getDefault().post(new Event.StartScanner());
+                                    }
+                                });
                     }
                 });
     }

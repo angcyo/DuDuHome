@@ -192,7 +192,6 @@ public class Event {
         }
     }
 
-    // FIXME: 15/9/6 rename to Connect
     public static class UsbConnect {
     }
 
@@ -205,4 +204,12 @@ public class Event {
     public static class SPIConnected {
     }
 
+
+    public static class BluetoothDisable{
+
+    }
+
+    public static class BluetoothEnable{
+
+    }
 }

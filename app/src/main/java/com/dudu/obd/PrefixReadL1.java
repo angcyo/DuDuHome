@@ -30,7 +30,6 @@ public class PrefixReadL1 {
     public void onEventBackgroundThread(EventRead.L0ReadDone event) {
         fifo.add(event);
         if (!processing) {
-//            processHead();
             processObdData(event.getData());
         }
     }
@@ -133,13 +132,10 @@ public class PrefixReadL1 {
 
     StringBuffer stringBuffer = new StringBuffer();
     private void processObdData(byte[] dataArray){
-        DuduLog.d("收到数据二进制：" + ByteTools.bytesToHexString(dataArray));
         try {
             String dataString = new String(dataArray, "UTF-8");
-            DuduLog.d("收到数据11111：" + dataString);
             stringBuffer.append(dataString);
             if(stringBuffer.toString().endsWith("\n")){
-                DuduLog.d("收到数据22222：" + stringBuffer.toString());
                 praseData(stringBuffer.toString());
                 stringBuffer.delete(0, stringBuffer.length() - 1);
             }
@@ -153,7 +149,6 @@ public class PrefixReadL1 {
         if (obdDataArray.length <= 0)
             return;
         for (int i= 0; i < obdDataArray.length; i++){
-            DuduLog.d("收到数据------：" + (obdDataArray[i]));
             EventBus.getDefault().post(new EventRead.L1ReadDone(obdDataArray[i].getBytes()));
         }
 

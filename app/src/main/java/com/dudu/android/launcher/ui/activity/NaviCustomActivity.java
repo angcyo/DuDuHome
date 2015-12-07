@@ -71,11 +71,19 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 
     private String playText;
 
+    private Runnable buttonRunnable = new Runnable() {
+        @Override
+        public void run() {
+            buttonAnimation();
+        }
+    };
+
     @Override
     public int initContentView() {
         return R.layout.activity_navicustom;
 
     }
+
 
     @Override
     public void initView(Bundle savedInstanceState) {
@@ -109,21 +117,23 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
     @Override
     public void initDatas() {
         mHandler = new Handler();
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                ViewAnimation.startAnimation(back_button, back_button.getVisibility() == View.VISIBLE
-                        ? R.anim.back_key_disappear : R.anim.back_key_appear, NaviCustomActivity.this);
-            }
-        }, 3000);
+        mHandler.postDelayed(buttonRunnable,3000);
 
         mAmapAMapNaviView.getMap().setOnMapClickListener(new AMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                ViewAnimation.startAnimation(back_button, back_button.getVisibility() == View.VISIBLE
-                        ? R.anim.back_key_disappear : R.anim.back_key_appear, NaviCustomActivity.this);
+                if(back_button.getVisibility()==View.VISIBLE)
+                    return;
+                mHandler.removeCallbacks(buttonRunnable);
+                mHandler.postDelayed(buttonRunnable,3000);
             }
         });
+    }
+
+
+    private void buttonAnimation(){
+        ViewAnimation.startAnimation(back_button, back_button.getVisibility() == View.VISIBLE
+                ? R.anim.back_key_disappear : R.anim.back_key_appear, NaviCustomActivity.this);
     }
 
     /**
@@ -145,14 +155,13 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         viewOptions.setTrafficLayerEnabled(true);
         viewOptions.setTrafficLine(true);
         viewOptions.setLeaderLineEnabled(Color.RED);
+        viewOptions.setCrossDisplayShow(false);
+        viewOptions.setCrossDisplayEnabled(false);
         int time = Integer.parseInt(TimeUtils.format(TimeUtils.format6));
         if(time>18||time<5)
             viewOptions.setNaviNight(true);
         mAmapAMapNaviView.setViewOptions(viewOptions);
         mAmapAMapNaviView.getMap().setTrafficEnabled(true);
-
-
-
     }
 
     // 全程预览
@@ -217,7 +226,6 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 
         }
     }
-
 
 
     /**
