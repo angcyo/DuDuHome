@@ -49,6 +49,9 @@ public class SppManager {
     private String mac;
 
     private Context mContext;
+
+    private boolean isConnected = false;
+
     public SppManager(Context context) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mState = STATE_NONE;
@@ -72,10 +75,12 @@ public class SppManager {
                 log.debug("onReceive connected to device");
                 EventBus.getDefault().post(new Event.SPPInitOutStream(mmOutStream));
                 EventBus.getDefault().post(new Event.BTConnected(remoteDevice.getName(), remoteDevice.getAddress()));
+                isConnected = true;
                 break;
             default:
                 log.debug("onReceive Disconnect from device,error : ConnectInvokeFail");
                 EventBus.getDefault().post(new Event.Disconnected(Event.ErrorCode.ConnectInvokeFail));
+                isConnected = false;
                 break;
         }
     }
@@ -96,13 +101,13 @@ public class SppManager {
 
         if (mConnectThread != null) {
             log.debug("Cancel any thread attempting to make a connection");
-            mConnectThread.cancel();
+            mConnectThread.interrupt();
             mConnectThread = null;
         }
 
         if (mConnectedThread != null) {
             log.debug("Cancel any thread currently running a connection");
-            mConnectedThread.cancel();
+            mConnectedThread.interrupt();
             mConnectedThread = null;
         }
 
@@ -187,6 +192,7 @@ public class SppManager {
     private void connectionLost() {
         log.debug("sppManager connectionLost");
         SppManager.this.start();
+        EventBus.getDefault().post(new Event.Disconnected(Event.ErrorCode.DeviceDisConnected));
     }
 
 
@@ -292,7 +298,7 @@ public class SppManager {
             log.info( "BEGIN mConnectedThread--Keep listening to the InputStream while connected");
             int bytes;
             byte[] buffer = new byte[MAX_SIZE];
-            while (true) {
+            while (isConnected) {
                 try {
                     bytes = mmInStream.read(buffer);
                     byte[] mResponseData = new byte[bytes];
@@ -300,6 +306,7 @@ public class SppManager {
                     EventBus.getDefault().post(new EventRead.L0ReadDone(mResponseData));
                 } catch (Exception e) {
                     log.warn("disconnected", e);
+                    isConnected = false;
                     connectionLost();
                 }
             }

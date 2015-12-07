@@ -34,32 +34,36 @@ public class SppConnectMain {
 
     public void onEvent(Event.StartScanner event) {
         log.debug("pod obd StartScanner");
-
+        if (null == sppScanner) {
+            sppScanner = new SppScanner(mContext);
+        }
         Observable.timer(2, TimeUnit.MINUTES)
                 .subscribe(new Action1<Long>() {
                     @Override
                     public void call(Long aLong) {
                         if (sppManager.getState() != SppManager.STATE_CONNECTED) {
                             log.debug("spp scan time out");
-                            sppScanner.stopScan();
-                            sppScanner.broadRegister = false;
-                            EventBus.getDefault().post(new
-                                    Event.Disconnected(Event.ErrorCode.ScanInvokeFail));
+                            try {
+                                EventBus.getDefault().post(new
+                                        Event.Disconnected(Event.ErrorCode.ScanInvokeFail));
+                                sppScanner.broadRegister = false;
+                                sppScanner.stopScan();
+                            } catch (Exception e) {
+                                log.debug("time out error",e);
+                            }
+
                         }
 
                     }
                 });
 
-        if(!TextUtils.isEmpty(BluetoothMacUtil.getMac(mContext))){
+        if (!TextUtils.isEmpty(BluetoothMacUtil.getMac(mContext))) {
 
             onEvent(new Event.Connect(BluetoothMacUtil.getMac(mContext),
                     Event.ConnectType.SPP, false));
             return;
         }
 
-        if (null == sppScanner) {
-            sppScanner = new SppScanner(mContext);
-        }
         if (!sppScanner.broadRegister) {
             sppScanner.initScan();
             sppScanner.broadRegister = true;
@@ -106,21 +110,16 @@ public class SppConnectMain {
         sppManager.write(event.data);
     }
 
-    public void onEvent(Event.BluetoothDisable event){
+    public void onEvent(Event.BluetoothDisable event) {
         log.debug("bluetooth disable");
-       sppManager.disableBluetooth();
+        sppManager.disableBluetooth();
 
     }
 
-    public void onEvent(Event.BluetoothEnable event){
+    public void onEvent(Event.BluetoothEnable event) {
         log.debug("bluetooth enable");
         sppManager.enableBluetooth();
 
     }
 
-    public void onEvent(Event.Reconnect event){
-        log.debug("bluetooth reconnect");
-        onEvent(new Event.Connect(BluetoothMacUtil.getMac(mContext),
-                Event.ConnectType.SPP, false));
-    }
 }

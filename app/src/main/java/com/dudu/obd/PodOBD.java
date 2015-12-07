@@ -52,7 +52,7 @@ public class PodOBD {
     }
 
     public void onEvent(Event.Disconnected event){
-
+        hasData = false;
         log.debug("spp bluetooth Disconnected");
         EventBus.getDefault().post(new BleStateChange(BleStateChange.BLEDISCONNECTED));
         EventBus.getDefault().post(new Event.BluetoothDisable());
