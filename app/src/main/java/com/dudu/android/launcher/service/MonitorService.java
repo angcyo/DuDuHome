@@ -54,7 +54,7 @@ public class MonitorService extends Service {
 
         mContext = this;
 
-        WAKE_INTERVAL_MS = Integer.valueOf(SharedPreferencesUtil.getStringValue(mContext, Constants.KEY_FLOW_FREQUENCY, "30000")) * 1000;
+        WAKE_INTERVAL_MS = Integer.valueOf(SharedPreferencesUtil.getStringValue(mContext, Constants.KEY_FLOW_FREQUENCY, "30")) * 1000;
 
         mOldMobileRx = TrafficStats.getMobileRxBytes() / 1024;
         mOldMobileTx = TrafficStats.getMobileTxBytes() / 1024;
