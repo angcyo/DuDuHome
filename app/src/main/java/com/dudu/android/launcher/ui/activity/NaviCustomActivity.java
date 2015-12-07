@@ -13,7 +13,6 @@ import android.widget.Button;
 
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
-import com.amap.api.maps.model.LatLng;
 import com.amap.api.navi.AMapNavi;
 import com.amap.api.navi.AMapNaviView;
 import com.amap.api.navi.AMapNaviViewListener;
@@ -117,21 +116,27 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
     @Override
     public void initDatas() {
         mHandler = new Handler();
-        mHandler.postDelayed(buttonRunnable,3000);
 
-        mAmapAMapNaviView.getMap().setOnMapClickListener(new AMap.OnMapClickListener() {
+        mAmapAMapNaviView.getMap().setOnMapTouchListener(new AMap.OnMapTouchListener() {
             @Override
-            public void onMapClick(LatLng latLng) {
-                if(back_button.getVisibility()==View.VISIBLE)
-                    return;
-                mHandler.removeCallbacks(buttonRunnable);
-                mHandler.postDelayed(buttonRunnable,3000);
+            public void onTouch(MotionEvent motionEvent) {
+                backButtonAutoHide();
+                mAmapAMapNaviView.onTouch(motionEvent);
             }
         });
     }
 
+    private void backButtonAutoHide() {
+        if(back_button.getVisibility() != View.VISIBLE) {
+            buttonAnimation();
+        }
 
-    private void buttonAnimation(){
+        mHandler.removeCallbacks(buttonRunnable);
+        mHandler.postDelayed(buttonRunnable,3000);
+    }
+
+
+    private void buttonAnimation() {
         ViewAnimation.startAnimation(back_button, back_button.getVisibility() == View.VISIBLE
                 ? R.anim.back_key_disappear : R.anim.back_key_appear, NaviCustomActivity.this);
     }
@@ -340,6 +345,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         }
         mAmapAMapNaviView.onResume();
 
+        backButtonAutoHide();
     }
 
     @Override
