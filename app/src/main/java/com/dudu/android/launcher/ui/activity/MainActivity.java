@@ -33,10 +33,8 @@ import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
-import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.DialogUtils;
 import com.dudu.android.launcher.utils.SharedPreferencesUtil;
-import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WeatherIconsUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
@@ -46,7 +44,6 @@ import com.dudu.event.DeviceEvent;
 import com.dudu.event.ListenerResetEvent;
 import com.dudu.init.InitManager;
 import com.dudu.map.NavigationClerk;
-import com.dudu.monitor.event.CarStatus;
 import com.dudu.monitor.utils.LocationUtils;
 import com.dudu.navi.event.NaviEvent;
 import com.dudu.voice.semantic.VoiceManager;
@@ -62,8 +59,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import de.greenrobot.event.EventBus;
-
-import static com.dudu.android.launcher.utils.ToastUtils.*;
 
 
 public class MainActivity extends BaseTitlebarActivity implements
@@ -150,19 +145,22 @@ public class MainActivity extends BaseTitlebarActivity implements
 
         mVideoButton.setOnClickListener(this);
         mNavigationButton.setOnClickListener(this);
-        mDiDiButton.setOnLongClickListener(new OnLongClickListener() {
 
-            @Override
-            public boolean onLongClick(View v) {
+        if (Utils.isDemoVersion(this)) {
+            mDiDiButton.setOnLongClickListener(new OnLongClickListener() {
 
-                Intent intent = new Intent();
-                intent.setComponent(new ComponentName("com.android.settings",
-                        "com.android.settings.Settings"));
-                startActivity(intent);
+                @Override
+                public boolean onLongClick(View v) {
 
-                return true;
-            }
-        });
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName("com.android.settings",
+                            "com.android.settings.Settings"));
+                    startActivity(intent);
+
+                    return true;
+                }
+            });
+        }
     }
 
     private void initTaxiView() {
@@ -392,8 +390,8 @@ public class MainActivity extends BaseTitlebarActivity implements
             VoiceManager.getInstance().stopWakeup();
             VoiceManager.getInstance().destroyWakeup();
             VoiceManager.getInstance().setIsListening(false);
-            handler.sendEmptyMessageDelayed(RECORDSERVICE_RESET_VOICE,1000);
-        } else if (event.getListenerStatus() == ListenerResetEvent.LISTENER_ON){
+            handler.sendEmptyMessageDelayed(RECORDSERVICE_RESET_VOICE, 1000);
+        } else if (event.getListenerStatus() == ListenerResetEvent.LISTENER_ON) {
             log_init.debug("收到开启语音通知");
             VoiceManager.getInstance().setIsListening(true);
             mRecordService.resetVoice();
