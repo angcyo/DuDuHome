@@ -249,6 +249,7 @@ public class MainActivity extends BaseTitlebarActivity implements
                     startCameraAndCloseListener();
                     break;
                 case START_VOICE_LINETER:
+                    VoiceManager.getInstance().setOpening(true);
                     VoiceManager.getInstance().startVoiceLineter();
                     break;
             }

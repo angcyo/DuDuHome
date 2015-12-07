@@ -456,6 +456,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
         }else{
             mHandler.removeMessages(1);
         }
+        VoiceManager.getInstance().setOpening(false);
         removeHasCalled = false;
     }
 

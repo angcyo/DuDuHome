@@ -235,8 +235,6 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_MEDIA_MOUNTED);
         intentFilter.addAction(Intent.ACTION_MEDIA_REMOVED);
-        intentFilter.addAction(Constants.VOICE_START_LISTENING);
-        intentFilter.addAction(Constants.VOICE_STOP_LISTENING);
         intentFilter.addDataScheme("file");
         registerReceiver(mTFlashCardReceiver, intentFilter);
     }
@@ -735,9 +733,6 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
                     doStartPreview();
                 }
-            } else if (action.equals(Constants.VOICE_STOP_LISTENING) || action.equals(Constants.VOICE_START_LISTENING)) {
-                logger.debug("接收广播，开启录像");
-                handler.sendEmptyMessageDelayed(RESTART_RECORD_WITH_TIMER, 3000);
             }
         }
     }

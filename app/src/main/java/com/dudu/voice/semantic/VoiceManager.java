@@ -77,12 +77,7 @@ public class VoiceManager {
      */
     private int mMisunderstandCount = 0;
 
-    private Handler mHandler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            opening = false;
-        }
-    };
+    private Handler mHandler;
 
     private boolean mShowMessageWindow = true;
 
@@ -168,24 +163,6 @@ public class VoiceManager {
             isListening = true;
         }
 
-    }
-
-    public void startLinteningBroadcast(Context context) {
-        Intent intent = new Intent(Constants.VOICE_START_LISTENING);
-        try {
-            context.sendBroadcast(intent);
-        } catch (ActivityNotFoundException exception) {
-            log.error(exception.toString());
-        }
-    }
-
-    public void stopLinteningBroadcast(Context context) {
-        Intent intent = new Intent(Constants.VOICE_STOP_LISTENING);
-        try {
-            context.sendBroadcast(intent);
-        } catch (ActivityNotFoundException exception) {
-            log.error(exception.toString());
-        }
     }
 
     public void stopWakeup() {
@@ -575,9 +552,8 @@ public class VoiceManager {
         this.isListening = isListening;
     }
 
-    public void setOpening(){
-        this.opening = true;
-        mHandler.sendEmptyMessageDelayed(1,500);
+    public void setOpening(boolean opening){
+        this.opening = opening;
     }
 
     public boolean getOpening(){
