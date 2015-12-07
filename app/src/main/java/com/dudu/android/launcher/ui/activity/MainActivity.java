@@ -425,7 +425,7 @@ public class MainActivity extends BaseTitlebarActivity implements
             PackageManager packageManager = MainActivity.this.getPackageManager();
             startActivity(new Intent(packageManager.getLaunchIntentForPackage("com.qualcomm.factory")));
         }
-        if (e2.getX() - e1.getX() > 400 && e1.getY() - e2.getY() > 400) {
+        if (e2.getX() - e1.getX() > 400 && e1.getY() - e2.getY() > 360) {
             com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.usb.config", "diag,serial_smd,rmnet_bam,adb");
         }
         return true;
