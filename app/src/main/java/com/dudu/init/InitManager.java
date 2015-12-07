@@ -122,13 +122,13 @@ public class InitManager {
      * 工厂检测
      */
     private boolean checkBTFT() {
-        SystemPropertiesProxy sps = SystemPropertiesProxy.getInstance();
-        boolean need_bt = !"1".equals(sps.get("persist.sys.bt", "0"));
-        boolean need_ft = !"1".equals(sps.get("persist.sys.ft", "0"));
+//        SystemPropertiesProxy sps = SystemPropertiesProxy.getInstance();
+//        boolean need_bt = !"1".equals(sps.get("persist.sys.bt", "0"));
+//        boolean need_ft = !"1".equals(sps.get("persist.sys.ft", "0"));
         Intent intent;
         PackageManager packageManager = mActivity.getPackageManager();
         intent = packageManager.getLaunchIntentForPackage("com.qualcomm.factory");
-        if ((need_bt || need_ft) && intent != null) {
+        if (intent != null) {
             //close wifi ap for ft test
             WifiApAdmin.closeWifiAp(mActivity);
 
