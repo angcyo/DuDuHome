@@ -25,6 +25,9 @@ public class PodOBD {
     private Logger log;
     private Context mContext;
     private PrefixReadL1 readL1;
+
+    private boolean hasData = false;
+
     public PodOBD(){
         log = LoggerFactory.getLogger("obd.pod.spp");
         readL1 = new PrefixReadL1();
@@ -72,6 +75,20 @@ public class PodOBD {
     public void onEvent(Event.BTConnected event){
         log.debug("spp bluetooth BTConnected");
         EventBus.getDefault().post(new BleStateChange(BleStateChange.BLECONNECTED));
+
+        Observable.timer(30, TimeUnit.SECONDS)
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        if(!hasData){
+                            EventBus.getDefault().post(new Event.Reconnect());
+                        }
+                    }
+                });
+    }
+
+    public void onEvent(EventRead.L1ReadDone event){
+        hasData = true;
     }
 
 }

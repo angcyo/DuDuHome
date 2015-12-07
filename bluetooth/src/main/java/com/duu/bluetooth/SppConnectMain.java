@@ -118,4 +118,9 @@ public class SppConnectMain {
 
     }
 
+    public void onEvent(Event.Reconnect event){
+        log.debug("bluetooth reconnect");
+        onEvent(new Event.Connect(BluetoothMacUtil.getMac(mContext),
+                Event.ConnectType.SPP, false));
+    }
 }

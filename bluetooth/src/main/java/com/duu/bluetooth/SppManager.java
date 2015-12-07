@@ -239,6 +239,8 @@ public class SppManager {
                 }
             }*/
             try {
+                if(mmSocket.isConnected())
+                    mmSocket.close();
                 mmSocket.connect();
             } catch (IOException e) {
                 log.warn("unable to connect：", e);
@@ -254,8 +256,8 @@ public class SppManager {
             synchronized (SppManager.this) {
                 mConnectThread = null;
             }
-            BluetoothMacUtil.saveMac(mContext,mac);
             connected(mmSocket, mSocketType);
+            BluetoothMacUtil.saveMac(mContext, mac);
         }
 
         public void cancel() {

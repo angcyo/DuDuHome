@@ -212,4 +212,8 @@ public class Event {
     public static class BluetoothEnable{
 
     }
+
+    public static class Reconnect{
+
+    }
 }
