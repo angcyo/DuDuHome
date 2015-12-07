@@ -122,7 +122,7 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
     }
 
     private void setSimLevel(int level) {
-        if(!isCanUseSim()) {
+        if (!isCanUseSim()) {
             return;
         }
 
@@ -143,7 +143,7 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String type = NetworkUtils.getCurrentNetworkType(mContext);
-            if (type.equals("4G")) {
+            if (type.equals("2G") || type.equals("3G") || type.equals("4G")) {
                 mSignalTextView.setText(type);
                 mSignalImage.setVisibility(View.VISIBLE);
             } else {
