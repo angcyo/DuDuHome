@@ -10,7 +10,6 @@ import android.hardware.Camera;
 import android.media.AudioManager;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
-import android.media.MediaRecorder.OnErrorListener;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Handler;
@@ -41,7 +40,6 @@ import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.DeviceIDUtil;
 import com.dudu.android.launcher.utils.FileNameUtil;
 import com.dudu.android.launcher.utils.FileUtils;
-import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.ViewAnimation;
@@ -50,7 +48,6 @@ import com.dudu.event.DeviceEvent;
 import com.dudu.http.MultipartRequest;
 import com.dudu.http.MultipartRequestParams;
 import com.dudu.monitor.event.CarStatus;
-import com.dudu.obd.BleOBD;
 import com.dudu.voice.semantic.VoiceManager;
 
 import org.slf4j.Logger;
@@ -58,7 +55,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -132,6 +128,8 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     private Camera.Parameters mCameraParams;
 
     private AudioManager audiomanager;
+
+    private boolean isFirst = true;
 
     /**
      * 录像开始错误重试次数，
@@ -298,28 +296,15 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         new MediaPrepareTask().execute();
     }
 
-    public void stopAndReleaseCamera() {
-        if (camera != null) {
-                try {
-
-                    //camera.setPreviewCallback(null);
-                    camera.lock();
-                    camera.stopPreview();
-                    camera.release();
-                    camera = null;
-                } catch (Exception e) {
-                    logger.error("相机释放出错了：" + e.getMessage());
-
-                }
-            }
-    }
-
     public void stopRecord() {
         if (!isPreviewingOrRecording) {
             return;
         }
 
+        handler.removeMessages(RESTART_RECORD_ONLY);
+
         isPreviewingOrRecording = false;
+
         logger.debug("调用stopRecord方法，停止录像...");
 
         stopRecordTimer();
@@ -452,6 +437,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         mCameraParams.setPreviewSize(854, 480);
         mCameraParams.setPictureSize(1280, 720);
         camera.setParameters(mCameraParams);
+        camera.setErrorCallback(null);
         camera.setErrorCallback(new Camera.ErrorCallback() {
             @Override
             public void onError(int error, Camera camera) {
@@ -470,43 +456,34 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
     private boolean prepareMediaRecorder() {
         if (camera == null) {
+            logger.debug("准备相机: prepareCamera is called!");
             prepareCamera();
         }
 
         camera.unlock();
 
         mediaRecorder = new MediaRecorder();
-        mediaRecorder.setOnErrorListener(new OnErrorListener() {
-            @Override
-            public void onError(MediaRecorder mr, int what, int extra) {
-                try {
-                    if (mr != null)
-                        mr.reset();
-                } catch (Exception e) {
-                    logger.error("mediaRecorder 出错了：" + e.getMessage());
-                }
-            }
-        });
-
+        mediaRecorder.setOnErrorListener(null);
         mediaRecorder.setPreviewDisplay(surfaceHolder.getSurface());
         mediaRecorder.setCamera(camera);
-        if (!VoiceManager.isWakeup()) {
+        if (isFirst || !VoiceManager.isUnderstandingOrSpeaking()) {
             mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         }
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         CamcorderProfile profile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
-//        mediaRecorder.setVideoSize(640, 480);
 
         if (profile.videoBitRate > 2 * 1024 * 1024)
             mediaRecorder.setVideoEncodingBitRate(2 * 1024 * 1024);
         else
             mediaRecorder.setVideoEncodingBitRate(profile.videoBitRate);
-
-        if (!VoiceManager.isWakeup()) {
+        if (isFirst || !VoiceManager.isUnderstandingOrSpeaking()) {
             mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         }
+
+        isFirst = false;
+
         mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
 
         videoName = dateFormat.format(new Date()) + ".mp4";
@@ -683,10 +660,12 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
                         isRecording = true;
                         mRecorderStartErrorTimes = 0;
                     } catch (Exception e) {
+                        stopRecord();
+
                         if (mRecorderStartErrorTimes < 2) {
                             handler.sendEmptyMessageDelayed(RESTART_RECORD_ONLY, 5000);
                             mRecorderStartErrorTimes++;
-                        }else{
+                        } else {
                             logger.error("开启录像异常三次都不成功", e);
                         }
                         logger.error("开启录像异常", e);
@@ -799,8 +778,6 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
             stopRecord();
 
-//            VoiceManager.getInstance().startWakeup();
-
             prepareCamera();
 
             doStartPreview();
@@ -808,19 +785,9 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
             logger.debug("接收到点火的消息...");
 
             isDrivingCar = true;
-            try {
-//                VoiceManager.getInstance().stopWakeup();
-            } catch (Exception e) {
-
-            }
 
             startRecord();
-
         }
-    }
-    public void stopRecordService(){
-        releaseMediaRecorder();
-        releaseCamera();
     }
 
     private void toggleAnimation() {
@@ -829,14 +796,5 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         ViewAnimation.startAnimation(localVideo, localVideo.getVisibility() == View.VISIBLE ?
                 R.anim.camera_image_disappear : R.anim.camera_image_apear, this);
     }
-
-    public void setShowing(boolean isShowing) {
-        this.isShowing = isShowing;
-    }
-
-    public boolean getisPreviewingOrRecording() {
-        return isPreviewingOrRecording;
-    }
-
 
 }

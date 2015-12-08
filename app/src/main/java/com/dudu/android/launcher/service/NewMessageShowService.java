@@ -34,6 +34,7 @@ import com.dudu.android.launcher.utils.FloatWindow.FloatVoiceChangeCallBack;
 import com.dudu.android.launcher.utils.FloatWindow.MessageShowCallBack;
 import com.dudu.android.launcher.utils.FloatWindow.RemoveFloatWindowCallBack;
 import com.dudu.android.launcher.utils.FloatWindow.StrategyChooseCallBack;
+import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.event.ListenerResetEvent;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.SemanticType;
@@ -176,7 +177,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
                 log_init.debug("三秒内没有重新打开窗口");
                 EventBus.getDefault().post(new ListenerResetEvent(ListenerResetEvent.LISTENER_OFF));
                 removeHasCalled = false;
-            }else{
+            } else {
                 log_init.debug("三秒内没有已经被打开窗口");
             }
         }
@@ -418,8 +419,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
             @Override
             public void run() {
                 if (floatWindowLayout != null && windowManager != null && isShowWindow) {
-                    removeHasCalled = true;
-                    mHandler.sendEmptyMessageDelayed(1, 3000);
+                    EventBus.getDefault().post(new ListenerResetEvent(ListenerResetEvent.LISTENER_OFF));
                     windowManager.removeView(floatWindowLayout);
                 }
                 isShowWindow = false;
@@ -428,9 +428,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
                 if (!list.isEmpty())
                     list.clear();
             }
-        }
-
-                , 100);
+        }, 100);
     }
 
     @Override
@@ -446,18 +444,9 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
         isShowWindow = true;
     }
 
-    private void showWindowCallback(){
-        log_init.debug("打开窗口");
-        if (removeHasCalled == false) {
-            log_init.debug("三秒内被打开窗口");
-            if(!VoiceManager.getInstance().getOpening()) {
-                EventBus.getDefault().post(new ListenerResetEvent(ListenerResetEvent.LISTENER_ON));
-            }
-        }else{
-            mHandler.removeMessages(1);
-        }
-        VoiceManager.getInstance().setOpening(false);
-        removeHasCalled = false;
+    private void showWindowCallback() {
+        log_init.error("调用显示window的回调");
+        EventBus.getDefault().post(new ListenerResetEvent(ListenerResetEvent.LISTENER_ON));
     }
 
 }

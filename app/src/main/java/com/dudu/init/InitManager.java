@@ -58,7 +58,6 @@ public class InitManager {
 
     public void unInit() {
         VoiceManager.getInstance().stopUnderstanding();
-        VoiceManager.getInstance().destroyWakeup();
     }
 
     /**
@@ -142,9 +141,6 @@ public class InitManager {
         if (!Utils.isDemoVersion(mActivity)) {
             com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mActivity, "persist.sys.usb.config", "charging");
         }
-
-//        logger.debug("[init][{}]开启语音监听", log_step++);
-//        VoiceManager.getInstance().startWakeup();
 
         logger.debug("[init][{}]打开蓝牙", log_step++);
         openBlueTooth();

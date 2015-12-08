@@ -223,9 +223,11 @@ public class MainActivity extends BaseTitlebarActivity implements
 
             case R.id.voice_button:
                 log_init.debug("点击语音按钮");
-                VoiceManager.getInstance().setIsListening(true);
-                mRecordService.resetVoice();
-                handler.sendEmptyMessageDelayed(START_VOICE_LINETER, 500);
+                if (VoiceManager.getInstance().isUnderstandingOrSpeaking()) {
+                    return;
+                }
+
+                EventBus.getDefault().post(new ListenerResetEvent(ListenerResetEvent.LISTENER_ON_HELLO));
                 break;
         }
     }
@@ -234,7 +236,7 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     private static final int START_CAMERA_AND_CLOSE_LISTENER = 2;
 
-    private static final int START_VOICE_LINETER = 3;
+    private static final int START_VOICE_SERVICE = 3;
 
     Handler handler = new Handler() {
         @Override
@@ -246,9 +248,10 @@ public class MainActivity extends BaseTitlebarActivity implements
                 case START_CAMERA_AND_CLOSE_LISTENER:
                     startCameraAndCloseListener();
                     break;
-                case START_VOICE_LINETER:
-                    VoiceManager.getInstance().setOpening(true);
-                    VoiceManager.getInstance().startVoiceLineter();
+                case START_VOICE_SERVICE:
+                    VoiceManager.getInstance().startVoiceService();
+
+                    mRecordService.startRecord();
                     break;
             }
         }
@@ -387,15 +390,21 @@ public class MainActivity extends BaseTitlebarActivity implements
     public void onEventMainThread(ListenerResetEvent event) {
         if (event.getListenerStatus() == ListenerResetEvent.LISTENER_OFF) {
             log_init.debug("收到关闭语音通知");
-            VoiceManager.getInstance().stopWakeup();
-            VoiceManager.getInstance().destroyWakeup();
-            VoiceManager.getInstance().setIsListening(false);
-            handler.sendEmptyMessageDelayed(RECORDSERVICE_RESET_VOICE, 1000);
+
+            VoiceManager.getInstance().stopUnderstanding();
+
+            VoiceManager.getInstance().setUnderstandingOrSpeaking(false);
+
+            handler.sendEmptyMessageDelayed(RECORDSERVICE_RESET_VOICE, 500);
         } else if (event.getListenerStatus() == ListenerResetEvent.LISTENER_ON) {
             log_init.debug("收到开启语音通知");
-            VoiceManager.getInstance().setIsListening(true);
+            VoiceManager.setUnderstandingOrSpeaking(true);
             mRecordService.resetVoice();
-            handler.sendEmptyMessageDelayed(START_VOICE_LINETER, 500);
+        } else if (event.getListenerStatus() == ListenerResetEvent.LISTENER_ON_HELLO) {
+            VoiceManager.setUnderstandingOrSpeaking(true);
+//            mRecordService.resetVoice();
+            mRecordService.stopRecord();
+            handler.sendEmptyMessageDelayed(START_VOICE_SERVICE, 500);
         }
     }
 
@@ -415,7 +424,6 @@ public class MainActivity extends BaseTitlebarActivity implements
         if (e2.getX() - e1.getX() > 400 && e2.getY() - e1.getY() > 400) {
             //关闭语音
             VoiceManager.getInstance().stopUnderstanding();
-            VoiceManager.getInstance().stopWakeup();
             //关闭Portal
             com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.nodog", "stop");
             //关闭热点
@@ -444,13 +452,6 @@ public class MainActivity extends BaseTitlebarActivity implements
     }
 
     private void startCameraAndCloseListener() {
-        try {
-
-            VoiceManager.getInstance().stopWakeup();
-            VoiceManager.getInstance().destroyWakeup();
-        } catch (Exception e) {
-
-        }
         mRecordService.startRecord();
     }
 

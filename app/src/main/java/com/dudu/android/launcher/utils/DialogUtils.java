@@ -27,7 +27,6 @@ public class DialogUtils {
             return;
         }
 
-        VoiceManager.getInstance().stopWakeup();
         mOBDErrorDialog = new ErrorMessageDialog(context, R.string.obd_checking_unconnected,
                 R.drawable.obd_checking_icon);
         mOBDErrorDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_PHONE);
@@ -40,7 +39,6 @@ public class DialogUtils {
         }
 
         if (mOBDErrorDialog != null && mOBDErrorDialog.isShowing()) {
-//            VoiceManager.getInstance().startWakeup();
             mOBDErrorDialog.dismiss();
             mOBDErrorDialog = null;
         }
