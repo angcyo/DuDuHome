@@ -420,7 +420,9 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
             public void run() {
                 if (floatWindowLayout != null && windowManager != null && isShowWindow) {
                     removeHasCalled = true;
-                    mHandler.sendEmptyMessageDelayed(1, 3000);
+                    VoiceManager.getInstance().setUnderstandingOrSpeaking(false);
+                    VoiceManager.getInstance().stopUnderstanding();
+                    mHandler.sendEmptyMessageDelayed(1, 5000);
                     windowManager.removeView(floatWindowLayout);
                 }
                 isShowWindow = false;

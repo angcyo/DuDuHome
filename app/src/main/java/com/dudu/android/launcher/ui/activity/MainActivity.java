@@ -396,8 +396,6 @@ public class MainActivity extends BaseTitlebarActivity implements
         if (event.getListenerStatus() == ListenerResetEvent.LISTENER_OFF) {
             log_init.debug("收到关闭语音通知");
 
-            VoiceManager.getInstance().stopUnderstanding();
-
             VoiceManager.getInstance().setUnderstandingOrSpeaking(false);
             mRecordService.stopRecord();
             handler.sendEmptyMessageDelayed(START_RECORDING,500);
