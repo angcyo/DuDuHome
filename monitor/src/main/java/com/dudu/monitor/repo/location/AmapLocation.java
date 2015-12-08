@@ -60,8 +60,9 @@ public class AmapLocation implements AMapLocationListener, ILocation{
                     break;
                 // 卫星状态改变
                 case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
-                    log.trace("卫星状态改变");
-                    EventBus.getDefault().post(locationManager.getGpsStatus(null));
+                    log.debug("卫星状态改变");
+                    if(last_Location!=null)
+                         EventBus.getDefault().post(locationManager.getGpsStatus(null));
                     break;
                 // 定位启动
                 case GpsStatus.GPS_EVENT_STARTED:
@@ -123,8 +124,9 @@ public class AmapLocation implements AMapLocationListener, ILocation{
         if (location.hasSpeed() && location.getSpeed() > 0)
             location.setSpeed(location.getSpeed() * 36 / 10);
         if (isFirstLoc) {
-            if (checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+            if (checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 locationManager.addGpsStatusListener(getGpsStatuslistener);
+            }
             Bundle locBundle = location.getExtras();
             if (locBundle != null) {
                 LocationUtils.getInstance(mContext).setCurrentCitycode(locBundle.getString("citycode"));

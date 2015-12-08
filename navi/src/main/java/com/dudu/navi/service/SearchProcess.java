@@ -49,8 +49,6 @@ public class SearchProcess {
 
     private String locProvider = "";
 
-    private boolean isGetCurdesc = false;
-
     private GeocodeSearch geocoderSearch;
 
     private LatLonPoint latLonPoint;
@@ -69,6 +67,8 @@ public class SearchProcess {
 
     private boolean hasResult;
 
+    private boolean isNoticeFail = false;
+
     public SearchProcess(Context context) {
         this.mContext = context;
         geocoderSearch = new GeocodeSearch(context);
@@ -83,6 +83,7 @@ public class SearchProcess {
     }
 
     public void search(String keyword) {
+        isNoticeFail = false;
         searchType = NavigationManager.getInstance(mContext).getSearchType();
         latLonPoint = new LatLonPoint(LocationUtils.getInstance(mContext).getCurrentLocation()[0], LocationUtils.getInstance(mContext).getCurrentLocation()[1]);
         NavigationManager.getInstance(mContext).getLog().debug("开始搜索{}", searchType);
@@ -94,11 +95,11 @@ public class SearchProcess {
                 case OPEN_NAVI:
                     EventBus.getDefault().post(NaviEvent.ChangeSemanticType.NAVIGATION);
                     EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast("您好，请说出您想去的地方或者关键字", true));
-                    break;
+                    return;
                 case SEARCH_COMMONADDRESS:
                     EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast("您好，请说出您要添加的地址", true));
                     EventBus.getDefault().post(NaviEvent.ChangeSemanticType.NAVIGATION);
-                    break;
+                    return;
                 case SEARCH_CUR_LOCATION:
                     getCur_locationDesc();
                     break;
@@ -113,6 +114,7 @@ public class SearchProcess {
                     @Override
                     public void call(Long aLong) {
                         if (!hasResult) {
+                            isNoticeFail = true;
                             EventBus.getDefault().
                                     post(new NaviEvent.NaviVoiceBroadcast("抱歉，搜索失败，请检查网络", true));
                             EventBus.getDefault().post(NaviEvent.SearchResult.FAIL);
@@ -145,6 +147,7 @@ public class SearchProcess {
     }
 
     public void getCur_locationDesc() {
+        hasResult = false;
         NavigationManager.getInstance(mContext).setSearchType(SearchType.SEARCH_CUR_LOCATION);
         cur_location = Monitor.getInstance(mContext).getCurrentLocation();
         if (cur_location != null) {
@@ -153,11 +156,13 @@ public class SearchProcess {
         }
         if (locProvider != null && locBundle != null) {
             cur_locationDesc = locBundle.getString("desc");
-            if(!TextUtils.isEmpty(cur_locationDesc)){
+            if (!TextUtils.isEmpty(cur_locationDesc)) {
+                hasResult = true;
                 String playText = "您好，您现在在" + cur_locationDesc;
                 ResourceManager.getInstance(mContext).setCur_locationDesc(playText);
-                EventBus.getDefault().post(NaviEvent.SearchResult.SUCCESS);
-            }else {
+                if (!isNoticeFail)
+                    EventBus.getDefault().post(NaviEvent.SearchResult.SUCCESS);
+            } else {
                 getCurLocation();
             }
 
@@ -166,24 +171,13 @@ public class SearchProcess {
             getCurLocation();
         }
     }
-    private void getCurLocation(){
+
+    private void getCurLocation() {
         RegeocodeQuery query = new RegeocodeQuery(latLonPoint, 200,
                 GeocodeSearch.AMAP);
         geocoderSearch.getFromLocationAsyn(query);
-
-        Observable.timer(15, TimeUnit.SECONDS)
-                .subscribe(new Action1<Long>() {
-                    @Override
-                    public void call(Long aLong) {
-                        if (!isGetCurdesc) {
-                            EventBus.getDefault().
-                                    post(new NaviEvent.NaviVoiceBroadcast("抱歉，暂时无法获取到您的详细位置，请稍后再试", true));
-                            EventBus.getDefault().post(NaviEvent.SearchResult.FAIL);
-                        }
-
-                    }
-                });
     }
+
     private PoiSearch.OnPoiSearchListener onPoiSearchListener = new PoiSearch.OnPoiSearchListener() {
 
         @Override
@@ -199,8 +193,10 @@ public class SearchProcess {
                             .getSearchSuggestionCitys();// 当搜索不到poiitem数据时，会返回含有搜索关键字的城市信息
                     if (poiItems != null && poiItems.size() > 0) {
                         setPoiList();
-                        EventBus.getDefault().post(NaviEvent.SearchResult.SUCCESS);
+                        if (!isNoticeFail)
+                            EventBus.getDefault().post(NaviEvent.SearchResult.SUCCESS);
                     } else {
+
                         EventBus.getDefault().post(NaviEvent.ChangeSemanticType.NORMAL);
                         EventBus.getDefault().post(NaviEvent.SearchResult.FAIL);
                         EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast(mContext.getString(R.string.no_result), true));
@@ -234,9 +230,8 @@ public class SearchProcess {
                     cur_locationDesc = "您好，您现在在" + result.getRegeocodeAddress().getFormatAddress()
                             + "附近";
                     ResourceManager.getInstance(mContext).setCur_locationDesc(cur_locationDesc);
-                    isGetCurdesc = true;
                     hasResult = true;
-                    if (isGetCurdesc)
+                    if (!isNoticeFail)
                         EventBus.getDefault().post(NaviEvent.SearchResult.SUCCESS);
 
                 }
