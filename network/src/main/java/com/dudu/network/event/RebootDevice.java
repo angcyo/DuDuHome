@@ -17,8 +17,6 @@ public class RebootDevice extends MessagePackage {
 
     private boolean rebootDeviceFlag = false;
 
-
-
     @Override
     public void setMessageId(String messageId) {
 

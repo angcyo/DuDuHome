@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.speech.tts.Voice;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.service.CheckUserService;
@@ -58,6 +59,7 @@ public class InitManager {
 
     public void unInit() {
         VoiceManager.getInstance().stopUnderstanding();
+        VoiceManager.getInstance().stopSpeaking();
     }
 
     /**

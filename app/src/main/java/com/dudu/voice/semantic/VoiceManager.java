@@ -98,7 +98,6 @@ public class VoiceManager {
         log = LoggerFactory.getLogger("voice.manager");
         log_step = 0;
         log.debug("[voice][{}]初始化语音manager...", log_step++);
-
         StringBuffer param = new StringBuffer();
         param.append("appid=" + Constants.XUFEIID);
         param.append(",");
@@ -165,6 +164,8 @@ public class VoiceManager {
 
     public void stopSpeaking() {
         mSpeechSynthesizer.stopSpeaking();
+        mSpeechSynthesizer.destroy();
+        
     }
 
     /**

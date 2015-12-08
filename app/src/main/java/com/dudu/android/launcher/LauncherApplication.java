@@ -7,8 +7,15 @@ import com.dudu.android.launcher.exception.CrashHandler;
 import com.dudu.android.launcher.service.NewMessageShowService;
 import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.dialog.ErrorMessageDialog;
+import com.dudu.android.launcher.utils.Constants;
+import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.NetworkUtils;
 import com.iflytek.cloud.Setting;
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechUtility;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LauncherApplication extends Application {
 
@@ -18,6 +25,8 @@ public class LauncherApplication extends Application {
 
     private RecordBindService mRecordService;
 
+    private Logger logger;
+
     public static LauncherApplication getContext() {
         return mApplication;
     }
@@ -26,6 +35,9 @@ public class LauncherApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mApplication = this;
+
+        logger = LoggerFactory.getLogger("init.application");
+        logger.debug("正在初始化application");
 
         Setting.showLogcat(false);
 
