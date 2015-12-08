@@ -174,11 +174,11 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
         @Override
         public void handleMessage(Message msg) {
             if (removeHasCalled == true) {
-                log_init.debug("三秒内没有重新打开窗口");
+                log_init.debug("五秒内没有重新打开窗口");
                 EventBus.getDefault().post(new ListenerResetEvent(ListenerResetEvent.LISTENER_OFF));
                 removeHasCalled = false;
             } else {
-                log_init.debug("三秒内没有已经被打开窗口");
+                log_init.debug("五秒内没有已经被打开窗口");
             }
         }
     };
@@ -419,7 +419,8 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
             @Override
             public void run() {
                 if (floatWindowLayout != null && windowManager != null && isShowWindow) {
-                    EventBus.getDefault().post(new ListenerResetEvent(ListenerResetEvent.LISTENER_OFF));
+                    removeHasCalled = true;
+                    mHandler.sendEmptyMessageDelayed(1, 3000);
                     windowManager.removeView(floatWindowLayout);
                 }
                 isShowWindow = false;
@@ -447,6 +448,14 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
     private void showWindowCallback() {
         log_init.error("调用显示window的回调");
         EventBus.getDefault().post(new ListenerResetEvent(ListenerResetEvent.LISTENER_ON));
+
+        if (removeHasCalled == false) {
+            EventBus.getDefault().post(new ListenerResetEvent(ListenerResetEvent.LISTENER_ON));
+        }else{
+            log_init.debug("五秒内被打开窗口");
+            mHandler.removeMessages(1);
+        }
+        removeHasCalled = false;
     }
 
 }

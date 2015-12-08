@@ -362,10 +362,10 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         }
     }
 
-    public void resetVoice() {
-        stopRecord();
-        startRecord();
-    }
+//    public void resetVoice() {
+//        stopRecord();
+//        startRecord();
+//    }
 
     @Override
     public void onDestroy() {

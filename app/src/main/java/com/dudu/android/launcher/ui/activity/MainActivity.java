@@ -238,12 +238,14 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     private static final int START_VOICE_SERVICE = 3;
 
+    private static final int START_RECORDING = 4;
+
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case RECORDSERVICE_RESET_VOICE:
-                    mRecordService.resetVoice();
+//                    mRecordService.resetVoice();
                     break;
                 case START_CAMERA_AND_CLOSE_LISTENER:
                     startCameraAndCloseListener();
@@ -251,6 +253,9 @@ public class MainActivity extends BaseTitlebarActivity implements
                 case START_VOICE_SERVICE:
                     VoiceManager.getInstance().startVoiceService();
 
+                    mRecordService.startRecord();
+                    break;
+                case START_RECORDING:
                     mRecordService.startRecord();
                     break;
             }
@@ -394,12 +399,15 @@ public class MainActivity extends BaseTitlebarActivity implements
             VoiceManager.getInstance().stopUnderstanding();
 
             VoiceManager.getInstance().setUnderstandingOrSpeaking(false);
-
-            handler.sendEmptyMessageDelayed(RECORDSERVICE_RESET_VOICE, 500);
+            mRecordService.stopRecord();
+            handler.sendEmptyMessageDelayed(START_RECORDING,500);
+//            handler.sendEmptyMessageDelayed(RECORDSERVICE_RESET_VOICE, 500);
         } else if (event.getListenerStatus() == ListenerResetEvent.LISTENER_ON) {
             log_init.debug("收到开启语音通知");
             VoiceManager.setUnderstandingOrSpeaking(true);
-            mRecordService.resetVoice();
+//            mRecordService.resetVoice();
+            mRecordService.stopRecord();
+            handler.sendEmptyMessageDelayed(START_RECORDING,500);
         } else if (event.getListenerStatus() == ListenerResetEvent.LISTENER_ON_HELLO) {
             VoiceManager.setUnderstandingOrSpeaking(true);
 //            mRecordService.resetVoice();
