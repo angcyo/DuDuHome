@@ -17,13 +17,17 @@ import com.dudu.android.launcher.utils.SharedPreferencesUtil;
 import com.dudu.network.NetworkManage;
 import com.dudu.network.event.FlowSynConfiguration;
 import com.dudu.network.event.FlowUpload;
+import com.dudu.network.event.GetFlow;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class MonitorService extends Service {
 
     private static final String TAG = "MonitorService";
 
-    private static int WAKE_INTERVAL_MS = 30 * 000;
+    private static int WAKE_INTERVAL_MS = 30 * 1000;
 
     private DbHelper mDbHelper;
 
@@ -38,6 +42,8 @@ public class MonitorService extends Service {
     private boolean mMonitoring = true;
 
     private Context mContext;
+
+    private Logger log;
 
     private SimpleDateFormat mFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
             Locale.getDefault());
@@ -54,6 +60,8 @@ public class MonitorService extends Service {
 
         mContext = this;
 
+        log = LoggerFactory.getLogger("flow");
+
         WAKE_INTERVAL_MS = Integer.valueOf(SharedPreferencesUtil.getStringValue(mContext, Constants.KEY_FLOW_FREQUENCY, "30")) * 1000;
 
         mOldMobileRx = TrafficStats.getMobileRxBytes() / 1024;
@@ -63,8 +71,9 @@ public class MonitorService extends Service {
         mMonitorThread.setPriority(Thread.NORM_PRIORITY - 1);
         mMonitorThread.start();
 
-        NetworkManage.getInstance().sendMessage(new FlowSynConfiguration(this));
+//        NetworkManage.getInstance().sendMessage(new FlowSynConfiguration(this));
 
+        NetworkManage.getInstance().sendMessage(new GetFlow(this));
     }
 
 
@@ -82,36 +91,44 @@ public class MonitorService extends Service {
                     return;
                 }
 
-                mMobileRx = TrafficStats.getMobileRxBytes() / 1024;
+                NetworkManage.getInstance().sendMessage(new FlowSynConfiguration(mContext));
+
+
+                //单位kb
+                mMobileRx = TrafficStats.getMobileRxBytes() / 1024;//
                 mMobileTx = TrafficStats.getMobileTxBytes() / 1024;
 
                 if (mMobileRx == -1 && mMobileRx == -1) {
                     continue;
                 } else {
-                    mDeltaRx = mMobileRx - mOldMobileRx;
+                    mDeltaRx = mMobileRx - mOldMobileRx;//时间段内接收消耗的流量
                     mOldMobileRx = mMobileRx;
-                    mDeltaTx = mMobileTx - mOldMobileTx;
+                    mDeltaTx = mMobileTx - mOldMobileTx;//时间段内发送消耗的流量
                     mOldMobileTx = mMobileTx;
 
                     mDeltaRx = (Math.round(mDeltaRx * 100.0)) / 100;
                     mDeltaTx = (Math.round(mDeltaTx * 100.0)) / 100;
+
+//                    log.debug("时间段内接收消耗的流量：mDeltaRx = {}, mDeltaTx = {}", mDeltaRx, mDeltaTx);
                 }
 
                 mMobileTotalRx += mDeltaRx;
                 mMobileTotalTx += mDeltaTx;
 
+                log.info("mMobileTotalRx = {},mMobileTotalTx = {}", mMobileTotalRx, mMobileTotalTx);
                 if (mMobileTotalRx != 0 || mMobileTotalTx != 0) {
-                    LogUtils.v(TAG, "上传流量到数据库...");
+                    log.debug("更新数据库");
                     Date date = new Date();
 
                     if (mDbHelper.checkRecord(1, date)) {
                         float up = mDbHelper.getProFlowUp(1, date);
                         float dw = mDbHelper.getProFlowDw(1, date);
-
+//                        log.debug("读数据库：up = {}, dw = {}", up, dw);
                         mMobileTotalRx += dw;
                         mMobileTotalTx += up;
                         refreshFlowData();
-                        float totalFlow = mDeltaRx + mDeltaTx;
+                        float totalFlow = mDeltaRx + mDeltaTx;//开机到现在已使用总流量
+//                        log.debug("时间段内接收消耗的总流量：{}", totalFlow);
                         NetworkManage.getInstance().sendMessage(new FlowUpload(mContext, totalFlow, mFormat.format(date)));
                         mDbHelper.updateFlow(mMobileTotalRx, mMobileTotalTx, 1, date);
                     } else {
@@ -153,8 +170,12 @@ public class MonitorService extends Service {
      * 更新SharedPreferences里面的剩余流量的数据
      */
     private void refreshFlowData() {
-        float primaryRemainingFlow = Float.parseFloat(SharedPreferencesUtil.getStringValue(MonitorService.this, Constants.KEY_REMAINING_FLOW, "0"));
-        float timelyRemainingFlow = primaryRemainingFlow - mMobileTotalRx - mMobileTotalTx;
+        float primaryRemainingFlow = Float.parseFloat(SharedPreferencesUtil.getStringValue(MonitorService.this, Constants.KEY_REMAINING_FLOW, "1024000"));//无值的时候先给1024M
+        log.debug("refreshFlowData剩余总流量：{}，mDeltaRx + mDeltaTx = {}", primaryRemainingFlow, (mDeltaRx + mDeltaTx));
+//        float timelyRemainingFlow = primaryRemainingFlow - mMobileTotalRx - mMobileTotalTx;
+
+        float timelyRemainingFlow = primaryRemainingFlow - mDeltaRx - mDeltaTx;//更新剩余流量应该是减去时间段内消耗的流量
+//        log.debug("timelyRemainingFlow剩余总流量：{}", timelyRemainingFlow);
         SharedPreferencesUtil.putStringValue(MonitorService.this, Constants.KEY_REMAINING_FLOW, String.valueOf(timelyRemainingFlow));
     }
 

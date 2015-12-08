@@ -30,6 +30,9 @@ public class FlowSynConfigurationRes extends MessagePackage{
     private String  freeArriveValue;
     private String  freeAddValue;
     private String freeAddTimes;
+
+//    private String remainingFlow;//该月剩余总流量
+
     private String  portalVersion;
     private String portalAddress;
 
@@ -90,6 +93,9 @@ public class FlowSynConfigurationRes extends MessagePackage{
             freeArriveValue= StringTools.GetStringValue("freeArriveValue", result);
             freeAddValue= StringTools.GetStringValue("freeAddValue", result);
             freeAddTimes= StringTools.GetStringValue("freeAddTimes", result);
+
+//            remainingFlow = StringTools.GetStringValue("remainingFlow", result);
+
             portalVersion= StringTools.GetStringValue("portalVersion", result);
             portalAddress= StringTools.GetStringValue("portalAddress", result);
 
@@ -169,6 +175,10 @@ public class FlowSynConfigurationRes extends MessagePackage{
     public String getFreeAddTimes() {
         return freeAddTimes;
     }
+
+    /*public String getRemainingFlow() {
+        return remainingFlow;
+    }*/
 
     public String getPortalVersion() {
         return portalVersion;
