@@ -25,7 +25,6 @@ public class DialogUtils {
             return;
         }
 
-
         if (mOBDErrorDialog != null && mOBDErrorDialog.isShowing()) {
             return;
         }
@@ -34,8 +33,8 @@ public class DialogUtils {
 
         Window dialogWindow = mOBDErrorDialog.getWindow();
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
-        lp.x = 10; // 新位置X坐标
-        lp.y = 0; // 新位置Y坐标
+        lp.x = 10;
+        lp.y = 0;
         lp.width = WindowManager.LayoutParams.MATCH_PARENT;
         lp.height = WindowManager.LayoutParams.MATCH_PARENT;
         dialogWindow.setAttributes(lp);

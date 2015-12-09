@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.amap.api.location.AMapLocation;
+import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.navi.AMapNavi;
 import com.amap.api.services.core.LatLonPoint;
@@ -46,6 +47,9 @@ public class StrategyChoiseDialog extends Dialog {
     private LatLonPoint endpoint = null;
 
     private AMapLocation cur_Location;
+
+    private String kilometer = "千米";
+    private String meter = "米";
 
     public StrategyChoiseDialog(Context context) {
         this(context, R.style.RouteSearchPoiDialogStyle);
@@ -147,6 +151,7 @@ public class StrategyChoiseDialog extends Dialog {
         tv_distance_2 = (TextView) findViewById(R.id.tv_distance_2);
         tv_distance_3 = (TextView) findViewById(R.id.tv_distance_3);
         tv_distance_4 = (TextView) findViewById(R.id.tv_distance_4);
+
         getDistance();
 
     }
@@ -161,7 +166,18 @@ public class StrategyChoiseDialog extends Dialog {
 
     private void getDistance() {
         cur_Location = Monitor.getInstance(context).getCurrentLocation();
+
         if (cur_Location != null) {
+
+            LatLng start = new LatLng(cur_Location.getLatitude(),cur_Location.getLongitude());
+            LatLng end = new LatLng(endpoint.getLatitude(),endpoint.getLongitude());
+            float distance = AMapUtils.calculateLineDistance(start,end);
+            String dstr = distance >= 1000 ? distance / 1000 + kilometer : distance + meter;
+            tv_distance_1.setText(dstr);
+            tv_distance_2.setText(dstr);
+            tv_distance_3.setText(dstr);
+            tv_distance_4.setText(dstr);
+
             LatLonPoint startPoint = new LatLonPoint(cur_Location.getLatitude(), cur_Location.getLongitude());
             RouteSearch.FromAndTo fromAndTo = new RouteSearch.FromAndTo(startPoint, endpoint);
             RouteSearch routeSearch = new RouteSearch(context);
@@ -194,8 +210,7 @@ public class StrategyChoiseDialog extends Dialog {
         public void onDriveRouteSearched(DriveRouteResult result, int arg1) {
             String fastest = "速度最快";
             String shortest = "距离最短";
-            String kilometer = "千米";
-            String meter = "米";
+
             for (int i = 0; i < result.getPaths().size(); i++) {
                 DrivePath path = result.getPaths().get(i);
                 String strategy = path.getStrategy();
