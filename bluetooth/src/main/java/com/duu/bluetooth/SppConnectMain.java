@@ -23,7 +23,7 @@ public class SppConnectMain {
     private SppManager sppManager;
 
     private Logger log;
-
+    private int timeoutCount = 0;
     private SppConnectMain() {
         log = LoggerFactory.getLogger("obd.pod.spp");
     }
@@ -43,40 +43,35 @@ public class SppConnectMain {
                     public void call(Long aLong) {
                         if (sppManager.getState() != SppManager.STATE_CONNECTED) {
                             log.debug("spp scan time out");
+                            timeoutCount++;
                             try {
-                                EventBus.getDefault().post(new
-                                        Event.Disconnected(Event.ErrorCode.ScanInvokeFail));
-                                sppScanner.broadRegister = false;
-                                sppScanner.stopScan();
+                                if (!hasMac()) {
+                                    stopScan();
+                                }
+                                EventBus.getDefault().post(new Event.Disconnected(Event.ErrorCode.ScanInvokeFail));
                             } catch (Exception e) {
-                                log.debug("time out error",e);
+                                log.debug("time out error", e);
                             }
-
                         }
-
                     }
                 });
 
-        if (!TextUtils.isEmpty(BluetoothMacUtil.getMac(mContext))) {
-
+        if(timeoutCount>=2||!hasMac()){
+            log.debug("obd timeoutcount[{}]",timeoutCount);
+            UnbindBluetooth.unbind();
+            scanner();
+            return;
+        }
+        if (hasMac()) {
             onEvent(new Event.Connect(BluetoothMacUtil.getMac(mContext),
                     Event.ConnectType.SPP, false));
             return;
         }
-
-        if (!sppScanner.broadRegister) {
-            sppScanner.initScan();
-            sppScanner.broadRegister = true;
-        } else {
-            sppScanner.startScan();
-        }
-
     }
 
     public void onEvent(Event.StopScanner event) {
         log.debug("pod obd StopScanner");
-        sppScanner.stopScan();
-        sppScanner.broadRegister = false;
+        stopScan();
     }
 
     public void onEvent(Event.Connect event) {
@@ -122,4 +117,35 @@ public class SppConnectMain {
 
     }
 
+    public void onEvent(Event.Reconnect event){
+        log.debug("obd Reconnect");
+        sppManager.stop();
+        Observable.timer(5, TimeUnit.SECONDS)
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        sppManager.connect(BluetoothMacUtil.getMac(mContext), true);
+                        }
+                });
+
+    }
+
+    private boolean hasMac(){
+       return !TextUtils.isEmpty(BluetoothMacUtil.getMac(mContext));
+    }
+
+    private void scanner(){
+        if (!sppScanner.broadRegister) {
+            sppScanner.initScan();
+            sppScanner.broadRegister = true;
+        } else {
+            sppScanner.startScan();
+        }
+
+    }
+
+    private void stopScan(){
+        sppScanner.broadRegister = false;
+        sppScanner.stopScan();
+    }
 }

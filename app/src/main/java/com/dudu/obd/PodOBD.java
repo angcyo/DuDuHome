@@ -26,9 +26,7 @@ public class PodOBD {
     private Logger log;
     private Context mContext;
     private PrefixReadL1 readL1;
-
     private boolean hasData = false;
-
     public PodOBD(){
         log = LoggerFactory.getLogger("obd.pod.spp");
         readL1 = new PrefixReadL1();
@@ -63,22 +61,7 @@ public class PodOBD {
     public void onEvent(Event.Disconnected event){
         hasData = false;
         log.debug("spp bluetooth Disconnected");
-        EventBus.getDefault().post(new BleStateChange(BleStateChange.BLEDISCONNECTED));
-        EventBus.getDefault().post(new Event.BluetoothDisable());
-        Observable.timer(10, TimeUnit.SECONDS)
-                .subscribe(new Action1<Long>() {
-                    @Override
-                    public void call(Long aLong) {
-                        EventBus.getDefault().post(new Event.BluetoothEnable());
-                        Observable.timer(10, TimeUnit.SECONDS)
-                                .subscribe(new Action1<Long>() {
-                                    @Override
-                                    public void call(Long aLong) {
-                                        EventBus.getDefault().post(new Event.StartScanner());
-                                    }
-                                });
-                    }
-                });
+        processDisConnected(event);
     }
 
     public void onEvent(Event.BTConnected event){
@@ -100,4 +83,23 @@ public class PodOBD {
         hasData = true;
     }
 
+    private void processDisConnected(Event.Disconnected event){
+        if(event.getError()== Event.ErrorCode.ScanInvokeFail)
+        EventBus.getDefault().post(new BleStateChange(BleStateChange.BLEDISCONNECTED));
+        EventBus.getDefault().post(new Event.BluetoothDisable());
+        Observable.timer(10, TimeUnit.SECONDS)
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        EventBus.getDefault().post(new Event.BluetoothEnable());
+                        Observable.timer(10, TimeUnit.SECONDS)
+                                .subscribe(new Action1<Long>() {
+                                    @Override
+                                    public void call(Long aLong) {
+                                        EventBus.getDefault().post(new Event.StartScanner());
+                                    }
+                                });
+                    }
+                });
+    }
 }

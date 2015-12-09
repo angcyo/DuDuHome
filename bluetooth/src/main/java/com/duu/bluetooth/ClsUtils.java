@@ -20,6 +20,7 @@ public class ClsUtils {
 
     static public boolean removeBond(Class btClass, BluetoothDevice btDevice)
             throws Exception {
+        Log.d("lxh"," obd bluetooth removeBond");
         Method removeBondMethod = btClass.getMethod("removeBond");
         Boolean returnValue = (Boolean) removeBondMethod.invoke(btDevice);
         return returnValue.booleanValue();

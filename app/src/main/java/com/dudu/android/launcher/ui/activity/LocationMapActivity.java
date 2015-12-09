@@ -33,6 +33,7 @@ import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.ui.dialog.RouteSearchPoiDialog;
 import com.dudu.android.launcher.ui.dialog.StrategyChoiseDialog;
 import com.dudu.android.launcher.ui.view.CleanableCompletaTextView;
+import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.ViewAnimation;
 import com.dudu.event.MapResultShow;
 import com.dudu.map.NavigationClerk;
@@ -194,6 +195,10 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     private void searchManual() {
         if(TextUtils.isEmpty(search_edit.getText().toString()))
             return;
+        if(containsEmoji(search_edit.getText().toString())){
+            ToastUtils.showToast("抱歉，您输入的关键字有误，请重新输入");
+            return;
+        }
         navigationManager.setKeyword(search_edit.getText().toString());
         navigationManager.setSearchType(SearchType.SEARCH_PLACE);
         NavigationClerk.getInstance().setIsManual(true);
@@ -385,5 +390,26 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
+    }
+
+
+    private static boolean containsEmoji(String str) {
+        int len = str.length();
+        for (int i = 0; i < len; i++) {
+            if (isEmojiCharacter(str.charAt(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isEmojiCharacter(char codePoint) {
+        return !((codePoint == 0x0) ||
+                (codePoint == 0x9) ||
+                (codePoint == 0xA) ||
+                (codePoint == 0xD) ||
+                ((codePoint >= 0x20) && (codePoint <= 0xD7FF)) ||
+                ((codePoint >= 0xE000) && (codePoint <= 0xFFFD)) ||
+                ((codePoint >= 0x10000) && (codePoint <= 0x10FFFF)));
     }
 }

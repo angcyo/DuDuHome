@@ -20,6 +20,7 @@ import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.CommonAddressUtil;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
+import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.event.MapResultShow;
 import com.dudu.navi.NavigationManager;
@@ -236,7 +237,8 @@ public class NavigationClerk {
                     playText = "正在获取您的当前位置,请稍后";
                     isShow = true;
                 }
-                VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_DO_NOTHING, isShow);
+                if(!isManual)
+                  VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_DO_NOTHING, isShow);
                 showProgressDialog(msg);
                 break;
 
@@ -274,6 +276,8 @@ public class NavigationClerk {
     }
 
     public void onEventMainThread(NaviEvent.NaviVoiceBroadcast event) {
+        if(isManual)
+            return;
         VoiceManager.getInstance().clearMisUnderstandCount();
         VoiceManager.getInstance().stopUnderstanding();
         removeCallback();
@@ -297,6 +301,8 @@ public class NavigationClerk {
         if (event == NaviEvent.SearchResult.SUCCESS) {
             handlerPoiResult();
         } else {
+            if(isManual)
+                ToastUtils.showToast("抱歉,搜索失败，请稍后重试");
             navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
         }
         disMissProgressDialog();
