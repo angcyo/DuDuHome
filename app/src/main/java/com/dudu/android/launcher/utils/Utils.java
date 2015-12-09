@@ -8,13 +8,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
-import com.dudu.android.launcher.ui.dialog.ErrorMessageDialog;
-
-import org.w3c.dom.Text;
 
 public class Utils {
 
@@ -72,8 +68,13 @@ public class Utils {
         } catch (PackageManager.NameNotFoundException e) {
             LogUtils.e(TAG, e.getMessage() + "");
         }
+        //没写IMEI号的机器 也算Demo版本
+        String imei = DeviceIDUtil.getIMEI(context);
+        if (imei != null && imei.length() == 15) {
+            return false;
+        }
 
-        return false;
+        return true;
     }
 
     public static void checkSimCardSerialNumber(Context context) {
@@ -103,6 +104,7 @@ public class Utils {
 
     /**
      * 检查用户是否已激活
+     *
      * @param context
      * @return
      */
@@ -126,6 +128,10 @@ public class Utils {
     }
 
     public static void checkSimCardState(Context context) {
+        if (isDemoVersion(context)) {
+            return;
+        }
+
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         int state = tm.getSimState();
         switch (state) {
@@ -149,17 +155,17 @@ public class Utils {
 
 
     public static String getOBDType(Context context) {
-        PackageInfo packageInfo ;
+        PackageInfo packageInfo;
         String obd = "";
         try {
             packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(),
                     PackageManager.GET_CONFIGURATIONS);
             String versionName = packageInfo.versionName;
             if (versionName.contains("thread")) {
-               obd = "thread";
-            }else if(versionName.contains("pod")){
+                obd = "thread";
+            } else if (versionName.contains("pod")) {
                 obd = "pod";
-            }else if(versionName.contains("xfa")){
+            } else if (versionName.contains("xfa")) {
                 obd = "xfa";
             }
         } catch (PackageManager.NameNotFoundException e) {
@@ -170,7 +176,7 @@ public class Utils {
     }
 
     public static String getJDType(Context context) {
-        PackageInfo packageInfo ;
+        PackageInfo packageInfo;
         String jd = "didi";
         try {
             packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(),
@@ -178,7 +184,7 @@ public class Utils {
             String versionName = packageInfo.versionName;
             if (versionName.contains("didi")) {
                 jd = "didi";
-            }else if(versionName.contains("uber")){
+            } else if (versionName.contains("uber")) {
                 jd = "uber";
             }
         } catch (PackageManager.NameNotFoundException e) {
@@ -188,14 +194,14 @@ public class Utils {
         return jd;
     }
 
-    public static void openJD(Context context){
-        switch (getJDType(context)){
+    public static void openJD(Context context) {
+        switch (getJDType(context)) {
 
             case "didi":
                 startThirdPartyApp(context, "com.sdu.didi.gsui", R.string.error_no_didi);
                 break;
             case "uber":
-                startThirdPartyApp(context,"com.ubercab.driver",R.string.error_no_uber);
+                startThirdPartyApp(context, "com.ubercab.driver", R.string.error_no_uber);
                 break;
             default:
                 startThirdPartyApp(context, "com.sdu.didi.gsui", R.string.error_no_didi);
