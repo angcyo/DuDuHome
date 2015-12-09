@@ -10,9 +10,9 @@ import com.dudu.android.launcher.utils.Utils;
 public class ObdInit {
 
 
-    public static void initOBD(Context context){
+    public static void initOBD(Context context) {
 
-        switch (Utils.getOBDType(context)){
+        switch (Utils.getOBDType(context)) {
             case "thread":
                 BleOBD bleOBD = new BleOBD();
                 bleOBD.initOBD(context);
@@ -30,6 +30,27 @@ public class ObdInit {
                 podOBD2.init(context);
                 break;
         }
+    }
 
+    public static void uninitOBD(Context context){
+
+        switch (Utils.getOBDType(context)){
+            case "thread":
+                BleOBD bleOBD = new BleOBD();
+                bleOBD.uninitOBD();
+                break;
+            case "pod":
+                PodOBD podOBD = new PodOBD();
+                podOBD.uninit();
+                break;
+            case "xfa":
+                XfaOBD xfaOBD = new XfaOBD();
+                xfaOBD.uninitXfaOBD();
+                break;
+            default:
+                PodOBD podOBD2 = new PodOBD();
+                podOBD2.uninit();
+                break;
+        }
     }
 }

@@ -46,6 +46,7 @@ import com.dudu.init.InitManager;
 import com.dudu.map.NavigationClerk;
 import com.dudu.monitor.utils.LocationUtils;
 import com.dudu.navi.event.NaviEvent;
+import com.dudu.obd.ObdInit;
 import com.dudu.voice.semantic.VoiceManager;
 
 import org.slf4j.Logger;
@@ -436,6 +437,9 @@ public class MainActivity extends BaseTitlebarActivity implements
             WifiApAdmin.closeWifiAp(mActivity);
             //关闭录像
             mRecordService.stopCamera();
+            //stop bluetooth
+            ObdInit.uninitOBD(this);
+
             PackageManager packageManager = MainActivity.this.getPackageManager();
             startActivity(new Intent(packageManager.getLaunchIntentForPackage("com.qualcomm.factory")));
         }

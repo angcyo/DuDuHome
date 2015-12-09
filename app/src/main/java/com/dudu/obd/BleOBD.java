@@ -26,6 +26,7 @@ public class BleOBD {
     private Logger log;
     private boolean isConnected = false;
     private PrefixReadL1 readL1;
+
     public BleOBD() {
 
         log = LoggerFactory.getLogger("ble.odb.old");
@@ -41,6 +42,14 @@ public class BleOBD {
         EventBus.getDefault().unregister(readL1);
         EventBus.getDefault().register(readL1);
 
+    }
+
+    public void uninitOBD() {
+        log.debug("initOBD");
+        ConnSession.getInstance().uninit();
+        BleConnectMain.getInstance().uninit();
+        EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(readL1);
     }
 
     public void onEvent(Event.BackScanResult event) {
@@ -59,25 +68,24 @@ public class BleOBD {
         final String devAddr = mBluetoothDevice.getAddress();
     }
 
-    public void onEvent(Event.Disconnected event){
+    public void onEvent(Event.Disconnected event) {
         log.debug("ble Disconnected");
         isConnected = false;
         EventBus.getDefault().post(new BleStateChange(BleStateChange.BLEDISCONNECTED));
         Observable.timer(1, TimeUnit.MINUTES)
-                    .subscribe(new Action1<Long>() {
-                        @Override
-                        public void call(Long aLong) {
-                            if(!isConnected)
-                                 EventBus.getDefault().post(new Event.StartScanner());
-                        }
-                    });
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        if (!isConnected)
+                            EventBus.getDefault().post(new Event.StartScanner());
+                    }
+                });
 
-        }
+    }
 
-    public void onEvent(Event.BTConnected event){
+    public void onEvent(Event.BTConnected event) {
         log.debug("ble BTConnected");
         isConnected = true;
         EventBus.getDefault().post(new BleStateChange(BleStateChange.BLECONNECTED));
     }
-
 }

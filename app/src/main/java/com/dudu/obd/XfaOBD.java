@@ -30,6 +30,9 @@ public class XfaOBD implements OBDDataListener {
 
     }
 
+    public void uninitXfaOBD() {
+    }
+
     @Override
     public void startIntent(String s, int i) {
 

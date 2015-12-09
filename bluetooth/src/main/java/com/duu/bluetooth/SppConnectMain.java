@@ -101,7 +101,7 @@ public class SppConnectMain {
         }
     }
 
-    public void unRegister() {
+    public void uninit() {
         EventBus.getDefault().unregister(ourInstance);
     }
 

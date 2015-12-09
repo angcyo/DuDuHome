@@ -12,6 +12,7 @@ import org.scf4a.EventWrite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Closeable;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
@@ -42,6 +43,14 @@ public class PodOBD {
         EventBus.getDefault().unregister(readL1);
         EventBus.getDefault().register(readL1);
         EventBus.getDefault().post(new Event.StartScanner());
+    }
+
+    public void uninit(){
+        log.debug("pod obd uninit");
+        SppConnectMain.getInstance().uninit();
+        EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(readL1);
+        EventBus.getDefault().post(new Event.StopScanner());
     }
 
     public void onEvent(Event.BackScanResult event) {
