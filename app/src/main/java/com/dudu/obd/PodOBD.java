@@ -27,12 +27,14 @@ public class PodOBD {
     private Context mContext;
     private PrefixReadL1 readL1;
     private boolean hasData = false;
-    public PodOBD(){
+    private int disConnectedCount = 0;
+
+    public PodOBD() {
         log = LoggerFactory.getLogger("obd.pod.spp");
         readL1 = new PrefixReadL1();
     }
 
-    public void init(Context context){
+    public void init(Context context) {
         log.debug("pod obd init");
         mContext = context;
         SppConnectMain.getInstance().init(context);
@@ -43,7 +45,7 @@ public class PodOBD {
         EventBus.getDefault().post(new Event.StartScanner());
     }
 
-    public void uninit(){
+    public void uninit() {
         log.debug("pod obd uninit");
         SppConnectMain.getInstance().uninit();
         EventBus.getDefault().unregister(this);
@@ -58,34 +60,36 @@ public class PodOBD {
         EventBus.getDefault().post(new Event.Connect(device.getAddress(), Event.ConnectType.SPP, false));
     }
 
-    public void onEvent(Event.Disconnected event){
+    public void onEvent(Event.Disconnected event) {
         hasData = false;
         log.debug("spp bluetooth Disconnected");
         processDisConnected(event);
     }
 
-    public void onEvent(Event.BTConnected event){
+    public void onEvent(Event.BTConnected event) {
         log.debug("spp bluetooth BTConnected");
         EventBus.getDefault().post(new BleStateChange(BleStateChange.BLECONNECTED));
-
+        disConnectedCount = 0;
         Observable.timer(30, TimeUnit.SECONDS)
                 .subscribe(new Action1<Long>() {
                     @Override
                     public void call(Long aLong) {
-                        if(!hasData){
+                        if (!hasData) {
                             EventBus.getDefault().post(new Event.Reconnect());
                         }
                     }
                 });
     }
 
-    public void onEvent(EventRead.L1ReadDone event){
+    public void onEvent(EventRead.L1ReadDone event) {
         hasData = true;
     }
 
-    private void processDisConnected(Event.Disconnected event){
-        if(event.getError()== Event.ErrorCode.ScanInvokeFail)
-        EventBus.getDefault().post(new BleStateChange(BleStateChange.BLEDISCONNECTED));
+    private void processDisConnected(Event.Disconnected event) {
+        disConnectedCount++;
+        if (disConnectedCount >= 3)
+            EventBus.getDefault().post(new BleStateChange(BleStateChange.BLEDISCONNECTED));
+
         EventBus.getDefault().post(new Event.BluetoothDisable());
         Observable.timer(10, TimeUnit.SECONDS)
                 .subscribe(new Action1<Long>() {

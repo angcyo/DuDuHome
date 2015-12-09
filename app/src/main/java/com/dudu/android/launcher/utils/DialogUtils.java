@@ -1,6 +1,8 @@
 package com.dudu.android.launcher.utils;
 
 import android.content.Context;
+import android.util.Log;
+import android.view.Window;
 import android.view.WindowManager;
 
 import com.dudu.android.launcher.R;
@@ -23,13 +25,20 @@ public class DialogUtils {
             return;
         }
 
+
         if (mOBDErrorDialog != null && mOBDErrorDialog.isShowing()) {
             return;
         }
-
         mOBDErrorDialog = new ErrorMessageDialog(context, R.string.obd_checking_unconnected,
                 R.drawable.obd_checking_icon);
-        mOBDErrorDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_PHONE);
+
+        Window dialogWindow = mOBDErrorDialog.getWindow();
+        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+        lp.x = 10; // 新位置X坐标
+        lp.y = 0; // 新位置Y坐标
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
+        dialogWindow.setAttributes(lp);
         mOBDErrorDialog.show();
     }
 
