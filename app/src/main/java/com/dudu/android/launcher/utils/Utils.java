@@ -139,8 +139,8 @@ public class Utils {
                 LogUtils.i("SimCardReceiver", "sim card ready...");
                 DialogUtils.dismissWithoutSimCardDialog();
 
-                // 如果插入了sim卡则检测是否匹配
-                checkSimCardSerialNumber(context);
+                // 如果插入了sim卡则检测是否匹配--暂时不开此功能
+//                checkSimCardSerialNumber(context);
                 break;
             case TelephonyManager.SIM_STATE_UNKNOWN:
             case TelephonyManager.SIM_STATE_ABSENT:
