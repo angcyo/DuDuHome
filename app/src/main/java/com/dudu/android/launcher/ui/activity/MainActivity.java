@@ -383,11 +383,6 @@ public class MainActivity extends BaseTitlebarActivity implements
         }
     }
 
-    public void onEventMainThread(DeviceEvent.GPS event) {
-        com.dudu.android.hideapi.SystemPropertiesProxy.getInstance()
-                .set(mContext, "persist.sys.gps", event.getState() == DeviceEvent.ON ? "start" : "stop");
-    }
-
     public void onEventMainThread(DeviceEvent.Screen event) {
         com.dudu.android.hideapi.SystemPropertiesProxy.getInstance()
                 .set(mContext, "persist.sys.screen", event.getState() == DeviceEvent.ON ? "on" : "off");
@@ -429,6 +424,9 @@ public class MainActivity extends BaseTitlebarActivity implements
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         if (e2.getX() - e1.getX() > 400 && e2.getY() - e1.getY() > 400) {
+            if (!InitManager.getInstance(this).isFinished()) {
+                return true;
+            }
             //关闭语音
             VoiceManager.getInstance().stopUnderstanding();
             //关闭Portal

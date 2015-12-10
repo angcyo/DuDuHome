@@ -6,7 +6,6 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.speech.tts.Voice;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.service.CheckUserService;
@@ -24,7 +23,10 @@ import com.dudu.voice.semantic.VoiceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.TimeUnit;
+
 import ch.qos.logback.core.android.SystemPropertiesProxy;
+import rx.functions.Action1;
 
 /**
  * Created by 赵圣琪 on 2015/11/24.
@@ -38,6 +40,8 @@ public class InitManager {
     private Logger logger;
 
     private int log_step = 0;
+
+    private boolean finished = false;
 
     private InitManager(Activity activity) {
         logger = LoggerFactory.getLogger("init.manager");
@@ -90,8 +94,6 @@ public class InitManager {
      * 开启OBD服务
      */
     private void startOBDService() {
-        com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mActivity,
-                "persist.sys.gps", "start");
         Intent intent = new Intent(mActivity, MainService.class);
         mActivity.startService(intent);
     }
@@ -143,9 +145,33 @@ public class InitManager {
         if (!Utils.isDemoVersion(mActivity)) {
             com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mActivity, "persist.sys.usb.config", "charging");
         }
+        rx.Observable.timer(1, TimeUnit.SECONDS)
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(final Long aLong) {
+                        logger.debug("[init][{}]打开热点", log_step++);
+                        WifiApAdmin.initWifiApState(mActivity);
 
-        logger.debug("[init][{}]打开蓝牙", log_step++);
-        openBlueTooth();
+                    }
+                });
+        rx.Observable.timer(10, TimeUnit.SECONDS)
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(final Long aLong) {
+                        logger.debug("[init][{}]打开蓝牙", log_step++);
+                        openBlueTooth();
+                    }
+                });
+        rx.Observable.timer(15, TimeUnit.SECONDS)
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(final Long aLong) {
+                        logger.debug("[init][{}]启动OBD服务", log_step++);
+                        com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mActivity, "sys.gps", "start");
+                        startOBDService();
+                        finished = true;
+                    }
+                });
 
         logger.debug("[init][{}]启动监听服务", log_step++);
         startMonitorService();
@@ -153,19 +179,17 @@ public class InitManager {
         logger.debug("[init][{}]启动语音悬浮框服务", log_step++);
         startFloatMessageService();
 
-        logger.debug("[init][{}]启动OBD服务", log_step++);
-        startOBDService();
-
         logger.debug("[init][{}]检查sim卡状态", log_step++);
         Utils.checkSimCardState(mActivity);
-
-        logger.debug("[init][{}]打开热点", log_step++);
-        WifiApAdmin.initWifiApState(mActivity);
 
         logger.debug("[init][{}]打开用户激活状态检查", log_step++);
         startCheckUserService();
 
         NavigationManager.getInstance(LauncherApplication.getContext()).initNaviManager();
+    }
+
+    public boolean isFinished() {
+        return finished;
     }
 
 }

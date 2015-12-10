@@ -101,14 +101,16 @@ public class WifiApAdmin {
             }
         }
 
-        log_init.debug("2s后关闭wifi");
-        rx.Observable.timer(2, TimeUnit.SECONDS)
-                .subscribe(new Action1<Long>() {
-                    @Override
-                    public void call(final Long aLong) {
-                        mWifiManager.setWifiEnabled(false);
-                    }
-                });
+        if (mWifiManager.isWifiEnabled()) {
+            log_init.debug("2s后关闭wifi");
+            rx.Observable.timer(2, TimeUnit.SECONDS)
+                    .subscribe(new Action1<Long>() {
+                        @Override
+                        public void call(final Long aLong) {
+                            mWifiManager.setWifiEnabled(false);
+                        }
+                    });
+        }
         log_init.debug("7s后打开热点");
         rx.Observable.timer(7, TimeUnit.SECONDS)
                 .subscribe(new Action1<Long>() {
