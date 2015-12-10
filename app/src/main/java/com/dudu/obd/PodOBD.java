@@ -89,8 +89,8 @@ public class PodOBD {
         disConnectedCount++;
         if (disConnectedCount >= 3)
             EventBus.getDefault().post(new BleStateChange(BleStateChange.BLEDISCONNECTED));
-
-        EventBus.getDefault().post(new Event.BluetoothDisable());
+        if(event.getError() == Event.ErrorCode.ScanInvokeFail)
+            EventBus.getDefault().post(new Event.BluetoothDisable());
         Observable.timer(10, TimeUnit.SECONDS)
                 .subscribe(new Action1<Long>() {
                     @Override

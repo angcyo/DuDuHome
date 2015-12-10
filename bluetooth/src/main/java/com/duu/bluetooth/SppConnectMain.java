@@ -59,6 +59,7 @@ public class SppConnectMain {
         if(timeoutCount>=2||!hasMac()){
             log.debug("obd timeoutcount[{}]",timeoutCount);
             UnbindBluetooth.unbind();
+            BluetoothMacUtil.saveMac(mContext,"");
             scanner();
             return;
         }
@@ -106,28 +107,20 @@ public class SppConnectMain {
     }
 
     public void onEvent(Event.BluetoothDisable event) {
-        log.debug("bluetooth disable");
+
         sppManager.disableBluetooth();
 
     }
 
     public void onEvent(Event.BluetoothEnable event) {
-        log.debug("bluetooth enable");
         sppManager.enableBluetooth();
 
     }
 
     public void onEvent(Event.Reconnect event){
         log.debug("obd Reconnect");
+        timeoutCount = 0;
         sppManager.stop();
-        Observable.timer(5, TimeUnit.SECONDS)
-                .subscribe(new Action1<Long>() {
-                    @Override
-                    public void call(Long aLong) {
-                        sppManager.connect(BluetoothMacUtil.getMac(mContext), true);
-                        }
-                });
-
     }
 
     public void onEvent(Event.BTConnected event) {

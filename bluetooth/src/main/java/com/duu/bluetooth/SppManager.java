@@ -66,6 +66,7 @@ public class SppManager {
             case STATE_NONE:
                 log.debug("onReceive Disconnect from device,error : DeviceDisConnected");
                 EventBus.getDefault().post(new Event.Disconnected(Event.ErrorCode.DeviceDisConnected));
+                isConnected = false;
                 break;
             case STATE_CONNECTING:
                 log.debug("onReceive connecting the device");
@@ -192,7 +193,7 @@ public class SppManager {
     private void connectionLost() {
         log.debug("sppManager connectionLost");
         SppManager.this.start();
-        EventBus.getDefault().post(new Event.Disconnected(Event.ErrorCode.DeviceDisConnected));
+        setState(STATE_NONE);
     }
 
 
@@ -306,7 +307,6 @@ public class SppManager {
                     EventBus.getDefault().post(new EventRead.L0ReadDone(mResponseData));
                 } catch (Exception e) {
                     log.warn("disconnected", e);
-                    isConnected = false;
                     connectionLost();
                 }
             }
@@ -338,12 +338,14 @@ public class SppManager {
 
     public void disableBluetooth(){
         if(mAdapter!=null&&mAdapter.enable()){
+            log.debug("bluetooth disable");
             mAdapter.disable();
         }
     }
 
     public void enableBluetooth(){
         if(mAdapter!=null&&!mAdapter.isEnabled()){
+            log.debug("bluetooth enable");
             mAdapter.enable();
         }
     }
