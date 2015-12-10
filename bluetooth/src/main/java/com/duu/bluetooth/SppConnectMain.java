@@ -130,6 +130,10 @@ public class SppConnectMain {
 
     }
 
+    public void onEvent(Event.BTConnected event) {
+        timeoutCount = 0;
+    }
+
     private boolean hasMac(){
        return !TextUtils.isEmpty(BluetoothMacUtil.getMac(mContext));
     }
