@@ -7,7 +7,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_toLeftOf="@+id/video_signal_image"
+        android:layout_toLeftOf="@+id/bluetooth_img"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -25,6 +25,15 @@
             android:textColor="@color/white"
             android:textSize="9sp" />
     </LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_centerVertical="true"
+        android:id="@+id/bluetooth_img"
+        android:layout_toLeftOf="@+id/video_signal_image"
+        android:src="@drawable/bluetooth_off"/>
 
     <ImageView
         android:id="@+id/video_signal_image"

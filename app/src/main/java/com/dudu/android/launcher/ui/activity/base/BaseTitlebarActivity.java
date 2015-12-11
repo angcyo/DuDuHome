@@ -16,7 +16,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dudu.android.launcher.R;
+import com.dudu.android.launcher.utils.DialogUtils;
 import com.dudu.android.launcher.utils.NetworkUtils;
+import com.dudu.event.BleStateChange;
 import com.dudu.event.DeviceEvent;
 import com.dudu.monitor.Monitor;
 
@@ -53,6 +55,8 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
     private ImageView mGpsSignalImage;
 
     private ImageView mVideoSignalImage;
+
+    private ImageView mBluetoothImage;
 
     private int mSatellite = 0;
 
@@ -119,6 +123,8 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
         mGpsSignalImage = (ImageView) getWindow().findViewById(R.id.gps_img);
 
         mVideoSignalImage = (ImageView) getWindow().findViewById(R.id.video_signal_image);
+
+        mBluetoothImage = (ImageView)getWindow().findViewById(R.id.bluetooth_img);
     }
 
     private void setSimLevel(int level) {
@@ -172,6 +178,19 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
     public void onEventMainThread(DeviceEvent.Video event) {
         mVideoSignalImage.setImageResource(event.getState() == DeviceEvent.ON ?
                 R.drawable.video_signal_recording : R.drawable.video_signal_stop);
+    }
+
+    public void onEventMainThread(BleStateChange event) {
+        switch (event.getConnState()) {
+            case BleStateChange.BLEDISCONNECTED:
+                DialogUtils.showOBDErrorDialog(BaseTitlebarActivity.this);
+                mBluetoothImage.setImageResource(R.drawable.bluetooth_off);
+                break;
+            case BleStateChange.BLECONNECTED:
+                DialogUtils.dismissOBDErrorDialog(BaseTitlebarActivity.this);
+                mBluetoothImage.setImageResource(R.drawable.bluetooth_on);
+                break;
+        }
     }
 
 }

@@ -410,16 +410,7 @@ public class MainActivity extends BaseTitlebarActivity implements
         }
     }
 
-    public void onEventMainThread(BleStateChange event) {
-        switch (event.getConnState()) {
-            case BleStateChange.BLEDISCONNECTED:
-                DialogUtils.showOBDErrorDialog(MainActivity.this);
-                break;
-            case BleStateChange.BLECONNECTED:
-                DialogUtils.dismissOBDErrorDialog(MainActivity.this);
-                break;
-        }
-    }
+
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
