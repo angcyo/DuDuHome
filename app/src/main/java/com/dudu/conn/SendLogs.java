@@ -75,6 +75,11 @@ public class SendLogs {
                         if (!dirFile.exists()) {
                             dirFile.mkdirs();
                         }
+                        File logZip = new File(TMP_FOLDER + "/" + LOGS_NAME);
+                        if (logZip.exists()) {
+                            log.info("日志压缩文件存在，删除后再上传");
+                            logZip.delete();
+                        }
                         FileUtils.zipFolder(LOGBACK_FOLDER, TMP_FOLDER + "/" + LOGS_NAME);
                     } catch (Exception e) {
                         e.printStackTrace();
