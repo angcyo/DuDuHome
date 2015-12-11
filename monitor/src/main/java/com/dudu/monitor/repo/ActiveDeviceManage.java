@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import com.dudu.network.NetworkManage;
+import com.dudu.network.event.ActiveDevice;
 import com.dudu.network.event.ActiveDeviceRes;
 import com.dudu.network.event.CheckDeviceActiveRes;
 import com.dudu.network.event.RebootDevice;
@@ -75,6 +77,9 @@ public class ActiveDeviceManage{
         log.info("收到-检查-设备激活响应----"+ checkDeviceActiveRes.isActive());
         if(checkDeviceActiveRes.isActive()){
             setActiveFlag(ACTIVE_OK);
+        }else {
+            log.info("monitor-发送-设备激活-----信息");
+            NetworkManage.getInstance().sendMessage(new ActiveDevice(mContext));
         }
     }
 

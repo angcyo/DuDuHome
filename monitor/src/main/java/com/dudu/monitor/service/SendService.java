@@ -10,6 +10,7 @@ import com.dudu.monitor.valueobject.LocationInfo;
 import com.dudu.monitor.valueobject.ObdData;
 import com.dudu.network.NetworkManage;
 import com.dudu.network.event.ActiveDevice;
+import com.dudu.network.event.CheckDeviceActive;
 import com.dudu.network.event.DriveDatasUpload;
 import com.dudu.network.event.LocationInfoUpload;
 import com.dudu.network.event.ObdDatasUpload;
@@ -71,7 +72,7 @@ public class SendService {
     }
 
     public void startSendService(){
-        sendServiceThreadPool.scheduleAtFixedRate(sendServiceThread, 10, 30, TimeUnit.SECONDS);
+        sendServiceThreadPool.scheduleAtFixedRate(sendServiceThread, 4, 30, TimeUnit.SECONDS);
     }
 
     public void stopSendService(){
@@ -154,10 +155,9 @@ public class SendService {
 
     //设备激活
     private void activeDevice(){
-        log.info("monitor-检查设备是否需要激活");
-        if (ActiveDeviceManage.getInstance(mContext).getActiveFlag() != ActiveDeviceManage.ACTIVE_OK){
-            log.info("monitor-发送-设备激活-----信息");
-            NetworkManage.getInstance().sendMessage(new ActiveDevice(mContext));
+        log.info("monitor-检查设备是否需要激活 activeFlag：{}", ActiveDeviceManage.getInstance(mContext).getActiveFlag());
+        if(ActiveDeviceManage.getInstance(mContext).getActiveFlag()!= ActiveDeviceManage.ACTIVE_OK) {
+            NetworkManage.getInstance().sendMessage(new CheckDeviceActive(mContext));
         }
     }
 

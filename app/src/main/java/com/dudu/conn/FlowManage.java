@@ -87,8 +87,8 @@ public class FlowManage {
             log.error("异常：{}", e);
         }
         try {
-            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_TRAFFICE_CONTROL,
-                    flowSynConfigurationRes.getTrafficControl());
+//            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_TRAFFICE_CONTROL,
+//                    flowSynConfigurationRes.getTrafficControl());
 
             SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_MONTH_MAX_VALUE,
                     flowSynConfigurationRes.getMonthMaxValue());

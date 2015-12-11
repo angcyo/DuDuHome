@@ -49,7 +49,7 @@ public class PortalUpdate {
     public PortalUpdate(Context context) {
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
-        log = LoggerFactory.getLogger("PortalUpdate");
+        log = LoggerFactory.getLogger("monitor");
         mContext = context;
     }
 
@@ -60,6 +60,7 @@ public class PortalUpdate {
      */
     public void onEventBackgroundThread(UpdatePortal updateportal) {
         Log.v("FlowManage", "开始");
+        log.info("接收到更新portal事件");
         String group = updateportal.getGroup_name();
         String url = updateportal.getUrl();
         refreshPortal(group, url);
@@ -93,6 +94,7 @@ public class PortalUpdate {
             public void run() {
                 int result = 1;
                 try {
+                    log.info("处理更新portal事件");
                     //嘟嘟相关文件存储的位置
                     File dirFile = new File(FileUtils.getExternalStorageDirectory(), NODOGSPLASH_NAME);
                     if (!dirFile.exists()) {
@@ -124,6 +126,7 @@ public class PortalUpdate {
                          * */
                         result = FileProcessUtil.getInstance(path).downloadFile(group, url, zipDirFile.getPath() + "/", TEMP_ZIP_NAME);
                         Log.i("ji", "" + result);
+                        log.info("下载portal文件结果：{}",result);
                     }
                     if (result == 0) {
                         //如果返回的结果为0的话，则下载成功
@@ -136,9 +139,13 @@ public class PortalUpdate {
                         }
                     }
                 } catch (IOException e) {
+                    log.error("异常 {}",e);
                     LogUtils.e(TAG, e.toString());
                 } catch (MyException e) {
+                    log.error("异常 {}",e);
                     LogUtils.e(TAG, e.toString());
+                }catch (Exception e){
+                    log.error("异常 {}",e);
                 }
             }
         }).start();
