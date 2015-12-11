@@ -30,7 +30,7 @@ public class SppManager {
     private static final UUID MY_UUID_SECURE =
             UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
-    private final BluetoothAdapter mAdapter;
+    private BluetoothAdapter mAdapter;
     private ConnectThread mConnectThread;
     private ConnectedThread mConnectedThread;
     private int mState;
@@ -227,24 +227,26 @@ public class SppManager {
                 mAdapter.cancelDiscovery();
             }
 
-            /*if (remoteDevice.getBondState() != BluetoothDevice.BOND_BONDED) {
-                try {
-                    ClsUtils.setPin(remoteDevice.getClass(), remoteDevice, "1234"); // 手机和蓝牙采集器配对
-                    ClsUtils.createBond(remoteDevice.getClass(), remoteDevice);
-                    log.info("BondState createBond--->");
-                } catch (Exception e) {
-                    log.info("ClsUtils{}", e.toString());
-                }
-            } else {
-                try {
-                    ClsUtils.createBond(remoteDevice.getClass(), remoteDevice);
-                    ClsUtils.setPin(remoteDevice.getClass(), remoteDevice, "1234"); // 手机和蓝牙采集器配对
-                    ClsUtils.createBond(remoteDevice.getClass(), remoteDevice);
-                    log.info("BondState  createBond--->");
-                } catch (Exception e) {
-                    log.info("ClsUtils {}", e.toString());
-                }
-            }*/
+            mAdapter = BluetoothAdapter.getDefaultAdapter();
+            remoteDevice = mAdapter.getRemoteDevice(mac);
+//            if (remoteDevice.getBondState() != BluetoothDevice.BOND_BONDED) {
+//                try {
+//                    ClsUtils.setPin(remoteDevice.getClass(), remoteDevice, "1234");
+//                    ClsUtils.createBond(remoteDevice.getClass(), remoteDevice);
+//                    log.info("BondState createBond--->");
+//                } catch (Exception e) {
+//                    log.info("ClsUtils{}", e.toString());
+//                }
+//            } else {
+//                try {
+//                    ClsUtils.createBond(remoteDevice.getClass(), remoteDevice);
+//                    ClsUtils.setPin(remoteDevice.getClass(), remoteDevice, "1234");
+//                    ClsUtils.createBond(remoteDevice.getClass(), remoteDevice);
+//                    log.info("BondState  createBond--->");
+//                } catch (Exception e) {
+//                    log.info("ClsUtils {}", e.toString());
+//                }
+//            }
             try {
                 if(mmSocket.isConnected())
                     mmSocket.close();

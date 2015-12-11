@@ -67,7 +67,7 @@ public class PodOBD {
     }
 
     public void onEvent(Event.BTConnected event) {
-        log.debug("spp bluetooth BTConnected");
+        log.debug("spp bluetooth BTConnected adr = {}",event.getDevAddr());
         EventBus.getDefault().post(new BleStateChange(BleStateChange.BLECONNECTED));
         disConnectedCount = 0;
         Observable.timer(30, TimeUnit.SECONDS)

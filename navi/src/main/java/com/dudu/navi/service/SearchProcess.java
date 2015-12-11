@@ -45,8 +45,6 @@ public class SearchProcess {
 
     private SearchType searchType;
 
-    public static final String CURRENT_POI = "CURRENT_POI";
-
     private String locProvider = "";
 
     private GeocodeSearch geocoderSearch;
@@ -131,7 +129,6 @@ public class SearchProcess {
             query.setPageSize(20);// 设置每页最多返回多少条poi item
             query.setPageNum(0);// 设置查第一页
             poiSearch = new PoiSearch(mContext, query);
-
             if (searchType == SearchType.SEARCH_NEARBY || searchType == SearchType.SEARCH_NEAREST) {
                 poiSearch.setBound(new PoiSearch.SearchBound(latLonPoint, 2000));
             }
@@ -183,10 +180,10 @@ public class SearchProcess {
         @Override
         public void onPoiSearched(PoiResult poiResult, int code) {
             ResourceManager.getInstance(mContext).getPoiResultList().clear();
-
+            hasResult = true;
             if (code == 0) {
-                hasResult = true;
                 if (poiResult != null && poiResult.getQuery() != null) {
+
                     // 取得搜索到的poiitems有多少页
                     poiItems = poiResult.getPois();// 取得第一页的poiitem数据，页数从数字0开始
                     List<SuggestionCity> suggestionCities = poiResult

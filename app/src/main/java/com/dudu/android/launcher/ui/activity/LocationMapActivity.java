@@ -288,11 +288,11 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     @Override
     public void onPause() {
         EventBus.getDefault().unregister(this);
-        NavigationClerk.getInstance().setIsManual(true);
         SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
         navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
         NavigationClerk.getInstance().setIsShowAddress(false);
         NavigationClerk.getInstance().setIsManual(false);
+        NavigationClerk.getInstance().disMissProgressDialog();
         if (mHandler != null && getLocatinRunable != null) {
             mHandler.removeCallbacks(getLocatinRunable);
         }

@@ -78,7 +78,7 @@ public class SppConnectMain {
     public void onEvent(Event.Connect event) {
         log.debug("pod obd connect");
         if (event.getType() == Event.ConnectType.SPP) {
-            sppManager.connect(event.getMac(), true);
+            sppManager.connect(event.getMac(), false);
         }
     }
 
