@@ -60,7 +60,7 @@ public class MonitorService extends Service {
 
         mContext = this;
 
-        log = LoggerFactory.getLogger("flow");
+        log = LoggerFactory.getLogger("monitor");
 
         WAKE_INTERVAL_MS = Integer.valueOf(SharedPreferencesUtil.getStringValue(mContext, Constants.KEY_FLOW_FREQUENCY, "30")) * 1000;
 
@@ -90,59 +90,62 @@ public class MonitorService extends Service {
                 if (Thread.interrupted()) {
                     return;
                 }
+                try {
+                    NetworkManage.getInstance().sendMessage(new FlowSynConfiguration(mContext));
 
-                NetworkManage.getInstance().sendMessage(new FlowSynConfiguration(mContext));
 
+                    //单位kb
+                    mMobileRx = TrafficStats.getMobileRxBytes() / 1024;//
+                    mMobileTx = TrafficStats.getMobileTxBytes() / 1024;
 
-                //单位kb
-                mMobileRx = TrafficStats.getMobileRxBytes() / 1024;//
-                mMobileTx = TrafficStats.getMobileTxBytes() / 1024;
-
-                if (mMobileRx == -1 && mMobileRx == -1) {
-                    continue;
-                } else {
-                    mDeltaRx = mMobileRx - mOldMobileRx;//时间段内接收消耗的流量
-                    mOldMobileRx = mMobileRx;
-                    mDeltaTx = mMobileTx - mOldMobileTx;//时间段内发送消耗的流量
-                    mOldMobileTx = mMobileTx;
-
-                    mDeltaRx = (Math.round(mDeltaRx * 100.0)) / 100;
-                    mDeltaTx = (Math.round(mDeltaTx * 100.0)) / 100;
-
-//                    log.debug("时间段内接收消耗的流量：mDeltaRx = {}, mDeltaTx = {}", mDeltaRx, mDeltaTx);
-                }
-
-                mMobileTotalRx += mDeltaRx;
-                mMobileTotalTx += mDeltaTx;
-
-                log.info("mMobileTotalRx = {},mMobileTotalTx = {}", mMobileTotalRx, mMobileTotalTx);
-                if (mMobileTotalRx != 0 || mMobileTotalTx != 0) {
-                    log.debug("更新数据库");
-                    Date date = new Date();
-
-                    if (mDbHelper.checkRecord(1, date)) {
-                        float up = mDbHelper.getProFlowUp(1, date);
-                        float dw = mDbHelper.getProFlowDw(1, date);
-//                        log.debug("读数据库：up = {}, dw = {}", up, dw);
-                        mMobileTotalRx += dw;
-                        mMobileTotalTx += up;
-                        refreshFlowData();
-                        float totalFlow = mDeltaRx + mDeltaTx;//开机到现在已使用总流量
-//                        log.debug("时间段内接收消耗的总流量：{}", totalFlow);
-                        NetworkManage.getInstance().sendMessage(new FlowUpload(mContext, totalFlow, mFormat.format(date)));
-                        mDbHelper.updateFlow(mMobileTotalRx, mMobileTotalTx, 1, date);
+                    if (mMobileRx == -1 && mMobileRx == -1) {
+                        continue;
                     } else {
-                        mDbHelper.insertFlow(mMobileTotalTx, mMobileTotalRx, 1, date);
+                        mDeltaRx = mMobileRx - mOldMobileRx;//时间段内接收消耗的流量
+                        mOldMobileRx = mMobileRx;
+                        mDeltaTx = mMobileTx - mOldMobileTx;//时间段内发送消耗的流量
+                        mOldMobileTx = mMobileTx;
+
+                        mDeltaRx = (Math.round(mDeltaRx * 100.0)) / 100;
+                        mDeltaTx = (Math.round(mDeltaTx * 100.0)) / 100;
+
+    //                    log.debug("时间段内接收消耗的流量：mDeltaRx = {}, mDeltaTx = {}", mDeltaRx, mDeltaTx);
                     }
 
-                    mMobileTotalRx = 0;
-                    mMobileTotalTx = 0;
+                    mMobileTotalRx += mDeltaRx;
+                    mMobileTotalTx += mDeltaTx;
+
+                    log.info("mMobileTotalRx = {},mMobileTotalTx = {}", mMobileTotalRx, mMobileTotalTx);
+                    if (mMobileTotalRx != 0 || mMobileTotalTx != 0) {
+                        log.debug("更新数据库");
+                        Date date = new Date();
+
+                        if (mDbHelper.checkRecord(1, date)) {
+                            float up = mDbHelper.getProFlowUp(1, date);
+                            float dw = mDbHelper.getProFlowDw(1, date);
+    //                        log.debug("读数据库：up = {}, dw = {}", up, dw);
+                            mMobileTotalRx += dw;
+                            mMobileTotalTx += up;
+                            refreshFlowData();
+                            float totalFlow = mDeltaRx + mDeltaTx;//开机到现在已使用总流量
+    //                        log.debug("时间段内接收消耗的总流量：{}", totalFlow);
+                            NetworkManage.getInstance().sendMessage(new FlowUpload(mContext, totalFlow, mFormat.format(date)));
+                            mDbHelper.updateFlow(mMobileTotalRx, mMobileTotalTx, 1, date);
+                        } else {
+                            mDbHelper.insertFlow(mMobileTotalTx, mMobileTotalRx, 1, date);
+                        }
+
+                        mMobileTotalRx = 0;
+                        mMobileTotalTx = 0;
+                    }
+                } catch (Exception e) {
+                    log.error("异常：{}", e);
                 }
 
                 try {
                     Thread.sleep(WAKE_INTERVAL_MS);
-                } catch (InterruptedException e) {
-                    LogUtils.e(TAG, e.getMessage());
+                } catch (Exception e) {
+                    log.error("异常：{}", e);
                 }
             }
         }

@@ -45,7 +45,7 @@ public class FlowManage {
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
 
-        log = LoggerFactory.getLogger("FlowManage");
+        log = LoggerFactory.getLogger("monitor");
         mContext = context;
     }
 
@@ -84,7 +84,7 @@ public class FlowManage {
                 PortalUpdate.getInstance(mContext).updatePortal(mContext, portalVersion, portalAddress);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("异常：{}", e);
         }
         try {
             SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_TRAFFICE_CONTROL,
@@ -151,7 +151,7 @@ public class FlowManage {
 //            SharedPreferencesUtil.putStringValue(mContext,Constants.KEY_REMAINING_FLOW, flowSynConfigurationRes.getRemainingFlow());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("异常：{}", e);
         }
     }
 

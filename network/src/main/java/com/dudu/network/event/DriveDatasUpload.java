@@ -115,10 +115,16 @@ public class DriveDatasUpload extends MessagePackage{
 
             sendJsonObject.put("createTime", flamountData.getString("createTime"));
 
-            sendJsonObject.put("hotCarTime", flamountData.getString("hotCarTime"));
-            sendJsonObject.put("idleTime", flamountData.getString("idleTime"));
+//            sendJsonObject.put("hotCarTime", flamountData.getString("hotCarTime"));
+//            sendJsonObject.put("idleTime", flamountData.getString("idleTime"));
+//
+//            sendJsonObject.put("idleFuelConsumption", flamountData.getString("idleFuelConsumption"));//协议中是浮点，后面再敲定
 
-            sendJsonObject.put("idleFuelConsumption", flamountData.getString("idleFuelConsumption"));//协议中是浮点，后面再敲定
+            //暂时先不处理
+            sendJsonObject.put("hotCarTime", "0");
+            sendJsonObject.put("idleTime", "0");
+
+            sendJsonObject.put("idleFuelConsumption", "0");//协议中是浮点，后面再敲定
 
         } catch (JSONException e) {
             e.printStackTrace();

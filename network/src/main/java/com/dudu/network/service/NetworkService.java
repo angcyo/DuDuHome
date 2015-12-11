@@ -172,7 +172,7 @@ public class NetworkService implements IConnectCallBack {
         try {
             if (messagePackage.isNeedEncrypt()) {
                 sendMessage = Encrypt.AESEncrypt(sendMessage, Encrypt.vi);
-                log.debug("发送消息_加密后 messageID：" + messagePackage.getMessageId() + "  消息内容：" + sendMessage);
+//                log.debug("发送消息_加密后 messageID：" + messagePackage.getMessageId() + "  消息内容：" + sendMessage);
             } else {
                 log.info("响应服务器发送的消息-----------");
                 curNoNeedResponseMessageString = sendMessage;
