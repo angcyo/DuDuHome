@@ -30,7 +30,7 @@ import static android.support.v4.content.PermissionChecker.checkSelfPermission;
  * Created by dengjun on 2015/11/26.
  * Description :
  */
-public class AmapLocation implements AMapLocationListener, ILocation{
+public class AmapLocation implements AMapLocationListener, ILocation {
     private Context mContext;
 
     private LocationManagerProxy mLocationManagerProxy;
@@ -61,8 +61,8 @@ public class AmapLocation implements AMapLocationListener, ILocation{
                 // 卫星状态改变
                 case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
                     log.debug("卫星状态改变");
-                    if(last_Location!=null)
-                         EventBus.getDefault().post(locationManager.getGpsStatus(null));
+                    if (last_Location != null)
+                        EventBus.getDefault().post(locationManager.getGpsStatus(null));
                     break;
                 // 定位启动
                 case GpsStatus.GPS_EVENT_STARTED:
@@ -89,13 +89,13 @@ public class AmapLocation implements AMapLocationListener, ILocation{
         mLocationManagerProxy.requestLocationData(
                 LocationProviderProxy.AMapNetwork, 2000, 10, this);
 
-        locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
     }
 
     @Override
     public void stopLocation() {
-        if(mLocationManagerProxy != null){
+        if (mLocationManagerProxy != null) {
             mLocationManagerProxy.removeUpdates(this);
             mLocationManagerProxy.destroy();
 
@@ -112,8 +112,8 @@ public class AmapLocation implements AMapLocationListener, ILocation{
     @Override
     public void onLocationChanged(AMapLocation location) {
         String provider = location.getProvider();
-        log.debug("定到位置 "+ provider);
-        log.debug("位置信息 "+ "纬度:"+ location.getLatitude()+ "  经度："+ location.getLongitude());
+        log.debug("定到位置 " + provider);
+        log.debug("位置信息 " + "纬度:" + location.getLatitude() + "  经度：" + location.getLongitude());
 
         if (GPSdataTime < 2) {
             GPSdataTime++;
@@ -130,13 +130,13 @@ public class AmapLocation implements AMapLocationListener, ILocation{
             Bundle locBundle = location.getExtras();
             if (locBundle != null) {
                 LocationUtils.getInstance(mContext).setCurrentCitycode(locBundle.getString("citycode"));
-                LocationUtils.getInstance(mContext).setCurrentLocation(location.getLatitude(),location.getLongitude());
+                LocationUtils.getInstance(mContext).setCurrentLocation(location.getLatitude(), location.getLongitude());
                 last_Location = location;
                 isFirstLoc = false;
             }
         }
 
-        if (mILocationListener != null){
+        if (mILocationListener != null) {
             mILocationListener.onLocationResult(location);
         }
         /*LocationInfo locationInfo = new LocationInfo(location);
@@ -203,6 +203,7 @@ public class AmapLocation implements AMapLocationListener, ILocation{
                     isAvalable = true;
                     unAvalableList.clear();
                 } else {
+                    log.debug("未通过第二阶段或第三阶段过滤");
                     isAvalable = false;
                     unAvalableList.add(location);
                     if (unAvalableList.size() == 3) {
@@ -213,6 +214,7 @@ public class AmapLocation implements AMapLocationListener, ILocation{
                                         .get(0).getTime(), TimeUtils.format1),
                                 TimeUtils.dateLongFormatString(unAvalableList
                                         .get(1).getTime(), TimeUtils.format1))) {
+
                             if (LocationFilter.checkStageTwo(unAvalableList
                                             .get(1).getSpeed(), unAvalableList.get(2)
                                             .getSpeed(), TimeUtils
@@ -233,6 +235,7 @@ public class AmapLocation implements AMapLocationListener, ILocation{
                 }
             }
             if (isAvalable) {
+                log.debug("gps通过过滤");
                 LocationInfo locationInfo = new LocationInfo(location);
                 if (mILocationListener != null) {
                     mILocationListener.onLocationResult(locationInfo);
@@ -241,8 +244,7 @@ public class AmapLocation implements AMapLocationListener, ILocation{
             }
 
         } else {
-            log.trace("gps未通过过滤locaion:lat={},lon={},speed={},bear={}", location.getLatitude(), location.getLongitude(),
-                    location.getSpeed(), location.getBearing());
+            log.debug("gps未通过过滤");
         }
     }
 
