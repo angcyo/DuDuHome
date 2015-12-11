@@ -254,7 +254,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         logger.debug("调用startRecord方法，开始启动录像...");
 
 
-        prepareCamera();
+//        prepareCamera();
 
         if (FileUtils.isTFlashCardExists()) {
             isPreviewingOrRecording = true;
@@ -316,7 +316,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
             camera.lock();
         }
 
-        releaseCamera();
+//        releaseCamera();
 
         insertVideo(videoName);
     }
@@ -373,6 +373,8 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
         stopRecord();
 
+        releaseCamera();
+
         windowManager.removeView(videoView);
 
         unregisterReceiver(mTFlashCardReceiver);
@@ -409,7 +411,14 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     public void prepareCamera() {
         logger.debug("开始初始化camera: prepareCamera");
         if (camera == null) {
-            camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
+            try {
+                camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
+            } catch (Exception e) {
+                logger.error("camera.open出错", e);
+                if(camera == null) {
+                    return;
+                }
+            }
         }
 
         mCameraParams = camera.getParameters();
@@ -439,9 +448,10 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
             logger.debug("准备相机: prepareCamera is called!");
             prepareCamera();
         }
-
+        if (camera == null) {
+            return false;
+        }
         camera.unlock();
-
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setOnErrorListener(null);
         mediaRecorder.setPreviewDisplay(surfaceHolder.getSurface());
@@ -536,7 +546,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
                     camera.lock();
                 }
             } catch (Exception e) {
-               logger.error("录像释放出错...");
+                logger.error("录像释放出错...");
             }
         }
     }
@@ -641,14 +651,14 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
                     } catch (Exception e) {
                         stopRecord();
 
-                        prepareCamera();
+//                        prepareCamera();
 
                         doStartPreview();
                     }
                 } else {
                     stopRecord();
 
-                    prepareCamera();
+//                    prepareCamera();
 
                     doStartPreview();
                 }
@@ -687,7 +697,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
                 stopRecord();
                 if (isShowing) {
-                    prepareCamera();
+//                    prepareCamera();
 
                     doStartPreview();
                 }

@@ -451,6 +451,7 @@ public class MainActivity extends BaseTitlebarActivity implements
     }
 
     private void startCameraAndCloseListener() {
+        mRecordService.prepareCamera();
         mRecordService.startRecord();
     }
 
