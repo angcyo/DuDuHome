@@ -60,6 +60,42 @@
         </rollingPolicy>
     </appender>
 
+    <appender name="FILE_storage" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/log_storage.today.txt</file>
+        <encoder>
+            <pattern>%date [%thread] %-5level %logger{36} [%file:%line] - %msg%n</pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/log_storage.%d.txt</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="FILE_CALCULATE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/log_calculate.today.txt</file>
+        <encoder>
+            <pattern>%date [%thread] %-5level %logger{36} [%file:%line] - %msg%n</pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/log_calculate.%d.txt</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="FILE_MONITOR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/log_monitor.today.txt</file>
+        <encoder>
+            <pattern>%date [%thread] %-5level %logger{36} [%file:%line] - %msg%n</pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/log_monitor.%d.txt</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
     <appender name="FILE_VOICE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_DIR}/log_voice.today.txt</file>
         <encoder>
@@ -132,12 +168,24 @@
         <appender-ref ref="FILE_OBD"/>
     </logger>
 
-    <logger name="net.conn" level="DEBUG">
+    <logger name="network" level="DEBUG">
         <appender-ref ref="FILE_NET"/>
     </logger>
 
     <logger name="lbs" level="DEBUG">
         <appender-ref ref="FILE_GPS"/>
+    </logger>
+
+    <logger name="monitor" level="DEBUG">
+        <appender-ref ref="FILE_MONITOR"/>
+    </logger>
+
+    <logger name="storage" level="DEBUG">
+        <appender-ref ref="FILE_STORAGE"/>
+    </logger>
+
+    <logger name="calculate" level="DEBUG">
+        <appender-ref ref="FILE_CALCULATE"/>
     </logger>
 
     <logger name="voice" level="DEBUG">

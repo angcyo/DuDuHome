@@ -50,7 +50,7 @@ public class SendLogs {
     public SendLogs(Context context) {
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
-        log = LoggerFactory.getLogger("SendLogs");
+        log = LoggerFactory.getLogger("network");
         mContext = context;
     }
     /**
@@ -59,43 +59,48 @@ public class SendLogs {
      */
     public void onEventBackgroundThread(LogSend logSend) {
         final String url = logSend.getUrl();
-        Log.v("FlowManage", url);
+        log.info("收到日志上传事件 上传地址：{}", url);
         queue = Volley.newRequestQueue(mContext);
         new Thread(new Runnable() {
             @Override
             public void run() {
-                File dirfile = new File(DUDU_FOLDER, "crash");
-                if (dirfile.exists()) {
-                    FileUtils.copyFolder(CRASH_FOLDER, LOGBACK_FOLDER);
-                }
                 try {
-                    File dirFile = new File(DUDU_FOLDER, "tmp");
-                    if (!dirFile.exists()) {
-                        dirFile.mkdirs();
+                    log.info("日志上传-----------");
+                    File dirfile = new File(DUDU_FOLDER, "crash");
+                    if (dirfile.exists()) {
+                        FileUtils.copyFolder(CRASH_FOLDER, LOGBACK_FOLDER);
                     }
-                    FileUtils.zipFolder(LOGBACK_FOLDER, TMP_FOLDER + "/" + LOGS_NAME);
+                    try {
+                        File dirFile = new File(DUDU_FOLDER, "tmp");
+                        if (!dirFile.exists()) {
+                            dirFile.mkdirs();
+                        }
+                        FileUtils.zipFolder(LOGBACK_FOLDER, TMP_FOLDER + "/" + LOGS_NAME);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    File file = new File(TMP_FOLDER, LOGS_NAME);
+                    MultipartRequestParams multiPartParams = new MultipartRequestParams();
+                    multiPartParams.put("upload_logs", file, LOGS_NAME);
+                    multiPartParams.put("obeId", DeviceIDUtil.getIMEI(mContext));
+                    MultipartRequest multipartRequest = new MultipartRequest
+                            (Request.Method.POST, multiPartParams, url, new Response.Listener<String>() {
+
+                                @Override
+                                public void onResponse(String response) {
+                                    log.info("日志上传响应信息：{}", response);
+                                }
+                            }, new Response.ErrorListener() {
+
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    log.error("日志上传错误响应：{}", error.toString());
+                                }
+                            });
+                    queue.add(multipartRequest);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error("异常 {}", e);
                 }
-                File file = new File(TMP_FOLDER, LOGS_NAME);
-                MultipartRequestParams multiPartParams = new MultipartRequestParams();
-                multiPartParams.put("upload_logs", file, LOGS_NAME);
-                multiPartParams.put("obeId", DeviceIDUtil.getIMEI(mContext));
-                MultipartRequest multipartRequest = new MultipartRequest
-                        (Request.Method.POST, multiPartParams, url, new Response.Listener<String>() {
-
-                            @Override
-                            public void onResponse(String response) {
-
-                            }
-                        }, new Response.ErrorListener() {
-
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-
-                            }
-                        });
-                queue.add(multipartRequest);
             }
         }).start();
     }
