@@ -24,19 +24,51 @@ public class FlamoutData {
     private int starts;            //点火启动次数
     private int power;            //汽车当前运行状态
     private String createTime;    //采集时间
+    private int hotCarTime;       //热车时长
+    private int idleTime;         // 怠速时长
+    private float idleFuelConsumption;  // 怠速耗油量
 
+    public int getHotCarTime() {
+        return hotCarTime;
+    }
+
+    public int getIdleTime() {
+        return idleTime;
+    }
+
+    public float getIdleFuelConsumption() {
+        return idleFuelConsumption;
+    }
+
+    public void setIdleTime(int idleTime) {
+
+        this.idleTime = idleTime;
+    }
+
+    public void setIdleFuelConsumption(float idleFuelConsumption) {
+        this.idleFuelConsumption = idleFuelConsumption;
+    }
+
+    public void setHotCarTime(int hotCarTime) {
+
+        this.hotCarTime = hotCarTime;
+    }
 
     public FlamoutData(String flamoutDataString) {
         if (!TextUtils.isEmpty(flamoutDataString)) {
             String[] flamoutDataArray = flamoutDataString.split(",");
-            fuels = Float.parseFloat(flamoutDataArray[6]);
+            hotCarTime =(int)( Float.parseFloat(flamoutDataArray[0].split("=")[1])*60);
+            fuelT = Float.parseFloat(flamoutDataArray[5]);
             miles = Float.parseFloat(flamoutDataArray[3]);
-            times = (int) Float.parseFloat(flamoutDataArray[2]) * 60;
-            maxrpm = Integer.parseInt(flamoutDataArray[8]);
-            maxspd = Integer.parseInt(flamoutDataArray[7]);
+            times = (int) (Float.parseFloat(flamoutDataArray[2]) * 60);
+            maxrpm = Integer.parseInt(flamoutDataArray[7]);
+            maxspd = Integer.parseInt(flamoutDataArray[6]);
             createTime = TimeUtils.dateLongFormatString(
                     System.currentTimeMillis(), TimeUtils.format1);
             power = 0;
+            idleTime = (int)(Float.parseFloat(flamoutDataArray[1])*60);
+            idleFuelConsumption = Float.parseFloat(flamoutDataArray[4]);
+
         }
     }
 

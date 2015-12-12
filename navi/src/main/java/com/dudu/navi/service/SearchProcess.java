@@ -83,13 +83,13 @@ public class SearchProcess {
     public void search(String keyword) {
         isNoticeFail = false;
         searchType = NavigationManager.getInstance(mContext).getSearchType();
-        latLonPoint = new LatLonPoint(LocationUtils.getInstance(mContext).getCurrentLocation()[0], LocationUtils.getInstance(mContext).getCurrentLocation()[1]);
+        cur_location = Monitor.getInstance(mContext).getCurrentLocation();
+        latLonPoint = new LatLonPoint(cur_location.getLatitude(),cur_location.getLongitude());
         NavigationManager.getInstance(mContext).getLog().debug("开始搜索{}", searchType);
-        if (latLonPoint != null) {
             cityCode = LocationUtils.getInstance(mContext).getCurrentCityCode();
             switch (searchType) {
                 case SEARCH_DEFAULT:
-                    break;
+                    return;
                 case OPEN_NAVI:
                     EventBus.getDefault().post(NaviEvent.ChangeSemanticType.NAVIGATION);
                     EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast("您好，请说出您想去的地方或者关键字", true));
@@ -106,7 +106,6 @@ public class SearchProcess {
                     break;
 
             }
-        }
         Observable.timer(25, TimeUnit.SECONDS)
                 .subscribe(new Action1<Long>() {
                     @Override
@@ -130,7 +129,8 @@ public class SearchProcess {
             query.setPageNum(0);// 设置查第一页
             poiSearch = new PoiSearch(mContext, query);
             if (searchType == SearchType.SEARCH_NEARBY || searchType == SearchType.SEARCH_NEAREST) {
-                poiSearch.setBound(new PoiSearch.SearchBound(latLonPoint, 2000));
+                if(latLonPoint!=null)
+                    poiSearch.setBound(new PoiSearch.SearchBound(latLonPoint, 2000));
             }
             poiSearch.setOnPoiSearchListener(onPoiSearchListener);
             poiSearch.searchPOIAsyn();
@@ -146,7 +146,7 @@ public class SearchProcess {
     public void getCur_locationDesc() {
         hasResult = false;
         NavigationManager.getInstance(mContext).setSearchType(SearchType.SEARCH_CUR_LOCATION);
-        cur_location = Monitor.getInstance(mContext).getCurrentLocation();
+
         if (cur_location != null) {
             locProvider = cur_location.getProvider();
             locBundle = cur_location.getExtras();

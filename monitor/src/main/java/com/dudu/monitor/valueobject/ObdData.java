@@ -10,23 +10,22 @@ import com.dudu.monitor.utils.TimeUtils;
  * Description :
  */
 public class ObdData {
-    private int speed;                        //车速
+    private int spd;                        //车速
     private String createTime;                    //采集时间
     private float engLoad;                    //发动机负荷
     private float engCoolant;                //发动机冷却液
-
     private float curon;                    //瞬时油耗
-    private float engineSpeed;                    //发动机转速
-    private float batteryVoltage;                    //电瓶电压
+    private float engSpd;                    //发动机转速
+    private float batteryV;                    //电瓶电压
     private int runState;                    //汽车当前运行状态（1：运行 0：熄火）
 
     public ObdData(String realTimeObdData) {
         if (!TextUtils.isEmpty(realTimeObdData)) {
             String[] realTimeDataArray = realTimeObdData.split(",");
 
-            batteryVoltage = Float.parseFloat(realTimeDataArray[1]);
-            engineSpeed = Float.parseFloat(realTimeDataArray[2]);
-            speed = Integer.parseInt(realTimeDataArray[3]);
+            batteryV = Float.parseFloat(realTimeDataArray[1]);
+            engSpd = Float.parseFloat(realTimeDataArray[2]);
+            spd = Integer.parseInt(realTimeDataArray[3]);
             engCoolant = Float.parseFloat(realTimeDataArray[4]);
             engLoad = Float.parseFloat(realTimeDataArray[5]);
             curon = Float.parseFloat(realTimeDataArray[6]);
@@ -44,13 +43,13 @@ public class ObdData {
             if (obdStr[i].startsWith("SS")) {
 
             } else if (s.startsWith("S")) {
-                speed = Integer.parseInt((s.substring(1, s.length())));
+                spd = Integer.parseInt((s.substring(1, s.length())));
 
             } else if (s.startsWith("V")) {
-                batteryVoltage = Float.parseFloat(s.substring(1, s.length()));
+                batteryV = Float.parseFloat(s.substring(1, s.length()));
             } else if (s.startsWith("R")) {
 
-                engineSpeed = Float.parseFloat(s.substring(1, s.length()));
+                engSpd = Float.parseFloat(s.substring(1, s.length()));
             } else if (s.startsWith("XH") || s.startsWith("YH")) {
 
             } else if (s.startsWith("XM") || s.startsWith("YM")) {
@@ -73,23 +72,44 @@ public class ObdData {
 
     // 转速不匹配判定
     public boolean misMatch() {
-        boolean first = speed < 30 && engineSpeed > 3000;
-        boolean second = (speed < 60 && speed > 30) && engineSpeed > 3500;
-        boolean third = (speed < 90 && speed > 60) && engineSpeed > 4000;
-        boolean forth = (speed < 110 && speed > 90) && engineSpeed > 4500;
-        boolean five = (speed < 130 && speed > 110) && engineSpeed > 5000;
-        boolean six = (speed < 150 && speed > 130) && engineSpeed > 5500;
+        boolean first = spd < 30 && engSpd > 3000;
+        boolean second = (spd < 60 && spd > 30) && engSpd > 3500;
+        boolean third = (spd < 90 && spd > 60) && engSpd > 4000;
+        boolean forth = (spd < 110 && spd > 90) && engSpd > 4500;
+        boolean five = (spd < 130 && spd > 110) && engSpd > 5000;
+        boolean six = (spd < 150 && spd > 130) && engSpd > 5500;
         if (first || second || third || forth || five || six)
             return true;
         return false;
     }
 
     public int getSpeed() {
-        return speed;
+        return spd;
     }
 
-    public void setSpeed(int speed) {
-        this.speed = speed;
+    public int getSpd() {
+        return spd;
+    }
+
+    public float getEngSpd() {
+        return engSpd;
+    }
+
+    public float getBatteryV() {
+        return batteryV;
+    }
+
+    public void setSpd(int spd) {
+
+        this.spd = spd;
+    }
+
+    public void setEngSpd(float engSpd) {
+        this.engSpd = engSpd;
+    }
+
+    public void setBatteryV(float batteryV) {
+        this.batteryV = batteryV;
     }
 
     public String getCreateTime() {
@@ -109,12 +129,10 @@ public class ObdData {
     }
 
     public float getEngineSpeed() {
-        return engineSpeed;
+        return engSpd;
     }
 
-    public void setEngineSpeed(float engineSpeed) {
-        this.engineSpeed = engineSpeed;
-    }
+
 
     public int getRunState() {
         return runState;
@@ -124,13 +142,6 @@ public class ObdData {
         this.runState = runState;
     }
 
-    public float getBatteryVoltage() {
-        return batteryVoltage;
-    }
-
-    public void setBatteryVoltage(float batteryVoltage) {
-        this.batteryVoltage = batteryVoltage;
-    }
 
     public float getCuron() {
         return curon;
