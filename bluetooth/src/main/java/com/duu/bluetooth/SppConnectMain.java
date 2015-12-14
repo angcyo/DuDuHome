@@ -42,7 +42,7 @@ public class SppConnectMain {
         if(mSubscription!=null){
             mSubscription.unsubscribe();
         }
-        mSubscription = Observable.timer(2, TimeUnit.MINUTES)
+        mSubscription = Observable.timer(30, TimeUnit.SECONDS)
                 .subscribe(new Action1<Long>() {
                     @Override
                     public void call(Long aLong) {

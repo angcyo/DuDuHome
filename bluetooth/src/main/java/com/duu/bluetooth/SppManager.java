@@ -134,14 +134,9 @@ public class SppManager {
             mConnectedThread = null;
         }
 
+
         mConnectThread = new ConnectThread(macAddr, secure);
-        Observable.timer(1000, TimeUnit.MILLISECONDS)
-                .subscribe(new Action1<Long>() {
-                    @Override
-                    public void call(Long aLong) {
-                        mConnectThread.start();
-                    }
-                });
+        mConnectThread.start();
 
         setState(STATE_CONNECTING);
     }
@@ -159,7 +154,7 @@ public class SppManager {
             mConnectedThread.cancel();
             mConnectedThread = null;
         }
-
+        isConnected = true;
         mConnectedThread = new ConnectedThread(socket, socketType);
         mConnectedThread.start();
 
@@ -240,6 +235,7 @@ public class SppManager {
 
             mAdapter = BluetoothAdapter.getDefaultAdapter();
             remoteDevice = mAdapter.getRemoteDevice(mac);
+
 //            if (remoteDevice.getBondState() != BluetoothDevice.BOND_BONDED) {
 //                try {
 //                    ClsUtils.setPin(remoteDevice.getClass(), remoteDevice, "1234");
