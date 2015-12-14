@@ -42,6 +42,10 @@ public class CalculateService {
 
     private int carState;
 
+    /* 用于比较，过滤掉相同的点*/
+    private LocationInfo locationInfoUsedCompare;
+    private boolean isFirst = true;
+
     //计算线程
     private Thread calculateThread = new Thread(){
         @Override
@@ -93,7 +97,7 @@ public class CalculateService {
             float avg_x = Math.abs(x_sum / (acceSensorDataList.size())); // 加速度传感器的X轴平均值
             // 速度大于0 x轴方向的绝对值大雨0.5则认为发生了急转弯
 //            log.debug("avg_x = "+ avg_x);
-            if (Monitor.getInstance(mContext).getCurSpeed() > 0 && avg_x >= 0.5) {
+            if (Monitor.getInstance(mContext).getCurSpeed() > 30 && avg_x >= 1) {
                 putLocationInfo(getAndSetTypeLocationInfo(DriveBehaviorType.TYPE_HARDTURN));
             }
             acceSensorDataList.clear();
@@ -116,15 +120,34 @@ public class CalculateService {
 
     //获取当前位置，并且设置驾驶行为类型
     private LocationInfo getAndSetTypeLocationInfo(int driveBehaviorType){
-        LocationInfo locationInfo = new LocationInfo(Monitor.getInstance(mContext).getCurrentLocation());
-        if (!LocationFilter.checkLatLon(locationInfo.getLat(),locationInfo.getLon()))
+//        LocationInfo locationInfo = new LocationInfo(Monitor.getInstance(mContext).getCurrentLocation());
+        LocationInfo locationInfo= Monitor.getInstance(mContext).getCurLocation();//改成直接获取过滤后的位置信息
+        if (locationInfo == null || locationInfo.getLon() == 0)//滤除为0的坐标
             return null;
         locationInfo.setType(driveBehaviorType);
-        return locationInfo;
+        return judgeEqual(locationInfo);
+    }
+
+    /* 判断位置信息是否一样，一样的滤除*/
+    public LocationInfo judgeEqual(LocationInfo locationInfo){
+        if (locationInfo == null)
+            return null;
+        if (isFirst){
+            locationInfoUsedCompare = locationInfo;
+            isFirst = false;
+            return locationInfo;
+        }else {
+            if (!locationInfoUsedCompare.equals(locationInfo)){
+                locationInfoUsedCompare = locationInfo;
+                return locationInfo;
+            }else{
+                return null;
+            }
+        }
     }
 
     //把数据放到driveLocationInfoArray，数据满30个就发送
-    private void putLocationInfo(LocationInfo locationInfo){
+    private synchronized void putLocationInfo(LocationInfo locationInfo){
         try {
             if (locationInfo == null)
                 return;
@@ -132,7 +155,7 @@ public class CalculateService {
                  driveLocationInfoArray.put(new JSONObject(gson.toJson(locationInfo)));
             }
 //            log.debug("driveLocationInfoArray.length() = " + driveLocationInfoArray.length());
-            if (driveLocationInfoArray.length() == 30)//满30个数据才给服务器发
+            if (driveLocationInfoArray.length() == 5)//满30个数据才给服务器发
             {
                 NetworkManage.getInstance().sendMessage(new LocationInfoUpload(mContext, driveLocationInfoArray));
                 driveLocationInfoArray = null;

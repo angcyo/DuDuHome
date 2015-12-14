@@ -48,11 +48,23 @@ public class LocationInfo {
     }
 
 
-
-
-
-
-
+    @Override
+    public boolean equals(Object object) {
+        if (object == null){
+            return false;
+        }else {
+            if (object instanceof LocationInfo){
+                LocationInfo location = (LocationInfo)object;
+                if (location.getLon() == this.lon && location.getLat() == this.lat
+                        && location.getAccuracy() == this.accuracy && location.getAltitude() == this.altitude
+                        /*&& location.getCreateTime().equals(this.createTime) */&& location.getDirection() == this.direction
+                       /* && location.getType().intValue() == this.type.intValue()*/&& location.getSpeeds() == this.speeds){
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
 
     public double getLat() {
         return lat;
