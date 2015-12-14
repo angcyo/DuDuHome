@@ -17,6 +17,7 @@ import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.voice.semantic.engine.SemanticProcessor;
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
+import com.iflytek.cloud.Setting;
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SpeechSynthesizer;
@@ -95,9 +96,13 @@ public class VoiceManager {
 
     private VoiceManager() {
         mContext = LauncherApplication.mApplication;
+
         log = LoggerFactory.getLogger("voice.manager");
         log_step = 0;
         log.debug("[voice][{}]初始化语音manager...", log_step++);
+
+        Setting.showLogcat(false);
+
         StringBuffer param = new StringBuffer();
         param.append("appid=" + Constants.XUFEIID);
         param.append(",");

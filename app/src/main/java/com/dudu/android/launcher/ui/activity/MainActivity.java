@@ -323,7 +323,7 @@ public class MainActivity extends BaseTitlebarActivity implements
             public void run() {
                 requestWeatherInfo();
             }
-        }, 10 * 1000, 60 * 60 * 1000);
+        }, 10 * 1000, 10 * 60 * 1000);
     }
 
     private void requestWeatherInfo() {

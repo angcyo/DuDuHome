@@ -1,18 +1,13 @@
 package com.dudu.android.launcher;
 
 import android.app.Application;
-import android.content.Intent;
+import android.os.StrictMode;
 
 import com.dudu.android.launcher.exception.CrashHandler;
-import com.dudu.android.launcher.service.NewMessageShowService;
 import com.dudu.android.launcher.service.RecordBindService;
-import com.dudu.android.launcher.ui.dialog.ErrorMessageDialog;
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.NetworkUtils;
 import com.iflytek.cloud.Setting;
-import com.iflytek.cloud.SpeechConstant;
-import com.iflytek.cloud.SpeechUtility;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,14 +34,24 @@ public class LauncherApplication extends Application {
         logger = LoggerFactory.getLogger("init.application");
         logger.debug("正在初始化application");
 
-        Setting.showLogcat(false);
+        if (Constants.DEBUG_STRICT_MODE) {
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                    .detectAll()
+                    .penaltyDialog()
+                    .penaltyLog()
+                    .build());
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                    .detectLeakedSqlLiteObjects()
+                    .detectLeakedClosableObjects()
+                    .penaltyLog()
+                    .build());
+        }
 
         CrashHandler crashHandler = CrashHandler.getInstance();
 
         // 注册crashHandler
         crashHandler.init(getApplicationContext());
 
-        //将htdocs压缩包解压
         NetworkUtils.writePortalConfig(this);
     }
 

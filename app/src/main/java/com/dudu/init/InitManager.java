@@ -6,6 +6,9 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Debug;
+import android.os.Environment;
+import android.os.StrictMode;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.service.CheckUserService;
@@ -141,10 +144,14 @@ public class InitManager {
     }
 
     private void initOthers() {
+        Debug.startMethodTracing(Environment.getExternalStorageDirectory() + "/launcher");
+
         // 关闭ADB调试端口
         if (!Utils.isDemoVersion(mActivity)) {
-            com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mActivity, "persist.sys.usb.config", "charging");
+            com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mActivity,
+                    "persist.sys.usb.config", "charging");
         }
+
         rx.Observable.timer(1, TimeUnit.SECONDS)
                 .subscribe(new Action1<Long>() {
                     @Override
@@ -167,7 +174,8 @@ public class InitManager {
                     @Override
                     public void call(final Long aLong) {
                         logger.debug("[init][{}]启动OBD服务", log_step++);
-                        com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mActivity, "sys.gps", "start");
+                        com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mActivity,
+                                "sys.gps", "start");
                         startOBDService();
                         finished = true;
                     }
@@ -186,6 +194,8 @@ public class InitManager {
         startCheckUserService();
 
         NavigationManager.getInstance(LauncherApplication.getContext()).initNaviManager();
+
+        Debug.stopMethodTracing();
     }
 
     public boolean isFinished() {

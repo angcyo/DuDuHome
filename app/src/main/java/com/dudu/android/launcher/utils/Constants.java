@@ -3,6 +3,7 @@ package com.dudu.android.launcher.utils;
 public class Constants {
 
 	public static final boolean DEBUG = true;
+	public static final boolean DEBUG_STRICT_MODE = false;
 	public static final String XUFEIID = "55bda6e9";
 
 
