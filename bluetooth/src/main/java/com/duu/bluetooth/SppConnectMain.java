@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
+import rx.Subscription;
 import rx.functions.Action1;
 
 
@@ -32,12 +33,16 @@ public class SppConnectMain {
         return ourInstance;
     }
 
+    private Subscription mSubscription;
     public void onEvent(Event.StartScanner event) {
         log.debug("pod obd StartScanner");
         if (null == sppScanner) {
             sppScanner = new SppScanner(mContext);
         }
-        Observable.timer(2, TimeUnit.MINUTES)
+        if(mSubscription!=null){
+            mSubscription.unsubscribe();
+        }
+        mSubscription = Observable.timer(2, TimeUnit.MINUTES)
                 .subscribe(new Action1<Long>() {
                     @Override
                     public void call(Long aLong) {
@@ -125,6 +130,7 @@ public class SppConnectMain {
 
     public void onEvent(Event.BTConnected event) {
         timeoutCount = 0;
+        mSubscription.unsubscribe();
     }
 
     private boolean hasMac(){

@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
+import rx.Subscription;
 import rx.functions.Action1;
 
 /**
@@ -29,6 +30,8 @@ public class PodOBD {
     private boolean hasData = false;
     private int disConnectedCount = 0;
 
+    private Subscription disableSubscription;
+    private Subscription enableSubscription;
     public PodOBD() {
         log = LoggerFactory.getLogger("obd.pod.spp");
         readL1 = new PrefixReadL1();
@@ -70,6 +73,10 @@ public class PodOBD {
         log.debug("spp bluetooth BTConnected adr = {}",event.getDevAddr());
         EventBus.getDefault().post(new BleStateChange(BleStateChange.BLECONNECTED));
         disConnectedCount = 0;
+        if(enableSubscription!=null&&disableSubscription!=null){
+            disableSubscription.unsubscribe();
+            enableSubscription.unsubscribe();
+        }
         Observable.timer(30, TimeUnit.SECONDS)
                 .subscribe(new Action1<Long>() {
                     @Override
@@ -91,12 +98,17 @@ public class PodOBD {
             EventBus.getDefault().post(new BleStateChange(BleStateChange.BLEDISCONNECTED));
         if(event.getError() == Event.ErrorCode.ScanInvokeFail)
             EventBus.getDefault().post(new Event.BluetoothDisable());
-        Observable.timer(10, TimeUnit.SECONDS)
+
+        if(enableSubscription!=null&&disableSubscription!=null){
+            disableSubscription.unsubscribe();
+            enableSubscription.unsubscribe();
+        }
+        disableSubscription = Observable.timer(10, TimeUnit.SECONDS)
                 .subscribe(new Action1<Long>() {
                     @Override
                     public void call(Long aLong) {
                         EventBus.getDefault().post(new Event.BluetoothEnable());
-                        Observable.timer(10, TimeUnit.SECONDS)
+                       enableSubscription = Observable.timer(10, TimeUnit.SECONDS)
                                 .subscribe(new Action1<Long>() {
                                     @Override
                                     public void call(Long aLong) {

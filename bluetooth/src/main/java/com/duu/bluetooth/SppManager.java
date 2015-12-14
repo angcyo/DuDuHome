@@ -19,8 +19,11 @@ import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.functions.Action1;
 
 /**
  * 通过蓝牙连接的BluetoothService
@@ -102,13 +105,13 @@ public class SppManager {
 
         if (mConnectThread != null) {
             log.debug("Cancel any thread attempting to make a connection");
-            mConnectThread.interrupt();
+            mConnectThread.cancel();
             mConnectThread = null;
         }
 
         if (mConnectedThread != null) {
             log.debug("Cancel any thread currently running a connection");
-            mConnectedThread.interrupt();
+            mConnectedThread.cancel();
             mConnectedThread = null;
         }
 
@@ -121,6 +124,7 @@ public class SppManager {
         if (mState == STATE_CONNECTING) {
             if (mConnectThread != null) {
                 mConnectThread.cancel();
+                mConnectThread.interrupt();
                 mConnectThread = null;
             }
         }
@@ -131,7 +135,14 @@ public class SppManager {
         }
 
         mConnectThread = new ConnectThread(macAddr, secure);
-        mConnectThread.start();
+        Observable.timer(1000, TimeUnit.MILLISECONDS)
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        mConnectThread.start();
+                    }
+                });
+
         setState(STATE_CONNECTING);
     }
 
@@ -248,9 +259,9 @@ public class SppManager {
 //                }
 //            }
             try {
-                if(mmSocket.isConnected())
-                    mmSocket.close();
+                log.debug("mmSocket connected {}",mmSocket.isConnected());
                 mmSocket.connect();
+
             } catch (IOException e) {
                 log.warn("unable to connect：", e);
                 try {
@@ -271,7 +282,8 @@ public class SppManager {
 
         public void cancel() {
             try {
-                mmSocket.close();
+                if(mmSocket.isConnected())
+                      mmSocket.close();
             } catch (IOException e) {
                 log.warn("close() of connect " + mSocketType + " socket failed", e);
             }
@@ -298,7 +310,7 @@ public class SppManager {
         }
 
         public void run() {
-            log.info( "BEGIN mConnectedThread--Keep listening to the InputStream while connected");
+            log.info( "BEGIN mConnectedThread--Keep listening to the InputStream while connected: {}",isConnected);
             int bytes;
             byte[] buffer = new byte[MAX_SIZE];
             while (isConnected) {
@@ -339,7 +351,7 @@ public class SppManager {
     }
 
     public void disableBluetooth(){
-        if(mAdapter!=null&&mAdapter.enable()){
+        if(mAdapter!=null&&mAdapter.isEnabled()){
             log.debug("bluetooth disable");
             mAdapter.disable();
         }
