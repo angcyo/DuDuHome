@@ -20,6 +20,7 @@ import com.dudu.monitor.valueobject.LocationInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -41,11 +42,10 @@ public class AmapLocation implements AMapLocationListener, ILocation {
 
     private int GPSdataTime = 0;// 第几个GPS点
     private AMapLocation last_Location;// 前一个位置点
-    private AMapLocation cur_Location; // 当前位置点
     private boolean isAvalable = false; // 标志定位点是否有效
     private boolean isFirstRun = true; // 第一个点
     private boolean isFirstLoc = true; // 是否第一次定位成功
-    private List<AMapLocation> unAvalableList; // 存放通过第一阶段但没通过第二阶段过滤的点
+    private List<AMapLocation> unAvalableList = new ArrayList<>(); // 存放通过第一阶段但没通过第二阶段过滤的点
 //    private List<LocationInfo> gpsDataListToSend; // 通过过滤后的定位点的集合
 
     // 状态监听
@@ -136,7 +136,7 @@ public class AmapLocation implements AMapLocationListener, ILocation {
             }
         }
 
-        if (mILocationListener != null) {
+        if (mILocationListener != null && location != null) {
             mILocationListener.onLocationResult(location);
         }
         /*LocationInfo locationInfo = new LocationInfo(location);
@@ -145,9 +145,6 @@ public class AmapLocation implements AMapLocationListener, ILocation {
         }*/
 
         handlerGPS(location);
-        // 更新preLocation
-        last_Location = location;
-        cur_Location = location;
     }
 
     private void handlerGPS(AMapLocation location) {
@@ -173,9 +170,9 @@ public class AmapLocation implements AMapLocationListener, ILocation {
                                 TimeUtils.format1), TimeUtils
                         .dateLongFormatString(location.getTime(),
                                 TimeUtils.format1))) { // 如果不是第一个点且速度大于2，则需通过第二阶段过滤
-                    log.debug("gps第二阶段过滤成功");
                     isAvalable = true;
                     unAvalableList.clear();
+                    log.debug("gps第二阶段过滤成功");
                 } else if (location.getSpeed() >= 0
                         && location.getSpeed() <= 2
                         && LocationFilter.checkStageTwo(last_Location
@@ -236,11 +233,13 @@ public class AmapLocation implements AMapLocationListener, ILocation {
             }
             if (isAvalable) {
                 log.debug("gps通过过滤");
+                last_Location = location;
                 LocationInfo locationInfo = new LocationInfo(location);
                 if (mILocationListener != null) {
                     mILocationListener.onLocationResult(locationInfo);
                 }
                 unAvalableList.clear();
+
             }
 
         } else {

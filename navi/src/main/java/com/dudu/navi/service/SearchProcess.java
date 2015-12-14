@@ -45,8 +45,6 @@ public class SearchProcess {
 
     private SearchType searchType;
 
-    private String locProvider = "";
-
     private GeocodeSearch geocoderSearch;
 
     private LatLonPoint latLonPoint;
@@ -84,28 +82,28 @@ public class SearchProcess {
         isNoticeFail = false;
         searchType = NavigationManager.getInstance(mContext).getSearchType();
         cur_location = Monitor.getInstance(mContext).getCurrentLocation();
-        latLonPoint = new LatLonPoint(cur_location.getLatitude(),cur_location.getLongitude());
         NavigationManager.getInstance(mContext).getLog().debug("开始搜索{}", searchType);
-            cityCode = LocationUtils.getInstance(mContext).getCurrentCityCode();
-            switch (searchType) {
-                case SEARCH_DEFAULT:
-                    return;
-                case OPEN_NAVI:
-                    EventBus.getDefault().post(NaviEvent.ChangeSemanticType.NAVIGATION);
-                    EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast("您好，请说出您想去的地方或者关键字", true));
-                    return;
-                case SEARCH_COMMONADDRESS:
-                    EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast("您好，请说出您要添加的地址", true));
-                    EventBus.getDefault().post(NaviEvent.ChangeSemanticType.NAVIGATION);
-                    return;
-                case SEARCH_CUR_LOCATION:
-                    getCur_locationDesc();
-                    break;
-                default:
-                    doSearch(keyword);
-                    break;
+        cityCode = LocationUtils.getInstance(mContext).getCurrentCityCode();
+        switch (searchType) {
+            case SEARCH_DEFAULT:
+                return;
+            case OPEN_NAVI:
+                EventBus.getDefault().post(NaviEvent.ChangeSemanticType.NAVIGATION);
+                EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast("您好，请说出您想去的地方或者关键字", true));
+                return;
+            case SEARCH_COMMONADDRESS:
+                EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast("您好，请说出您要添加的地址", true));
+                EventBus.getDefault().post(NaviEvent.ChangeSemanticType.NAVIGATION);
+                return;
+            case SEARCH_CUR_LOCATION:
+                getCur_locationDesc();
+                break;
+            default:
 
-            }
+                doSearch(keyword);
+                break;
+
+        }
         Observable.timer(25, TimeUnit.SECONDS)
                 .subscribe(new Action1<Long>() {
                     @Override
@@ -123,13 +121,16 @@ public class SearchProcess {
 
     private void doSearch(String keyword) {
         hasResult = false;
+        if (cur_location != null) {
+            latLonPoint = new LatLonPoint(cur_location.getLatitude(), cur_location.getLongitude());
+        }
         if (!TextUtils.isEmpty(keyword)) {
             query = new PoiSearch.Query(keyword, "", cityCode);
             query.setPageSize(20);// 设置每页最多返回多少条poi item
             query.setPageNum(0);// 设置查第一页
             poiSearch = new PoiSearch(mContext, query);
             if (searchType == SearchType.SEARCH_NEARBY || searchType == SearchType.SEARCH_NEAREST) {
-                if(latLonPoint!=null)
+                if (latLonPoint != null)
                     poiSearch.setBound(new PoiSearch.SearchBound(latLonPoint, 2000));
             }
             poiSearch.setOnPoiSearchListener(onPoiSearchListener);
@@ -148,12 +149,10 @@ public class SearchProcess {
         NavigationManager.getInstance(mContext).setSearchType(SearchType.SEARCH_CUR_LOCATION);
 
         if (cur_location != null) {
-            locProvider = cur_location.getProvider();
             locBundle = cur_location.getExtras();
-        }
-        if (locProvider != null && locBundle != null) {
-            cur_locationDesc = locBundle.getString("desc");
-            if (!TextUtils.isEmpty(cur_locationDesc)) {
+            if (locBundle != null &&
+                    !TextUtils.isEmpty(locBundle.getString("desc"))) {
+                cur_locationDesc = locBundle.getString("desc");
                 hasResult = true;
                 String playText = "您好，您现在在" + cur_locationDesc;
                 ResourceManager.getInstance(mContext).setCur_locationDesc(playText);
@@ -162,17 +161,16 @@ public class SearchProcess {
             } else {
                 getCurLocation();
             }
-
-        } else {
-
-            getCurLocation();
         }
     }
 
     private void getCurLocation() {
+
+        latLonPoint = new LatLonPoint(cur_location.getLatitude(), cur_location.getLongitude());
         RegeocodeQuery query = new RegeocodeQuery(latLonPoint, 200,
                 GeocodeSearch.AMAP);
         geocoderSearch.getFromLocationAsyn(query);
+
     }
 
     private PoiSearch.OnPoiSearchListener onPoiSearchListener = new PoiSearch.OnPoiSearchListener() {

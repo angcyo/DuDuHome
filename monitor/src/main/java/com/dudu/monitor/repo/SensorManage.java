@@ -3,6 +3,7 @@ package com.dudu.monitor.repo;
 import android.content.Context;
 import android.hardware.*;
 import android.hardware.Sensor;
+import android.view.WindowManager;
 
 import com.dudu.monitor.valueobject.SensorData;
 import com.dudu.monitor.utils.TimeUtils;
@@ -47,6 +48,7 @@ public class SensorManage  implements SensorEventListener {
 
         mGyroscopSensorList = Collections.synchronizedList(new ArrayList<SensorData>());
         mAcceSensorList = Collections.synchronizedList(new ArrayList<SensorData>());
+
     }
 
 
@@ -65,6 +67,7 @@ public class SensorManage  implements SensorEventListener {
         }else if (sensorType == Sensor.TYPE_GYROSCOPE){
             mGyroscopSensorList.add(sensorData);
         }
+
     }
 
     @Override

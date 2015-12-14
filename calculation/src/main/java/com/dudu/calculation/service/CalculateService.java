@@ -7,6 +7,7 @@ import com.dudu.calculation.valueobject.DriveBehaviorType;
 import com.dudu.monitor.Monitor;
 import com.dudu.monitor.event.CarDriveSpeedState;
 import com.dudu.monitor.event.CarStatus;
+import com.dudu.monitor.utils.LocationFilter;
 import com.dudu.monitor.valueobject.LocationInfo;
 import com.dudu.monitor.valueobject.SensorData;
 import com.dudu.network.NetworkManage;
@@ -116,7 +117,7 @@ public class CalculateService {
     //获取当前位置，并且设置驾驶行为类型
     private LocationInfo getAndSetTypeLocationInfo(int driveBehaviorType){
         LocationInfo locationInfo = new LocationInfo(Monitor.getInstance(mContext).getCurrentLocation());
-        if (locationInfo.getLon() == 0)//滤除为0的坐标
+        if (!LocationFilter.checkLatLon(locationInfo.getLat(),locationInfo.getLon()))
             return null;
         locationInfo.setType(driveBehaviorType);
         return locationInfo;
@@ -127,8 +128,9 @@ public class CalculateService {
         try {
             if (locationInfo == null)
                 return;
-
-            driveLocationInfoArray.put(new JSONObject(gson.toJson(locationInfo)));
+            if(locationInfo.getSpeeds() > 0 ){
+                 driveLocationInfoArray.put(new JSONObject(gson.toJson(locationInfo)));
+            }
 //            log.debug("driveLocationInfoArray.length() = " + driveLocationInfoArray.length());
             if (driveLocationInfoArray.length() == 30)//满30个数据才给服务器发
             {

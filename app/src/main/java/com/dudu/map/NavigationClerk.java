@@ -77,6 +77,8 @@ public class NavigationClerk {
     private WaitingDialog waitingDialog = null;// 搜索时进度条
 
     private Class intentClass;
+    private String msg;
+    private String playText;
 
     private Runnable removeWindowRunnable = new Runnable() {
 
@@ -173,8 +175,7 @@ public class NavigationClerk {
 
 
     private Activity getTopActivity() {
-        Activity topActivity = ActivitiesManager.getInstance().getTopActivity();
-        return topActivity;
+        return ActivitiesManager.getInstance().getTopActivity();
     }
 
     private boolean isMapActivity() {
@@ -207,8 +208,7 @@ public class NavigationClerk {
     }
 
     public void doSearch() {
-        String msg;
-        String playText = "正在搜索" + navigationManager.getKeyword();
+        msg = "正在搜索" + navigationManager.getKeyword();
         boolean isShow = false;
         if (!navigationManager.isNavigatining() && !isMapActivity()) {
             intentClass = LocationMapActivity.class;
