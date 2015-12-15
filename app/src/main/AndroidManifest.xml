@@ -92,18 +92,6 @@
             android:name=".ui.activity.NaviBackActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="landscape" />
-        <!--
-            <activity
-            android:name=".ui.activity.LineChartActivity1"
-            android:launchMode="singleInstance"
-            android:screenOrientation="landscape" />
-        -->
-        <!--
-            <activity
-            android:name=".ui.activity.GsensorChartActivity"
-            android:launchMode="singleInstance"
-            android:screenOrientation="landscape" />
-        -->
         <activity
             android:name=".ui.activity.video.VideoActivity"
             android:launchMode="singleTop"
@@ -139,20 +127,13 @@
             android:screenOrientation="landscape"
             android:theme="@style/AppBaseTheme" />
 
+        <activity android:name=".ui.activity.GsensorChartActivity"></activity>
+
         <service android:name=".service.NewMessageShowService" />
         <service android:name=".service.RecordBindService" />
         <service android:name=".service.FloatBackButtonService"/>
         <service android:name=".service.MonitorService"/>
         <service android:name="com.dudu.service.MainService"/>
-
-
-
-        <activity android:name=".ui.activity.GsensorChartActivity"></activity>
-        <!--
-            <activity
-            android:name=".ui.activity.LineChartActivity2"
-            android:screenOrientation="landscape"/>
-        -->
 
         <receiver android:name=".broadcast.SimCardReceiver">
             <intent-filter>

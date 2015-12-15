@@ -1,5 +1,13 @@
 package com.dudu.android.launcher.exception;
 
+import android.content.Context;
+import android.text.TextUtils;
+
+import com.dudu.android.launcher.utils.FileUtils;
+import com.dudu.android.launcher.utils.LogUtils;
+import com.dudu.android.launcher.utils.TimeUtils;
+import com.dudu.init.InitManager;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -7,13 +15,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.Thread.UncaughtExceptionHandler;
-
-import android.content.Context;
-import android.text.TextUtils;
-
-import com.dudu.android.launcher.utils.FileUtils;
-import com.dudu.android.launcher.utils.LogUtils;
-import com.dudu.android.launcher.utils.TimeUtils;
 
 public class CrashHandler implements UncaughtExceptionHandler {
 
@@ -45,6 +46,8 @@ public class CrashHandler implements UncaughtExceptionHandler {
 
 	@Override
 	public void uncaughtException(Thread thread, Throwable ex) {
+		InitManager.getInstance().unInit();
+
 		if (!handleException(ex) && mDefaultHandler != null) {
 			mDefaultHandler.uncaughtException(thread, ex);
 		} else {

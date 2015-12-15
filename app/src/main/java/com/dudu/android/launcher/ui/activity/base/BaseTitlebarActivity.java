@@ -150,6 +150,9 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
         public void onReceive(Context context, Intent intent) {
             String type = NetworkUtils.getCurrentNetworkType(mContext);
             if (type.equals("2G") || type.equals("3G") || type.equals("4G")) {
+                // 当网络连接时重新获取天气信息
+                requestWeatherInfo();
+
                 mSignalTextView.setText(type);
                 mSignalImage.setVisibility(View.VISIBLE);
             } else {
@@ -157,6 +160,10 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
                 mSignalImage.setVisibility(View.GONE);
             }
         }
+    }
+
+    public void requestWeatherInfo() {
+
     }
 
     public void onEventMainThread(GpsStatus gpsStatus) {

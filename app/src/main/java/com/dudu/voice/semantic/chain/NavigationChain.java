@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.dudu.android.launcher.LauncherApplication;
+import com.dudu.android.launcher.ui.activity.NaviBackActivity;
 import com.dudu.android.launcher.ui.activity.NaviCustomActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
@@ -217,8 +218,7 @@ public class NavigationChain extends SemanticChain {
                         .mapPriview();
             } else {
                 Intent intent = new Intent();
-                intent.setClass(mContext,
-                        NaviCustomActivity.class);
+                intent.setClass(mContext, NaviCustomActivity.class);
                 mBundle.putString("type",
                         Constants.NAVI_PREVIEW);
                 intent.putExtras(mBundle);
@@ -245,7 +245,6 @@ public class NavigationChain extends SemanticChain {
 
     }
     private void goBack(){
-
             if (mContext != null
                     && mContext instanceof NaviCustomActivity) {
                 ((NaviCustomActivity) mContext)

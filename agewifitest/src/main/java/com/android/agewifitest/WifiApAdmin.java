@@ -99,12 +99,12 @@ public class WifiApAdmin {
         }
 
         log_init.debug("5s后打开热点");
-   rx.Observable.timer(5, TimeUnit.SECONDS)
+        rx.Observable.timer(5, TimeUnit.SECONDS)
                 .subscribe(new Action1<Long>() {
-                   @Override
-                   public void call(final Long aLong) {
+                    @Override
+                    public void call(final Long aLong) {
                         startWifiAp(context, DEFAULT_SSID, "", null);
-                   }
+                    }
                 });
 
         return true;
@@ -196,7 +196,7 @@ public class WifiApAdmin {
                         "setWifiApEnabled", WifiConfiguration.class, boolean.class);
                 setWifiApEnabled.invoke(mWifiManager, null, false);
                 SharedPreferencesUtil.putBooleanValue(context, KEY_WIFI_AP_STATE, false);
-                Log.v("lll","关闭热点成功");
+                Log.v("lll", "关闭热点成功");
             } catch (Exception e) {
                 log_init.debug("反射关闭热点异常", e);
             }
@@ -215,7 +215,7 @@ public class WifiApAdmin {
             method.setAccessible(true);
             return (Boolean) method.invoke(mWifiManager);
         } catch (Exception e) {
-            Log.v("lll","反射查询热点异常");
+            Log.v("lll", "反射查询热点异常");
             log_init.debug("反射查询热点异常", e);
         }
 

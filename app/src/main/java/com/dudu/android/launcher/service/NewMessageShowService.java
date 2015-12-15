@@ -448,7 +448,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
     }
 
     private void showWindowCallback() {
-        log_init.error("调用显示window的回调");
+        log_init.debug("调用显示window的回调");
         EventBus.getDefault().post(new ListenerResetEvent(ListenerResetEvent.LISTENER_ON));
 
         if (removeHasCalled == false) {

@@ -7,10 +7,13 @@ import com.dudu.android.launcher.exception.CrashHandler;
 import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.NetworkUtils;
+import com.dudu.init.InitManager;
 import com.iflytek.cloud.Setting;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Timer;
 
 public class LauncherApplication extends Application {
 
@@ -53,6 +56,8 @@ public class LauncherApplication extends Application {
         crashHandler.init(getApplicationContext());
 
         NetworkUtils.writePortalConfig(this);
+
+        InitManager.getInstance().init();
     }
 
     public RecordBindService getRecordService() {

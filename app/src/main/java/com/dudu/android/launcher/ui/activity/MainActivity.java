@@ -27,19 +27,16 @@ import android.widget.Toast;
 import com.amap.api.location.AMapLocalWeatherForecast;
 import com.amap.api.location.AMapLocalWeatherListener;
 import com.amap.api.location.AMapLocalWeatherLive;
-import com.amap.api.location.LocationManagerProxy;
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
-import com.dudu.android.launcher.utils.DialogUtils;
 import com.dudu.android.launcher.utils.SharedPreferencesUtil;
 import com.dudu.android.launcher.utils.Utils;
-import com.dudu.android.launcher.utils.WeatherIconsUtils;
+import com.dudu.android.launcher.utils.WeatherUtil;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.android.launcher.utils.cache.AgedContacts;
-import com.dudu.event.BleStateChange;
 import com.dudu.event.DeviceEvent;
 import com.dudu.event.ListenerResetEvent;
 import com.dudu.init.InitManager;
@@ -67,13 +64,12 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     private Button mVideoButton, mNavigationButton,
             mDiDiButton, mWlanButton;
-    private LocationManagerProxy mLocationManagerProxy;
     private TextView mDateTextView, mWeatherView, mTemperatureView;
     private ImageView mWeatherImage;
     private LinearLayout mSelfCheckingView;
-    private Timer timer;
-
     private RecordBindService mRecordService;
+
+    private Timer mTimer;
 
     private ServiceConnection mServiceConnection;
 
@@ -92,9 +88,7 @@ public class MainActivity extends BaseTitlebarActivity implements
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
 
-        if (InitManager.getInstance(this).init()) {
-            initVideoService();
-        }
+        initVideoService();
 
         initDate();
 
@@ -152,12 +146,10 @@ public class MainActivity extends BaseTitlebarActivity implements
 
                 @Override
                 public boolean onLongClick(View v) {
-
                     Intent intent = new Intent();
                     intent.setComponent(new ComponentName("com.android.settings",
                             "com.android.settings.Settings"));
                     startActivity(intent);
-
                     return true;
                 }
             });
@@ -181,17 +173,11 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     @Override
     protected void onDestroy() {
-        if (timer != null) {
-            timer.cancel();
-        }
-
         if (mServiceConnection != null) {
             unbindService(mServiceConnection);
         }
 
         super.onDestroy();
-
-        InitManager.getInstance(this).unInit();
     }
 
     @Override
@@ -233,8 +219,6 @@ public class MainActivity extends BaseTitlebarActivity implements
         }
     }
 
-    private static final int RECORDSERVICE_RESET_VOICE = 1;
-
     private static final int START_CAMERA_AND_CLOSE_LISTENER = 2;
 
     private static final int START_VOICE_SERVICE = 3;
@@ -245,9 +229,6 @@ public class MainActivity extends BaseTitlebarActivity implements
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case RECORDSERVICE_RESET_VOICE:
-//                    mRecordService.resetVoice();
-                    break;
                 case START_CAMERA_AND_CLOSE_LISTENER:
                     startCameraAndCloseListener();
                     break;
@@ -309,31 +290,23 @@ public class MainActivity extends BaseTitlebarActivity implements
      * 实例化请求地图天气接口
      */
     private void initWeatherInfo() {
-        mLocationManagerProxy = LocationManagerProxy.getInstance(this);
-        mLocationManagerProxy.requestWeatherUpdates(
-                LocationManagerProxy.WEATHER_TYPE_LIVE, this);
-
-        if (timer == null) {
-            timer = new Timer();
+        if (mTimer == null) {
+            mTimer = new Timer();
         }
 
-        timer.schedule(new TimerTask() {
+        mTimer.schedule(new TimerTask() {
 
             @Override
             public void run() {
                 requestWeatherInfo();
             }
-        }, 10 * 1000, 10 * 60 * 1000);
+        }, 10 * 1000, 60 * 60 * 1000);
     }
 
-    private void requestWeatherInfo() {
-        log_init.debug("[main][{}]requestWeatherInfo, lmp={}", log_step++, mLocationManagerProxy);
-        if (mLocationManagerProxy != null) {
-            mLocationManagerProxy.requestWeatherUpdates(
-                    LocationManagerProxy.WEATHER_TYPE_LIVE, MainActivity.this);
-        }
+    @Override
+    public void requestWeatherInfo() {
+        WeatherUtil.requestWeatherInfo(MainActivity.this);
     }
-
 
     @Override
     public void onWeatherForecaseSearched(AMapLocalWeatherForecast arg0) {
@@ -368,8 +341,8 @@ public class MainActivity extends BaseTitlebarActivity implements
                 lps.addRule(RelativeLayout.CENTER_HORIZONTAL);
             }
             mWeatherView.setText(weather);
-            mWeatherImage.setImageResource(WeatherIconsUtils
-                    .getWeatherIcon(WeatherIconsUtils.getWeatherType(weather)));
+            mWeatherImage.setImageResource(WeatherUtil
+                    .getWeatherIcon(WeatherUtil.getWeatherType(weather)));
             mWeatherImage.setImageResource(R.drawable.weather_cloudy);
             LocationUtils.getInstance(this).setCurrentCity(aMapLocalWeatherLive.getCity());
             LocationUtils.getInstance(this).setCurrentCitycode(aMapLocalWeatherLive.getCityCode());
@@ -395,16 +368,13 @@ public class MainActivity extends BaseTitlebarActivity implements
             VoiceManager.getInstance().setUnderstandingOrSpeaking(false);
             mRecordService.stopRecord();
             handler.sendEmptyMessageDelayed(START_RECORDING,500);
-//            handler.sendEmptyMessageDelayed(RECORDSERVICE_RESET_VOICE, 500);
         } else if (event.getListenerStatus() == ListenerResetEvent.LISTENER_ON) {
             log_init.debug("收到开启语音通知");
             VoiceManager.setUnderstandingOrSpeaking(true);
-//            mRecordService.resetVoice();
             mRecordService.stopRecord();
             handler.sendEmptyMessageDelayed(START_RECORDING,500);
         } else if (event.getListenerStatus() == ListenerResetEvent.LISTENER_ON_HELLO) {
             VoiceManager.setUnderstandingOrSpeaking(true);
-//            mRecordService.resetVoice();
             mRecordService.stopRecord();
             handler.sendEmptyMessageDelayed(START_VOICE_SERVICE, 500);
         }
@@ -415,9 +385,10 @@ public class MainActivity extends BaseTitlebarActivity implements
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         if (e2.getX() - e1.getX() > 400 && e2.getY() - e1.getY() > 400) {
-            if (!InitManager.getInstance(this).isFinished()) {
+            if (!InitManager.getInstance().isFinished()) {
                 return true;
             }
+
             //关闭语音
             VoiceManager.getInstance().stopUnderstanding();
             //关闭Portal

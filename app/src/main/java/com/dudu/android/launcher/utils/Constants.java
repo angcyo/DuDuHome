@@ -82,8 +82,6 @@ public class Constants {
 	public static final String NINETEEN = "十九";
 	public static final String TWENTW1 = "20";
 	public static final String TWENTW = "二十";
-	
-	public static final int VOICE_WAKEUP_CURTHRESH = 10;
 
 	// 代表我的位置
 	public static final String CURRENT_POI = "CURRENT_POI";
@@ -115,8 +113,6 @@ public class Constants {
 	public static final int LIGHT_TO_MODERATE_SNOW = 22;
 	public static final int MODERATE_TO_HEAVY_SNOW = 23;
 	public static final int HEAVY_TO_SNOWSTORM = 24;
-	
-	public static final String PARAM_MAP_DATA = "map_data";
 
 	public static final String NAVI_TRAFFIC_BROADCAST = "路况播报";
 	public static final String NAVI_TRAFFIC = "路况";
@@ -158,8 +154,6 @@ public class Constants {
 	public static final String KEY_FLOW_FREQUENCY = "flowFrequency";
 	public static final String KEY_GPS_FREQUENCU = "gpsFrequency";
 	public static final String KEY_PORTAL_COUNT_FREQUENCY = "portalCountFrequency";
-
-	public static final String KEY_USER_ACTIVE_TIME = "key_user_active_time";
 
 	public static final String KEY_USER_IS_ACTIVE = "key_user_is_active";
 

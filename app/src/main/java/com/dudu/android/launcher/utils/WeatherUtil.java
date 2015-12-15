@@ -10,11 +10,14 @@ import java.util.Locale;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.amap.api.location.AMapLocalWeatherListener;
+import com.amap.api.location.LocationManagerProxy;
+import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
 
-public class WeatherIconsUtils {
+public class WeatherUtil {
 
-	private static final String TAG = "WeatherIconsUtils";
+	private static final String TAG = "WeatherUtil";
 
 	private final static String[] WEATHER_STRINGS = new String[] { "晴", "多云",
 			"阴", "阵雨", "雷阵雨", "小雨", "中雨", "大雨", "暴雨", "大暴雨", "特大暴雨", "小雪",
@@ -25,6 +28,11 @@ public class WeatherIconsUtils {
 
 	static {
 		weatherList = Arrays.asList(WEATHER_STRINGS);
+	}
+
+	public static void requestWeatherInfo(AMapLocalWeatherListener listener) {
+        LocationManagerProxy.getInstance(LauncherApplication.getContext()).requestWeatherUpdates(
+                LocationManagerProxy.WEATHER_TYPE_LIVE, listener);
 	}
 
 	public static boolean isNight(long time) {

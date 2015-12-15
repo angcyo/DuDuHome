@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -237,8 +236,8 @@ public class NavigationClerk {
                     playText = "正在获取您的当前位置,请稍后";
                     isShow = true;
                 }
-                if(!isManual)
-                  VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_DO_NOTHING, isShow);
+                if (!isManual)
+                    VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_DO_NOTHING, isShow);
                 showProgressDialog(msg);
                 break;
 
@@ -276,7 +275,7 @@ public class NavigationClerk {
     }
 
     public void onEventMainThread(NaviEvent.NaviVoiceBroadcast event) {
-        if(isManual)
+        if (isManual)
             return;
         VoiceManager.getInstance().clearMisUnderstandCount();
         VoiceManager.getInstance().stopUnderstanding();
@@ -301,7 +300,7 @@ public class NavigationClerk {
         if (event == NaviEvent.SearchResult.SUCCESS) {
             handlerPoiResult();
         } else {
-            if(isManual)
+            if (isManual)
                 ToastUtils.showToast("抱歉,搜索失败，请稍后重试");
             navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
         }

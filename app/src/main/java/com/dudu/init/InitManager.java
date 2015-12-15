@@ -6,9 +6,7 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Debug;
-import android.os.Environment;
-import android.os.StrictMode;
+
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.service.CheckUserService;
@@ -22,6 +20,7 @@ import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.navi.NavigationManager;
 import com.dudu.service.MainService;
 import com.dudu.voice.semantic.VoiceManager;
+import com.iflytek.cloud.SpeechUtility;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,22 +37,22 @@ public class InitManager {
 
     private static InitManager mInstance;
 
-    private Activity mActivity;
-
     private Logger logger;
 
     private int log_step = 0;
 
     private boolean finished = false;
 
-    private InitManager(Activity activity) {
+    private Context mContext;
+
+    private InitManager() {
         logger = LoggerFactory.getLogger("init.manager");
-        mActivity = activity;
+        mContext = LauncherApplication.getContext();
     }
 
-    public static InitManager getInstance(Activity activity) {
+    public static InitManager getInstance() {
         if (mInstance == null) {
-            mInstance = new InitManager(activity);
+            mInstance = new InitManager();
         }
 
         return mInstance;
@@ -65,30 +64,35 @@ public class InitManager {
     }
 
     public void unInit() {
+        logger.debug("反初始化，释放续费占用资源...");
         VoiceManager.getInstance().stopUnderstanding();
         VoiceManager.getInstance().stopSpeaking();
+        SpeechUtility speech = SpeechUtility.getUtility();
+        if (speech != null) {
+            speech.destroy();
+        }
     }
 
     /**
      * 开启语音对话框服务
      */
     private void startFloatMessageService() {
-        Intent intent = new Intent(mActivity, NewMessageShowService.class);
-        mActivity.startService(intent);
+        Intent intent = new Intent(mContext, NewMessageShowService.class);
+        mContext.startService(intent);
 
         /**
          * 悬浮按钮服务
          */
-        Intent i = new Intent(mActivity, FloatBackButtonService.class);
-        mActivity.startService(i);
+        Intent i = new Intent(mContext, FloatBackButtonService.class);
+        mContext.startService(i);
     }
 
     /**
      * 开启用户激活状态检查服务
      */
     private void startCheckUserService() {
-        if (!SharedPreferencesUtil.getBooleanValue(mActivity, Constants.KEY_USER_IS_ACTIVE, false)) {
-            CheckUserService service = CheckUserService.getInstance(mActivity);
+        if (!SharedPreferencesUtil.getBooleanValue(mContext, Constants.KEY_USER_IS_ACTIVE, false)) {
+            CheckUserService service = CheckUserService.getInstance(mContext);
             service.startService();
         }
     }
@@ -97,20 +101,20 @@ public class InitManager {
      * 开启OBD服务
      */
     private void startOBDService() {
-        Intent intent = new Intent(mActivity, MainService.class);
-        mActivity.startService(intent);
+        Intent intent = new Intent(mContext, MainService.class);
+        mContext.startService(intent);
     }
 
     private void startMonitorService() {
-        Intent intent = new Intent(mActivity, MonitorService.class);
-        mActivity.startService(intent);
+        Intent intent = new Intent(mContext, MonitorService.class);
+        mContext.startService(intent);
     }
 
     /**
      * 打开蓝牙
      */
     private void openBlueTooth() {
-        BluetoothManager bluetoothManager = (BluetoothManager) mActivity.getSystemService(
+        BluetoothManager bluetoothManager = (BluetoothManager) mContext.getSystemService(
                 Context.BLUETOOTH_SERVICE);
         BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
         if (bluetoothAdapter != null) {
@@ -128,14 +132,14 @@ public class InitManager {
         boolean need_bt = !"1".equals(sps.get("persist.sys.bt", "0"));
         boolean need_ft = !"1".equals(sps.get("persist.sys.ft", "0"));
         Intent intent;
-        PackageManager packageManager = mActivity.getPackageManager();
+        PackageManager packageManager = mContext.getPackageManager();
         intent = packageManager.getLaunchIntentForPackage("com.qualcomm.factory");
         if (intent != null) {
             //close wifi ap for ft test
-            WifiApAdmin.closeWifiAp(mActivity);
+            WifiApAdmin.closeWifiAp(mContext);
 
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mActivity.startActivity(intent);
+            mContext.startActivity(intent);
             return false;
         } else {
             initOthers();
@@ -144,11 +148,9 @@ public class InitManager {
     }
 
     private void initOthers() {
-        Debug.startMethodTracing(Environment.getExternalStorageDirectory() + "/launcher");
-
         // 关闭ADB调试端口
-        if (!Utils.isDemoVersion(mActivity)) {
-            com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mActivity,
+        if (!Utils.isDemoVersion(mContext)) {
+            com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext,
                     "persist.sys.usb.config", "charging");
         }
 
@@ -157,7 +159,7 @@ public class InitManager {
                     @Override
                     public void call(final Long aLong) {
                         logger.debug("[init][{}]打开热点", log_step++);
-                        WifiApAdmin.initWifiApState(mActivity);
+                        WifiApAdmin.initWifiApState(mContext);
 
                     }
                 });
@@ -174,7 +176,7 @@ public class InitManager {
                     @Override
                     public void call(final Long aLong) {
                         logger.debug("[init][{}]启动OBD服务", log_step++);
-                        com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mActivity,
+                        com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext,
                                 "sys.gps", "start");
                         startOBDService();
                         finished = true;
@@ -188,14 +190,12 @@ public class InitManager {
         startFloatMessageService();
 
         logger.debug("[init][{}]检查sim卡状态", log_step++);
-        Utils.checkSimCardState(mActivity);
+        Utils.checkSimCardState(mContext);
 
         logger.debug("[init][{}]打开用户激活状态检查", log_step++);
         startCheckUserService();
 
         NavigationManager.getInstance(LauncherApplication.getContext()).initNaviManager();
-
-        Debug.stopMethodTracing();
     }
 
     public boolean isFinished() {

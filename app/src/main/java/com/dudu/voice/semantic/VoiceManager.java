@@ -109,12 +109,6 @@ public class VoiceManager {
         param.append(SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC);
         SpeechUtility.createUtility(mContext, param.toString());
 
-        log.debug("[voice][{}]set SpeechUnderstander Listener", log_step++);
-        mSpeechUnderstander = SpeechUnderstander.createUnderstander(mContext,
-                mSpeechUnderstanderListener);
-
-        setTtsParameter();
-
         mHandler = new Handler();
     }
 
@@ -129,6 +123,8 @@ public class VoiceManager {
     public void startVoiceService() {
         log.debug("[voice][{}]startVoiceService", log_step++);
         mMisunderstandCount = 0;
+
+        setTtsParameter();
 
         if (!NetworkUtils.isNetworkConnected(mContext)) {
             startSpeaking(Constants.WAKEUP_NETWORK_UNAVAILABLE);
@@ -168,9 +164,11 @@ public class VoiceManager {
     }
 
     public void stopSpeaking() {
-        mSpeechSynthesizer.stopSpeaking();
-        mSpeechSynthesizer.destroy();
-        
+        if (mSpeechSynthesizer != null) {
+            mSpeechSynthesizer.stopSpeaking();
+            mSpeechSynthesizer.destroy();
+            mSpeechSynthesizer = null;
+        }
     }
 
     /**
@@ -181,6 +179,7 @@ public class VoiceManager {
         if (mSpeechUnderstander != null) {
             mSpeechUnderstander.cancel();
             mSpeechUnderstander.destroy();
+            mSpeechUnderstander = null;
         }
     }
 
@@ -188,6 +187,8 @@ public class VoiceManager {
      * 设置语义理解相关参数
      */
     private void setUnderstanderParams() {
+        mSpeechUnderstander = SpeechUnderstander.createUnderstander(mContext,
+                mSpeechUnderstanderListener);
         log.debug("[voice][{}]设置语义理解相关参数", log_step++);
         mSpeechUnderstander.setParameter(SpeechConstant.RESULT_TYPE, "json");
 
