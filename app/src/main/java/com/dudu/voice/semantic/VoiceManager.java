@@ -280,6 +280,8 @@ public class VoiceManager {
     }
 
     public void startSpeaking(String playText, int type, boolean showMessage) {
+        setTtsParameter();
+
         if (mMisunderstandCount >= MISUNDERSTAND_REPEAT_COUNT) {
             playText = Constants.UNDERSTAND_EXIT;
         }
