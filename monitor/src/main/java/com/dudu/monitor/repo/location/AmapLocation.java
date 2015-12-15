@@ -243,9 +243,12 @@ public class AmapLocation implements AMapLocationListener, ILocation {
             }
 
         } else {
+
             log.debug("gps未通过过滤");
         }
     }
+
+
 
     @Override
     public void onLocationChanged(Location location) {

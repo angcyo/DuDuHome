@@ -5,24 +5,21 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-
+import com.dudu.calculation.Calculation;
 import com.dudu.conn.FlowManage;
 import com.dudu.conn.PortalUpdate;
 import com.dudu.conn.SendLogs;
-
-import com.dudu.calculation.Calculation;
+import com.dudu.event.DeviceEvent;
 import com.dudu.monitor.Monitor;
+import com.dudu.monitor.event.CarStatus;
 import com.dudu.network.NetworkManage;
-import com.dudu.obd.BleOBD;
-
 import com.dudu.obd.ObdInit;
-import com.dudu.obd.PodOBD;
-
 import com.dudu.storage.Storage;
-
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.greenrobot.event.EventBus;
 
 
 /**
@@ -96,4 +93,16 @@ public class MainService extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
+
+    public void onEventMainThread(CarStatus event){
+
+         switch (event.getCarStatus()){
+             case CarStatus.CAR_ONLINE:
+                 EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.ON));
+                 break;
+             case CarStatus.CAR_OFFLINE:
+                 EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.OFF));
+                 break;
+         }
+        }
 }

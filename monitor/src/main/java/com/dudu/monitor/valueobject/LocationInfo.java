@@ -57,8 +57,8 @@ public class LocationInfo {
                 LocationInfo location = (LocationInfo)object;
                 if (location.getLon() == this.lon && location.getLat() == this.lat
                         && location.getAccuracy() == this.accuracy && location.getAltitude() == this.altitude
-                        /*&& location.getCreateTime().equals(this.createTime) */&& location.getDirection() == this.direction
-                       /* && location.getType().intValue() == this.type.intValue()*/&& location.getSpeeds() == this.speeds){
+                        && location.getCreateTime().equals(this.createTime) && location.getDirection() == this.direction
+                        && location.getType().intValue() == this.type.intValue()&& location.getSpeeds() == this.speeds){
                     return true;
                 }
             }

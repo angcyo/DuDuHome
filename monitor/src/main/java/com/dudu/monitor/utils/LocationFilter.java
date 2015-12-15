@@ -20,7 +20,7 @@ public class LocationFilter {
 	 * @return
 	 */
 	private static boolean checkRadius(float radius) {
-		return radius > 0 && radius <= 60;
+		return radius > 0 && radius <= 15;
 	}
 	
 	/**
