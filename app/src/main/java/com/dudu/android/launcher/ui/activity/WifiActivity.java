@@ -75,30 +75,19 @@ public class WifiActivity extends BaseTitlebarActivity {
             mRemainingFlowView.setText(getString(R.string.remaining_flow,
                     mDecimalFormat.format(remainingFlow)));
         }
+        int progress;
+        if ((mTotalFlow- remainingFlow) < 0){
+            progress = 100;
+        }else {
+            progress = Math.round(((mTotalFlow- remainingFlow)  * 100 / mTotalFlow));
+        }
 
-        int progress = Math.round((remainingFlow * 100 / mTotalFlow));
         if (progress > 100) {
             mTaskCompleteView.setProgress(100);
         } else {
-            String message="";
-            if(progress>20){
-                //流量使用正常
-                message=getString(R.string.use_flow_normal);
-            }else if (progress>15){
-                //流量低级预警
-                message=getString(R.string.use_flow_low_alarm);
-            }else if(progress>10){
-                //流量中级预警
-                message=getString(R.string.use_flow_middle_alarm);
-            }else if(progress>5){
-                //流量高级预警
-                message=getString(R.string.use_flow_high_alarm);
-            }else {
-                //关闭流量
-                message=getString(R.string.use_close_flow);
-                WifiApAdmin.closeWifiAp(mContext);
+            if(progress>=95){
+//                WifiApAdmin.closeWifiAp(mContext);
             }
-            showFlowToast(message);
             mTaskCompleteView.setProgress(progress);
         }
 
@@ -107,8 +96,6 @@ public class WifiActivity extends BaseTitlebarActivity {
     public void onBackPressed(View v) {
         finish();
     }
-    private void showFlowToast(String message){
-        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
-    }
+
 
 }

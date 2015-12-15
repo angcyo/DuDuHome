@@ -183,24 +183,19 @@ public class FlowManage {
         switch (dataOverstepAlarm.getAlarmLevel()) {
             case ConnectionConstants.FIELD_ALARM_LEVEL_OPEN:
                 //   0:正常
-//                EventBus.getDefault().post(new Port(mContext.getString(R.string.use_flow_normal)));
                 break;
             case ConnectionConstants.FIELD_ALARM_LEVEL_ADVANCED_WARNING:
                 //   1:高级预警   当前剩余值<最大阀值10%
-//                EventBus.getDefault().post(new Port(mContext.getString(R.string.use_flow_low_alarm)));
                 break;
             case ConnectionConstants.FIELD_ALARM_LEVEL_INTERMEDIATE_WARNING:
                 //   2:中级预警    当前剩余值<最大阀值15%
-//                EventBus.getDefault().post(new Port(mContext.getString(R.string.use_flow_middle_alarm)));
                 break;
             case ConnectionConstants.FIELD_ALARM_LEVEL_LOWLEVEL_WARNING:
                 //   3:低级预警    当前剩余值<最大阀值20%
-//                EventBus.getDefault().post(new Port(mContext.getString(R.string.use_flow_high_alarm)));
                 break;
             case ConnectionConstants.FIELD_ALARM_LEVEL_CLOSE:
                 //   4:关闭        当前剩余值<最大阀值5%
-//                EventBus.getDefault().post(new Port(mContext.getString(R.string.use_close_flow)));
-                WifiApAdmin.closeWifiAp(mContext);
+//                WifiApAdmin.closeWifiAp(mContext);
                 break;
         }
     }
@@ -215,11 +210,11 @@ public class FlowManage {
         switch (dataExceptionAlarm.getAlarmLevel()) {
             case ConnectionConstants.FIELD_ALARM_LEVEL_OPEN:
                 //   0:正常
-                WifiApAdmin.initWifiApState(mContext);
+//                WifiApAdmin.closeWifiAp(mContext);
                 break;
             case 1:
                 //   1:关闭（后台说的是关闭）
-                WifiApAdmin.closeWifiAp(mContext);
+
                 break;
         }
     }
