@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,7 +35,6 @@ import com.dudu.android.launcher.broadcast.WeatherAlarmReceiver;
 import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
-import com.dudu.android.launcher.utils.SharedPreferencesUtil;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WeatherUtil;
 import com.dudu.android.launcher.utils.WifiApAdmin;
@@ -52,8 +52,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+
 import java.util.Calendar;
+
+import java.util.ArrayList;
+
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import de.greenrobot.event.EventBus;
@@ -432,27 +437,37 @@ public class MainActivity extends BaseTitlebarActivity implements
     }
 
     private void proceedAgeTest() {
-        boolean agedModel = SharedPreferencesUtil.getBooleanValue(MainActivity.this, AgedContacts.AGEDMODEL_NAME, false);
-        long currentCount = SharedPreferencesUtil.getLongValue(MainActivity.this, AgedContacts.AGEDTEST_COUNT, 0);
-        if (currentCount <= 1) {
-            if (!agedModel) {
-                File file = new File(AgedContacts.AGEDMODEL_APK_DIR, AgedContacts.AGEDMODEL_APK);
-                if (file.exists()) {
-                    SharedPreferencesUtil.putBooleanValue(MainActivity.this, AgedContacts.AGEDMODEL_NAME, true);
-                    mRecordService.stopCamera();
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.setDataAndType(Uri.parse(AgedContacts.FILE_NAME + file.toString()), AgedContacts.APPLICATION_NAME);
-                    startActivity(intent);
-                }
-            } else {
-                SharedPreferencesUtil.putBooleanValue(MainActivity.this, AgedContacts.AGEDMODEL_NAME, false);
-                SharedPreferencesUtil.putLongValue(MainActivity.this, AgedContacts.AGEDTEST_COUNT, currentCount + 1);
-                Uri packageURI = Uri.parse(AgedContacts.PACKAGE_NAME);
-                Intent uninstallIntent = new Intent(Intent.ACTION_DELETE, packageURI);
-                startActivity(uninstallIntent);
-            }
+
+        File file = new File(AgedContacts.AGEDMODEL_APK_DIR, AgedContacts.AGEDMODEL_APK);
+        if (!file.exists()) {
+            return;
         }
+
+        if (isAppInstalled(this, AgedContacts.PACKAGE_NAME)) {
+            Utils.startThirdPartyApp(this, AgedContacts.PACKAGE_NAME);
+        } else {
+            installAgedApp(file);
+        }
+
     }
 
+    private void installAgedApp(File file) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setDataAndType(Uri.parse(AgedContacts.FILE_NAME + file.toString()), AgedContacts.APPLICATION_NAME);
+        startActivity(intent);
+    }
+
+    public boolean isAppInstalled(Context context, String packageName) {
+        final PackageManager packageManager = context.getPackageManager();
+        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);
+        List<String> pName = new ArrayList();
+        if (pinfo != null) {
+            for (int i = 0; i < pinfo.size(); i++) {
+                String pn = pinfo.get(i).packageName;
+                pName.add(pn);
+            }
+        }
+        return pName.contains(packageName);
+    }
 }

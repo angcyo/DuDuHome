@@ -128,10 +128,16 @@
         <activity android:name=".ui.activity.GsensorChartActivity" />
 
         <service android:name=".service.NewMessageShowService" />
-        <service android:name=".service.RecordBindService" />
         <service android:name=".service.FloatBackButtonService" />
         <service android:name=".service.MonitorService" />
         <service android:name="com.dudu.service.MainService" />
+
+        <service android:name=".service.RecordBindService">
+            <intent-filter>
+                <action android:name="com.intent.aged.updateRecode"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
 
         <receiver android:name=".broadcast.SimCardReceiver" >
             <intent-filter>

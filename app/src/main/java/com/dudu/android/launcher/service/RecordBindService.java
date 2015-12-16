@@ -7,14 +7,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
-import android.media.AudioManager;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
-import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.RemoteException;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -33,6 +32,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.dudu.android.launcher.R;
+import com.dudu.android.launcher.RecordeInterFace;
 import com.dudu.android.launcher.bean.VideoEntity;
 import com.dudu.android.launcher.db.DbHelper;
 import com.dudu.android.launcher.ui.activity.video.VideoListActivity;
@@ -41,13 +41,11 @@ import com.dudu.android.launcher.utils.DeviceIDUtil;
 import com.dudu.android.launcher.utils.FileNameUtil;
 import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
-import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.ViewAnimation;
 import com.dudu.conn.ConnectionEvent;
 import com.dudu.event.DeviceEvent;
 import com.dudu.http.MultipartRequest;
 import com.dudu.http.MultipartRequestParams;
-import com.dudu.monitor.event.CarStatus;
 import com.dudu.voice.semantic.VoiceManager;
 
 import org.slf4j.Logger;
@@ -69,6 +67,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     private static final int VIDEO_INTERVAL = 10 * 60 * 1000;
 
     private static final int DISAPPEAR_INTERVAL = 3000;
+    private static final int AGED_RECORD = 1;
 
     private WindowManager windowManager;
 
@@ -378,9 +377,20 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         return binder;
     }
 
-    public class MyBinder extends Binder {
+    public class MyBinder extends RecordeInterFace.Stub {
         public RecordBindService getService() {
             return RecordBindService.this;
+        }
+
+        @Override
+        public void updateRecorde(int width, int height) throws RemoteException {
+            Message message=Message.obtain();
+            VideoImageHolder holder=new VideoImageHolder();
+            holder.width=width;
+            holder.height=height;
+            message.obj=holder;
+            message.what=AGED_RECORD;
+            handler.sendMessage(message);
         }
     }
 
@@ -726,13 +736,34 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         }
     }
 
-    private Handler handler = new Handler();
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+             if (msg.what==AGED_RECORD){
+                 VideoImageHolder holder=(VideoImageHolder)msg.obj;
+                 int width=holder.width;
+                 int height=holder.height;
+                 updatePreviewSize(width, height);
+                 if (width==854&&height==480){
+                     backButton.setClickable(false);
+                     localVideo.setClickable(false);
+                 }else if(width==1&&height==1){
+                     backButton.setClickable(true);
+                     localVideo.setClickable(true);
+                 }
+             }
+        }
+    };
 
     private void toggleAnimation() {
         ViewAnimation.startAnimation(backButton, backButton.getVisibility() == View.VISIBLE ?
                 R.anim.back_key_disappear : R.anim.back_key_appear, this);
         ViewAnimation.startAnimation(localVideo, localVideo.getVisibility() == View.VISIBLE ?
                 R.anim.camera_image_disappear : R.anim.camera_image_apear, this);
+    }
+    private class VideoImageHolder{
+        int width;
+        int height;
     }
 
 }
