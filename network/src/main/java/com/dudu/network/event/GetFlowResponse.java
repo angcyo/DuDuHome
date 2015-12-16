@@ -1,5 +1,6 @@
 package com.dudu.network.event;
 
+import com.dudu.network.utils.StringTools;
 import com.dudu.network.valueobject.MessagePackage;
 
 import org.json.JSONException;
@@ -53,7 +54,15 @@ public class GetFlowResponse extends MessagePackage{
             messageId = jsonObject.getString("messageId");
             resultCode =  jsonObject.getString("resultCode");
             method = jsonObject.getString("method");
-            remainingFlow = Float.valueOf(new JSONObject(jsonObject.getString("result")).getString("remainingFlow"));
+//            remainingFlow = Float.valueOf(new JSONObject(jsonObject.getString("result")).getString("remainingFlow"));
+
+            JSONObject resultJson = new JSONObject(jsonObject.getString("result"));
+            String remainFlow = StringTools.GetStringValue("remainingFlow", resultJson);
+            if (remainFlow == null){
+                remainingFlow = Float.valueOf("1048576");
+            }else {
+                remainingFlow = Float.valueOf(remainFlow);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
