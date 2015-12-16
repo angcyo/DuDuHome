@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
+import android.media.AudioManager;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
@@ -35,6 +36,8 @@ import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.RecordeInterFace;
 import com.dudu.android.launcher.bean.VideoEntity;
 import com.dudu.android.launcher.db.DbHelper;
+import com.dudu.android.launcher.service.video.VideoConfigParam;
+import com.dudu.android.launcher.service.video.VideoTransfer;
 import com.dudu.android.launcher.ui.activity.video.VideoListActivity;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.DeviceIDUtil;
@@ -63,8 +66,8 @@ import java.util.TimerTask;
 import de.greenrobot.event.EventBus;
 
 public class RecordBindService extends Service implements SurfaceHolder.Callback {
-
-    private static final int VIDEO_INTERVAL = 10 * 60 * 1000;
+    /* 录像视频参数*/
+    private VideoConfigParam videoConfigParam;
 
     private static final int DISAPPEAR_INTERVAL = 3000;
     private static final int AGED_RECORD = 1;
@@ -123,6 +126,10 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     private Camera.Parameters mCameraParams;
 
     private boolean isFirst = true;
+    private AudioManager audiomanager;
+    /* 当前录制视频的文件名*/
+    private String curVideoName;
+    private VideoTransfer videoTransfer;
 
     //Back键定时消失的handler
     private Handler mBackDisappearHandler = new Handler() {
@@ -140,6 +147,8 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     @Override
     public void onCreate() {
         super.onCreate();
+
+        videoConfigParam = new VideoConfigParam();
 
         logger = LoggerFactory.getLogger("video.service");
 
@@ -210,7 +219,13 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
         queue = Volley.newRequestQueue(this);
 
+
         prepareCamera();
+
+        audiomanager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+        videoTransfer = new VideoTransfer(this, this);
+
     }
 
     private void registerTFlashCardReceiver() {
@@ -305,6 +320,9 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
             }
         }
 
+        //当前的录像上传
+        videoTransfer.addVideoFileName(curVideoName);
+
         releaseMediaRecorder();
 
         if (camera != null) {
@@ -313,6 +331,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
         insertVideo(videoName);
     }
+
 
     public void stopCamera() {
         isPreviewingOrRecording = false;
@@ -337,7 +356,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
             }
         };
 
-        timer.schedule(timerTask, VIDEO_INTERVAL, VIDEO_INTERVAL);
+        timer.schedule(timerTask, videoConfigParam.getVideo_interval(), videoConfigParam.getVideo_interval());
     }
 
     /**
@@ -370,6 +389,8 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         unregisterReceiver(mTFlashCardReceiver);
 
         EventBus.getDefault().unregister(this);
+
+        videoTransfer.release();
     }
 
     @Override
@@ -426,7 +447,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         mCameraParams = camera.getParameters();
         mCameraParams.setPreviewFormat(PixelFormat.YCbCr_420_SP);
         mCameraParams.setPreviewSize(854, 480);
-        mCameraParams.setPictureSize(1280, 720);
+        mCameraParams.setPictureSize(videoConfigParam.getWidth(), videoConfigParam.getHeight());
         camera.setParameters(mCameraParams);
         camera.setErrorCallback(null);
         camera.setErrorCallback(new Camera.ErrorCallback() {
@@ -465,10 +486,10 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        CamcorderProfile profile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
+        CamcorderProfile profile = CamcorderProfile.get(videoConfigParam.getQuality());
 
-        if (profile.videoBitRate > 2 * 1024 * 1024)
-            mediaRecorder.setVideoEncodingBitRate(2 * 1024 * 1024);
+        if (profile.videoBitRate > videoConfigParam.getVideoBitRate())
+            mediaRecorder.setVideoEncodingBitRate(videoConfigParam.getVideoBitRate());
         else
             mediaRecorder.setVideoEncodingBitRate(profile.videoBitRate);
 
@@ -480,9 +501,12 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
         videoName = dateFormat.format(new Date()) + ".mp4";
 
+        curVideoName = videoPath + File.separator + videoName;
+
         logger.debug("用户正在开车并且TFlashCard存在，录像正常...");
         mediaRecorder.setOutputFile(videoPath + File.separator + videoName);
-        mediaRecorder.setVideoFrameRate(30);
+        mediaRecorder.setVideoFrameRate(videoConfigParam.getRate());
+        mediaRecorder.setVideoSize(videoConfigParam.getWidth(), videoConfigParam.getHeight());
         try {
             mediaRecorder.prepare();
         } catch (Exception e) {
@@ -766,4 +790,11 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         int height;
     }
 
+    public VideoConfigParam getVideoConfigParam() {
+        return videoConfigParam;
+    }
+
+    public void setVideoConfigParam(VideoConfigParam videoConfigParam) {
+        this.videoConfigParam = videoConfigParam;
+    }
 }

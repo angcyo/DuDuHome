@@ -16,6 +16,7 @@ import com.dudu.network.event.PortalUpdateRes;
 import com.dudu.network.event.RebootDevice;
 import com.dudu.network.event.SwitchFlow;
 import com.dudu.network.event.UpdatePortal;
+import com.dudu.network.event.UploadVideo;
 import com.dudu.network.utils.DuduLog;
 import com.dudu.network.utils.Encrypt;
 import com.dudu.network.valueobject.MessagePackage;
@@ -23,6 +24,8 @@ import com.dudu.network.valueobject.MessagePackage;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.greenrobot.event.EventBus;
 
@@ -37,9 +40,12 @@ public class MessageHandler {
 
     private  NetworkService mNetworkService;
 
+    private Logger log;
+
 
     public MessageHandler(NetworkService networkService) {
         mNetworkService = networkService;
+        log = LoggerFactory.getLogger("network");
     }
 
     //处理收到的消息
@@ -103,8 +109,11 @@ public class MessageHandler {
                 case MessageMethod.REBOOTDEVICE:
                     proRebootDeviceMessage(messageJsonObject);
                     break;
+                case MessageMethod.UPLOADVIDEO:
+                    proUploadVideoMessage(messageJsonObject);
+                    break;
                 default:
-                    DuduLog.e("network-收到错误的网络消息--------");
+                    log.error("network-收到错误的网络消息--------");
                     break;
             }
 
@@ -117,7 +126,7 @@ public class MessageHandler {
 
 
     private void proGeneralResponse(JSONObject messageJsonObject){
-        DuduLog.i("network-处理proGeneralResponse事件");
+        log.info("network-处理proGeneralResponse事件");
         GeneralResponse generalResponse = new GeneralResponse();
         generalResponse.createFromJsonString(messageJsonObject.toString());
         if (generalResponse.getMessageId().equals(mNetworkService.getCurSendMessagePackage().getMessageId()))
@@ -135,7 +144,7 @@ public class MessageHandler {
             mNetworkService.removeHeadOfMessageQueue();
             mNetworkService.nodifyReceiveResponse();
         }
-        DuduLog.i("network-发出ActiveDeviceRes事件");
+        log.info("network-发出ActiveDeviceRes事件");
         EventBus.getDefault().post(activeDeviceRes);
     }
 
@@ -147,7 +156,7 @@ public class MessageHandler {
             mNetworkService.removeHeadOfMessageQueue();
             mNetworkService.nodifyReceiveResponse();
         }
-        DuduLog.i("network-发出checkDeviceActiveRes事件");
+        log.info("network-发出checkDeviceActiveRes事件");
         EventBus.getDefault().post(checkDeviceActiveRes);
     }
 
@@ -159,7 +168,7 @@ public class MessageHandler {
             mNetworkService.removeHeadOfMessageQueue();
             mNetworkService.nodifyReceiveResponse();
         }
-        DuduLog.i("network-发出GetFlowResponse事件");
+        log.info("network-发出GetFlowResponse事件");
         EventBus.getDefault().post(getFlowResponse);
     }
 
@@ -173,7 +182,7 @@ public class MessageHandler {
             mNetworkService.nodifyReceiveResponse();
         }
 
-        DuduLog.i("network-发出FlowUploadResponse事件");
+        log.info("network-发出FlowUploadResponse事件");
         EventBus.getDefault().post(flowUploadResponse);
     }
 
@@ -187,7 +196,7 @@ public class MessageHandler {
             mNetworkService.nodifyReceiveResponse();
         }
 
-        DuduLog.i("network-发出FlowSynConfigurationRes事件");
+        log.info("network-发出FlowSynConfigurationRes事件");
         EventBus.getDefault().post(flowSynConfigurationRes);
     }
 
@@ -201,7 +210,7 @@ public class MessageHandler {
             mNetworkService.nodifyReceiveResponse();
         }
 
-        DuduLog.i("network-发出PortalUpdateRes事件");
+        log.info("network-发出PortalUpdateRes事件");
         EventBus.getDefault().post(portalUpdateRes);
     }
 
@@ -217,7 +226,7 @@ public class MessageHandler {
         AccessGps accessGps = new AccessGps();
         accessGps.createFromJsonString(messageJsonObject.toString());
 
-        DuduLog.i("network-发出AccessGps事件");
+        log.info("network-发出AccessGps事件");
         EventBus.getDefault().post(accessGps);
     }
 
@@ -225,7 +234,7 @@ public class MessageHandler {
         SwitchFlow switchFlow = new SwitchFlow();
         switchFlow.createFromJsonString(messageJsonObject.toString());
 
-        DuduLog.i("network-发出AccessGps事件");
+        log.info("network-发出AccessGps事件");
         EventBus.getDefault().post(switchFlow);
     }
 
@@ -233,7 +242,7 @@ public class MessageHandler {
         DataOverstepAlarm dataOverstepAlarm = new DataOverstepAlarm();
         dataOverstepAlarm.createFromJsonString(messageJsonObject.toString());
 
-        DuduLog.i("network-发出DataOverstepAlarm事件");
+        log.info("network-发出DataOverstepAlarm事件");
         EventBus.getDefault().post(dataOverstepAlarm);
     }
 
@@ -241,7 +250,7 @@ public class MessageHandler {
         DataExceptionAlarm dataExceptionAlarm = new DataExceptionAlarm();
         dataExceptionAlarm.createFromJsonString(messageJsonObject.toString());
 
-        DuduLog.i("network-发出DataExceptionAlarm事件");
+        log.info("network-发出DataExceptionAlarm事件");
         EventBus.getDefault().post(dataExceptionAlarm);
     }
 
@@ -249,7 +258,7 @@ public class MessageHandler {
         UpdatePortal updatePortal = new UpdatePortal();
         updatePortal.createFromJsonString(messageJsonObject.toString());
 
-        DuduLog.i("network-发出UpdatePortal事件");
+        log.info("network-发出UpdatePortal事件");
         EventBus.getDefault().post(updatePortal);
     }
 
@@ -257,15 +266,22 @@ public class MessageHandler {
         LogSend logSend = new LogSend();
         logSend.createFromJsonString(messageJsonObject.toString());
 
-        DuduLog.i("network-发出LogSend事件");
+        log.info("network-发出LogSend事件");
         EventBus.getDefault().post(logSend);
     }
 
     private void proRebootDeviceMessage(JSONObject messageJsonObject){
         RebootDevice rebootDevice = new RebootDevice();
         rebootDevice.createFromJsonString(messageJsonObject.toString());
-        DuduLog.i("network-发出RebootDevice事件");
+        log.info("network-发出RebootDevice事件");
         EventBus.getDefault().post(rebootDevice);
+    }
+
+    private void proUploadVideoMessage(JSONObject messageJsonObject){
+        UploadVideo uploadVideo = new UploadVideo();
+        uploadVideo.createFromJsonString(messageJsonObject.toString());
+        log.info("network-发出UploadVideo事件");
+        EventBus.getDefault().post(uploadVideo);
     }
 
     public void init(){

@@ -21,7 +21,8 @@ public enum BusinessMessageEnum {
     UPDATE_PORTAL(2004, "更新portal推送指令服务"),
     UPDATE_LOGS(2005, "获取设备日志推送指令服务"),
     ACCESS_SWITCH(2006, "接人指令"),
-    REBOOT_DEVICE(2007, "重启设备");
+    REBOOT_DEVICE(2007, "重启设备"),
+    UPLOAD_VIDEO(2008, "上传视频");
 
     private BusinessMessageEnum(int code, String text) {
         this.code = code;
