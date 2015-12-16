@@ -126,7 +126,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     private Camera.Parameters mCameraParams;
 
     private boolean isFirst = true;
-    private AudioManager audiomanager;
+
     /* 当前录制视频的文件名*/
     private String curVideoName;
     private VideoTransfer videoTransfer;
@@ -221,8 +221,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
 
         prepareCamera();
-
-        audiomanager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        
 
         videoTransfer = new VideoTransfer(this, this);
 
