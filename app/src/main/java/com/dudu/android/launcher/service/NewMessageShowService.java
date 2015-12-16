@@ -312,7 +312,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
         switch (type) {
             case ChoosePageChain.NEXT_PAGE:
-                if (pageIndex > 5) {
+                if (pageIndex == 4) {
                     VoiceManager.getInstance().startSpeaking("已经是最后一页", SemanticConstants.TTS_DO_NOTHING, false);
                     return;
                 }
@@ -326,8 +326,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
                 pageIndex--;
                 break;
             case ChoosePageChain.CHOOSE_PAGE:
-                if (pageIndex > 5)
-                    return;
+
                 if (page > 5 || page < 1) {
                     VoiceManager.getInstance().stopUnderstanding();
                     VoiceManager.getInstance().startSpeaking("选择错误，请重新选择", SemanticConstants.TTS_START_UNDERSTANDING, false);
@@ -336,7 +335,6 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
                 pageIndex = page - 1;
                 break;
         }
-        Log.d("lxh", "choosePage ：" + pageIndex);
         addressList.setSelection(pageIndex * Constants.ADDRESS_VIEW_COUNT);
     }
 

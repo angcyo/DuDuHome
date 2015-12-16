@@ -22,6 +22,7 @@ import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.event.MapResultShow;
+import com.dudu.monitor.event.CarStatus;
 import com.dudu.navi.NavigationManager;
 import com.dudu.navi.Util.NaviUtils;
 import com.dudu.navi.entity.Navigation;
@@ -77,7 +78,6 @@ public class NavigationClerk {
 
     private Class intentClass;
     private String msg;
-    private String playText;
 
     private Runnable removeWindowRunnable = new Runnable() {
 
@@ -228,16 +228,14 @@ public class NavigationClerk {
                             SemanticConstants.TTS_START_UNDERSTANDING, true);
                     return;
                 }
-
-                msg = "正在搜索:" + navigationManager.getKeyword();
+                msg = "正在搜索 " + navigationManager.getKeyword();
                 if (Constants.CURRENT_POI.equals(navigationManager.getKeyword())) {
                     navigationManager.setSearchType(SearchType.SEARCH_CUR_LOCATION);
-                    msg = "正在获取当前位置信息";
-                    playText = "正在获取您的当前位置,请稍后";
+                    msg = "正在获取您的当前位置";
                     isShow = true;
                 }
-                if (!isManual)
-                    VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_DO_NOTHING, isShow);
+                if(!isManual)
+                  VoiceManager.getInstance().startSpeaking(msg, SemanticConstants.TTS_DO_NOTHING, isShow);
                 showProgressDialog(msg);
                 break;
 
@@ -614,10 +612,10 @@ public class NavigationClerk {
     }
 
     public void removeWindow(int t) {
+        isShowAddress = false;
         if (navigationManager.getNavigationType() != NavigationType.DEFAULT) {
             navigationManager.setIsNavigatining(true);
             if (navigationManager.getSearchType() == SearchType.SEARCH_DEFAULT) {
-                isShowAddress = false;
                 mhandler.postDelayed(removeWindowRunnable, REMOVEWINDOW_TIME);
             }
         }
@@ -631,6 +629,15 @@ public class NavigationClerk {
         ActivitiesManager.getInstance().closeTargetActivity(LocationMapActivity.class);
         if (LauncherApplication.getContext().getRecordService() != null) {
             LauncherApplication.getContext().getRecordService().updatePreviewSize(1, 1);
+        }
+    }
+
+    public void onEvent(CarStatus event){
+
+        switch (event.getCarStatus()){
+            case CarStatus.CAR_OFFLINE:
+                existNavi();
+                break;
         }
     }
 }

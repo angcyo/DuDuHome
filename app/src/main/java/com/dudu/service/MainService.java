@@ -61,7 +61,6 @@ public class MainService extends Service {
         portalUpdate = PortalUpdate.getInstance(this);
 
         calculation = Calculation.getInstance(this);
-        calculation.init();
 
         storage = Storage.getInstance();
         storage.init();
@@ -99,9 +98,11 @@ public class MainService extends Service {
          switch (event.getCarStatus()){
              case CarStatus.CAR_ONLINE:
                  EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.ON));
+                 calculation.init();
                  break;
              case CarStatus.CAR_OFFLINE:
                  EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.OFF));
+                 calculation.release();
                  break;
          }
         }

@@ -78,8 +78,6 @@ public class CalculateService {
     }
 
     public void stopService(){
-        EventBus.getDefault().unregister(this);
-
         if (calculateThreadPool != null && !calculateThreadPool.isShutdown()) {
             calculateThreadPool.shutdown();
             calculateThreadPool = null;

@@ -5,6 +5,7 @@ import android.hardware.*;
 import android.hardware.Sensor;
 import android.view.WindowManager;
 
+import com.dudu.monitor.event.CarStatus;
 import com.dudu.monitor.valueobject.SensorData;
 import com.dudu.monitor.utils.TimeUtils;
 
@@ -39,18 +40,37 @@ public class SensorManage  implements SensorEventListener {
 
     private SensorManage(Context context) {
         mSensorManager = (SensorManager)context.getSystemService(Context.SENSOR_SERVICE);
-
         mAcceSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mGyroscopSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-
-        mSensorManager.registerListener(this, mAcceSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        mSensorManager.registerListener(this, mGyroscopSensor, SensorManager.SENSOR_DELAY_NORMAL);
-
         mGyroscopSensorList = Collections.synchronizedList(new ArrayList<SensorData>());
         mAcceSensorList = Collections.synchronizedList(new ArrayList<SensorData>());
-
     }
 
+    public void initSensorManage(){
+        mSensorManager.registerListener(this, mAcceSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, mGyroscopSensor, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    public void unInitSensorManage(){
+        mSensorManager.unregisterListener(this);
+        if(!mGyroscopSensorList.isEmpty()){
+            mGyroscopSensorList.clear();
+        }
+        if(!mAcceSensorList.isEmpty()){
+            mAcceSensorList.clear();
+        }
+    }
+
+    public void onEvent(CarStatus event){
+        switch (event.getCarStatus()){
+            case CarStatus.CAR_OFFLINE:
+                unInitSensorManage();
+                break;
+            case CarStatus.CAR_ONLINE:
+                initSensorManage();
+                break;
+        }
+    }
 
     @Override
     public void onSensorChanged(SensorEvent event) {

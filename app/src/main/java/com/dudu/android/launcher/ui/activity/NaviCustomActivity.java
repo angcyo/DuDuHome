@@ -26,6 +26,7 @@ import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.NaviSettingUtil;
 import com.dudu.android.launcher.utils.TimeUtils;
 import com.dudu.android.launcher.utils.ViewAnimation;
+import com.dudu.map.NavigationClerk;
 import com.dudu.monitor.utils.LocationUtils;
 import com.dudu.navi.NavigationManager;
 import com.dudu.navi.vauleObject.NavigationType;
@@ -127,12 +128,12 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
     }
 
     private void backButtonAutoHide() {
-        if(back_button.getVisibility() != View.VISIBLE) {
+        if (back_button.getVisibility() != View.VISIBLE) {
             buttonAnimation();
         }
 
         mHandler.removeCallbacks(buttonRunnable);
-        mHandler.postDelayed(buttonRunnable,3000);
+        mHandler.postDelayed(buttonRunnable, 3000);
     }
 
 
@@ -163,7 +164,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         viewOptions.setCrossDisplayShow(false);
         viewOptions.setCrossDisplayEnabled(false);
         int time = Integer.parseInt(TimeUtils.format(TimeUtils.format6));
-        if(time>18||time<5)
+        if (time > 18 || time < 5)
             viewOptions.setNaviNight(true);
         mAmapAMapNaviView.setViewOptions(viewOptions);
         mAmapAMapNaviView.getMap().setTrafficEnabled(true);
@@ -183,14 +184,14 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         if (mAmapAMapNaviView != null && mAmapAMapNaviView.getViewOptions() != null) {
             FloatWindowUtil.removeFloatWindow();
             playText = "路况播报已打开";
-            if (mAmapAMapNaviView.getViewOptions().isTrafficInfoUpdateEnabled()){
+            if (mAmapAMapNaviView.getViewOptions().isTrafficInfoUpdateEnabled()) {
                 playText = "已经为您打开路况播报";
-            }else{
+            } else {
                 AMapNaviViewOptions viewOptions = new AMapNaviViewOptions();
                 viewOptions.setTrafficInfoUpdateEnabled(true);
                 mAmapAMapNaviView.setViewOptions(viewOptions);
             }
-                mAmapAMapNaviView.getViewOptions().setTrafficInfoUpdateEnabled(true);
+            mAmapAMapNaviView.getViewOptions().setTrafficInfoUpdateEnabled(true);
 
             VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_DO_NOTHING);
         }
@@ -200,7 +201,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
     public void closeTraffic() {
         if (mAmapAMapNaviView != null && mAmapAMapNaviView.getViewOptions() != null) {
             FloatWindowUtil.removeFloatWindow();
-            if(mAmapAMapNaviView.getViewOptions().isTrafficInfoUpdateEnabled()){
+            if (mAmapAMapNaviView.getViewOptions().isTrafficInfoUpdateEnabled()) {
                 AMapNaviViewOptions viewOptions = new AMapNaviViewOptions();
                 viewOptions.setTrafficInfoUpdateEnabled(false);
                 mAmapAMapNaviView.setViewOptions(viewOptions);
@@ -351,6 +352,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
     @Override
     public void onPause() {
         mAmapAMapNaviView.onPause();
+        NavigationClerk.getInstance().setIsShowAddress(false);
         super.onPause();
     }
 
@@ -360,7 +362,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         EventBus.getDefault().unregister(this);
         NavigationManager.getInstance(this).existNavigation();
         VoiceManager.getInstance().clearMisUnderstandCount();
-        VoiceManager.getInstance().startSpeaking("导航结束",SemanticConstants.TTS_DO_NOTHING,false);
+        VoiceManager.getInstance().startSpeaking("导航结束", SemanticConstants.TTS_DO_NOTHING, false);
         try {
             mAmapAMapNaviView.onDestroy();
         } catch (Exception e) {

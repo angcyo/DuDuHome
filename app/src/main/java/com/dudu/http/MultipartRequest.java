@@ -8,8 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.HttpEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
@@ -26,30 +27,26 @@ public class MultipartRequest extends Request<String>{
     private Listener<String> listener = null;  
     private MultipartRequestParams params = null;  
     private HttpEntity httpEntity = null;  
-      
+    private Logger log;
     public MultipartRequest(int method,MultipartRequestParams params, String url, Listener<String> listener,   
             ErrorListener errorListener) {  
         super(method, url, null);  
-        // TODO Auto-generated constructor stub  
-        this.params = params;  
+        this.params = params;
         this.errorListener = errorListener;   
-        this.listener = listener;  
+        this.listener = listener;
+        log = LoggerFactory.getLogger("net.http");
     }  
   
     @Override  
     public byte[] getBody() throws AuthFailureError {  
-        // TODO Auto-generated method stub  
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();  
-        if(params != null) {  
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        if(params != null) {
             httpEntity = params.getEntity();   
             try {  
                 httpEntity.writeTo(baos);  
-//                String str = new String(baos.toByteArray());  
-//                Log.d("lxh","bodyString is :" + str); 
-            } catch (IOException e) {  
-                // TODO Auto-generated catch block  
-                e.printStackTrace();  
-                Log.e("lxh","IOException writing to ByteArrayOutputStream");  
+            } catch (IOException e) {
+                e.printStackTrace();
+                log.warn("IOException writing to ByteArrayOutputStream {}", e);
             }  
         }  
         return baos.toByteArray();  
@@ -68,35 +65,31 @@ public class MultipartRequest extends Request<String>{
   
     @Override  
     public Map<String, String> getHeaders() throws AuthFailureError {  
-        // TODO Auto-generated method stub  
-        Map<String, String> headers = super.getHeaders();  
+        Map<String, String> headers = super.getHeaders();
         if (null == headers || headers.equals(Collections.emptyMap())) {  
-            headers = new HashMap<String, String>();  
+            headers = new HashMap<>();
         }  
         return headers;  
     }  
       
     @Override  
     public String getBodyContentType() {  
-        // TODO Auto-generated method stub  
-        return httpEntity.getContentType().getValue();  
+        return httpEntity.getContentType().getValue();
     }  
       
     @Override  
     protected void deliverResponse(String response) {  
-        // TODO Auto-generated method stub  
-    	if (listener != null) {  
+    	if (listener != null) {
     		listener.onResponse(response);  
-        } 
-    	Log.d("lxh", "应答：" + response);
-    }  
+        }
+        log.debug("http deliverResponse {}", response);
+    }
       
     @Override  
     public void deliverError(VolleyError error) {  
-        // TODO Auto-generated method stub  
-        if(errorListener != null) {  
+        if(errorListener != null) {
             errorListener.onErrorResponse(error); 
-            Log.d("lxh", "上传错误：" + error);
+           log.debug("http deliverError {}",error);
         }  
         
     }  

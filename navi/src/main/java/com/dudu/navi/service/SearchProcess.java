@@ -130,8 +130,8 @@ public class SearchProcess {
             query.setPageNum(0);// 设置查第一页
             poiSearch = new PoiSearch(mContext, query);
             if (searchType == SearchType.SEARCH_NEARBY || searchType == SearchType.SEARCH_NEAREST) {
-                if (latLonPoint != null)
-                    poiSearch.setBound(new PoiSearch.SearchBound(latLonPoint, 2000));
+                if(latLonPoint!=null)
+                 poiSearch.setBound(new PoiSearch.SearchBound(latLonPoint, 2000));
             }
             poiSearch.setOnPoiSearchListener(onPoiSearchListener);
             poiSearch.searchPOIAsyn();
