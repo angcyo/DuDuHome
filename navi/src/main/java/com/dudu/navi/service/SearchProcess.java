@@ -3,6 +3,7 @@ package com.dudu.navi.service;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.maps.AMapUtils;
@@ -241,9 +242,10 @@ public class SearchProcess {
 
 
     private void setPoiList() {
-        if (latLonPoint != null && !poiItems.isEmpty()) {
+        if (Monitor.getInstance(mContext).getCurrentLocation() != null && !poiItems.isEmpty()) {
             ResourceManager.getInstance(mContext).setPoiItems(poiItems);
-            LatLng startPoints_gaode = new LatLng(latLonPoint.getLatitude(), latLonPoint.getLongitude());
+            LatLng startPoints_gaode = new LatLng(Monitor.getInstance(mContext).getCurrentLocation().getLatitude(),
+                    Monitor.getInstance(mContext).getCurrentLocation().getLongitude());
             poiResultList.clear();
             for (int i = 0; i < poiItems.size(); i++) {
                 PoiResultInfo poiResultInfo = new PoiResultInfo();
@@ -264,6 +266,7 @@ public class SearchProcess {
             Collections.sort(poiResultList, new PoiResultInfo.MyComparator());
 
             ResourceManager.getInstance(mContext).setPoiResultList(poiResultList);
+            Log.d("------lxh","----poiResultList:"+poiResultList.size());
         }
     }
 }

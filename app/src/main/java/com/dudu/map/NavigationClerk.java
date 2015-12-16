@@ -22,6 +22,7 @@ import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.event.MapResultShow;
+import com.dudu.monitor.Monitor;
 import com.dudu.monitor.event.CarStatus;
 import com.dudu.navi.NavigationManager;
 import com.dudu.navi.Util.NaviUtils;
@@ -207,6 +208,8 @@ public class NavigationClerk {
     }
 
     public void doSearch() {
+
+
         msg = "正在搜索" + navigationManager.getKeyword();
         boolean isShow = false;
         if (!navigationManager.isNavigatining() && !isMapActivity()) {
@@ -215,6 +218,7 @@ public class NavigationClerk {
             return;
         }
         isNaviActivity();
+
         switch (navigationManager.getSearchType()) {
             case SEARCH_DEFAULT:
                 return;
@@ -223,6 +227,16 @@ public class NavigationClerk {
             case SEARCH_PLACE:
             case SEARCH_PLACE_LOCATION:
             case SEARCH_COMMONPLACE:
+                if(Monitor.getInstance(mContext).getCurrentLocation()==null){
+                    msg = "暂未获取到您的当前位置，不能搜索，请稍后再试";
+                    if(isManual){
+                        ToastUtils.showToast(msg);
+                    }else{
+                        VoiceManager.getInstance().startSpeaking(msg, SemanticConstants.TTS_DO_NOTHING, true);
+                    }
+                    return;
+                }
+
                 if (TextUtils.isEmpty(navigationManager.getKeyword())) {
                     VoiceManager.getInstance().startSpeaking("关键字有误，请重新输入！",
                             SemanticConstants.TTS_START_UNDERSTANDING, true);
@@ -640,4 +654,6 @@ public class NavigationClerk {
                 break;
         }
     }
+
+
 }
