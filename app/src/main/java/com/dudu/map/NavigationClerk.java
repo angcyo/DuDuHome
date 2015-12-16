@@ -295,15 +295,8 @@ public class NavigationClerk {
         if (event.isShow()) {
             VoiceManager.getInstance().startSpeaking(event.getNaviVoice(), SemanticConstants.TTS_START_UNDERSTANDING, true);
             removeWindow(REMOVEWINDOW_TIME);
-        } else {
-            if (navigationManager.isNavigatining()) {
-                if (FloatWindowUtil.IsWindowShow()) {
-                    VoiceManager.getInstance().startSpeaking(event.getNaviVoice(), SemanticConstants.TTS_START_UNDERSTANDING, false);
-                } else {
-                    VoiceManager.getInstance().startSpeaking(event.getNaviVoice(), SemanticConstants.TTS_DO_NOTHING, false);
-                }
-            }
         }
+
     }
 
     public void onEventMainThread(NaviEvent.SearchResult event) {
@@ -655,5 +648,8 @@ public class NavigationClerk {
         }
     }
 
-
+    public void onEvent(NaviEvent.NavigationInfoBroadcast event){
+        if(!FloatWindowUtil.IsWindowShow())
+             VoiceManager.getInstance().startSpeaking(event.getInfo(), SemanticConstants.TTS_DO_NOTHING, false);
+    }
 }

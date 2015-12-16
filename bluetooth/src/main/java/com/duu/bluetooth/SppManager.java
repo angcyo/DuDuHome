@@ -198,7 +198,7 @@ public class SppManager {
      */
     private void connectionLost() {
         log.debug("sppManager connectionLost");
-        SppManager.this.start();
+//        SppManager.this.start();
         setState(STATE_NONE);
     }
 
@@ -260,13 +260,13 @@ public class SppManager {
 
             } catch (IOException e) {
                 log.warn("unable to connect：", e);
-                try {
-                    mmSocket.close();
-                } catch (IOException e1) {
-                    log.warn("unable to close() " + mSocketType +
-                            " socket during connection failure", e1);
-                }
-                connectionFailed();
+//                try {
+//                    mmSocket.close();
+//                } catch (IOException e1) {
+//                    log.warn("unable to close() " + mSocketType +
+//                            " socket during connection failure", e1);
+//                }
+//                connectionFailed();
                 return;
             }
             synchronized (SppManager.this) {

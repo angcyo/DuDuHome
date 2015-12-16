@@ -195,7 +195,7 @@ public class NaviProcess {
                 @Override
                 public void onGetNavigationText(int arg0, String arg1) {
                     log.debug("[{}] 导航播报信息", step++);
-                    EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast(arg1, false));
+                    EventBus.getDefault().post(new NaviEvent.NavigationInfoBroadcast(arg1));
 
                 }
 

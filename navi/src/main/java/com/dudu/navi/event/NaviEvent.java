@@ -45,4 +45,15 @@ public class NaviEvent {
         SUCCESS,
         FAIL
     }
+
+    public static class NavigationInfoBroadcast{
+        private String info;
+        public NavigationInfoBroadcast(String info){
+            this.info = info;
+        }
+
+        public String getInfo() {
+            return info;
+        }
+    }
 }
