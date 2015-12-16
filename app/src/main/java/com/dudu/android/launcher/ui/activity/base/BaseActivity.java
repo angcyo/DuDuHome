@@ -22,7 +22,6 @@ import android.view.View.OnTouchListener;
 
 public abstract class BaseActivity extends Activity implements OnGestureListener, OnTouchListener {
 
-    protected Context mContext;
     protected Activity mActivity;
 
     private GestureDetector gestureDetector;
@@ -76,19 +75,6 @@ public abstract class BaseActivity extends Activity implements OnGestureListener
     public abstract void initListener();
 
     public abstract void initDatas();
-
-    public Context getContext() {
-        return mContext;
-    }
-
-    public Activity getActivity() {
-        return mActivity;
-    }
-
-    public void setContext(Context mContext) {
-        this.mContext = mContext;
-        this.mActivity = (Activity) mContext;
-    }
 
     @Override
     protected void onDestroy() {

@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.DialogUtils;
 import com.dudu.android.launcher.utils.NetworkUtils;
+import com.dudu.android.launcher.utils.WeatherUtil;
 import com.dudu.event.BleStateChange;
 import com.dudu.event.DeviceEvent;
 import com.dudu.monitor.Monitor;
@@ -148,10 +149,10 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            String type = NetworkUtils.getCurrentNetworkType(mContext);
+            String type = NetworkUtils.getCurrentNetworkType(BaseTitlebarActivity.this);
             if (type.equals("2G") || type.equals("3G") || type.equals("4G")) {
                 // 当网络连接时重新获取天气信息
-                requestWeatherInfo();
+                WeatherUtil.requestWeatherInfo();
 
                 mSignalTextView.setText(type);
                 mSignalImage.setVisibility(View.VISIBLE);
@@ -160,10 +161,6 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
                 mSignalImage.setVisibility(View.GONE);
             }
         }
-    }
-
-    public void requestWeatherInfo() {
-
     }
 
     public void onEventMainThread(GpsStatus gpsStatus) {

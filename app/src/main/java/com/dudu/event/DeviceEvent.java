@@ -12,20 +12,6 @@ public class DeviceEvent {
         }
 
         public Screen(final int state) {
-
-            this.state = state;
-        }
-    }
-
-    public static class GPS {
-        private int state;
-
-        public int getState() {
-            return state;
-        }
-
-        public GPS(final int state) {
-
             this.state = state;
         }
     }
@@ -38,8 +24,26 @@ public class DeviceEvent {
         }
 
         public Video(final int state) {
-
             this.state = state;
+        }
+    }
+
+    public static class Weather {
+        private String weather;
+
+        private String temperature;
+
+        public String getWeather() {
+            return weather;
+        }
+
+        public String getTemperature() {
+            return temperature;
+        }
+
+        public Weather(final String weather, final String temperature) {
+            this.weather = weather;
+            this.temperature = temperature;
         }
     }
 

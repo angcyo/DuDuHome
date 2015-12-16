@@ -14,6 +14,7 @@ import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
 import com.amap.api.location.LocationProviderProxy;
 import com.amap.api.maps.LocationSource;
+import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.ui.adapter.NearbyRepairAdapter;
@@ -88,7 +89,7 @@ public class NearbyRepairActivity extends BaseNoTitlebarAcitivity implements
 
                 double[] location = {23.156596,113.30791};
 				Navigation navigation = new Navigation(new Point(23.156596,113.30791), NaviDriveMode.SPEEDFIRST, NavigationType.NAVIGATION);
-				NavigationManager.getInstance(getContext()).startCalculate(navigation);
+				NavigationManager.getInstance(LauncherApplication.getContext()).startCalculate(navigation);
 			}
 		});
 
@@ -97,7 +98,7 @@ public class NearbyRepairActivity extends BaseNoTitlebarAcitivity implements
             @Override
             public void onListItemClick(int position) {
 				Navigation navigation = new Navigation(new Point(23.156596,113.30791), NaviDriveMode.SPEEDFIRST, NavigationType.NAVIGATION);
-				NavigationManager.getInstance(getContext()).startCalculate(navigation);
+				NavigationManager.getInstance(LauncherApplication.getContext()).startCalculate(navigation);
             }
         });
 

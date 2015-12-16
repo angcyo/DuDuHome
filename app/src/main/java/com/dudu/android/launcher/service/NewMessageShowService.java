@@ -34,8 +34,7 @@ import com.dudu.android.launcher.utils.FloatWindow.FloatVoiceChangeCallBack;
 import com.dudu.android.launcher.utils.FloatWindow.MessageShowCallBack;
 import com.dudu.android.launcher.utils.FloatWindow.RemoveFloatWindowCallBack;
 import com.dudu.android.launcher.utils.FloatWindow.StrategyChooseCallBack;
-import com.dudu.android.launcher.utils.LogUtils;
-import com.dudu.event.ListenerResetEvent;
+import com.dudu.event.VoiceEvent;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.SemanticType;
 import com.dudu.voice.semantic.VoiceManager;
@@ -56,6 +55,8 @@ import de.greenrobot.event.EventBus;
 public class NewMessageShowService extends Service implements MessageShowCallBack, AddressShowCallBack,
         StrategyChooseCallBack, FloatVoiceChangeCallBack,
         AddressListItemClickCallback, RemoveFloatWindowCallBack, CreateFloatWindowCallBack, FloatWindow.ChooseAddressPageCallBack {
+
+    private static final int MESSAGE_WINDOW_REMOVED = 1001;
 
     private FloatWindow mFloatWindow;
 
@@ -88,7 +89,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
     private int pageIndex = 0;
 
-    private Logger log_init;
+    private Logger logger;
 
     private Context mContext;
 
@@ -96,15 +97,13 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
     @Override
     public IBinder onBind(Intent intent) {
-
         return null;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        log_init = LoggerFactory.getLogger("init.ui.float");
+        logger = LoggerFactory.getLogger("init.ui.float");
 
-        log_init.debug("onStartCommand");
         init();
         return super.onStartCommand(intent, flags, startId);
     }
@@ -161,24 +160,18 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
                 VoiceManager.getInstance().stopSpeaking();
 
-                VoiceManager.getInstance().removeFloatCallback();
-
                 SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
             }
         });
     }
-
 
     private Handler mHandler = new Handler() {
 
         @Override
         public void handleMessage(Message msg) {
             if (removeHasCalled == true) {
-                log_init.debug("五秒内没有重新打开窗口");
-                EventBus.getDefault().post(new ListenerResetEvent(ListenerResetEvent.LISTENER_OFF));
-                removeHasCalled = false;
-            } else {
-                log_init.debug("五秒内没有已经被打开窗口");
+                logger.debug("八秒内没有重新打开窗口, 语音已经退出");
+                EventBus.getDefault().post(new VoiceEvent(VoiceEvent.STOP_VOICE_SERVICE));
             }
         }
     };
@@ -190,7 +183,6 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
     @Override
     public void onDestroy() {
-        log_init.debug("onDestroy");
         if (floatWindowLayout != null && windowManager != null) {
             windowManager.removeView(floatWindowLayout);
             floatWindowLayout = null;
@@ -418,11 +410,16 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
             public void run() {
                 if (floatWindowLayout != null && windowManager != null && isShowWindow) {
                     removeHasCalled = true;
+
                     VoiceManager.getInstance().setUnderstandingOrSpeaking(false);
+
                     VoiceManager.getInstance().stopUnderstanding();
-                    mHandler.sendEmptyMessageDelayed(1, 5000);
+
+                    mHandler.sendEmptyMessageDelayed(MESSAGE_WINDOW_REMOVED, 8000);
+
                     windowManager.removeView(floatWindowLayout);
                 }
+
                 isShowWindow = false;
                 isShowAddress = false;
                 mFloatWindow.setIsWindowShow(false);
@@ -434,7 +431,6 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
     @Override
     public void createFloatWindow() {
-        log_init.debug("打开窗口");
         if (!isShowWindow) {
             if (windowManager != null && floatWindowLayout != null && windowParams != null) {
                 windowManager.addView(floatWindowLayout, windowParams);
@@ -446,15 +442,8 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
     }
 
     private void showWindowCallback() {
-        log_init.debug("调用显示window的回调");
-        EventBus.getDefault().post(new ListenerResetEvent(ListenerResetEvent.LISTENER_ON));
+        mHandler.removeMessages(MESSAGE_WINDOW_REMOVED);
 
-        if (removeHasCalled == false) {
-            EventBus.getDefault().post(new ListenerResetEvent(ListenerResetEvent.LISTENER_ON));
-        }else{
-            log_init.debug("五秒内被打开窗口");
-            mHandler.removeMessages(1);
-        }
         removeHasCalled = false;
     }
 

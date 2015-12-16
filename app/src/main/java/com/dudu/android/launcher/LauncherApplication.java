@@ -56,8 +56,6 @@ public class LauncherApplication extends Application {
         crashHandler.init(getApplicationContext());
 
         NetworkUtils.writePortalConfig(this);
-
-        InitManager.getInstance().init();
     }
 
     public RecordBindService getRecordService() {

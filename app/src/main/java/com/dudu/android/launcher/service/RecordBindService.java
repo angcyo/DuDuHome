@@ -123,8 +123,6 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
     private Camera.Parameters mCameraParams;
 
-    private AudioManager audiomanager;
-
     private boolean isFirst = true;
 
     //Back键定时消失的handler
@@ -212,7 +210,8 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         registerTFlashCardReceiver();
 
         queue = Volley.newRequestQueue(this);
-        audiomanager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+        prepareCamera();
     }
 
     private void registerTFlashCardReceiver() {
@@ -252,9 +251,6 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         }
 
         logger.debug("调用startRecord方法，开始启动录像...");
-
-
-//        prepareCamera();
 
         if (FileUtils.isTFlashCardExists()) {
             isPreviewingOrRecording = true;
@@ -316,8 +312,6 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
             camera.lock();
         }
 
-//        releaseCamera();
-
         insertVideo(videoName);
     }
 
@@ -362,14 +356,11 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         }
     }
 
-//    public void resetVoice() {
-//        stopRecord();
-//        startRecord();
-//    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        logger.debug("录像服务结束...");
 
         stopRecord();
 
@@ -396,11 +387,12 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         this.surfaceHolder = holder;
+        startRecord();
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        this.surfaceHolder = holder;
+
     }
 
     @Override
@@ -435,9 +427,10 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
                 isPreviewingOrRecording = false;
 
+                releaseMediaRecorder();
+
                 releaseCamera();
 
-                releaseMediaRecorder();
                 startRecord();
             }
         });
@@ -456,7 +449,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
         mediaRecorder.setOnErrorListener(null);
         mediaRecorder.setPreviewDisplay(surfaceHolder.getSurface());
         mediaRecorder.setCamera(camera);
-        if (isFirst || !VoiceManager.isUnderstandingOrSpeaking()) {
+        if (!VoiceManager.isUnderstandingOrSpeaking()) {
             mediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
         }
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
@@ -468,11 +461,10 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
             mediaRecorder.setVideoEncodingBitRate(2 * 1024 * 1024);
         else
             mediaRecorder.setVideoEncodingBitRate(profile.videoBitRate);
-        if (isFirst || !VoiceManager.isUnderstandingOrSpeaking()) {
+
+        if (!VoiceManager.isUnderstandingOrSpeaking()) {
             mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         }
-
-        isFirst = false;
 
         mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
 
@@ -651,14 +643,10 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
                     } catch (Exception e) {
                         stopRecord();
 
-//                        prepareCamera();
-
                         doStartPreview();
                     }
                 } else {
                     stopRecord();
-
-//                    prepareCamera();
 
                     doStartPreview();
                 }

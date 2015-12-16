@@ -1,5 +1,7 @@
 package com.dudu.android.launcher.ui.activity;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +10,9 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -24,11 +28,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.amap.api.location.AMapLocalWeatherForecast;
-import com.amap.api.location.AMapLocalWeatherListener;
-import com.amap.api.location.AMapLocalWeatherLive;
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
+import com.dudu.android.launcher.broadcast.WeatherAlarmReceiver;
 import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
@@ -38,10 +40,9 @@ import com.dudu.android.launcher.utils.WeatherUtil;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.android.launcher.utils.cache.AgedContacts;
 import com.dudu.event.DeviceEvent;
-import com.dudu.event.ListenerResetEvent;
+import com.dudu.event.VoiceEvent;
 import com.dudu.init.InitManager;
 import com.dudu.map.NavigationClerk;
-import com.dudu.monitor.utils.LocationUtils;
 import com.dudu.navi.event.NaviEvent;
 import com.dudu.obd.ObdInit;
 import com.dudu.voice.semantic.VoiceManager;
@@ -51,25 +52,35 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import de.greenrobot.event.EventBus;
 
 
 public class MainActivity extends BaseTitlebarActivity implements
-        OnClickListener, AMapLocalWeatherListener {
+        OnClickListener {
+
+    private static final int START_RECORDING = 1;
+
+    private static final int STOP_RECORDING = 2;
+
+    private static final int START_VOICE_SERVICE = 3;
 
     private Button mVideoButton, mNavigationButton,
             mDiDiButton, mWlanButton;
     private TextView mDateTextView, mWeatherView, mTemperatureView;
     private ImageView mWeatherImage;
     private LinearLayout mSelfCheckingView;
+
     private RecordBindService mRecordService;
 
-    private Timer mTimer;
+    private AlarmManager mAlarmManager;
+
+    private HandlerThread mWorkerThread;
+
+    private WorkerHandler mWorkerHandler;
 
     private ServiceConnection mServiceConnection;
 
@@ -78,6 +89,39 @@ public class MainActivity extends BaseTitlebarActivity implements
     private Logger log_init;
 
     private int log_step;
+
+    private class WorkerHandler extends Handler {
+        public WorkerHandler(Looper looper) {
+            super(looper);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case START_RECORDING:
+                    mRecordService.startRecord();
+                    break;
+                case STOP_RECORDING:
+                    mRecordService.stopRecord();
+                    break;
+                case START_VOICE_SERVICE:
+                    VoiceManager.getInstance().startVoiceService();
+                    break;
+            }
+        }
+    }
+
+    private void startRecording() {
+        mWorkerHandler.sendMessage(mWorkerHandler.obtainMessage(START_RECORDING));
+    }
+
+    private void stopRecording() {
+        mWorkerHandler.sendMessage(mWorkerHandler.obtainMessage(STOP_RECORDING));
+    }
+
+    private void startVoiceService() {
+        mWorkerHandler.sendMessage(mWorkerHandler.obtainMessage(START_VOICE_SERVICE));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,11 +132,18 @@ public class MainActivity extends BaseTitlebarActivity implements
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
 
+        InitManager.getInstance().init();
+
         initVideoService();
 
         initDate();
 
-        initWeatherInfo();
+        setWeatherAlarm();
+
+        mWorkerThread = new HandlerThread("video and voice worker thread");
+        mWorkerThread.start();
+
+        mWorkerHandler = new WorkerHandler(mWorkerThread.getLooper());
     }
 
     @Override
@@ -106,9 +157,6 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     @Override
     public void initView(Bundle savedInstanceState) {
-
-        setContext(this);
-
         mDiDiButton = (Button) findViewById(R.id.didi_button);
         mWlanButton = (Button) findViewById(R.id.wlan_button);
         mVideoButton = (Button) findViewById(R.id.video_button);
@@ -173,11 +221,17 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
+
+        log_init.debug("主界面退出 onDestroy方法调用...");
+
+        InitManager.getInstance().unInit();
+
+        cancelWeatherAlarm();
+
         if (mServiceConnection != null) {
             unbindService(mServiceConnection);
         }
-
-        super.onDestroy();
     }
 
     @Override
@@ -209,40 +263,14 @@ public class MainActivity extends BaseTitlebarActivity implements
                 break;
 
             case R.id.voice_button:
-                log_init.debug("点击语音按钮");
                 if (VoiceManager.getInstance().isUnderstandingOrSpeaking()) {
                     return;
                 }
 
-                EventBus.getDefault().post(new ListenerResetEvent(ListenerResetEvent.LISTENER_ON_HELLO));
+                EventBus.getDefault().post(new VoiceEvent(VoiceEvent.INIT_VOICE_SERVICE));
                 break;
         }
     }
-
-    private static final int START_CAMERA_AND_CLOSE_LISTENER = 2;
-
-    private static final int START_VOICE_SERVICE = 3;
-
-    private static final int START_RECORDING = 4;
-
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case START_CAMERA_AND_CLOSE_LISTENER:
-                    startCameraAndCloseListener();
-                    break;
-                case START_VOICE_SERVICE:
-                    VoiceManager.getInstance().startVoiceService();
-
-                    mRecordService.startRecord();
-                    break;
-                case START_RECORDING:
-                    mRecordService.startRecord();
-                    break;
-            }
-        }
-    };
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -278,55 +306,35 @@ public class MainActivity extends BaseTitlebarActivity implements
                 mRecordService = ((RecordBindService.MyBinder) service).getService();
                 ((LauncherApplication) getApplicationContext())
                         .setRecordService(mRecordService);
-                sendStartCameraMessage();
             }
         };
 
-        Intent intent = new Intent(mContext, RecordBindService.class);
+        Intent intent = new Intent(MainActivity.this, RecordBindService.class);
         bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
-    /**
-     * 实例化请求地图天气接口
-     */
-    private void initWeatherInfo() {
-        if (mTimer == null) {
-            mTimer = new Timer();
-        }
+    private void setWeatherAlarm() {
+        mAlarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
-        mTimer.schedule(new TimerTask() {
+        Intent intent = new Intent(MainActivity.this, WeatherAlarmReceiver.class);
+        PendingIntent pi = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
 
-            @Override
-            public void run() {
-                requestWeatherInfo();
-            }
-        }, 10 * 1000, 60 * 60 * 1000);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.add(Calendar.SECOND, 10);
+        mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 30 * 60 * 1000, pi);
     }
 
-    @Override
-    public void requestWeatherInfo() {
-        WeatherUtil.requestWeatherInfo(MainActivity.this);
+    private void cancelWeatherAlarm() {
+        Intent intent = new Intent(MainActivity.this, WeatherAlarmReceiver.class);
+        PendingIntent pi = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
+        mAlarmManager.cancel(pi);
     }
 
-    @Override
-    public void onWeatherForecaseSearched(AMapLocalWeatherForecast arg0) {
-
-    }
-
-    @Override
-    public void onWeatherLiveSearched(AMapLocalWeatherLive aMapLocalWeatherLive) {
+    private void updateWeatherInfo(String weather, String temperature) {
         LinearLayout ll_weatherInfo = (LinearLayout) findViewById(R.id.ll_weather_info);
-
         RelativeLayout.LayoutParams lps = (RelativeLayout.LayoutParams) ll_weatherInfo.getLayoutParams();
-
-        if (aMapLocalWeatherLive != null
-                && aMapLocalWeatherLive.getAMapException().getErrorCode() == 0) {
-            String weather = aMapLocalWeatherLive.getWeather();
-            String temperature = aMapLocalWeatherLive.getTemperature();
-            if (TextUtils.isEmpty(weather) || TextUtils.isEmpty(temperature)) {
-                return;
-            }
-
+        if (!TextUtils.isEmpty(weather) && !TextUtils.isEmpty(temperature)) {
             if (weather.contains("-")) {
                 weather = weather
                         .replace("-", getString(R.string.weather_turn));
@@ -334,7 +342,6 @@ public class MainActivity extends BaseTitlebarActivity implements
 
             mTemperatureView.setText(temperature
                     + getString(R.string.temperature_degree));
-
             if (weather.length() == 1) {
                 lps.removeRule(RelativeLayout.CENTER_HORIZONTAL);
             } else {
@@ -344,8 +351,6 @@ public class MainActivity extends BaseTitlebarActivity implements
             mWeatherImage.setImageResource(WeatherUtil
                     .getWeatherIcon(WeatherUtil.getWeatherType(weather)));
             mWeatherImage.setImageResource(R.drawable.weather_cloudy);
-            LocationUtils.getInstance(this).setCurrentCity(aMapLocalWeatherLive.getCity());
-            LocationUtils.getInstance(this).setCurrentCitycode(aMapLocalWeatherLive.getCityCode());
         } else {
             Toast.makeText(this, R.string.get_weather_info_failed,
                     Toast.LENGTH_SHORT).show();
@@ -358,29 +363,40 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     public void onEventMainThread(DeviceEvent.Screen event) {
         com.dudu.android.hideapi.SystemPropertiesProxy.getInstance()
-                .set(mContext, "persist.sys.screen", event.getState() == DeviceEvent.ON ? "on" : "off");
+                .set(MainActivity.this, "persist.sys.screen", event.getState() == DeviceEvent.ON ? "on" : "off");
     }
 
-    public void onEventMainThread(ListenerResetEvent event) {
-        if (event.getListenerStatus() == ListenerResetEvent.LISTENER_OFF) {
-            log_init.debug("收到关闭语音通知");
+    public void onEventMainThread(VoiceEvent event) {
+        switch (event.getVoiceEvent()) {
+            case VoiceEvent.INIT_VOICE_SERVICE:
+                VoiceManager.setUnderstandingOrSpeaking(true);
 
-            VoiceManager.getInstance().setUnderstandingOrSpeaking(false);
-            mRecordService.stopRecord();
-            handler.sendEmptyMessageDelayed(START_RECORDING,500);
-        } else if (event.getListenerStatus() == ListenerResetEvent.LISTENER_ON) {
-            log_init.debug("收到开启语音通知");
-            VoiceManager.setUnderstandingOrSpeaking(true);
-            mRecordService.stopRecord();
-            handler.sendEmptyMessageDelayed(START_RECORDING,500);
-        } else if (event.getListenerStatus() == ListenerResetEvent.LISTENER_ON_HELLO) {
-            VoiceManager.setUnderstandingOrSpeaking(true);
-            mRecordService.stopRecord();
-            handler.sendEmptyMessageDelayed(START_VOICE_SERVICE, 500);
+                stopRecording();
+
+                startVoiceService();
+
+                startRecording();
+                break;
+            case VoiceEvent.START_VOICE_SERVICE:
+                VoiceManager.setUnderstandingOrSpeaking(true);
+
+                stopRecording();
+
+                startRecording();
+                break;
+            case VoiceEvent.STOP_VOICE_SERVICE:
+                VoiceManager.setUnderstandingOrSpeaking(false);
+
+                stopRecording();
+
+                startRecording();
+                break;
         }
     }
 
-
+    public void onEventMainThread(DeviceEvent.Weather weather) {
+        updateWeatherInfo(weather.getWeather(), weather.getTemperature());
+    }
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
@@ -392,7 +408,7 @@ public class MainActivity extends BaseTitlebarActivity implements
             //关闭语音
             VoiceManager.getInstance().stopUnderstanding();
             //关闭Portal
-            com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.nodog", "stop");
+            com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(MainActivity.this, "persist.sys.nodog", "stop");
             //关闭热点
             WifiApAdmin.closeWifiAp(mActivity);
             //关闭录像
@@ -404,7 +420,7 @@ public class MainActivity extends BaseTitlebarActivity implements
             startActivity(new Intent(packageManager.getLaunchIntentForPackage("com.qualcomm.factory")));
         }
         if (e2.getX() - e1.getX() > 400 && e1.getY() - e2.getY() > 360) {
-            com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.usb.config", "diag,serial_smd,rmnet_bam,adb");
+            com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(MainActivity.this, "persist.sys.usb.config", "diag,serial_smd,rmnet_bam,adb");
         }
         return true;
     }
@@ -415,25 +431,14 @@ public class MainActivity extends BaseTitlebarActivity implements
         EventBus.getDefault().post(NaviEvent.FloatButtonEvent.HIDE);
     }
 
-    private void sendStartCameraMessage() {
-        handler.sendEmptyMessageDelayed(START_CAMERA_AND_CLOSE_LISTENER, 3000);
-        log_init.debug("[main][{}]startCameraAndCloseListener", log_step++);
-
-    }
-
-    private void startCameraAndCloseListener() {
-        mRecordService.prepareCamera();
-        mRecordService.startRecord();
-    }
-
     private void proceedAgeTest() {
-        boolean agedModel = SharedPreferencesUtil.getBooleanValue(mContext, AgedContacts.AGEDMODEL_NAME, false);
-        long currentCount = SharedPreferencesUtil.getLongValue(mContext, AgedContacts.AGEDTEST_COUNT, 0);
+        boolean agedModel = SharedPreferencesUtil.getBooleanValue(MainActivity.this, AgedContacts.AGEDMODEL_NAME, false);
+        long currentCount = SharedPreferencesUtil.getLongValue(MainActivity.this, AgedContacts.AGEDTEST_COUNT, 0);
         if (currentCount <= 1) {
             if (!agedModel) {
                 File file = new File(AgedContacts.AGEDMODEL_APK_DIR, AgedContacts.AGEDMODEL_APK);
                 if (file.exists()) {
-                    SharedPreferencesUtil.putBooleanValue(mContext, AgedContacts.AGEDMODEL_NAME, true);
+                    SharedPreferencesUtil.putBooleanValue(MainActivity.this, AgedContacts.AGEDMODEL_NAME, true);
                     mRecordService.stopCamera();
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -441,8 +446,8 @@ public class MainActivity extends BaseTitlebarActivity implements
                     startActivity(intent);
                 }
             } else {
-                SharedPreferencesUtil.putBooleanValue(mContext, AgedContacts.AGEDMODEL_NAME, false);
-                SharedPreferencesUtil.putLongValue(mContext, AgedContacts.AGEDTEST_COUNT, currentCount + 1);
+                SharedPreferencesUtil.putBooleanValue(MainActivity.this, AgedContacts.AGEDMODEL_NAME, false);
+                SharedPreferencesUtil.putLongValue(MainActivity.this, AgedContacts.AGEDTEST_COUNT, currentCount + 1);
                 Uri packageURI = Uri.parse(AgedContacts.PACKAGE_NAME);
                 Intent uninstallIntent = new Intent(Intent.ACTION_DELETE, packageURI);
                 startActivity(uninstallIntent);

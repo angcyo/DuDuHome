@@ -67,10 +67,6 @@ public class InitManager {
         logger.debug("反初始化，释放续费占用资源...");
         VoiceManager.getInstance().stopUnderstanding();
         VoiceManager.getInstance().stopSpeaking();
-        SpeechUtility speech = SpeechUtility.getUtility();
-        if (speech != null) {
-            speech.destroy();
-        }
     }
 
     /**

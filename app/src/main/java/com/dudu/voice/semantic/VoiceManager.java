@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 
 import com.dudu.android.hideapi.SystemPropertiesProxy;
@@ -73,14 +74,7 @@ public class VoiceManager {
 
     private int log_step;
 
-    private static boolean isUnderstandingOrSpeaking = false;
-
-    private Runnable mRemoveFloatWindow = new Runnable() {
-        @Override
-        public void run() {
-            FloatWindowUtil.removeFloatWindow();
-        }
-    };
+    private volatile static boolean isUnderstandingOrSpeaking = false;
 
     /**
      * 获取整个应用唯一语音控制对象
@@ -109,7 +103,7 @@ public class VoiceManager {
         param.append(SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC);
         SpeechUtility.createUtility(mContext, param.toString());
 
-        mHandler = new Handler();
+        mHandler = new Handler(Looper.getMainLooper());
     }
 
     public void clearMisUnderstandCount() {
@@ -128,15 +122,16 @@ public class VoiceManager {
 
         if (!NetworkUtils.isNetworkConnected(mContext)) {
             startSpeaking(Constants.WAKEUP_NETWORK_UNAVAILABLE);
-            mHandler.postDelayed(mRemoveFloatWindow, 4000);
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    FloatWindowUtil.removeFloatWindow();
+                }
+            }, 4000);
             return;
         }
 
         startSpeaking(Constants.WAKEUP_WORDS, SemanticConstants.TTS_START_UNDERSTANDING);
-    }
-
-    public void removeFloatCallback() {
-        mHandler.removeCallbacks(mRemoveFloatWindow);
     }
 
     /**
@@ -290,7 +285,7 @@ public class VoiceManager {
         mSynthesizerType = type;
 
         if (mShowMessageWindow && showMessage) {
-            FloatWindowUtil.showMessage(playText, FloatWindow.MESSAGE_IN);
+            showInMessage(playText);
         }
 
         int code = mSpeechSynthesizer.startSpeaking(playText, mSynthesizerListener);
@@ -302,11 +297,47 @@ public class VoiceManager {
         }
     }
 
+    private void removeFloatWindow() {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                FloatWindowUtil.removeFloatWindow();
+            }
+        });
+    }
+
+    private void showInMessage(final String message) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                FloatWindowUtil.showMessage(message, FloatWindow.MESSAGE_IN);
+            }
+        });
+    }
+
+    private void showOutMessage(final String message) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                FloatWindowUtil.showMessage(message, FloatWindow.MESSAGE_OUT);
+            }
+        });
+    }
+
+    private void volumeChanged(final int volume) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                FloatWindowUtil.changeVoice(volume);
+            }
+        });
+    }
+
     private SpeechUnderstanderListener mRecognizerListener = new SpeechUnderstanderListener() {
 
         @Override
         public void onVolumeChanged(int i) {
-            FloatWindowUtil.changeVoice(i);
+            volumeChanged(i);
         }
 
         @Override
@@ -330,9 +361,8 @@ public class VoiceManager {
                 log.trace("[voice][{}]语义理解结果:{}", log_step++, text);
                 if (!TextUtils.isEmpty(text)) {
                     String message = JsonUtils.parseIatResult(text, "text");
-
                     if (mShowMessageWindow) {
-                        FloatWindowUtil.showMessage(message, FloatWindow.MESSAGE_OUT);
+                        showOutMessage(message);
                     }
 
                     SemanticProcessor.getProcessor().processSemantic(text);
@@ -414,7 +444,8 @@ public class VoiceManager {
                         break;
                     case SemanticConstants.TTS_START_UNDERSTANDING:
                         if (mMisunderstandCount >= MISUNDERSTAND_REPEAT_COUNT) {
-                            FloatWindowUtil.removeFloatWindow();
+                            removeFloatWindow();
+
                             SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
                             return;
                         }

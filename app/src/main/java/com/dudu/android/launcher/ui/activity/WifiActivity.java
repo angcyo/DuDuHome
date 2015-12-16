@@ -42,7 +42,6 @@ public class WifiActivity extends BaseTitlebarActivity {
 
     @Override
     public void initView(Bundle savedInstanceState) {
-        setContext(this);
         mTaskCompleteView = (TasksCompletedView) findViewById(R.id.tasks_completed);
         mUsedFlowView = (TextView) findViewById(R.id.used_text);
         mRemainingFlowView = (TextView) findViewById(R.id.remaining_flow_text);
