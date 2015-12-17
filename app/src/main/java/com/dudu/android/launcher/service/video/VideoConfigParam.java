@@ -16,7 +16,7 @@ public class VideoConfigParam {
     public static  final  int DEFAULT_RATE= 30;
     public static  final  int DEFAULT_QUALITY= CamcorderProfile.QUALITY_HIGH;
 
-    public static final int DEFAULT_UPLOAD_VIDEO_INTERVAL = 1*60*1000;
+    public static final int DEFAULT_UPLOAD_VIDEO_INTERVAL = 1*30*1000;
     public static  final int DEFAULT_UPLOAD_VIDEOBITRATE = 300 * 1024;//512k
     public static  final  int DEFAULT_UPLOAD_WIDTH = 352;
     public static  final  int DEFAULT_UPLOAD_HEIGHT = 288;

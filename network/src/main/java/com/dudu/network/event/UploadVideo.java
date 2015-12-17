@@ -58,7 +58,7 @@ public class UploadVideo extends MessagePackage {
         try {
             JSONObject jsonObject = new JSONObject(messageJsonString);
             messageId = jsonObject.getString("messageId");
-            obeId =  jsonObject.getString("obeid");
+            obeId =  jsonObject.getString("obeId");
             method = jsonObject.getString("method");
         } catch (JSONException e) {
             e.printStackTrace();

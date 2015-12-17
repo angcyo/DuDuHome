@@ -37,19 +37,20 @@ import de.greenrobot.event.EventBus;
  */
 public class VideoTransfer {
     private Context mContext;
-    private int video_interval = 2*30*1000;
     private ScheduledExecutorService sendServiceThreadPool = null;
 
     /* 标记是否上传视频*/
     private boolean uploadThreadRunFlag = false;
     private Logger log;
-    private String uploadUrl = "http://192.168.0.50:8080/carVideoUpload";
+    private String uploadUrl = "http://119.29.65.127/carVideoUpload";
 
     private RequestQueue queue;
     /* 用于存放文件路径*/
     private List<String > videoFileNameList;
 
     private RecordBindService recordBindService;
+
+    private VideoConfirmRequest videoConfirmRequest;
 
     public VideoTransfer(Context context, RecordBindService recordBindService) {
         mContext = context;
@@ -65,6 +66,8 @@ public class VideoTransfer {
 
         videoFileNameList = Collections.synchronizedList(new ArrayList<String>());
 
+        videoConfirmRequest = new VideoConfirmRequest( this,mContext);
+
 //        test();
     }
 
@@ -73,12 +76,21 @@ public class VideoTransfer {
             @Override
             public void run() {
                 try {
-                    log.debug("测试-------------");
-                    sleep(10 * 1000);
-                    restartRecordVideo(false);
+                    while (true){
+                        sleep(15 * 1000);
+                        videoConfirmRequest.confirmStartVideo();
+                        sleep(15 * 1000);
+                    }
+
+//                    log.debug("测试-------------");
+//                    sleep(15 * 1000);
+
+//                    EventBus.getDefault().post(new UploadVideo(mContext));
+
+                  /*  restartRecordVideo(false);
                     sleep(2*1000);
                     uploadThreadRunFlag = true;//需要放到重启记录摄像之后
-                    uploadVideo();
+                    uploadVideo();*/
                 } catch (InterruptedException e) {
                     log.error("异常：{}", e);
                 }
@@ -89,16 +101,30 @@ public class VideoTransfer {
     /* 处理视频上传事件*/
     public void onEventBackgroundThread(UploadVideo uploadVideo){
         log.info("收到并处理UploadVideo事件");
+       /* if (uploadThreadRunFlag == true){
+            log.info("已经在上传视频了---");
+            return;
+        }*/
+
+        stopUploadThread();//收到事件如果上传线程在运行先停掉
+
+        videoFileNameList.clear();
         if (uploadVideo.getObeId().equals(DeviceIDUtil.getIMEI(mContext))){
-            confirmStartVideo();
+            uploadThreadRunFlag = true;
+
+            videoConfirmRequest.confirmStartVideo();
+
             restartRecordVideo(false);
-            uploadThreadRunFlag = true;//需要放到重启记录摄像之后
+//            uploadThreadRunFlag = true;//需要放到重启记录摄像之后
+
+            //测试的时候用
+//            uploadVideo();
         }
     }
 
     /* 用新的间隔参数重启摄像*/
     private void restartRecordVideo(boolean optionFlag){
-        log.info("用新的间隔参数重启摄像");
+        log.info("用新的间隔参数重启摄像  optionFlag = {}", optionFlag);
         recordBindService.stopRecord();
         if (optionFlag){
             recordBindService.getVideoConfigParam().resetToDefault();
@@ -106,7 +132,7 @@ public class VideoTransfer {
             recordBindService.getVideoConfigParam().setToUploadParam();
         }
         try {
-            Thread.sleep(3*1000);
+            Thread.sleep(5*1000);
         } catch (InterruptedException e) {
             log.error("异常：{}", e);
         }
@@ -115,9 +141,18 @@ public class VideoTransfer {
 
     /* 加入录像路径*/
     public void addVideoFileName(String videoFileName){
+       /* if (videoFileNameList.size() > 5){
+            log.info("待发送实时视频大于5个，删除第一个");
+            videoFileNameList.remove(0);
+        }else if (videoFileNameList.size() > 10){
+            log.info("待发送视频个数大于10个，恢复正常行车记录");
+            videoFileNameList.clear();
+            restartRecordVideo(true);
+        }*/
+
         if (videoFileName == null)
             return;
-        if (uploadThreadRunFlag = true){
+        if (uploadThreadRunFlag == true){
             log.debug("新加入文件：{}", videoFileName);
             videoFileNameList.add(videoFileName);
             synchronized (videoFileNameList){
@@ -127,51 +162,22 @@ public class VideoTransfer {
 
     }
 
-    /* 确认是否开始上传视频*/
-    private void confirmStartVideo(){
-        log.info("confirmStartVideo信息");
-        MultipartRequestParams multiPartParams = new MultipartRequestParams();
-        multiPartParams.put("confirmStartVideo", DeviceIDUtil.getIMEI(mContext));
-        MultipartRequest multipartRequest = new MultipartRequest(Request.Method.POST, multiPartParams, uploadUrl, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                log.info("confirmStartVideo响应信息：{}", response);
-                proConfirmResInfo(response);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                log.error("confirmStartVideo错误响应：{}", error);
-            }
-        });
-        queue.add(multipartRequest);
-    }
-
-    private void proConfirmResInfo(String confirmResInfo){
-        if (confirmResInfo == null)
-            return;
-        try {
-            JSONObject confirmResJsonobject = new JSONObject(confirmResInfo);
-            String resultCode = confirmResJsonobject.getString("resultCode");
-            String method = confirmResJsonobject.getString("method");
-            String msg = confirmResJsonobject.getString("msg");
-            if (resultCode.equals("200")){
-                log.info("开启上传线程");
-                uploadVideo();
-            }
-        } catch (JSONException e) {
-            log.error("异常：{}", e);
-        }
-    }
 
     private  Thread uploadThread = new Thread(){
         @Override
         public void run() {
+            log.info("视频上传线程开始运行----------");
             while (uploadThreadRunFlag) {
                 try {
                     String filePath = getNextFilepath();
                     if (filePath != null){
-                        log.debug("上传视频文件名：{}", filePath);
+                        String fileLength = FileUtils.fileByte2Mb(new File(filePath).length());
+                        log.debug("上传视频  长度：{} M，文件名：{}",fileLength, filePath);
+                        if (Float.valueOf(fileLength) < 0.8 || Float.valueOf(fileLength)  > 4){
+                            log.info("文件长度 length < 0.8 || length > 4，过滤掉");
+                            continue;
+                        }
+
                         doUploadVideo(filePath);
 
                         log.info("视频上传等待响应");
@@ -180,16 +186,6 @@ public class VideoTransfer {
                             log.info("视频上传等待----结束");
                         }
                     }
-
-                    /*if (true) {
-                        log.debug("上传视频文件名：{}", "/storage/sdcard1/dudu/video/2015-12-16 17.05.35.mp4");
-                        doUploadVideo("/storage/sdcard1/dudu/video/test.mp4");
-
-                        log.info("视频上传等待响应");
-                        synchronized (uploadThread){
-                            uploadThread.wait();
-                        }
-                    }*/
                 } catch (Exception e) {
                     log.error("异常：{}", e);
                 }
@@ -197,16 +193,25 @@ public class VideoTransfer {
         }
     };
 
-    private void uploadVideo(){
-        sendServiceThreadPool.schedule(uploadThread, 30, TimeUnit.SECONDS);
+    public void uploadVideo(){
+        log.info("开启上传线程");
+
+        if (sendServiceThreadPool == null){
+            sendServiceThreadPool = Executors.newScheduledThreadPool(1);
+        }
+        sendServiceThreadPool.schedule(uploadThread, 1, TimeUnit.SECONDS);
+//        sendServiceThreadPool.execute(uploadThread);
 //        sendServiceThreadPool.scheduleAtFixedRate(uploadThread, 10, 60, TimeUnit.SECONDS);
+
     }
 
     private void stopUploadThread(){
         if (sendServiceThreadPool != null && !sendServiceThreadPool.isShutdown()){
             try {
-                sendServiceThreadPool.awaitTermination(30, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
+//                sendServiceThreadPool.awaitTermination(30, TimeUnit.SECONDS);
+                sendServiceThreadPool.shutdown();
+                sendServiceThreadPool = null;
+            } catch (Exception e) {
                 log.error("异常：{}", e);
             }
         }
@@ -235,13 +240,19 @@ public class VideoTransfer {
     }
 
 
+
     private void doUploadVideo(String videoFileName){
         File videoFileToUpload = new File(videoFileName);
-        log.debug("上传的视频文件大小：{}", FileUtils.fileByte2Mb(videoFileToUpload.length()));
+        /*String  fileLength = FileUtils.fileByte2Mb(videoFileToUpload.length());
+        log.debug("上传的视频文件大小：{}", fileLength);
+        float length = Float.valueOf(fileLength);
+        if (length < 0.8 || length > 3){
+            log.info("文件长度 length < 0.8 || length > 4，过滤掉");
+            return;
+        }*/
 
-        File file = new File(videoFileName);
         MultipartRequestParams multiPartParams = new MultipartRequestParams();
-        multiPartParams.put("upload_video", file, file.getName());
+        multiPartParams.put("upload_video", videoFileToUpload, videoFileToUpload.getName());
         multiPartParams.put("obeId", DeviceIDUtil.getIMEI(mContext));
         MultipartRequest multipartRequest = new MultipartRequest(Request.Method.POST, multiPartParams, uploadUrl, new Response.Listener<String>() {
                     @Override
@@ -253,8 +264,16 @@ public class VideoTransfer {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        log.error("上传视频文件错误响应：{}", error);
-                        goOnUpload();
+                        try {
+                            if (error != null){
+                                log.error("上传视频文件错误响应：{}", error.toString());
+                                goOnUpload();
+                            }else{
+                                log.error("上传视频文件错误响应  null");
+                            }
+                        } catch (Exception e) {
+                            log.error("异常：{}", e);
+                        }
                     }
                 });
         log.debug("上传开始时间：{}", TimeUtils.format(TimeUtils.format1));
@@ -280,6 +299,8 @@ public class VideoTransfer {
                 log.info("上传响应 400");
             }
         } catch (JSONException e) {
+            log.error("异常：{}", e);
+        }catch (Exception e){
             log.error("异常：{}", e);
         }
     }

@@ -28,7 +28,7 @@ public class MessageMethod {
     public static final String LOGS = "logs";                  // 上传logs
     public static final String REBOOTDEVICE = "rebootDevice";                  // 重启设备
 
-    public static final String UPLOADVIDEO = "uploadvideo";                  // 上传视频
+    public static final String UPLOADVIDEO = "uploadVideo";                  // 上传视频
 
 //    public static final String METHOD_WIFICONTROL = "";                   // wifi 热点开关控制
 //
