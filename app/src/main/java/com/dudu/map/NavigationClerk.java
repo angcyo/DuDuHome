@@ -232,7 +232,7 @@ public class NavigationClerk {
                     if(isManual){
                         ToastUtils.showToast(msg);
                     }else{
-                        VoiceManager.getInstance().startSpeaking(msg, SemanticConstants.TTS_DO_NOTHING, true);
+                        VoiceManager.getInstance().startSpeaking(msg, SemanticConstants.TTS_START_UNDERSTANDING, true);
                     }
                     return;
                 }

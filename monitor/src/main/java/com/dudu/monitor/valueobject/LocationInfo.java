@@ -3,6 +3,7 @@ package com.dudu.monitor.valueobject;
 import android.location.Location;
 
 import com.amap.api.location.AMapLocation;
+import com.dudu.monitor.utils.DataFormatUtil;
 import com.dudu.monitor.utils.TimeUtils;
 
 /**
@@ -10,34 +11,48 @@ import com.dudu.monitor.utils.TimeUtils;
  * Description :
  */
 public class LocationInfo {
-    /**经度  */
+    /**
+     * 经度
+     */
     private double lon;
-    /**纬度  */
+    /**
+     * 纬度
+     */
     private double lat;
-    /**高程  */
+    /**
+     * 高程
+     */
     private double altitude;
-    /**速度  */
+    /**
+     * 速度
+     */
     private float speeds;
-    /**方向  */
+    /**
+     * 方向
+     */
     private float direction;
-    /** 精度*/
+    /**
+     * 精度
+     */
     private float accuracy;
-    /** 时间*/
+    /**
+     * 时间
+     */
     private String createTime;
 
-    private Integer type;		//类型 1.急加速 	2.急减速	3.急转弯	4.急变道	5.疲劳驾驶	6.发动机转速不匹配
+    private Integer type;        //类型 1.急加速 	2.急减速	3.急转弯	4.急变道	5.疲劳驾驶	6.发动机转速不匹配
 
 //    private String obeId;
 
-    public LocationInfo(Location location){
+    public LocationInfo(Location location) {
 
     }
 
-    public LocationInfo(AMapLocation location){
-        if(location == null)
+    public LocationInfo(AMapLocation location) {
+        if (location == null)
             return;
-        lon = location.getLongitude();
-        lat = location.getLatitude();
+        lon = DataFormatUtil.formatDoubleValue(location.getLongitude(), 7);
+        lat = DataFormatUtil.formatDoubleValue(location.getLatitude(), 7);
         altitude = location.getAltitude();
         speeds = location.getSpeed();
         direction = location.getBearing();
@@ -50,15 +65,15 @@ public class LocationInfo {
 
     @Override
     public boolean equals(Object object) {
-        if (object == null){
+        if (object == null) {
             return false;
-        }else {
-            if (object instanceof LocationInfo){
-                LocationInfo location = (LocationInfo)object;
+        } else {
+            if (object instanceof LocationInfo) {
+                LocationInfo location = (LocationInfo) object;
                 if (location.getLon() == this.lon && location.getLat() == this.lat
                         && location.getAccuracy() == this.accuracy && location.getAltitude() == this.altitude
                         && location.getCreateTime().equals(this.createTime) && location.getDirection() == this.direction
-                        && location.getType().intValue() == this.type.intValue()&& location.getSpeeds() == this.speeds){
+                        && location.getType().intValue() == this.type.intValue() && location.getSpeeds() == this.speeds) {
                     return true;
                 }
             }
@@ -129,4 +144,6 @@ public class LocationInfo {
     public void setType(Integer type) {
         this.type = type;
     }
+
+
 }
