@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import com.dudu.monitor.event.CarDriveSpeedState;
 import com.dudu.monitor.event.CarStatus;
+import com.dudu.monitor.event.PowerOffEvent;
 import com.dudu.monitor.event.XfaOBDEvent;
 import com.dudu.monitor.valueobject.FlamoutData;
 import com.dudu.monitor.valueobject.ObdData;
@@ -42,6 +43,8 @@ public class ObdManage {
     private int acc_spd, break_spd;
 
     private boolean isxfaOBd = false;
+
+    private float cur_batteryV;
 
     public static ObdManage getInstance() {
         if (instance == null) {
@@ -108,10 +111,11 @@ public class ObdManage {
 
         curSpeed = obdData.getSpeed();
         curRpm = obdData.getEngineSpeed();
+        cur_batteryV = obdData.getBatteryV();
 
         obdDataList.add(obdData);
 
-        if (!isNotice_start) {
+        if (!isNotice_start&&curSpeed>0) {
             isNotice_flamout = false;
             isNotice_start = true;
             log.info("monitor- 发送CarStatus(CarStatus.CAR_ONLINE))事件");
@@ -120,6 +124,10 @@ public class ObdManage {
 
         if (obdData.misMatch()) {
             EventBus.getDefault().post(new CarDriveSpeedState(6));
+        }
+
+        if(cur_batteryV<11.5){
+            EventBus.getDefault().post(new PowerOffEvent());
         }
     }
 
@@ -218,5 +226,9 @@ public class ObdManage {
                 break_spd = b_spd;
             }
         }
+    }
+
+    public float getCur_batteryV() {
+        return cur_batteryV;
     }
 }

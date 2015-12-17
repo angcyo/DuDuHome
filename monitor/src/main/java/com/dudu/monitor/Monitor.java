@@ -90,4 +90,8 @@ public class Monitor {
     public float getCurRpm(){
         return mObdManage.getCurRpm();
     }
+
+    public float getCur_batteryV(){
+        return mObdManage.getCur_batteryV();
+    }
 }

@@ -281,7 +281,6 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
             mJamFlag = bundle.getBoolean(NaviSettingUtil.JAM, mJamFlag);
             mTrafficFlag = bundle.getBoolean(NaviSettingUtil.TRAFFIC, mTrafficFlag);
             mCameraFlag = bundle.getBoolean(NaviSettingUtil.CAMERA, mCameraFlag);
-//            mScreenFlag = bundle.getBoolean(NaviSettingUtil.SCREEN, mScreenFlag);
             mThemeStle = bundle.getInt(NaviSettingUtil.THEME);
 
         }

@@ -35,6 +35,7 @@ public class SppScanner {
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
         log = LoggerFactory.getLogger("obd.spp.scan");
         this.name = "OBDII";
+//        this.name = "GNTOP";
     }
 
     /**

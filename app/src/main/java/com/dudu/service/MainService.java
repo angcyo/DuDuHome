@@ -12,6 +12,7 @@ import com.dudu.conn.SendLogs;
 import com.dudu.event.DeviceEvent;
 import com.dudu.monitor.Monitor;
 import com.dudu.monitor.event.CarStatus;
+import com.dudu.monitor.event.PowerOffEvent;
 import com.dudu.network.NetworkManage;
 import com.dudu.obd.ObdInit;
 import com.dudu.storage.Storage;
@@ -106,4 +107,9 @@ public class MainService extends Service {
                  break;
          }
         }
+
+    public void onEventMainThread(PowerOffEvent event){
+
+
+    }
 }

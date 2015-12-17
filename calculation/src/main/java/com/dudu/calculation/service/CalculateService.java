@@ -7,6 +7,7 @@ import com.dudu.calculation.valueobject.DriveBehaviorType;
 import com.dudu.monitor.Monitor;
 import com.dudu.monitor.event.CarDriveSpeedState;
 import com.dudu.monitor.event.CarStatus;
+import com.dudu.monitor.event.PowerOffEvent;
 import com.dudu.monitor.utils.LocationFilter;
 import com.dudu.monitor.valueobject.LocationInfo;
 import com.dudu.monitor.valueobject.SensorData;
@@ -17,6 +18,7 @@ import com.google.gson.Gson;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.scf4a.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,12 +29,17 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.Subscription;
+import rx.functions.Action1;
 
 /**
  * Created by dengjun on 2015/12/2.
  * Description :
  */
 public class CalculateService {
+
+    private static final int POWEROFF_TIME = 48;
     private ScheduledExecutorService calculateThreadPool = null;
     private Context mContext;
     private Gson gson;
@@ -46,6 +53,7 @@ public class CalculateService {
     private LocationInfo locationInfoUsedCompare;
     private boolean isFirst = true;
 
+    private Subscription powerOffSub;
     //计算线程
     private Thread calculateThread = new Thread(){
         @Override
@@ -169,12 +177,26 @@ public class CalculateService {
     public void onEventBackgroundThread(CarStatus event) {
         carState = event.getCarStatus();
         log.info("onEvent CarStatus:{}", carState);
-        if (carState == CarStatus.CAR_ONLINE){
-            log.info("车辆运行");
-            calculateThreadPool.schedule(fatigueDrivingThread, 4*60*60, TimeUnit.SECONDS);//4个小时
-        }else{
-            log.info("车辆熄火");
+        switch (event.getCarStatus()){
+            case CarStatus.CAR_ONLINE:
+                calculateThreadPool.schedule(fatigueDrivingThread, 4 * 60 * 60, TimeUnit.SECONDS);//4个小时
+                if(powerOffSub!=null){
+                    powerOffSub.unsubscribe();
+                }
+                break;
+            case CarStatus.CAR_OFFLINE:
+
+               powerOffSub = Observable.timer(POWEROFF_TIME,TimeUnit.HOURS).subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        EventBus.getDefault().post(new PowerOffEvent());
+                    }
+                });
+
+                break;
         }
+
+
     }
 
     //处理疲劳驾驶

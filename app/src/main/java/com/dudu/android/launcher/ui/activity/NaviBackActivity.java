@@ -51,7 +51,6 @@ AMapNaviViewListener{
 	private boolean mJamFlag = NaviSettingUtil.YES_MODE;// 默认进行拥堵重算
 	private boolean mTrafficFlag = NaviSettingUtil.OPEN_MODE;// 默认进行交通播报
 	private boolean mCameraFlag = NaviSettingUtil.OPEN_MODE;// 默认进行摄像头播报
-	private boolean mScreenFlag = NaviSettingUtil.YES_MODE;// 默认是屏幕常亮
 	// 导航界面风格
 	private int mThemeStle;
 
@@ -126,7 +125,6 @@ AMapNaviViewListener{
 		viewOptions.setReCalculateRouteForYaw(mDeviationFlag);// 设置导偏航是否重算
 		viewOptions.setReCalculateRouteForTrafficJam(mJamFlag);// 设置交通拥挤是否重算
 		viewOptions.setCameraInfoUpdateEnabled(mCameraFlag);// 设置摄像头播报
-		viewOptions.setScreenAlwaysBright(mScreenFlag);// 设置屏幕常亮情况
 		viewOptions.setNaviViewTopic(mThemeStle);// 设置导航界面主题样式
 		viewOptions.setTrafficLayerEnabled(true);
 		viewOptions.setTrafficLine(true);
@@ -251,7 +249,6 @@ AMapNaviViewListener{
 			mJamFlag = bundle.getBoolean(NaviSettingUtil.JAM, mJamFlag);
 			mTrafficFlag = bundle.getBoolean(NaviSettingUtil.TRAFFIC, mTrafficFlag);
 			mCameraFlag = bundle.getBoolean(NaviSettingUtil.CAMERA, mCameraFlag);
-			mScreenFlag = bundle.getBoolean(NaviSettingUtil.SCREEN, mScreenFlag);
 			mThemeStle = bundle.getInt(NaviSettingUtil.THEME);
 
 		}
