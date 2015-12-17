@@ -291,10 +291,6 @@ public class VoiceManager {
         int code = mSpeechSynthesizer.startSpeaking(playText, mSynthesizerListener);
 
         log.debug("[voice][{}]语音合成结果:{}", log_step++, code);
-
-        if ("off".equals(SystemPropertiesProxy.getInstance().get("persist.sys.screen", "unkonw"))) {
-            SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.screen", "on");
-        }
     }
 
     private void removeFloatWindow() {
