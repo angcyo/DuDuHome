@@ -169,37 +169,6 @@ public class NetworkUtils {
 	}
 
 
-	/**
-	 * 获取总的接受字节数，包含Mobile和WiFi等
-	 * 
-	 * @return KB
-	 */
-	public static long getTotalRxBytes() {
-		return TrafficStats.getTotalRxBytes() == TrafficStats.UNSUPPORTED ? 0
-				: (TrafficStats.getTotalRxBytes() / 1024);
-	}
-
-    /**
-     * 打开网络热点
-     */
-	public static void startWifiAp() {
-        WifiManager wifiManager = (WifiManager) LauncherApplication.getContext().
-                getSystemService(Context.WIFI_SERVICE);
-        if (wifiManager.isWifiEnabled()) {
-            wifiManager.setWifiEnabled(false);
-        }
-
-        Method method;
-        try {
-            method = wifiManager.getClass().getMethod("setWifiApEnabled",
-                    WifiConfiguration.class, boolean.class);
-            WifiConfiguration config = new WifiConfiguration();
-            config.SSID = SSID;
-            method.invoke(wifiManager, config, true);
-        } catch (Exception e) {
-            LogUtils.e(TAG, e.getMessage());
-        }
-    }
 /**
  * 讲htdocs压缩包解压到指定路径
  * */

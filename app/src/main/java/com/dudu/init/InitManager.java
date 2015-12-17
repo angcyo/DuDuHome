@@ -15,6 +15,7 @@ import com.dudu.android.launcher.service.MonitorService;
 import com.dudu.android.launcher.service.NewMessageShowService;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.SharedPreferencesUtil;
+import com.dudu.android.launcher.utils.SignalManager;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.navi.NavigationManager;
@@ -192,6 +193,8 @@ public class InitManager {
         startCheckUserService();
 
         NavigationManager.getInstance(LauncherApplication.getContext()).initNaviManager();
+
+        SignalManager.getInstance().registerSignalListener();
     }
 
     public boolean isFinished() {

@@ -47,4 +47,29 @@ public class DeviceEvent {
         }
     }
 
+    public static class SimType {
+        private String simType;
+
+        public String getSimType() {
+            return simType;
+        }
+
+        public SimType(String simType) {
+            this.simType = simType;
+        }
+
+    }
+
+    public static class SimLevel {
+        private int simLevel;
+
+        public int getSimLevel() {
+            return simLevel;
+        }
+
+        public SimLevel(int simLevel) {
+            this.simLevel = simLevel;
+        }
+    }
+
 }

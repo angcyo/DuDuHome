@@ -30,8 +30,6 @@ import de.greenrobot.event.EventBus;
 
 public abstract class BaseTitlebarActivity extends BaseActivity {
 
-    private static final String TAG = "BaseTitlebarActivity";
-
     public static final String ACTION_CONNECTIVITY_CHANGE = "android.net.conn.CONNECTIVITY_CHANGE";
 
     private static final int SIM_SIGNAL_IMAGE_IDS[] = {
@@ -45,10 +43,6 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
 
     private ConnectivityChangeReceiver mConnectivityReceiver;
 
-    private TelephonyManager mPhoneManager;
-
-    private PhoneStateListener mPhoneStateListener;
-
     private TextView mSignalTextView;
 
     private ImageView mSignalImage;
@@ -61,8 +55,6 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
 
     private int mSatellite = 0;
 
-    private int mSignalLevel = 0;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
@@ -73,33 +65,6 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
         EventBus.getDefault().register(this);
 
         initTitleBar();
-
-        mPhoneManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-
-        mPhoneStateListener = new PhoneStateListener() {
-
-            @Override
-            public void onDataConnectionStateChanged(int state, int networkType) {
-                super.onDataConnectionStateChanged(state, networkType);
-            }
-
-            @Override
-            public void onSignalStrengthsChanged(SignalStrength signalStrength) {
-                super.onSignalStrengthsChanged(signalStrength);
-                try {
-                    int level = (int) signalStrength.getClass().getMethod("getLevel").
-                            invoke(signalStrength);
-                    if (level != mSignalLevel) {
-                        setSimLevel(level + 1);
-                    }
-                } catch (Exception e) {
-                    // ignore
-                }
-            }
-        };
-
-        mPhoneManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS |
-                PhoneStateListener.LISTEN_DATA_CONNECTION_STATE);
 
         mConnectivityReceiver = new ConnectivityChangeReceiver();
         IntentFilter intentFilter = new IntentFilter();
@@ -129,20 +94,24 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
     }
 
     private void setSimLevel(int level) {
-        if (!isCanUseSim()) {
-            return;
-        }
-
         if (level < 0 || level >= SIM_SIGNAL_IMAGE_IDS.length) {
             return;
         }
 
-        mSignalLevel = level;
         mSignalImage.setImageResource(SIM_SIGNAL_IMAGE_IDS[level]);
     }
 
-    private boolean isCanUseSim() {
-        return mPhoneManager.getSimState() == TelephonyManager.SIM_STATE_READY;
+    private void setSimType(String type) {
+        if (type.equals("2G") || type.equals("3G") || type.equals("4G")) {
+            // 当网络连接时重新获取天气信息
+            WeatherUtil.requestWeatherInfo();
+
+            mSignalTextView.setText(type);
+            mSignalImage.setVisibility(View.VISIBLE);
+        } else {
+            mSignalTextView.setText(R.string.no_4g_signal);
+            mSignalImage.setVisibility(View.GONE);
+        }
     }
 
     private class ConnectivityChangeReceiver extends BroadcastReceiver {
@@ -150,16 +119,7 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String type = NetworkUtils.getCurrentNetworkType(BaseTitlebarActivity.this);
-            if (type.equals("2G") || type.equals("3G") || type.equals("4G")) {
-                // 当网络连接时重新获取天气信息
-                WeatherUtil.requestWeatherInfo();
-
-                mSignalTextView.setText(type);
-                mSignalImage.setVisibility(View.VISIBLE);
-            } else {
-                mSignalTextView.setText(R.string.no_4g_signal);
-                mSignalImage.setVisibility(View.GONE);
-            }
+            setSimType(type);
         }
     }
 
@@ -195,6 +155,14 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
                 mBluetoothImage.setImageResource(R.drawable.bluetooth_on);
                 break;
         }
+    }
+
+    public void onEventMainThread(DeviceEvent.SimLevel simLevel) {
+        setSimLevel(simLevel.getSimLevel() + 1);
+    }
+
+    public void onEventMainThread(DeviceEvent.SimType simType) {
+        setSimType(simType.getSimType());
     }
 
 }
