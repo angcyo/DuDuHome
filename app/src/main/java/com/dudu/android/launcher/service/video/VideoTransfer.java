@@ -78,6 +78,7 @@ public class VideoTransfer {
         if (uploadVideo.getIsStopUploadVideo().equals("true")){
             log.info("收到停止上传指令");
             uploadThreadRunFlag = false;
+            videoFileNameList.clear();
             return;
         }
 

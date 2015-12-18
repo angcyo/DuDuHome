@@ -18,6 +18,7 @@ public class UploadVideo extends MessagePackage {
     private String messageId;
     private  String method;
     private String obeId;
+    private String isStopUploadVideo = "true";
 
     public UploadVideo() {
     }
@@ -60,6 +61,7 @@ public class UploadVideo extends MessagePackage {
             messageId = jsonObject.getString("messageId");
             obeId =  jsonObject.getString("obeId");
             method = jsonObject.getString("method");
+            isStopUploadVideo = jsonObject.getString("isStopUploadVideo");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -77,5 +79,9 @@ public class UploadVideo extends MessagePackage {
 
     public String getObeId() {
         return obeId;
+    }
+
+    public String getIsStopUploadVideo() {
+        return isStopUploadVideo;
     }
 }
