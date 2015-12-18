@@ -5,8 +5,6 @@ package com.dudu.navi.event;
  */
 public class NaviEvent {
 
-
-
     public enum FloatButtonEvent {
 
         SHOW,

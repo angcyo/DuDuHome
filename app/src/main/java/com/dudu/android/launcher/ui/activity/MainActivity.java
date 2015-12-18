@@ -210,7 +210,9 @@ public class MainActivity extends BaseTitlebarActivity implements
                             "com.android.settings.Settings"));
                     startActivity(intent);
 
-                    startService(new Intent(MainActivity.this, WindowService.class));
+                    //显示返回的按钮
+                    EventBus.getDefault().post(NaviEvent.FloatButtonEvent.SHOW);
+
                     return true;
                 }
             });
