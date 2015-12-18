@@ -10,6 +10,7 @@ import com.dudu.android.launcher.db.DbHelper;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.view.TasksCompletedView;
 import com.dudu.android.launcher.utils.Constants;
+import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.SharedPreferencesUtil;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 
@@ -95,6 +96,5 @@ public class WifiActivity extends BaseTitlebarActivity {
     public void onBackPressed(View v) {
         finish();
     }
-
 
 }

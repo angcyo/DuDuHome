@@ -63,9 +63,6 @@ public abstract class BaseActivity extends Activity implements OnGestureListener
 
         WindowManager wm = this.getWindowManager();
         width = wm.getDefaultDisplay().getWidth();
-        Context mContext = this;
-        mContext.getContentResolver().registerContentObserver(Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS),
-                true, mBrightnessObserver);
     }
 
     public abstract int initContentView();
