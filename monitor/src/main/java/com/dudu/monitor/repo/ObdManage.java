@@ -86,7 +86,7 @@ public class ObdManage {
 
 
     private void parseOBDData(String obdDataString) {
-        if(!TextUtils.isEmpty(obdDataString)){
+        if (!TextUtils.isEmpty(obdDataString)) {
             if (obdDataString.startsWith(REALTIME)) {
                 parseRealtimeData(obdDataString);
 
@@ -105,7 +105,7 @@ public class ObdManage {
     private void parseRealtimeData(String obdDataString) {
         ObdData obdData;
         if (isxfaOBd)
-            obdData = new ObdData(obdDataString,1);
+            obdData = new ObdData(obdDataString, 1);
         else
             obdData = new ObdData(obdDataString);
 
@@ -115,7 +115,7 @@ public class ObdManage {
 
         obdDataList.add(obdData);
 
-        if (!isNotice_start&&curSpeed>0) {
+        if (!isNotice_start && curRpm > 0) {
             isNotice_flamout = false;
             isNotice_start = true;
             log.info("monitor- 发送CarStatus(CarStatus.CAR_ONLINE))事件");
@@ -126,7 +126,7 @@ public class ObdManage {
             EventBus.getDefault().post(new CarDriveSpeedState(6));
         }
 
-        if(cur_batteryV<11.5){
+        if (cur_batteryV < 11.5) {
             EventBus.getDefault().post(new PowerOffEvent());
         }
     }

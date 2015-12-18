@@ -94,21 +94,21 @@ public class MainService extends Service {
         return null;
     }
 
-    public void onEventMainThread(CarStatus event){
+    public void onEventMainThread(CarStatus event) {
 
-         switch (event.getCarStatus()){
-             case CarStatus.CAR_ONLINE:
-                 EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.ON));
-                 calculation.init();
-                 break;
-             case CarStatus.CAR_OFFLINE:
-                 EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.OFF));
-                 calculation.release();
-                 break;
-         }
+        switch (event.getCarStatus()) {
+            case CarStatus.CAR_ONLINE:
+                EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.ON));
+                calculation.init();
+                break;
+            case CarStatus.CAR_OFFLINE:
+                EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.OFF));
+                calculation.release();
+                break;
         }
+    }
 
-    public void onEventMainThread(PowerOffEvent event){
+    public void onEventMainThread(PowerOffEvent event) {
 
 
     }
