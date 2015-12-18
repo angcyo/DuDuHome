@@ -2,6 +2,7 @@ package com.dudu.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
@@ -65,6 +66,7 @@ public class MainService extends Service {
 
         storage = Storage.getInstance();
         storage.init();
+
     }
 
     @Override
@@ -94,22 +96,21 @@ public class MainService extends Service {
         return null;
     }
 
-    public void onEventMainThread(CarStatus event) {
 
+
+    public void onEvent(CarStatus event) {
         switch (event.getCarStatus()) {
             case CarStatus.CAR_ONLINE:
                 EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.ON));
-                calculation.init();
                 break;
             case CarStatus.CAR_OFFLINE:
                 EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.OFF));
-                calculation.release();
                 break;
+
         }
     }
 
-    public void onEventMainThread(PowerOffEvent event) {
-
+    public void onEvent(PowerOffEvent event) {
 
     }
 }

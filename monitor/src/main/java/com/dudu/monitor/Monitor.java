@@ -8,6 +8,7 @@ import com.dudu.monitor.repo.ActiveDeviceManage;
 import com.dudu.monitor.repo.ObdManage;
 import com.dudu.monitor.repo.SensorManage;
 import com.dudu.monitor.repo.location.LocationManage;
+import com.dudu.monitor.service.FlamoutService;
 import com.dudu.monitor.service.SendService;
 import com.dudu.monitor.valueobject.FlamoutData;
 import com.dudu.monitor.valueobject.LocationInfo;
@@ -29,6 +30,7 @@ public class Monitor {
     private ObdManage mObdManage;
     private ActiveDeviceManage activeDeviceManage;
     private SendService mSendService;
+    private FlamoutService flamoutService;
 
     public static  Monitor getInstance(Context context){
         if (instance == null){
@@ -48,11 +50,13 @@ public class Monitor {
         mObdManage = ObdManage.getInstance();
         activeDeviceManage = ActiveDeviceManage.getInstance(mContext);
         mSendService = new SendService(mContext);
+        flamoutService = new FlamoutService(mContext);
     }
 
     public void startWork(){
         mLocationManage.startLocation(mContext);
         mSendService.startSendService();
+        flamoutService.init();
     }
 
     public void stopWork(){

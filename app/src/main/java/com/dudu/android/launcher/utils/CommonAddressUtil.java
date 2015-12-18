@@ -159,7 +159,7 @@ public class CommonAddressUtil {
 
         editor = context.getSharedPreferences(ADDRESS_PREFERENCE,Context.MODE_APPEND).edit();
         editor.putString(COMPANY_LAT,lat+"");
-        editor.putString(COMPANY_LAT,lon+"");
+        editor.putString(COMPANY_LON,lon+"");
         editor.commit();
     }
 

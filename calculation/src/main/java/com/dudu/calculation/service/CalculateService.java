@@ -39,7 +39,7 @@ import rx.functions.Action1;
  */
 public class CalculateService {
 
-    private static final int POWEROFF_TIME = 48;
+
     private ScheduledExecutorService calculateThreadPool = null;
     private Context mContext;
     private Gson gson;
@@ -53,9 +53,8 @@ public class CalculateService {
     private LocationInfo locationInfoUsedCompare;
     private boolean isFirst = true;
 
-    private Subscription powerOffSub;
     //计算线程
-    private Thread calculateThread = new Thread(){
+    private Thread calculateThread = new Thread() {
         @Override
         public void run() {
 //            log.debug("calculateThread");
@@ -63,7 +62,7 @@ public class CalculateService {
                 calclulateHardturn();
 
             } catch (Exception e) {
-                log.error("异常 {}",e);
+                log.error("异常 {}", e);
             }
         }
     };
@@ -72,20 +71,20 @@ public class CalculateService {
     public CalculateService(Context mContext) {
         this.mContext = mContext;
         //核心保持一个线程，这样此模块中线程不用做同步处理
-        calculateThreadPool = Executors.newScheduledThreadPool(1);
         driveLocationInfoArray = new JSONArray();
-        gson =  new Gson();
+        gson = new Gson();
         log = LoggerFactory.getLogger("calculate");
-
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
     }
 
-    public void startService(){
+    public void startService() {
+        if (calculateThreadPool == null)
+            calculateThreadPool = Executors.newScheduledThreadPool(1);
         calculateThreadPool.scheduleAtFixedRate(calculateThread, 5, 1, TimeUnit.SECONDS);
     }
 
-    public void stopService(){
+    public void stopService() {
         if (calculateThreadPool != null && !calculateThreadPool.isShutdown()) {
             calculateThreadPool.shutdown();
             calculateThreadPool = null;
@@ -93,9 +92,9 @@ public class CalculateService {
     }
 
     //计算急转弯
-    public void calclulateHardturn(){
+    public void calclulateHardturn() {
         List<SensorData> acceSensorDataList = Monitor.getInstance(mContext).getSensorDataList(Sensor.TYPE_ACCELEROMETER);
-        if (!acceSensorDataList.isEmpty()){
+        if (!acceSensorDataList.isEmpty()) {
             float x_sum = 0;
             for (int i = 0; i < acceSensorDataList.size(); i++) {
                 x_sum += acceSensorDataList.get(i).mX;
@@ -110,7 +109,7 @@ public class CalculateService {
         }
 
         List<SensorData> gSensorDataList = Monitor.getInstance(mContext).getSensorDataList(Sensor.TYPE_GYROSCOPE);
-        if (!gSensorDataList.isEmpty()){
+        if (!gSensorDataList.isEmpty()) {
                    /* float x_sum = 0;
                     for (int i = 0; i < gSensorDataList.size(); i++) {
                         x_sum += gSensorDataList.get(i).mX;
@@ -125,9 +124,9 @@ public class CalculateService {
     }
 
     //获取当前位置，并且设置驾驶行为类型
-    private LocationInfo getAndSetTypeLocationInfo(int driveBehaviorType){
+    private LocationInfo getAndSetTypeLocationInfo(int driveBehaviorType) {
 //        LocationInfo locationInfo = new LocationInfo(Monitor.getInstance(mContext).getCurrentLocation());
-        LocationInfo locationInfo= Monitor.getInstance(mContext).getCurLocation();//改成直接获取过滤后的位置信息
+        LocationInfo locationInfo = Monitor.getInstance(mContext).getCurLocation();//改成直接获取过滤后的位置信息
         if (locationInfo == null || locationInfo.getLon() == 0)//滤除为0的坐标
             return null;
         locationInfo.setType(driveBehaviorType);
@@ -135,30 +134,30 @@ public class CalculateService {
     }
 
     /* 判断位置信息是否一样，一样的滤除*/
-    public LocationInfo judgeEqual(LocationInfo locationInfo){
+    public LocationInfo judgeEqual(LocationInfo locationInfo) {
         if (locationInfo == null)
             return null;
-        if (isFirst){
+        if (isFirst) {
             locationInfoUsedCompare = locationInfo;
             isFirst = false;
             return locationInfo;
-        }else {
-            if (!locationInfoUsedCompare.equals(locationInfo)){
+        } else {
+            if (!locationInfoUsedCompare.equals(locationInfo)) {
                 locationInfoUsedCompare = locationInfo;
                 return locationInfo;
-            }else{
+            } else {
                 return null;
             }
         }
     }
 
     //把数据放到driveLocationInfoArray，数据满30个就发送
-    private synchronized void putLocationInfo(LocationInfo locationInfo){
+    private synchronized void putLocationInfo(LocationInfo locationInfo) {
         try {
             if (locationInfo == null)
                 return;
-            if(locationInfo.getSpeeds() > 0 ){
-                 driveLocationInfoArray.put(new JSONObject(gson.toJson(locationInfo)));
+            if (locationInfo.getSpeeds() > 0) {
+                driveLocationInfoArray.put(new JSONObject(gson.toJson(locationInfo)));
             }
 //            log.debug("driveLocationInfoArray.length() = " + driveLocationInfoArray.length());
             if (driveLocationInfoArray.length() == 5)//满30个数据才给服务器发
@@ -168,43 +167,33 @@ public class CalculateService {
                 driveLocationInfoArray = new JSONArray();
             }
         } catch (JSONException e) {
-            log.error("异常 {}",e);
+            log.error("异常 {}", e);
         }
     }
-
 
 
     public void onEventBackgroundThread(CarStatus event) {
         carState = event.getCarStatus();
         log.info("onEvent CarStatus:{}", carState);
-        switch (event.getCarStatus()){
+        switch (event.getCarStatus()) {
             case CarStatus.CAR_ONLINE:
+                startService();
                 calculateThreadPool.schedule(fatigueDrivingThread, 4 * 60 * 60, TimeUnit.SECONDS);//4个小时
-                if(powerOffSub!=null){
-                    powerOffSub.unsubscribe();
-                }
                 break;
             case CarStatus.CAR_OFFLINE:
-
-               powerOffSub = Observable.timer(POWEROFF_TIME,TimeUnit.HOURS).subscribe(new Action1<Long>() {
-                    @Override
-                    public void call(Long aLong) {
-                        EventBus.getDefault().post(new PowerOffEvent());
-                    }
-                });
-
+                stopService();
                 break;
         }
 
-
     }
 
+
     //处理疲劳驾驶
-    Thread fatigueDrivingThread = new Thread(){
+    Thread fatigueDrivingThread = new Thread() {
         @Override
         public void run() {
             try {
-                if(carState == 1)
+                if (carState == 1)
                     calculateThreadPool.schedule(fatigueDrivingThread, 15 * 60, TimeUnit.SECONDS);//15分钟
                 log.info("车辆运行超过4小时，疲劳驾驶");
                 putLocationInfo(getAndSetTypeLocationInfo(DriveBehaviorType.TYPE_FATIGUEDRIVING));
@@ -217,7 +206,7 @@ public class CalculateService {
 
     public void onEventBackgroundThread(CarDriveSpeedState carDriveSpeedState) {
         try {
-            switch (carDriveSpeedState.getSpeedState()){
+            switch (carDriveSpeedState.getSpeedState()) {
                 case DriveBehaviorType.TYPE_HARDACCL:
                     putLocationInfo(getAndSetTypeLocationInfo(DriveBehaviorType.TYPE_HARDACCL));
                     break;
@@ -234,4 +223,5 @@ public class CalculateService {
             log.error("异常 {}", e);
         }
     }
+
 }

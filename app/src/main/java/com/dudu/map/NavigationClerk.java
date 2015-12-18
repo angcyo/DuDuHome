@@ -147,7 +147,6 @@ public class NavigationClerk {
     }
 
     private boolean openActivity(int openType) {
-        navigationManager.getLog().debug("openActivity {},{}", isShowAddress, navigationManager.isNavigatining());
         if (isShowAddress)
             return false;
         if (navigationManager.isNavigatining()) {
@@ -329,9 +328,8 @@ public class NavigationClerk {
     }
 
     public void onEventMainThread(NavigationType event) {
+        disMissProgressDialog();
         removeCallback();
-        if (navigationManager.isNavigatining())
-            return;
         switch (event) {
             case NAVIGATION:
                 navigationManager.setNavigationType(NavigationType.NAVIGATION);
@@ -344,7 +342,6 @@ public class NavigationClerk {
                 intentClass = NaviBackActivity.class;
                 break;
             case CALCULATEERROR:
-                disMissProgressDialog();
                 navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
                 VoiceManager.getInstance().startSpeaking("路径规划出错，请稍后再试", SemanticConstants.TTS_DO_NOTHING, true);
                 removeWindow(REMOVEWINDOW_TIME);
@@ -358,7 +355,6 @@ public class NavigationClerk {
         }
         navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
         intentActivity();
-        disMissProgressDialog();
 
     }
 
@@ -598,6 +594,7 @@ public class NavigationClerk {
 
     public void startNavigation(Navigation navigation) {
 
+        openActivity(OPEN_MANUAL);
         showProgressDialog("路径规划中...");
         VoiceManager.getInstance().startSpeaking("路径规划中，请稍后...", SemanticConstants.TTS_DO_NOTHING, false);
         if (NaviUtils.getOpenMode(mContext) == OpenMode.OUTSIDE) {

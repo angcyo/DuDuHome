@@ -62,6 +62,8 @@ public class NaviProcess {
     private AMapLocation cur_location;
 
     private boolean isSucess = false;
+
+    private boolean iscalculate = false;
     public NaviProcess(Context context) {
         this.mContext = context;
         log = LoggerFactory.getLogger("lbs.navi");
@@ -97,6 +99,18 @@ public class NaviProcess {
 
     public void calculateDriverRoute(Navigation navigation) {
         log.debug("calculateDriverRoute");
+        isSucess = false;
+        iscalculate = true;
+        Observable.timer(20, TimeUnit.SECONDS)
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        if (!isSucess) {
+                            iscalculate = false;
+                            EventBus.getDefault().post(NavigationType.CALCULATEERROR);
+                        }
+                    }
+                });
         navigationType = navigation.getType();
         switch (NaviUtils.getOpenMode(mContext)) {
             case OUTSIDE:
@@ -115,15 +129,14 @@ public class NaviProcess {
                 initNaviListener();
                 calculateInside(navigation);
                 break;
-
         }
+
     }
 
     private int calculateInside(Navigation navigation) {
         log.debug("-----calculateInside");
-        isSucess = false;
         cur_location = Monitor.getInstance(mContext).getCurrentLocation();
-        NavigationManager.getInstance(mContext).setIsNavigatining(false);
+
         int code = CALCULATEERROR;
         NaviLatLng mEndPoint = new NaviLatLng(navigation.getDestination().latitude, navigation.getDestination().longitude);
         if (cur_location != null && mEndPoint != null) {
@@ -139,15 +152,6 @@ public class NaviProcess {
                 code = CALCULATEERROR;
             }
         }
-        Observable.timer(20, TimeUnit.SECONDS)
-                .subscribe(new Action1<Long>() {
-                    @Override
-                    public void call(Long aLong) {
-                        if (!isSucess) {
-                            EventBus.getDefault().post(NavigationType.CALCULATEERROR);
-                        }
-                    }
-                });
         return code;
     }
 
@@ -207,8 +211,12 @@ public class NaviProcess {
                 @Override
                 public void onCalculateRouteSuccess() {
                     log.debug("[{}] 步行或者驾车路径规划成功", step++);
-                    isSucess = true;
-                    EventBus.getDefault().post(navigationType);
+                   if(iscalculate){
+                       isSucess = true;
+                       iscalculate = false;
+                       EventBus.getDefault().post(navigationType);
+                   }
+
 
                 }
 

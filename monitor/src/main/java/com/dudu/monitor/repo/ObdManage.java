@@ -4,7 +4,6 @@ import android.text.TextUtils;
 
 import com.dudu.monitor.event.CarDriveSpeedState;
 import com.dudu.monitor.event.CarStatus;
-import com.dudu.monitor.event.PowerOffEvent;
 import com.dudu.monitor.event.XfaOBDEvent;
 import com.dudu.monitor.valueobject.FlamoutData;
 import com.dudu.monitor.valueobject.ObdData;
@@ -125,10 +124,6 @@ public class ObdManage {
         if (obdData.misMatch()) {
             EventBus.getDefault().post(new CarDriveSpeedState(6));
         }
-
-        if (cur_batteryV < 11.5) {
-            EventBus.getDefault().post(new PowerOffEvent());
-        }
     }
 
     private void parseTotalData(String obdDataString) {
@@ -231,4 +226,5 @@ public class ObdManage {
     public float getCur_batteryV() {
         return cur_batteryV;
     }
+
 }
