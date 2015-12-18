@@ -1,5 +1,7 @@
 package com.dudu.android.launcher.ui.activity;
 
+import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -9,6 +11,7 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -22,6 +25,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -33,6 +39,7 @@ import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.broadcast.WeatherAlarmReceiver;
 import com.dudu.android.launcher.service.RecordBindService;
+import com.dudu.android.launcher.service.video.WindowService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
 import com.dudu.android.launcher.utils.Utils;
@@ -196,13 +203,14 @@ public class MainActivity extends BaseTitlebarActivity implements
 
         if (Utils.isDemoVersion(this)) {
             mDiDiButton.setOnLongClickListener(new OnLongClickListener() {
-
                 @Override
                 public boolean onLongClick(View v) {
                     Intent intent = new Intent();
                     intent.setComponent(new ComponentName("com.android.settings",
                             "com.android.settings.Settings"));
                     startActivity(intent);
+
+                    startService(new Intent(MainActivity.this, WindowService.class));
                     return true;
                 }
             });

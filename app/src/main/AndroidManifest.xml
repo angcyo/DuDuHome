@@ -131,10 +131,10 @@
         <service android:name=".service.FloatBackButtonService" />
         <service android:name=".service.MonitorService" />
         <service android:name="com.dudu.service.MainService" />
-
-        <service android:name=".service.RecordBindService">
+        <service android:name=".service.RecordBindService" >
             <intent-filter>
-                <action android:name="com.intent.aged.updateRecode"/>
+                <action android:name="com.intent.aged.updateRecode" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </service>
@@ -149,6 +149,10 @@
             android:enabled="true"
             android:exported="true" >
         </receiver>
+
+        <service
+            android:name=".service.video.WindowService"/>
+
     </application>
 
 </manifest>
