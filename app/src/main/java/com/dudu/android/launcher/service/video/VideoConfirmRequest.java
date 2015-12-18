@@ -28,7 +28,9 @@ import java.util.List;
  * Description :
  */
 public class VideoConfirmRequest {
-    private String confirmStartVideoUrl = "http://119.29.65.127/confirmStartVideo";
+    private String confirmStartVideoUrl = "http://dudu.gotunnel.org/confirmStartVideo";
+    //debug
+//    private String confirmStartVideoUrl = "http://192.168.0.50:8080/confirmStartVideo";
     private VideoTransfer videoTransfer;
     private Context mContext;
     private Logger log;

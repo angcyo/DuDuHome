@@ -42,7 +42,9 @@ public class VideoTransfer {
     /* 标记是否上传视频*/
     private boolean uploadThreadRunFlag = false;
     private Logger log;
-    private String uploadUrl = "http://119.29.65.127/carVideoUpload";
+    private String uploadUrl = "http://dudu.gotunnel.org/carVideoUpload";
+    //debug
+//    private String uploadUrl = "http://192.168.0.50:8080/carVideoUpload";
 
     private RequestQueue queue;
     /* 用于存放文件路径*/
@@ -67,58 +69,22 @@ public class VideoTransfer {
         videoFileNameList = Collections.synchronizedList(new ArrayList<String>());
 
         videoConfirmRequest = new VideoConfirmRequest( this,mContext);
-
-//        test();
-    }
-
-    public void test(){
-        new Thread(){
-            @Override
-            public void run() {
-                try {
-                    while (true){
-                        sleep(15 * 1000);
-                        videoConfirmRequest.confirmStartVideo();
-                        sleep(15 * 1000);
-                    }
-
-//                    log.debug("测试-------------");
-//                    sleep(15 * 1000);
-
-//                    EventBus.getDefault().post(new UploadVideo(mContext));
-
-                  /*  restartRecordVideo(false);
-                    sleep(2*1000);
-                    uploadThreadRunFlag = true;//需要放到重启记录摄像之后
-                    uploadVideo();*/
-                } catch (InterruptedException e) {
-                    log.error("异常：{}", e);
-                }
-            }
-        }.start();
     }
 
     /* 处理视频上传事件*/
-    public void onEventBackgroundThread(UploadVideo uploadVideo){
-        log.info("收到并处理UploadVideo事件");
-       /* if (uploadThreadRunFlag == true){
-            log.info("已经在上传视频了---");
-            return;
-        }*/
-
+    public void onEventAsync(UploadVideo uploadVideo){
+        log.info("收到并处理UploadVideo事件：isStopUploadVideo：{}",uploadVideo.getIsStopUploadVideo());
         stopUploadThread();//收到事件如果上传线程在运行先停掉
+        if (uploadVideo.getIsStopUploadVideo().equals("true")){
+            log.info("收到停止上传指令");
+            uploadThreadRunFlag = false;
+            return;
+        }
 
-        videoFileNameList.clear();
         if (uploadVideo.getObeId().equals(DeviceIDUtil.getIMEI(mContext))){
             uploadThreadRunFlag = true;
-
             videoConfirmRequest.confirmStartVideo();
-
             restartRecordVideo(false);
-//            uploadThreadRunFlag = true;//需要放到重启记录摄像之后
-
-            //测试的时候用
-//            uploadVideo();
         }
     }
 
@@ -141,15 +107,6 @@ public class VideoTransfer {
 
     /* 加入录像路径*/
     public void addVideoFileName(String videoFileName){
-       /* if (videoFileNameList.size() > 5){
-            log.info("待发送实时视频大于5个，删除第一个");
-            videoFileNameList.remove(0);
-        }else if (videoFileNameList.size() > 10){
-            log.info("待发送视频个数大于10个，恢复正常行车记录");
-            videoFileNameList.clear();
-            restartRecordVideo(true);
-        }*/
-
         if (videoFileName == null)
             return;
         if (uploadThreadRunFlag == true){
@@ -170,11 +127,12 @@ public class VideoTransfer {
             while (uploadThreadRunFlag) {
                 try {
                     String filePath = getNextFilepath();
-                    if (filePath != null){
+                    if (filePath != null){//如果为null，就尝试获取下一个
                         String fileLength = FileUtils.fileByte2Mb(new File(filePath).length());
                         log.debug("上传视频  长度：{} M，文件名：{}",fileLength, filePath);
-                        if (Float.valueOf(fileLength) < 0.8 || Float.valueOf(fileLength)  > 4){
-                            log.info("文件长度 length < 0.8 || length > 4，过滤掉");
+
+                        if (Float.valueOf(fileLength) < 0.2 || Float.valueOf(fileLength)  > 4){
+                            log.info("文件长度 length < 0.2 || length > 4，过滤掉");
                             continue;
                         }
 
@@ -195,20 +153,15 @@ public class VideoTransfer {
 
     public void uploadVideo(){
         log.info("开启上传线程");
-
         if (sendServiceThreadPool == null){
             sendServiceThreadPool = Executors.newScheduledThreadPool(1);
         }
         sendServiceThreadPool.schedule(uploadThread, 1, TimeUnit.SECONDS);
-//        sendServiceThreadPool.execute(uploadThread);
-//        sendServiceThreadPool.scheduleAtFixedRate(uploadThread, 10, 60, TimeUnit.SECONDS);
-
     }
 
     private void stopUploadThread(){
         if (sendServiceThreadPool != null && !sendServiceThreadPool.isShutdown()){
             try {
-//                sendServiceThreadPool.awaitTermination(30, TimeUnit.SECONDS);
                 sendServiceThreadPool.shutdown();
                 sendServiceThreadPool = null;
             } catch (Exception e) {
@@ -219,23 +172,27 @@ public class VideoTransfer {
 
 
     private String getNextFilepath(){
-        if (!videoFileNameList.isEmpty()){
-            log.debug("获取到下一个视频文件地址");
-            return videoFileNameList.remove(0);
-        }else {
-            synchronized (videoFileNameList){
-                try {
+        try {
+            if (!videoFileNameList.isEmpty()){
+                log.debug("获取到下一个视频文件地址");
+                synchronized (videoFileNameList){
+                    if (videoFileNameList.isEmpty())
+                        return null;
+                    return videoFileNameList.remove(0);
+                }
+            }else {
+                synchronized (videoFileNameList){
                     log.debug("videoFileNameList 没有数据，等待有数据");
                     videoFileNameList.wait();
                     log.debug("videoFileNameList 没有数据，等待结束");
                     if (videoFileNameList.isEmpty())
                         return null;
                     return videoFileNameList.remove(0);
-                } catch (InterruptedException e) {
-                    log.error("异常：{}", e);
-                    return null;
                 }
             }
+        } catch (Exception e) {
+            log.error("异常：{}", e);
+            return null;
         }
     }
 
@@ -243,13 +200,6 @@ public class VideoTransfer {
 
     private void doUploadVideo(String videoFileName){
         File videoFileToUpload = new File(videoFileName);
-        /*String  fileLength = FileUtils.fileByte2Mb(videoFileToUpload.length());
-        log.debug("上传的视频文件大小：{}", fileLength);
-        float length = Float.valueOf(fileLength);
-        if (length < 0.8 || length > 3){
-            log.info("文件长度 length < 0.8 || length > 4，过滤掉");
-            return;
-        }*/
 
         MultipartRequestParams multiPartParams = new MultipartRequestParams();
         multiPartParams.put("upload_video", videoFileToUpload, videoFileToUpload.getName());
