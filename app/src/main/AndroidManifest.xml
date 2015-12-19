@@ -150,9 +150,6 @@
             android:exported="true" >
         </receiver>
 
-        <service
-            android:name=".service.video.WindowService"/>
-
     </application>
 
 </manifest>

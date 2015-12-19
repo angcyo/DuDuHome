@@ -22,8 +22,6 @@ import android.view.View.OnTouchListener;
 
 public abstract class BaseActivity extends Activity implements OnGestureListener, OnTouchListener {
 
-    protected Activity mActivity;
-
     private GestureDetector gestureDetector;
     private AudioManager audiomanager;
     private int maxVolume, currentVolume;

@@ -417,7 +417,8 @@ public class MainActivity extends BaseTitlebarActivity implements
             //关闭Portal
             com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(MainActivity.this, "persist.sys.nodog", "stop");
             //关闭热点
-            WifiApAdmin.closeWifiAp(mActivity);
+            WifiApAdmin.closeWifiAp(this);
+
             //关闭录像
             mRecordService.stopCamera();
             //stop bluetooth
