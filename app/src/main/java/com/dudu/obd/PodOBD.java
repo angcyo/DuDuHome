@@ -94,7 +94,7 @@ public class PodOBD {
 
     private void processDisConnected(Event.Disconnected event) {
         disConnectedCount++;
-        if (disConnectedCount >= 3)
+        if (disConnectedCount >= 30)
             EventBus.getDefault().post(new BleStateChange(BleStateChange.BLEDISCONNECTED));
         if(event.getError() == Event.ErrorCode.ScanInvokeFail)
             EventBus.getDefault().post(new Event.BluetoothDisable());

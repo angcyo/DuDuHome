@@ -47,7 +47,7 @@ import de.greenrobot.event.EventBus;
  */
 public class NavigationClerk {
 
-    private static final int REMOVEWINDOW_TIME = 8 * 1000;
+    private static final int REMOVEWINDOW_TIME = 6 * 1000;
 
     private static NavigationClerk navigationClerk;
 
@@ -227,11 +227,13 @@ public class NavigationClerk {
             case SEARCH_PLACE_LOCATION:
             case SEARCH_COMMONPLACE:
                 if(Monitor.getInstance(mContext).getCurrentLocation()==null){
+                    navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
                     msg = "暂未获取到您的当前位置，不能搜索，请稍后再试";
                     if(isManual){
                         ToastUtils.showToast(msg);
                     }else{
-                        VoiceManager.getInstance().startSpeaking(msg, SemanticConstants.TTS_START_UNDERSTANDING, true);
+                        VoiceManager.getInstance().startSpeaking(msg, SemanticConstants.TTS_DO_NOTHING, true);
+                        removeWindow(REMOVEWINDOW_TIME);
                     }
                     return;
                 }
@@ -502,16 +504,20 @@ public class NavigationClerk {
      *
      * @param choosePoint
      */
-    private void addCommonAddress(PoiResultInfo choosePoint) {
+    private void addCommonAddress(final PoiResultInfo choosePoint) {
         FloatWindowUtil.removeFloatWindow();
-        String addType = navigationManager.getCommonAddressType().getName();
+        final String addType = navigationManager.getCommonAddressType().getName();
         CommonAddressUtil.setCommonAddress(addType, mContext, choosePoint.getAddressTitle());
         CommonAddressUtil.setCommonLocation(addType,
                 mContext, choosePoint.getLatitude(), choosePoint.getLongitude());
         VoiceManager.getInstance().stopUnderstanding();
-
-        VoiceManager.getInstance().startSpeaking("添加" + choosePoint.getAddressTitle() + "为" + addType + "地址成功！",
-                SemanticConstants.TTS_DO_NOTHING, true);
+        mhandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                VoiceManager.getInstance().startSpeaking("添加" + choosePoint.getAddressTitle() + "为" + addType + "地址成功！",
+                        SemanticConstants.TTS_DO_NOTHING, true);
+            }
+        }, 200);
         navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
         removeWindow(REMOVEWINDOW_TIME);
 
@@ -619,9 +625,9 @@ public class NavigationClerk {
         isShowAddress = false;
         if (navigationManager.getNavigationType() != NavigationType.DEFAULT) {
             navigationManager.setIsNavigatining(true);
-            if (navigationManager.getSearchType() == SearchType.SEARCH_DEFAULT) {
-                mhandler.postDelayed(removeWindowRunnable, REMOVEWINDOW_TIME);
-            }
+        }
+        if (navigationManager.getSearchType() == SearchType.SEARCH_DEFAULT) {
+            mhandler.postDelayed(removeWindowRunnable, REMOVEWINDOW_TIME);
         }
     }
 

@@ -216,11 +216,16 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
             messageList.setVisibility(View.GONE);
         if (addressList != null)
             addressList.setVisibility(View.VISIBLE);
-        mStrategyAdapter = new StrategyAdapter(this);
-        addressList.setAdapter(mStrategyAdapter);
-        mStrategyAdapter.notifyDataSetChanged();
-        isShowWindow = true;
-        mFloatWindow.setIsWindowShow(true);
+        try {
+            mStrategyAdapter = new StrategyAdapter(this);
+            addressList.setAdapter(mStrategyAdapter);
+            mStrategyAdapter.notifyDataSetChanged();
+            isShowWindow = true;
+            mFloatWindow.setIsWindowShow(true);
+        }catch (Exception e){
+            logger.debug("showStrategy error",e);
+        }
+
     }
 
     @Override
@@ -237,11 +242,16 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
             messageList.setVisibility(View.GONE);
         if (addressList != null)
             addressList.setVisibility(View.VISIBLE);
-        mRouteSearchAdapter = new RouteSearchAdapter(this, 1);
-        addressList.setAdapter(mRouteSearchAdapter);
-        mRouteSearchAdapter.notifyDataSetChanged();
-        isShowWindow = true;
-        mFloatWindow.setIsWindowShow(true);
+        try{
+            mRouteSearchAdapter = new RouteSearchAdapter(this, 1);
+            addressList.setAdapter(mRouteSearchAdapter);
+            mRouteSearchAdapter.notifyDataSetChanged();
+            isShowWindow = true;
+            mFloatWindow.setIsWindowShow(true);
+        }catch (Exception e){
+            logger.debug("showAddress error",e);
+        }
+
     }
 
     //消息显示
