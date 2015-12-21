@@ -1,6 +1,7 @@
 package com.dudu.voice.semantic.chain;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.bean.WeatherEntity;
@@ -10,6 +11,7 @@ import com.dudu.android.launcher.utils.GsonUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.TimeUtils;
+import com.dudu.event.DeviceEvent;
 import com.dudu.monitor.utils.LocationUtils;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.iflytek.cloud.SpeechError;
@@ -20,6 +22,10 @@ import com.iflytek.cloud.UnderstanderResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.math.BigDecimal;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by 赵圣琪 on 2015/10/30.
@@ -95,11 +101,17 @@ public class WeatherChain extends SemanticChain {
                     JSONObject weather = result.getJSONObject(i);
 
                     if (weather.get("date").equals(date)) {
-                        range = weather.getString("tempRange").split("~")[1] + "~"
-                                + weather.getString("tempRange").split("~")[0];
+                        String lowStringRange = weather.getString("tempRange").split("~")[1];
+                        String highStringRange = weather.getString("tempRange").split("~")[0];
+                        range = lowStringRange + "~" + highStringRange;
                         weatherText = city + dateOrig + "天气 ：" + "\n"
                                 + weather.getString("weather") + "\n温度" + range
                                 + "\n" + weather.getString("wind");
+                        //四舍五入取整
+                        double lowRange = Double.parseDouble(lowStringRange.substring(0, lowStringRange.length() - 1));
+                        double highRange = Double.parseDouble(highStringRange.substring(0, highStringRange.length() - 1));
+                        String temperature = String.valueOf(new BigDecimal(String.valueOf((lowRange + highRange) / 2)).setScale(0, BigDecimal.ROUND_HALF_UP));
+                        EventBus.getDefault().post(new DeviceEvent.Weather(weather.getString("weather"), temperature));
                         return weatherText;
                     }
                 }
