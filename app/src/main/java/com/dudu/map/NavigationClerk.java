@@ -40,7 +40,12 @@ import com.dudu.voice.semantic.chain.ChoiseChain;
 import com.dudu.voice.semantic.chain.ChoosePageChain;
 import com.dudu.voice.semantic.engine.SemanticProcessor;
 
+import java.util.concurrent.TimeUnit;
+
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.Subscription;
+import rx.functions.Action1;
 
 /**
  * Created by lxh on 2015/11/26.
@@ -79,6 +84,7 @@ public class NavigationClerk {
 
     private Class intentClass;
     private String msg;
+    private Subscription naviSubscription = null;
 
     private Runnable removeWindowRunnable = new Runnable() {
 
@@ -332,6 +338,7 @@ public class NavigationClerk {
     public void onEventMainThread(NavigationType event) {
         disMissProgressDialog();
         removeCallback();
+        naviSubscription = null;
         switch (event) {
             case NAVIGATION:
                 navigationManager.setNavigationType(NavigationType.NAVIGATION);
@@ -408,7 +415,8 @@ public class NavigationClerk {
 
     private void initWaitingDialog(String message) {
 
-        if (waitingDialog != null) {
+        if (waitingDialog != null&&waitingDialog.isShowing()) {
+            waitingDialog.dismiss();
             waitingDialog = null;
         }
         waitingDialog = new WaitingDialog(ActivitiesManager.getInstance().getTopActivity(), message);
@@ -598,20 +606,28 @@ public class NavigationClerk {
         }
     }
 
-    public void startNavigation(Navigation navigation) {
+    public void startNavigation(final Navigation navigation) {
+        if (naviSubscription!=null)
+            return;
+        naviSubscription = Observable.just("")
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        VoiceManager.getInstance().stopUnderstanding();
+                        openActivity(OPEN_MANUAL);
+                        showProgressDialog("路径规划中...");
+                        VoiceManager.getInstance().startSpeaking("路径规划中，请稍后...", SemanticConstants.TTS_DO_NOTHING, false);
+                        if (NaviUtils.getOpenMode(mContext) == OpenMode.OUTSIDE) {
+                            LauncherApplication.getContext().setReceivingOrder(true);
+                        }
+                        isShowAddress = false;
+                        isManual = false;
+                        SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
+                        FloatWindowUtil.removeFloatWindow();
+                        navigationManager.startCalculate(navigation);
+                    }
+                });
 
-        openActivity(OPEN_MANUAL);
-        showProgressDialog("路径规划中...");
-        VoiceManager.getInstance().startSpeaking("路径规划中，请稍后...", SemanticConstants.TTS_DO_NOTHING, false);
-        if (NaviUtils.getOpenMode(mContext) == OpenMode.OUTSIDE) {
-            LauncherApplication.getContext().setReceivingOrder(true);
-        }
-        isShowAddress = false;
-        isManual = false;
-        SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
-        FloatWindowUtil.removeFloatWindow();
-        VoiceManager.getInstance().stopUnderstanding();
-        navigationManager.startCalculate(navigation);
     }
 
 
@@ -622,6 +638,7 @@ public class NavigationClerk {
     }
 
     public void removeWindow(int t) {
+        disMissProgressDialog();
         isShowAddress = false;
         if (navigationManager.getNavigationType() != NavigationType.DEFAULT) {
             navigationManager.setIsNavigatining(true);
