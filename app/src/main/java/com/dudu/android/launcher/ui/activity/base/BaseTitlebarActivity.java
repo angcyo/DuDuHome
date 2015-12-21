@@ -55,6 +55,8 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
 
     private int mSatellite = 0;
 
+    private int disConnectedCount = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
@@ -90,7 +92,7 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
 
         mVideoSignalImage = (ImageView) getWindow().findViewById(R.id.video_signal_image);
 
-        mBluetoothImage = (ImageView)getWindow().findViewById(R.id.bluetooth_img);
+        mBluetoothImage = (ImageView) getWindow().findViewById(R.id.bluetooth_img);
     }
 
     private void setSimLevel(int level) {
@@ -147,10 +149,13 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
     public void onEventMainThread(BleStateChange event) {
         switch (event.getConnState()) {
             case BleStateChange.BLEDISCONNECTED:
-                DialogUtils.showOBDErrorDialog(BaseTitlebarActivity.this);
                 mBluetoothImage.setImageResource(R.drawable.bluetooth_off);
+                disConnectedCount++;
+                if (disConnectedCount >= 30)
+                    DialogUtils.showOBDErrorDialog(BaseTitlebarActivity.this);
                 break;
             case BleStateChange.BLECONNECTED:
+                disConnectedCount = 0;
                 DialogUtils.dismissOBDErrorDialog(BaseTitlebarActivity.this);
                 mBluetoothImage.setImageResource(R.drawable.bluetooth_on);
                 break;

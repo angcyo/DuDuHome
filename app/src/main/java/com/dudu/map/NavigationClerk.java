@@ -514,7 +514,7 @@ public class NavigationClerk {
         mhandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                VoiceManager.getInstance().startSpeaking("添加" + choosePoint.getAddressTitle() + "为" + addType + "地址成功！",
+                VoiceManager.getInstance().startSpeaking("添加" + choosePoint.getAddressTitle() + "为 " + addType + " 地址成功！",
                         SemanticConstants.TTS_DO_NOTHING, true);
             }
         }, 200);

@@ -28,7 +28,6 @@ public class PodOBD {
     private Context mContext;
     private PrefixReadL1 readL1;
     private boolean hasData = false;
-    private int disConnectedCount = 0;
 
     private Subscription disableSubscription;
     private Subscription enableSubscription;
@@ -72,7 +71,7 @@ public class PodOBD {
     public void onEvent(Event.BTConnected event) {
         log.debug("spp bluetooth BTConnected adr = {}",event.getDevAddr());
         EventBus.getDefault().post(new BleStateChange(BleStateChange.BLECONNECTED));
-        disConnectedCount = 0;
+
         if(enableSubscription!=null&&disableSubscription!=null){
             disableSubscription.unsubscribe();
             enableSubscription.unsubscribe();
@@ -93,9 +92,8 @@ public class PodOBD {
     }
 
     private void processDisConnected(Event.Disconnected event) {
-        disConnectedCount++;
-        if (disConnectedCount >= 30)
-            EventBus.getDefault().post(new BleStateChange(BleStateChange.BLEDISCONNECTED));
+
+        EventBus.getDefault().post(new BleStateChange(BleStateChange.BLEDISCONNECTED));
         if(event.getError() == Event.ErrorCode.ScanInvokeFail)
             EventBus.getDefault().post(new Event.BluetoothDisable());
 
