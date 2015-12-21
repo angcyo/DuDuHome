@@ -67,6 +67,8 @@ public class MainService extends Service {
         storage = Storage.getInstance();
         storage.init();
 
+        EventBus.getDefault().unregister(this);
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -83,6 +85,8 @@ public class MainService extends Service {
         calculation.release();
 
         storage.release();
+
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
