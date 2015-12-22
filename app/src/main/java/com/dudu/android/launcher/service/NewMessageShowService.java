@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -79,7 +78,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
     private ListView messageList;
 
-    private List<WindowMessageEntity> list = new ArrayList<WindowMessageEntity>();
+    private ArrayList<WindowMessageEntity> messageDataList = new ArrayList<>();
 
     private MessageAdapter mMessageAdapter;
 
@@ -193,8 +192,8 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
         mStrategyAdapter = null;
         mRouteSearchAdapter = null;
         mMessageAdapter = null;
-        if (!list.isEmpty()) {
-            list.clear();
+        if (!messageDataList.isEmpty()) {
+            messageDataList.clear();
         }
         isShowWindow = false;
         isShowAddress = false;
@@ -219,11 +218,10 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
         try {
             mStrategyAdapter = new StrategyAdapter(this);
             addressList.setAdapter(mStrategyAdapter);
-            mStrategyAdapter.notifyDataSetChanged();
             isShowWindow = true;
             mFloatWindow.setIsWindowShow(true);
-        }catch (Exception e){
-            logger.debug("showStrategy error",e);
+        } catch (Exception e) {
+            logger.debug("showStrategy error", e);
         }
 
     }
@@ -242,14 +240,13 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
             messageList.setVisibility(View.GONE);
         if (addressList != null)
             addressList.setVisibility(View.VISIBLE);
-        try{
+        try {
             mRouteSearchAdapter = new RouteSearchAdapter(this, 1);
             addressList.setAdapter(mRouteSearchAdapter);
-            mRouteSearchAdapter.notifyDataSetChanged();
             isShowWindow = true;
             mFloatWindow.setIsWindowShow(true);
-        }catch (Exception e){
-            logger.debug("showAddress error",e);
+        } catch (Exception e) {
+            logger.debug("showAddress error", e);
         }
 
     }
@@ -259,39 +256,41 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
     public void showMessage(String message, String type) {
         if (isShowAddress)
             return;
+
+        if (TextUtils.isEmpty(message))
+            return;
+        if (!isShowWindow) {
+            if (windowManager != null && floatWindowLayout != null && windowParams != null) {
+                windowManager.addView(floatWindowLayout, windowParams);
+                showWindowCallback();
+            }
+        }
+        if (addressList != null)
+            addressList.setVisibility(View.GONE);
+        if (messageList != null)
+            messageList.setVisibility(View.VISIBLE);
+        if (messageDataList == null) {
+            messageDataList = new ArrayList<>();
+        }
         try {
-            if (TextUtils.isEmpty(message))
-                return;
-            if (!isShowWindow) {
-                if (windowManager != null && floatWindowLayout != null && windowParams != null) {
-                    windowManager.addView(floatWindowLayout, windowParams);
-                    showWindowCallback();
-                }
-            }
-            if (addressList != null)
-                addressList.setVisibility(View.GONE);
-            if (messageList != null)
-                messageList.setVisibility(View.VISIBLE);
-            if (list == null) {
-                list = new ArrayList<>();
-            }
             WindowMessageEntity wme = new WindowMessageEntity();
             wme.setContent(message);
             wme.setType(type);
-            list.add(wme);
+            messageDataList.add(wme);
             if (floatWindowLayout != null && messageList != null) {
-                if (android.os.Build.VERSION.SDK_INT >= 8) {
-                    messageList.smoothScrollToPosition(list.size() - 1);
-                } else {
-                    messageList.setSelection(list.size() - 1);
-                }
+                
                 if (mMessageAdapter != null)
-                    mMessageAdapter.notifyDataSetChanged();
+                    mMessageAdapter.setDataList(messageDataList);
+                if (android.os.Build.VERSION.SDK_INT >= 8) {
+                    messageList.smoothScrollToPosition(messageDataList.size() - 1);
+                } else {
+                    messageList.setSelection(messageDataList.size() - 1);
+                }
                 isShowWindow = true;
                 mFloatWindow.setIsWindowShow(true);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug("showMessage error:", e);
         }
     }
 
@@ -343,6 +342,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
     class MessageAdapter extends BaseAdapter {
 
+        private List<WindowMessageEntity> dataList;
 
         public MessageAdapter(Context context) {
             mContext = context;
@@ -350,12 +350,12 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
         @Override
         public int getCount() {
-            return list == null ? 0 : list.size();
+            return dataList == null ? 0 : dataList.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return list.get(position);
+            return dataList.get(position);
         }
 
         @Override
@@ -366,7 +366,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder;
-            WindowMessageEntity message = list.get(position);
+            WindowMessageEntity message = dataList.get(position);
             if (convertView == null) {
                 holder = new ViewHolder();
                 convertView = View.inflate(mContext, R.layout.list_message_item_layout, null);
@@ -388,6 +388,14 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
                 tv_chatcontent.setText(message.getContent());
             }
             return convertView;
+        }
+
+        public void setDataList(ArrayList<WindowMessageEntity> list) {
+
+            if (list != null) {
+                dataList = (ArrayList<WindowMessageEntity>) list.clone();
+                notifyDataSetChanged();
+            }
         }
 
         class ViewHolder {
@@ -433,8 +441,8 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
                 isShowWindow = false;
                 isShowAddress = false;
                 mFloatWindow.setIsWindowShow(false);
-                if (!list.isEmpty())
-                    list.clear();
+                if (!messageDataList.isEmpty())
+                    messageDataList.clear();
             }
         }, 100);
     }

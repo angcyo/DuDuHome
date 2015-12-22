@@ -103,6 +103,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
                 try {
                     startActivity(new Intent(ActivitiesManager.getInstance().getTopActivity(),
                             MainActivity.class));
+                    back_button.setVisibility(View.INVISIBLE);
                 } catch (Exception e) {
                     LogUtils.e(TAG, e.getMessage());
                     startActivity(new Intent(NaviCustomActivity.this, MainActivity.class));
@@ -124,6 +125,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
                 mAmapAMapNaviView.onTouch(motionEvent);
             }
         });
+        backButtonAutoHide();
     }
 
     private void backButtonAutoHide() {
@@ -137,6 +139,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 
 
     private void buttonAnimation() {
+
         ViewAnimation.startAnimation(back_button, back_button.getVisibility() == View.VISIBLE
                 ? R.anim.back_key_disappear : R.anim.back_key_appear, NaviCustomActivity.this);
     }
@@ -342,7 +345,6 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
             }
         }
         mAmapAMapNaviView.onResume();
-
         backButtonAutoHide();
     }
 

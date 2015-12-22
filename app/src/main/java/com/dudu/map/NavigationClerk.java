@@ -376,7 +376,7 @@ public class NavigationClerk {
                     @Override
                     public void run() {
                         VoiceManager.getInstance().startSpeaking(navigationManager.getCurlocationDesc(),
-                                SemanticConstants.TTS_START_UNDERSTANDING, true);
+                                SemanticConstants.TTS_DO_NOTHING, true);
                     }
                 }, 200);
                 navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
@@ -385,7 +385,7 @@ public class NavigationClerk {
             case SEARCH_PLACE_LOCATION:
                 String playText = "您好，" + navigationManager.getKeyword() + "的位置为："
                         + navigationManager.getPoiResultList().get(0).getAddressDetial();
-                VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_START_UNDERSTANDING, true);
+                VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_DO_NOTHING, true);
                 navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
                 removeWindow(REMOVEWINDOW_TIME);
                 return;
