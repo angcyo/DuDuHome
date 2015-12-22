@@ -168,8 +168,10 @@ public class MessageHandler {
             mNetworkService.removeHeadOfMessageQueue();
             mNetworkService.nodifyReceiveResponse();
         }
-        log.info("network-发出GetFlowResponse事件");
-        EventBus.getDefault().post(getFlowResponse);
+        if (getFlowResponse.getResultCode().equals("200")){
+            log.info("network-发出GetFlowResponse事件");
+            EventBus.getDefault().post(getFlowResponse);
+        }
     }
 
     private void proFlowUploadResponse(JSONObject messageJsonObject){
@@ -181,9 +183,10 @@ public class MessageHandler {
             mNetworkService.removeHeadOfMessageQueue();
             mNetworkService.nodifyReceiveResponse();
         }
-
-        log.info("network-发出FlowUploadResponse事件");
-        EventBus.getDefault().post(flowUploadResponse);
+        if (flowUploadResponse.getResultCode().equals("200")){
+            log.info("network-发出FlowUploadResponse事件");
+            EventBus.getDefault().post(flowUploadResponse);
+        }
     }
 
     private void proFlowSynConfigurationRes(JSONObject messageJsonObject){

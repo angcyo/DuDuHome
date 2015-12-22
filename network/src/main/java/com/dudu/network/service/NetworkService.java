@@ -78,7 +78,7 @@ public class NetworkService implements IConnectCallBack {
                     checkAndStorageMessage();//检查并处理消息是否需要持久化
 
                     MessagePackage messagePackageToSend = nextMessagePackage();
-                    log.debug("----消息---：" + messagePackageToSend.toJsonString() + " 发送消息时： 网络状态：" + iConnection.isConnected());
+//                    log.debug("----消息---：" + messagePackageToSend.toJsonString() + " 发送消息时： 网络状态：" + iConnection.isConnected());
                     curSendMessagePackage = messagePackageToSend;
                     if (iConnection.isConnected()) {
                         sendMessageReal(messagePackageToSend);

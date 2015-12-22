@@ -55,6 +55,8 @@ public class GetFlowResponse extends MessagePackage{
             resultCode =  jsonObject.getString("resultCode");
             method = jsonObject.getString("method");
 //            remainingFlow = Float.valueOf(new JSONObject(jsonObject.getString("result")).getString("remainingFlow"));
+            if (resultCode.equals("400") || !jsonObject.has("result"))
+                return;
 
             JSONObject resultJson = new JSONObject(jsonObject.getString("result"));
             String remainFlow = StringTools.GetStringValue("remainingFlow", resultJson);
@@ -89,5 +91,9 @@ public class GetFlowResponse extends MessagePackage{
 
     public float getRemainingFlow(){
         return remainingFlow;
+    }
+
+    public String getResultCode() {
+        return resultCode;
     }
 }

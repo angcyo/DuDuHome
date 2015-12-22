@@ -1,5 +1,6 @@
 package com.dudu.network.event;
 
+import com.dudu.network.utils.StringTools;
 import com.dudu.network.valueobject.MessagePackage;
 
 import org.json.JSONException;
@@ -7,7 +8,7 @@ import org.json.JSONObject;
 
 /**
  * Created by dengjun on 2015/12/1.
- * Description :
+ * Description :使用流量上传响应
  */
 public class FlowUploadResponse extends MessagePackage{
     //消息ID
@@ -51,8 +52,16 @@ public class FlowUploadResponse extends MessagePackage{
             messageId = jsonObject.getString("messageId");
             resultCode =  jsonObject.getString("resultCode");
             method = jsonObject.getString("method");
-            if (jsonObject.has("result"))
-                remainingFlow = Float.valueOf(new JSONObject(jsonObject.getString("result")).getString("remainingFlow"));
+            if (resultCode.equals("400") || !jsonObject.has("result"))
+                return;
+
+            JSONObject resultJson = new JSONObject(jsonObject.getString("result"));
+            String remainFlow = StringTools.GetStringValue("remainingFlow", resultJson);
+            if (remainFlow == null){
+                remainingFlow = Float.valueOf("1048576");
+            }else {
+                remainingFlow = Float.valueOf(remainFlow);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -80,5 +89,9 @@ public class FlowUploadResponse extends MessagePackage{
 
     public float getRemainingFlow(){
         return remainingFlow;
+    }
+
+    public String getResultCode() {
+        return resultCode;
     }
 }
