@@ -96,7 +96,7 @@ public class NetworkService implements IConnectCallBack {
     //检查是否需要对消息队列的数据进行持久化处理，如果大小大于200条就进行持久化
     private void checkAndStorageMessage() {
         synchronized (stotageMessageLock) {
-            if (messagePackagesQueue.size() > 200) {
+            if (messagePackagesQueue.size() > 50) {
                 log.info("消息持久化----messagePackagesQueue.size()：" + messagePackagesQueue.size());
                 for (int i = 0; i < messagePackagesQueue.size(); i++) {
                     MessagePackage messagePackage = messagePackagesQueue.remove();
@@ -117,10 +117,10 @@ public class NetworkService implements IConnectCallBack {
     public void sendMessage(MessagePackage messagePackage) {
 //        synchronized (stotageMessageLock){//暂不加锁
         try {
-            log.debug("messagePackagesQueue消息队列大小：" + messagePackagesQueue.size() + "  消息ID：" + messagePackage.getMessageId() + "  消息：" + messagePackage.toJsonString());
+            log.debug("messagePackagesQueue消息队列大小：{}, 消息ID：{}" , messagePackagesQueue.size(), messagePackage.getMessageId());
             messagePackagesQueue.put(messagePackage);
         } catch (InterruptedException e) {
-            log.error("异常:" + e);
+            log.error("异常:",e);
         }
         synchronized (messagePackagesQueue) {
             messagePackagesQueue.notifyAll();
@@ -149,7 +149,7 @@ public class NetworkService implements IConnectCallBack {
                     messagePackagesQueue.wait();
                 }
             } catch (InterruptedException e) {
-                log.error("获取下一条消息异常:" + e);
+                log.error("获取下一条消息异常:",e);
             }
         }
         return messagePackage;
@@ -162,7 +162,7 @@ public class NetworkService implements IConnectCallBack {
                 sendMessageLock.wait(30 * 1000);//后续做时间控制,
             }
         } catch (InterruptedException e) {
-            log.error("异常:" + e);
+            log.error("异常:" ,e);
         }
     }
 
@@ -180,7 +180,7 @@ public class NetworkService implements IConnectCallBack {
 
             iConnection.sendMessage(sendMessage);
         } catch (Exception e) {
-            log.error("异常:" + e);
+            log.error("异常:", e);
         }
     }
 
@@ -248,7 +248,7 @@ public class NetworkService implements IConnectCallBack {
         try {
             messageHandler.processReceivedMessage(new JSONObject(messageReceived));
         } catch (JSONException e) {
-            log.error("异常:" + e);
+            log.error("异常:",e);
         }
     }
 
@@ -292,7 +292,7 @@ public class NetworkService implements IConnectCallBack {
                     storageMessageHandler.proStorageMessage();
                 }
             } catch (Exception e) {
-                log.error("异常:" + e);
+                log.error("异常:",e);
             }
         }
     };

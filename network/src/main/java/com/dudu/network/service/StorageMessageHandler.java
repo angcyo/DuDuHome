@@ -8,11 +8,9 @@ import com.dudu.network.event.GetFlow;
 import com.dudu.network.event.LocationInfoUpload;
 import com.dudu.network.event.MessageMethod;
 import com.dudu.network.event.ObdDatasUpload;
-import com.dudu.network.utils.DuduLog;
 import com.dudu.storage.Storage;
 import com.dudu.storage.core.IReadCallBack;
 
-import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,7 +114,6 @@ public class StorageMessageHandler {
             }
         } catch (Exception e){
             log.error("异常:{}",e);
-            e.printStackTrace();
         }
     }
 }

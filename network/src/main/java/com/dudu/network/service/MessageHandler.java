@@ -118,9 +118,9 @@ public class MessageHandler {
             }
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            log.error("异常：", e);
         } catch (Exception e){
-            e.printStackTrace();
+            log.error("异常：", e);
         }
     }
 
@@ -131,7 +131,9 @@ public class MessageHandler {
         generalResponse.createFromJsonString(messageJsonObject.toString());
         if (generalResponse.getMessageId().equals(mNetworkService.getCurSendMessagePackage().getMessageId()))
         {
-            mNetworkService.removeHeadOfMessageQueue();
+            if (generalResponse.getResultCode().equals("200")){
+                mNetworkService.removeHeadOfMessageQueue();
+            }
             mNetworkService.nodifyReceiveResponse();
         }
     }
@@ -198,9 +200,10 @@ public class MessageHandler {
             mNetworkService.removeHeadOfMessageQueue();
             mNetworkService.nodifyReceiveResponse();
         }
-
-        log.info("network-发出FlowSynConfigurationRes事件");
-        EventBus.getDefault().post(flowSynConfigurationRes);
+        if (flowSynConfigurationRes.getResultCode().equals("200")){
+            log.info("network-发出FlowSynConfigurationRes事件");
+            EventBus.getDefault().post(flowSynConfigurationRes);
+        }
     }
 
     private void proPortalUpdateRes(JSONObject messageJsonObject){

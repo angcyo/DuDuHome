@@ -203,4 +203,8 @@ public class FlowSynConfigurationRes extends MessagePackage{
     public String getPortalCountFrequency() {
         return portalCountFrequency;
     }
+
+    public String getResultCode() {
+        return resultCode;
+    }
 }
