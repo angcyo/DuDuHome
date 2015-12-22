@@ -334,9 +334,9 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
     public void stopCamera() {
         isPreviewingOrRecording = false;
 
-        stopRecordTimer();
+        stopRecord();
 
-        createVideoFragment();
+        releaseCamera();
     }
 
     public void startRecordTimer() {
