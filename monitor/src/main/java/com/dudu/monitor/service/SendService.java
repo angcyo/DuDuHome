@@ -47,7 +47,7 @@ public class SendService {
         public void run() {
             log.info("monitor 发送服务");
             try {
-                activeDevice();
+//                activeDevice();
 
                 sendLocationInfo();
 
@@ -72,6 +72,7 @@ public class SendService {
     }
 
     public void startSendService(){
+        activeDevice();
         sendServiceThreadPool.scheduleAtFixedRate(sendServiceThread, 4, 30, TimeUnit.SECONDS);
     }
 
@@ -155,10 +156,10 @@ public class SendService {
 
     //设备激活
     private void activeDevice(){
-        log.info("monitor-检查设备是否需要激活 activeFlag：{}", ActiveDeviceManage.getInstance(mContext).getActiveFlag());
-        if(ActiveDeviceManage.getInstance(mContext).getActiveFlag()!= ActiveDeviceManage.ACTIVE_OK) {
+        log.info("monitor-检查设备激活 activeFlag：{}", ActiveDeviceManage.getInstance(mContext).getActiveFlag());
+//        if(ActiveDeviceManage.getInstance(mContext).getActiveFlag()!= ActiveDeviceManage.ACTIVE_OK) {
             NetworkManage.getInstance().sendMessage(new CheckDeviceActive(mContext));
-        }
+//        }
     }
 
     //发送portal弹出次数
