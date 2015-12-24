@@ -2,4 +2,8 @@
     <string name="app_name">老化模式</string>
     <string name="weather_turn">转</string>
     <string name="temperature_degree">度</string>
+
+    <string name="loading_map">正在下载离线地图，请稍等 。。。</string>
+    <string name="deleting_map">正在卸载离线地图，请稍等 。。。</string>
+
 </resources>

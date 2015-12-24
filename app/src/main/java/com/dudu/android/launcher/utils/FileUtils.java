@@ -573,7 +573,7 @@ public class FileUtils {
     /**
      * 递归删除 文件/文件夹
      */
-    private static void deleteFile2(File file) {
+    public static void deleteFile2(File file) {
 
         // Log.i(TAG, "delete file path=" + file.getAbsolutePath());
 
@@ -591,53 +591,56 @@ public class FileUtils {
             // Log.e(TAG, "delete file no exists " + file.getAbsolutePath());
         }
     }
+
     /**
-     * @param context :上下文
-     * @param trafficControl  控制
-     * @param downloadLimit 下载流量限制
-     * @param uploadLimit 上传流量限制
-     * */
-    public static boolean refreshFlowLimit(Context context,boolean trafficControl,int downloadLimit,int uploadLimit) {
+     * @param context        :上下文
+     * @param trafficControl 控制
+     * @param downloadLimit  下载流量限制
+     * @param uploadLimit    上传流量限制
+     */
+    public static boolean refreshFlowLimit(Context context, boolean trafficControl, int downloadLimit, int uploadLimit) {
         boolean flag = false;
-        File file = new File(getExternalStorageDirectory()+File.separator+"nodogsplash", "nodogsplash.conf");
+        File file = new File(getExternalStorageDirectory() + File.separator + "nodogsplash", "nodogsplash.conf");
         if (file.exists()) {
             try {
                 FileOutputStream out = new FileOutputStream(file, false);
                 //获得assets目录下nodogsplash.conf的内容
-                String content=readFile(context,"nodogsplash.conf","UTF_8");
-                String control="";
-                if(trafficControl){
-                    control="yes";
-                }else {
-                    control="no";
+                String content = readFile(context, "nodogsplash.conf", "UTF_8");
+                String control = "";
+                if (trafficControl) {
+                    control = "yes";
+                } else {
+                    control = "no";
                 }
-                String result= content+"\n"+"\n"+"TrafficControl "+control+"\n"+"\n"
-                        +"DownloadLimit "+downloadLimit+"\n"+"\n"+
-                       "UploadLimit "+uploadLimit;
+                String result = content + "\n" + "\n" + "TrafficControl " + control + "\n" + "\n"
+                        + "DownloadLimit " + downloadLimit + "\n" + "\n" +
+                        "UploadLimit " + uploadLimit;
                 out.write(result.getBytes());
                 out.close();
-                flag=true;
+                flag = true;
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         return flag;
     }
+
     /**
      * 复制文件
-     *@params assetFile :被复制文件的输入流
+     *
      * @param sdFile :目标文件
-     * */
-    public static Boolean copyFileToSd(InputStream assetFile,File sdFile) {
-        boolean flags=false;
+     * @params assetFile :被复制文件的输入流
+     */
+    public static Boolean copyFileToSd(InputStream assetFile, File sdFile) {
+        boolean flags = false;
         try {
             FileOutputStream fos = new FileOutputStream(sdFile);
             byte[] buffer = new byte[1024];
-            int count ;
+            int count;
             while ((count = assetFile.read(buffer)) > 0) {
                 fos.write(buffer, 0, count);
             }
-            flags=true;
+            flags = true;
             fos.close();
             assetFile.close();
         } catch (FileNotFoundException e) {
@@ -678,15 +681,15 @@ public class FileUtils {
         return result;
 
     }
+
     /**
      * 解压缩一个文件
      *
-     * @param zipFile 压缩文件
+     * @param zipFile    压缩文件
      * @param folderPath 解压缩的目标目录
      * @throws IOException 当解压缩过程出错时抛出
      */
-    public static void upZipFile(File zipFile,String folderPath)
-    {
+    public static void upZipFile(File zipFile, String folderPath) {
 //        String strZipName = zipFile.getName();
 //        folderPath += "/" + strZipName.substring(0, strZipName.lastIndexOf("."));
 //        File desDir = new File(folderPath);
@@ -695,17 +698,14 @@ public class FileUtils {
 //            desDir.mkdirs();
 //        }
         ZipFile zf;
-        try
-        {
+        try {
             zf = new ZipFile(zipFile);
-            for (Enumeration<?> entries = zf.entries(); entries.hasMoreElements();)
-            {
-                ZipEntry entry = ((ZipEntry)entries.nextElement());
-                if(entry.isDirectory())
-                {
+            for (Enumeration<?> entries = zf.entries(); entries.hasMoreElements(); ) {
+                ZipEntry entry = ((ZipEntry) entries.nextElement());
+                if (entry.isDirectory()) {
                     String dirstr = entry.getName();
                     dirstr = new String(dirstr.getBytes("8859_1"), "GB2312");
-                    File f=new File(dirstr);
+                    File f = new File(dirstr);
                     f.mkdir();
                     continue;
                 }
@@ -714,11 +714,9 @@ public class FileUtils {
                 String str = folderPath + File.separator + entry.getName();
                 str = new String(str.getBytes("8859_1"), "GB2312");
                 File desFile = new File(str);
-                if (!desFile.exists())
-                {
-                  File fileParentDir = desFile.getParentFile();
-                    if (!fileParentDir.exists())
-                    {
+                if (!desFile.exists()) {
+                    File fileParentDir = desFile.getParentFile();
+                    if (!fileParentDir.exists()) {
                         fileParentDir.mkdirs();
                     }
                     desFile.createNewFile();
@@ -727,21 +725,19 @@ public class FileUtils {
                 OutputStream out = new FileOutputStream(desFile);
                 byte buffer[] = new byte[BUFF_SIZE];
                 int realLength;
-                while ((realLength = in.read(buffer)) > 0)
-                {
+                while ((realLength = in.read(buffer)) > 0) {
                     out.write(buffer, 0, realLength);
                 }
                 in.close();
                 out.close();
             }
-        } catch (ZipException e)
-        {
+        } catch (ZipException e) {
             e.printStackTrace();
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
     /**
      * 压缩一个文件
      *
@@ -837,7 +833,7 @@ public class FileUtils {
     }
 
 
-    public static boolean writeObjectToFile(Object object, String fileName){
+    public static boolean writeObjectToFile(Object object, String fileName) {
 
         ObjectOutputStream oos = null;
         FileOutputStream fos = null;
@@ -868,7 +864,7 @@ public class FileUtils {
 
     }
 
-    public static Object readObjectFromFile(String fileName){
+    public static Object readObjectFromFile(String fileName) {
 
         ObjectInputStream ois = null;
         FileInputStream fis = null;

@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.amap.api.location.AMapLocalWeatherForecast;
@@ -14,6 +16,7 @@ import com.amap.api.location.LocationManagerProxy;
 import com.dudu.event.ExitTimerEvent;
 import com.dudu.map.AMapLocationHandler;
 import com.dudu.service.TimerExitService;
+import com.dudu.utils.AgedUtils;
 import com.dudu.utils.Contacts;
 import com.dudu.utils.LocationUtils;
 
@@ -23,21 +26,22 @@ import java.util.Locale;
 
 import de.greenrobot.event.EventBus;
 
-public class AgedModelMainActivity extends NoTitleBaseActivity implements AMapLocalWeatherListener {
+public class AgedModelMainActivity extends NoTitleBaseActivity implements AMapLocalWeatherListener, View.OnClickListener {
     private Handler handler;
     private Intent mIntent = null;
     private int classType;
     private AgedModelMainActivity mActivity;
     private LocationManagerProxy locationManagerProxy;
     private TextView txtDate, txtWeather, txtTemperature;
+    private Button btnVideo,btnNavigation,btnDiDi,btnWlan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActivity = this;
         setContentView(R.layout.activity_aged_model_main);
-        initData();
         initView();
+        initData();
         getDate();
     }
 
@@ -51,9 +55,18 @@ public class AgedModelMainActivity extends NoTitleBaseActivity implements AMapLo
         txtDate = (TextView) findViewById(R.id.data_text);
         txtWeather = (TextView) findViewById(R.id.weather_text);
         txtTemperature = (TextView) findViewById(R.id.temperature_text);
+        btnVideo=(Button)findViewById(R.id.video_button);
+        btnNavigation=(Button)findViewById(R.id.navigation_button);
+        btnDiDi=(Button)findViewById(R.id.didi_button);
+        btnWlan=(Button)findViewById(R.id.wifi_button);
     }
 
     private void initData() {
+        btnVideo.setOnClickListener(this);
+        btnNavigation.setOnClickListener(this);
+        btnDiDi.setOnClickListener(this);
+        btnWlan.setOnClickListener(this);
+
         /**
          * 启动定位的监听事件
          * */
@@ -80,7 +93,7 @@ public class AgedModelMainActivity extends NoTitleBaseActivity implements AMapLo
         Intent intent = getIntent();
         if (intent != null) {
             classType = intent.getIntExtra(Contacts.CLASS_TYPE, Contacts.DEFAULT_TYPE);
-            skipActivity(classType);
+            //skipActivity(classType);
         }
     }
 
@@ -108,6 +121,23 @@ public class AgedModelMainActivity extends NoTitleBaseActivity implements AMapLo
     @Override
     public void onWeatherForecaseSearched(AMapLocalWeatherForecast aMapLocalWeatherForecast) {
 
+    }
+
+    @Override
+    public void onClick(View v) {
+     switch (v.getId()){
+         case R.id.video_button:
+             AgedUtils.installGaoDeMap(this);
+             break;
+         case R.id.navigation_button:
+             AgedUtils.loadOffLine(this);
+             break;
+         case R.id.didi_button:
+             AgedUtils.uninstallGaoApk(this);
+             break;
+         case R.id.wifi_button:
+             break;
+     }
     }
 
     private class MyHandler extends Handler {

@@ -1,7 +1,9 @@
 package com.dudu.android.launcher.ui.activity;
 
 import android.app.AlarmManager;
+import android.app.Dialog;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -10,12 +12,14 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -29,12 +33,19 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amap.api.maps.AMapException;
+import com.amap.api.maps.AMapUtils;
+import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.RoutePara;
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.broadcast.WeatherAlarmReceiver;
 import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
+import com.dudu.android.launcher.utils.AgedUtils;
+import com.dudu.android.launcher.utils.DialogUtils;
+import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WeatherUtil;
 import com.dudu.android.launcher.utils.WifiApAdmin;
@@ -94,6 +105,8 @@ public class MainActivity extends BaseTitlebarActivity implements
     private Logger log_init;
 
     private int log_step;
+
+    private ProgressDialog myProgressDialog;
 
     private class WorkerHandler extends Handler {
         public WorkerHandler(Looper looper) {
@@ -186,7 +199,7 @@ public class MainActivity extends BaseTitlebarActivity implements
         mWlanButton.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                proceedAgeTest();
+                AgedUtils.proceedAgeTest(MainActivity.this);
                 return true;
             }
         });
@@ -439,38 +452,4 @@ public class MainActivity extends BaseTitlebarActivity implements
         EventBus.getDefault().post(NaviEvent.FloatButtonEvent.HIDE);
     }
 
-    private void proceedAgeTest() {
-
-        File file = new File(AgedContacts.AGEDMODEL_APK_DIR, AgedContacts.AGEDMODEL_APK);
-        if (!file.exists()) {
-            return;
-        }
-
-        if (isAppInstalled(this, AgedContacts.PACKAGE_NAME)) {
-            Utils.startThirdPartyApp(this, AgedContacts.PACKAGE_NAME);
-        } else {
-            installAgedApp(file);
-        }
-
-    }
-
-    private void installAgedApp(File file) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setDataAndType(Uri.parse(AgedContacts.FILE_NAME + file.toString()), AgedContacts.APPLICATION_NAME);
-        startActivity(intent);
-    }
-
-    public boolean isAppInstalled(Context context, String packageName) {
-        final PackageManager packageManager = context.getPackageManager();
-        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);
-        List<String> pName = new ArrayList();
-        if (pinfo != null) {
-            for (int i = 0; i < pinfo.size(); i++) {
-                String pn = pinfo.get(i).packageName;
-                pName.add(pn);
-            }
-        }
-        return pName.contains(packageName);
-    }
 }

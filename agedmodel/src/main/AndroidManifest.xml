@@ -26,8 +26,10 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
+
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -47,45 +49,41 @@
             android:name=".AgedModelMainActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="landscape"
-            android:theme="@style/AppBaseTheme"
-            >
+            android:theme="@style/AppBaseTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.DEFAULT" />
-
-
             </intent-filter>
         </activity>
         <activity
             android:name=".AgedCameraActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.Holo.DialogWhenLarge"/>
+            android:theme="@android:style/Theme.Holo.DialogWhenLarge" />
         <activity
             android:name=".AgedVideoPlayActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.Holo.DialogWhenLarge"/>
+            android:theme="@android:style/Theme.Holo.DialogWhenLarge" />
         />
         <activity
             android:name=".AgedMapActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.Holo.DialogWhenLarge"/>
+            android:theme="@android:style/Theme.Holo.DialogWhenLarge" />
         />
         <activity
             android:name=".AgedNavigationActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.Holo.DialogWhenLarge"/>
+            android:theme="@android:style/Theme.Holo.DialogWhenLarge" />
         />
 
         <service
             android:name="com.dudu.service.TimerExitService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
 
 
     </application>

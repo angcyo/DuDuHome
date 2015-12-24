@@ -89,7 +89,6 @@
     <string name="use_flow_high_alarm">流量高级预警</string>
     <string name="use_close_flow">关闭流量</string>
 
-
     <string-array name="action_menu_list_select">
         <item>选择</item>
         <item>全选</item>

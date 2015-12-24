@@ -25,8 +25,8 @@ public class NoTitleBaseActivity extends Activity {
         return super.onKeyDown(keyCode, event);
     }
 
-    @Override
+    /*@Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         return true;
-    }
+    }*/
 }

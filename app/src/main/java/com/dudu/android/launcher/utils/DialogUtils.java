@@ -1,13 +1,11 @@
 package com.dudu.android.launcher.utils;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.dialog.ErrorMessageDialog;
-import com.dudu.voice.semantic.VoiceManager;
 
 /**
  * Created by Administrator on 2015/11/25.
@@ -95,5 +93,4 @@ public class DialogUtils {
             mSimCardReplaceDialog = null;
         }
     }
-
 }
