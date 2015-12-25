@@ -10,6 +10,10 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 
+import com.amap.api.maps.AMapException;
+import com.amap.api.maps.AMapUtils;
+import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.NaviPara;
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.ui.activity.LocationMapActivity;
 import com.dudu.android.launcher.ui.activity.NaviBackActivity;
@@ -134,8 +138,7 @@ public class NavigationClerk {
             case INSIDE:
                 return (openType == OPEN_MAP) ? openMapActivity() : openActivity(openType);
             case OUTSIDE:
-                EventBus.getDefault().post(NaviEvent.FloatButtonEvent.SHOW);
-                Utils.startThirdPartyApp(ActivitiesManager.getInstance().getTopActivity(), "com.autonavi.minimap");
+                openGaode();
                 break;
         }
         return true;
@@ -217,12 +220,15 @@ public class NavigationClerk {
 
         msg = "正在搜索" + navigationManager.getKeyword();
         boolean isShow = false;
+        if(NaviUtils.getOpenMode(mContext)==OpenMode.INSIDE){
         if (!navigationManager.isNavigatining() && !isMapActivity()) {
             intentClass = LocationMapActivity.class;
             intentActivity();
             return;
         }
-        isNaviActivity();
+        isNaviActivity();}else {
+            openGaode();
+        }
 
         switch (navigationManager.getSearchType()) {
             case SEARCH_DEFAULT:
@@ -614,22 +620,36 @@ public class NavigationClerk {
                     @Override
                     public void call(String s) {
                         VoiceManager.getInstance().stopUnderstanding();
+                        VoiceManager.getInstance().clearMisUnderstandCount();
+                        VoiceManager.getInstance().startSpeaking("路径规划中，请稍后...", SemanticConstants.TTS_DO_NOTHING, false);
+                        FloatWindowUtil.removeFloatWindow();
+                        if(NaviUtils.getOpenMode(mContext)==OpenMode.OUTSIDE){
+                            startNaviOutside(navigation);
+                            return;
+                        }
                         openActivity(OPEN_MANUAL);
                         showProgressDialog("路径规划中...");
-                        VoiceManager.getInstance().startSpeaking("路径规划中，请稍后...", SemanticConstants.TTS_DO_NOTHING, false);
-                        if (NaviUtils.getOpenMode(mContext) == OpenMode.OUTSIDE) {
-                            LauncherApplication.getContext().setReceivingOrder(true);
-                        }
                         isShowAddress = false;
                         isManual = false;
                         SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
-                        FloatWindowUtil.removeFloatWindow();
                         navigationManager.startCalculate(navigation);
                     }
                 });
 
     }
-
+    private void startNaviOutside(Navigation navigation){
+        NaviPara naviPara = new NaviPara();
+        naviPara.setTargetPoint(new LatLng(navigation.getDestination().latitude,
+                navigation.getDestination().longitude));
+        naviPara.setNaviStyle(navigation.getDriveMode().ordinal());
+        try {
+            AMapUtils.openAMapNavi(naviPara,mContext);
+            LauncherApplication.getContext().setReceivingOrder(true);
+            naviSubscription = null;
+        } catch (AMapException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void removeCallback() {
         if (mhandler != null && removeWindowRunnable != null) {
@@ -671,5 +691,10 @@ public class NavigationClerk {
     public void onEvent(NaviEvent.NavigationInfoBroadcast event){
         if(!FloatWindowUtil.IsWindowShow())
              VoiceManager.getInstance().startSpeaking(event.getInfo(), SemanticConstants.TTS_DO_NOTHING, false);
+    }
+
+    public void openGaode(){
+        EventBus.getDefault().post(NaviEvent.FloatButtonEvent.SHOW);
+        Utils.startThirdPartyApp(ActivitiesManager.getInstance().getTopActivity(), "com.autonavi.minimap");
     }
 }
