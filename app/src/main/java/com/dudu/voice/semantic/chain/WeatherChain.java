@@ -10,6 +10,7 @@ import com.dudu.android.launcher.utils.CmdType;
 import com.dudu.android.launcher.utils.GsonUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.android.launcher.utils.LogUtils;
+import com.dudu.android.launcher.utils.SharedPreferencesUtil;
 import com.dudu.android.launcher.utils.TimeUtils;
 import com.dudu.event.DeviceEvent;
 import com.dudu.monitor.utils.LocationUtils;
@@ -107,11 +108,13 @@ public class WeatherChain extends SemanticChain {
                         weatherText = city + dateOrig + "天气 ：" + "\n"
                                 + weather.getString("weather") + "\n温度" + range
                                 + "\n" + weather.getString("wind");
-                        //四舍五入取整
-                        double lowRange = Double.parseDouble(lowStringRange.substring(0, lowStringRange.length() - 1));
-                        double highRange = Double.parseDouble(highStringRange.substring(0, highStringRange.length() - 1));
-                        String temperature = String.valueOf(new BigDecimal(String.valueOf((lowRange + highRange) / 2)).setScale(0, BigDecimal.ROUND_HALF_UP));
-                        EventBus.getDefault().post(new DeviceEvent.Weather(weather.getString("weather"), temperature));
+                        if (dateOrig.equals("今天")&&LocationUtils.getInstance(LauncherApplication.getContext()).getCurrentCity().contains(city)){
+                            //四舍五入取整
+                            double lowRange = Double.parseDouble(lowStringRange.substring(0, lowStringRange.length() - 1));
+                            double highRange = Double.parseDouble(highStringRange.substring(0, highStringRange.length() - 1));
+                            String temperature = String.valueOf(new BigDecimal(String.valueOf((lowRange + highRange) / 2)).setScale(0, BigDecimal.ROUND_HALF_UP));
+                            EventBus.getDefault().post(new DeviceEvent.Weather(weather.getString("weather"), temperature));
+                        }
                         return weatherText;
                     }
                 }
