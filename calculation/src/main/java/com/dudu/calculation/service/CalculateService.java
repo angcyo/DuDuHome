@@ -7,8 +7,7 @@ import com.dudu.calculation.valueobject.DriveBehaviorType;
 import com.dudu.monitor.Monitor;
 import com.dudu.monitor.event.CarDriveSpeedState;
 import com.dudu.monitor.event.CarStatus;
-import com.dudu.monitor.event.PowerOffEvent;
-import com.dudu.monitor.utils.LocationFilter;
+
 import com.dudu.monitor.valueobject.LocationInfo;
 import com.dudu.monitor.valueobject.SensorData;
 import com.dudu.network.NetworkManage;
@@ -18,20 +17,17 @@ import com.google.gson.Gson;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.scf4a.Event;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
-import rx.Observable;
-import rx.Subscription;
-import rx.functions.Action1;
 
 /**
  * Created by dengjun on 2015/12/2.
@@ -162,7 +158,10 @@ public class CalculateService {
 //            log.debug("driveLocationInfoArray.length() = " + driveLocationInfoArray.length());
             if (driveLocationInfoArray.length() == 5)//满30个数据才给服务器发
             {
-                NetworkManage.getInstance().sendMessage(new LocationInfoUpload(mContext, driveLocationInfoArray));
+                if (Monitor.getInstance(mContext).isDeviceActived()){
+                    NetworkManage.getInstance().sendMessage(new LocationInfoUpload(mContext, driveLocationInfoArray));
+                }
+
                 driveLocationInfoArray = null;
                 driveLocationInfoArray = new JSONArray();
             }

@@ -3,6 +3,7 @@ package com.dudu.monitor.service;
 import android.content.Context;
 
 import com.dudu.android.hideapi.SystemPropertiesProxy;
+import com.dudu.monitor.Monitor;
 import com.dudu.monitor.repo.ActiveDeviceManage;
 import com.dudu.monitor.repo.ObdManage;
 import com.dudu.monitor.repo.location.LocationManage;
@@ -98,7 +99,7 @@ public class SendService {
                     locationInfoArray.put(i, new JSONObject(gson.toJson(locationInfo)));
                 }
             }
-            if (locationInfoArray != null){
+            if (locationInfoArray != null && Monitor.getInstance(mContext).isDeviceActived()){
                 NetworkManage.getInstance().sendMessage(new LocationInfoUpload(obdId, locationInfoArray));
             }
             LocationManage.getInstance().getLocationInfoList().clear();
@@ -121,7 +122,7 @@ public class SendService {
                     obdDataArray.put(i,new JSONObject(gson.toJson(obdData)));
                 }
             }
-            if (obdDataArray != null){
+            if (obdDataArray != null && Monitor.getInstance(mContext).isDeviceActived()){
                 NetworkManage.getInstance().sendMessage(new ObdDatasUpload(obdId,obdDataArray));
             }
             ObdManage.getInstance().getObdDataList().clear();
@@ -141,12 +142,13 @@ public class SendService {
                 if (locationInfo != null){
                     locationInfoArray.put(new JSONObject(gson.toJson(locationInfo)));
                 }
-                if (locationInfoArray != null){
-                    NetworkManage.getInstance().sendMessage(new LocationInfoUpload(obdId, locationInfoArray));
+                if (Monitor.getInstance(mContext).isDeviceActived()){
+                    if (locationInfoArray != null){
+                        NetworkManage.getInstance().sendMessage(new LocationInfoUpload(obdId, locationInfoArray));
+                    }
+                    NetworkManage.getInstance().sendMessage(new DriveDatasUpload(obdId,
+                            new JSONObject(gson.toJson(ObdManage.getInstance().getFlamoutData()))));
                 }
-
-                NetworkManage.getInstance().sendMessage(new DriveDatasUpload(obdId,
-                        new JSONObject(gson.toJson(ObdManage.getInstance().getFlamoutData()))));
                 ObdManage.getInstance().setFlamoutData(null);
             }catch (JSONException e) {
                 log.error("monitor-发送obd-熄火-信息 异常："+ e);
@@ -171,6 +173,8 @@ public class SendService {
             e.printStackTrace();
         }
         String portalCount = SystemPropertiesProxy.getInstance().get("persist.sys.views", "0");
-        NetworkManage.getInstance().sendMessage(new Portal(mContext,portalCount));
+        if (Monitor.getInstance(mContext).isDeviceActived()){
+            NetworkManage.getInstance().sendMessage(new Portal(mContext,portalCount));
+        }
     }
 }

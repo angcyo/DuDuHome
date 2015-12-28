@@ -10,9 +10,7 @@ import com.dudu.monitor.repo.SensorManage;
 import com.dudu.monitor.repo.location.LocationManage;
 import com.dudu.monitor.service.FlamoutService;
 import com.dudu.monitor.service.SendService;
-import com.dudu.monitor.valueobject.FlamoutData;
 import com.dudu.monitor.valueobject.LocationInfo;
-import com.dudu.monitor.valueobject.ObdData;
 import com.dudu.monitor.valueobject.SensorData;
 
 import java.util.List;
@@ -97,5 +95,14 @@ public class Monitor {
 
     public float getCur_batteryV(){
         return mObdManage.getCur_batteryV();
+    }
+
+    /* 设备是否激活了*/
+    public boolean isDeviceActived(){
+        if (activeDeviceManage.getActiveState() == ActiveDeviceManage.ACTIVE_OK){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

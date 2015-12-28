@@ -1,8 +1,6 @@
 package com.dudu.monitor.repo;
 
-import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 
 import com.dudu.network.NetworkManage;
@@ -30,6 +28,8 @@ public class ActiveDeviceManage{
     private Context mContext;
     private SharedPreferences sp;
     private Logger log;
+    /* 激活状态*/
+    private int activeState = 0;
 
     public static  ActiveDeviceManage getInstance(Context context){
         if (instance == null){
@@ -44,12 +44,14 @@ public class ActiveDeviceManage{
 
     private ActiveDeviceManage(Context context) {
         mContext = context;
-        sp = context.getSharedPreferences("ActiveDevice",Context.MODE_PRIVATE);
+        sp = context.getSharedPreferences("ActiveDevice", Context.MODE_PRIVATE);
 
         log = LoggerFactory.getLogger("monitor");
 
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
+
+        activeState = getActiveFlag();
     }
 
     public  void setActiveFlag(int flag){
@@ -69,6 +71,7 @@ public class ActiveDeviceManage{
     public void onEventBackgroundThread(ActiveDeviceRes activeDeviceRes){
         log.info("收到--设备激活响应----" + activeDeviceRes.isActive());
         if(activeDeviceRes.isActive()){
+            activeState = 1;
             setActiveFlag(ACTIVE_OK);
         }
     }
@@ -76,6 +79,7 @@ public class ActiveDeviceManage{
     public void onEventBackgroundThread(CheckDeviceActiveRes checkDeviceActiveRes){
         log.info("收到-检查-设备激活响应----"+ checkDeviceActiveRes.isActive());
         if(checkDeviceActiveRes.isActive()){
+            activeState = 1;
             setActiveFlag(ACTIVE_OK);
         }else {
             log.info("monitor-发送-设备激活-----信息");
@@ -94,5 +98,9 @@ public class ActiveDeviceManage{
 
     private void reboot() {
         com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.boot", "reboot");
+    }
+
+    public int getActiveState() {
+        return activeState;
     }
 }
