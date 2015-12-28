@@ -4,8 +4,10 @@ import android.content.Context;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import com.dudu.android.launcher.LauncherApplication;
+import com.dudu.android.launcher.R;
 import com.dudu.event.DeviceEvent;
 
 import de.greenrobot.event.EventBus;
@@ -13,9 +15,9 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by 赵圣琪 on 2015/12/17.
  */
-public class SignalManager {
+public class StatusBarManager {
 
-    private static SignalManager mInstance;
+    private static StatusBarManager mInstance;
 
     private Context mContext;
 
@@ -27,15 +29,39 @@ public class SignalManager {
 
     private TelephonyManager mPhoneManager;
 
-    public static SignalManager getInstance() {
+    private int isRecording = 1;
+
+    private int bleConnState = 1;
+
+    public int getBleConnState() {
+        return bleConnState;
+    }
+
+    public void setBleConnState(int bleConnState) {
+        this.bleConnState = bleConnState;
+    }
+
+    public int isRecording() {
+        return isRecording;
+    }
+
+    public void setRecording(int isRecording) {
+        this.isRecording = isRecording;
+    }
+
+    public int getSignalLevel() {
+        return mSignalLevel;
+    }
+
+    public static StatusBarManager getInstance() {
         if (mInstance == null) {
-            mInstance = new SignalManager();
+            mInstance = new StatusBarManager();
         }
 
         return mInstance;
     }
 
-    private SignalManager() {
+    private StatusBarManager() {
         mContext = LauncherApplication.getContext();
 
         mPhoneManager = (TelephonyManager) mContext.getSystemService(
@@ -70,6 +96,7 @@ public class SignalManager {
     public void registerSignalListener() {
         mPhoneManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS |
                 PhoneStateListener.LISTEN_DATA_CONNECTION_STATE);
+        // EventBus.getDefault().register(mContext);
     }
 
     private boolean isCanUseSim() {
@@ -83,6 +110,7 @@ public class SignalManager {
 
         if (!mSignalType.equals(type)) {
             mSignalType = type;
+            Log.v("DeviceEvent", "Type");
             EventBus.getDefault().post(new DeviceEvent.SimType(type));
         }
     }
@@ -97,5 +125,4 @@ public class SignalManager {
             EventBus.getDefault().post(new DeviceEvent.SimLevel(level));
         }
     }
-
 }

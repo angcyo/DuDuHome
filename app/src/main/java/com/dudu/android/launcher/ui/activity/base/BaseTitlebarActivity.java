@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.DialogUtils;
 import com.dudu.android.launcher.utils.NetworkUtils;
+import com.dudu.android.launcher.utils.StatusBarManager;
 import com.dudu.android.launcher.utils.WeatherUtil;
 import com.dudu.event.BleStateChange;
 import com.dudu.event.DeviceEvent;
@@ -93,6 +95,18 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
         mVideoSignalImage = (ImageView) getWindow().findViewById(R.id.video_signal_image);
 
         mBluetoothImage = (ImageView) getWindow().findViewById(R.id.bluetooth_img);
+
+        mVideoSignalImage.setImageResource(StatusBarManager.getInstance().isRecording() == DeviceEvent.ON ?
+                R.drawable.video_signal_recording : R.drawable.video_signal_stop);
+
+        setSimLevel(StatusBarManager.getInstance().getSignalLevel() + 1);
+
+        mBluetoothImage.setImageResource(StatusBarManager.getInstance().getBleConnState() == BleStateChange.BLEDISCONNECTED ?
+                R.drawable.bluetooth_off : R.drawable.bluetooth_on);
+
+
+
+
     }
 
     private void setSimLevel(int level) {
@@ -142,11 +156,13 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
     }
 
     public void onEventMainThread(DeviceEvent.Video event) {
+        StatusBarManager.getInstance().setRecording(event.getState());
         mVideoSignalImage.setImageResource(event.getState() == DeviceEvent.ON ?
                 R.drawable.video_signal_recording : R.drawable.video_signal_stop);
     }
 
     public void onEventMainThread(BleStateChange event) {
+        StatusBarManager.getInstance().setBleConnState(event.getConnState());
         switch (event.getConnState()) {
             case BleStateChange.BLEDISCONNECTED:
                 mBluetoothImage.setImageResource(R.drawable.bluetooth_off);

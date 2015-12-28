@@ -1,6 +1,5 @@
 package com.dudu.init;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
@@ -15,13 +14,12 @@ import com.dudu.android.launcher.service.MonitorService;
 import com.dudu.android.launcher.service.NewMessageShowService;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.SharedPreferencesUtil;
-import com.dudu.android.launcher.utils.SignalManager;
+import com.dudu.android.launcher.utils.StatusBarManager;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.navi.NavigationManager;
 import com.dudu.service.MainService;
 import com.dudu.voice.semantic.VoiceManager;
-import com.iflytek.cloud.SpeechUtility;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -194,7 +192,7 @@ public class InitManager {
 
         NavigationManager.getInstance(LauncherApplication.getContext()).initNaviManager();
 
-        SignalManager.getInstance().registerSignalListener();
+        StatusBarManager.getInstance().registerSignalListener();
     }
 
     public boolean isFinished() {

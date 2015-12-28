@@ -49,15 +49,14 @@ public class AgedUtils {
     }
 
     public static void proceedAgeTest(Context context) {
-        File file = new File(AgedContacts.AGEDMODEL_APK_DIR, AgedContacts.AGEDMODEL_APK);
-        if (!file.exists()) {
-            return;
-        }
         EventBus.getDefault().post(NaviEvent.FloatButtonEvent.SHOW);
         if (isAppInstalled(context, AgedContacts.PACKAGE_NAME)) {
             Utils.startThirdPartyApp(context, AgedContacts.PACKAGE_NAME);
         } else {
-            installApp(context, file);
+            File file = new File(AgedContacts.AGEDMODEL_APK_DIR, AgedContacts.AGEDMODEL_APK);
+            if (!file.exists()) {
+                installApp(context, file);
+            }
         }
 
     }
