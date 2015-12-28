@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import com.dudu.android.hideapi.SystemPropertiesProxy;
 import com.dudu.calculation.Calculation;
 import com.dudu.conn.FlowManage;
 import com.dudu.conn.PortalUpdate;
@@ -100,7 +101,6 @@ public class MainService extends Service {
     }
 
 
-
     public void onEvent(CarStatus event) {
         switch (event.getCarStatus()) {
             case CarStatus.CAR_ONLINE:
@@ -114,6 +114,6 @@ public class MainService extends Service {
     }
 
     public void onEvent(PowerOffEvent event) {
-
+        SystemPropertiesProxy.getInstance().set(this, "persist.sys.boot", "shutdown");
     }
 }
