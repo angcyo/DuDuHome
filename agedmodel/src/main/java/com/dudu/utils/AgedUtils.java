@@ -86,14 +86,13 @@ public class AgedUtils {
     }
 
     public static void installGaoDeMap(Context context) {
-        if (!gaoApkFile.exists()) {
-            return;
-        }
-
         if (isAppInstalled(context, AgedContacts.GAO_DE_PACKAGE_NAME)) {
             openMap(context);
         } else {
-            installApp(context, gaoApkFile);
+            if (gaoApkFile.exists()) {
+                installApp(context, gaoApkFile);
+            }
+
         }
 
     }

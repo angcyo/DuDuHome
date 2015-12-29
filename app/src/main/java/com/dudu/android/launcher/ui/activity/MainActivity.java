@@ -370,7 +370,6 @@ public class MainActivity extends BaseTitlebarActivity implements
             mWeatherView.setText(weather);
             mWeatherImage.setImageResource(WeatherUtil
                     .getWeatherIcon(WeatherUtil.getWeatherType(weather)));
-            mWeatherImage.setImageResource(R.drawable.weather_cloudy);
         } else {
             Toast.makeText(this, R.string.get_weather_info_failed,
                     Toast.LENGTH_SHORT).show();
