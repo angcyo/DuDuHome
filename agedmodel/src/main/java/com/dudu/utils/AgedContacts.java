@@ -27,7 +27,7 @@ public class AgedContacts {
 
     public static final String GAO_DE_PACKAGE_NAME = "com.autonavi.minimap";
 
-    public static final String VMAP_NAME = "vmap";
+    public static final String VMAP_NAME = "china";
 
     public static final String ROUTE_NAME = "route";
 

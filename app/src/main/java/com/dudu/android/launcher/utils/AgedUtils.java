@@ -54,7 +54,7 @@ public class AgedUtils {
             Utils.startThirdPartyApp(context, AgedContacts.PACKAGE_NAME);
         } else {
             File file = new File(AgedContacts.AGEDMODEL_APK_DIR, AgedContacts.AGEDMODEL_APK);
-            if (!file.exists()) {
+            if (file.exists()) {
                 installApp(context, file);
             }
         }
