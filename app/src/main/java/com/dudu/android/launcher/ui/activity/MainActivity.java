@@ -435,7 +435,7 @@ public class MainActivity extends BaseTitlebarActivity implements
             WifiApAdmin.closeWifiAp(this);
 
             //关闭录像
-            mRecordService.stopRecord();
+            mRecordService.stopCamera();
 
             //stop bluetooth
             ObdInit.uninitOBD(this);

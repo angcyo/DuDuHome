@@ -332,7 +332,7 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
 
 
     public void stopCamera() {
-        isPreviewingOrRecording = false;
+        //isPreviewingOrRecording = false;
 
         stopRecord();
 
