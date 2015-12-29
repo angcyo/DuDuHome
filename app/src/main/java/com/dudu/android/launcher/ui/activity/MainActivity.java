@@ -415,6 +415,7 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     public void onEventMainThread(DeviceEvent.Weather weather) {
         updateWeatherInfo(weather.getWeather(), weather.getTemperature());
+        initDate();
     }
 
     @Override
