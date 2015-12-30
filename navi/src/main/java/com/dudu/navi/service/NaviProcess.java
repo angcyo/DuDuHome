@@ -172,7 +172,6 @@ public class NaviProcess {
                 @Override
                 public void onReCalculateRouteForYaw() {
 
-                    EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast("您已偏离路线", false));
                     log.debug("[{}] 步行或驾车导航时,出现偏航后需要重新计算路径", step++);
                 }
 

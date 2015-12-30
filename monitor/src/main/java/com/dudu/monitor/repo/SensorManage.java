@@ -62,11 +62,11 @@ public class SensorManage  implements SensorEventListener {
     }
 
     public void onEvent(CarStatus event){
-        switch (event.getCarStatus()){
-            case CarStatus.CAR_OFFLINE:
+        switch (event){
+            case OFFLINE:
                 unInitSensorManage();
                 break;
-            case CarStatus.CAR_ONLINE:
+            case ONLINE:
                 initSensorManage();
                 break;
         }

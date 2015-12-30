@@ -348,7 +348,7 @@ public class VoiceManager {
 
         @Override
         public void onResult(UnderstanderResult result) {
-            log.debug("[voice][{}]语义理解结果:{}", log_step++, result != null);
+            log.debug("语义理解结果返回...");
 
             stopUnderstanding();
 

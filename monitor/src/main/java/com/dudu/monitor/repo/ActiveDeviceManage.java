@@ -3,6 +3,8 @@ package com.dudu.monitor.repo;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.dudu.monitor.Monitor;
+import com.dudu.monitor.event.CarStatus;
 import com.dudu.network.NetworkManage;
 import com.dudu.network.event.ActiveDevice;
 import com.dudu.network.event.ActiveDeviceRes;
@@ -19,7 +21,7 @@ import de.greenrobot.event.EventBus;
  * Created by dengjun on 2015/12/2.
  * Description :
  */
-public class ActiveDeviceManage{
+public class ActiveDeviceManage {
     private static ActiveDeviceManage instance = null;
 
     public static int ACTIVE_OK = 1;
@@ -31,10 +33,10 @@ public class ActiveDeviceManage{
     /* 激活状态*/
     private int activeState = 0;
 
-    public static  ActiveDeviceManage getInstance(Context context){
-        if (instance == null){
-            synchronized (ActiveDeviceManage.class){
-                if (instance == null){
+    public static ActiveDeviceManage getInstance(Context context) {
+        if (instance == null) {
+            synchronized (ActiveDeviceManage.class) {
+                if (instance == null) {
                     instance = new ActiveDeviceManage(context);
                 }
             }
@@ -54,34 +56,34 @@ public class ActiveDeviceManage{
         activeState = getActiveFlag();
     }
 
-    public  void setActiveFlag(int flag){
-        if(sp!=null){
-            sp.edit().putInt("activeFlag",flag).commit();
+    public void setActiveFlag(int flag) {
+        if (sp != null) {
+            sp.edit().putInt("activeFlag", flag).commit();
         }
 
     }
 
-    public int getActiveFlag(){
-        if(sp!=null){
+    public int getActiveFlag() {
+        if (sp != null) {
             return sp.getInt("activeFlag", 0);
         }
         return 0;
     }
 
-    public void onEventBackgroundThread(ActiveDeviceRes activeDeviceRes){
+    public void onEventBackgroundThread(ActiveDeviceRes activeDeviceRes) {
         log.info("收到--设备激活响应----" + activeDeviceRes.isActive());
-        if(activeDeviceRes.isActive()){
+        if (activeDeviceRes.isActive()) {
             activeState = 1;
             setActiveFlag(ACTIVE_OK);
         }
     }
 
-    public void onEventBackgroundThread(CheckDeviceActiveRes checkDeviceActiveRes){
-        log.info("收到-检查-设备激活响应----"+ checkDeviceActiveRes.isActive());
-        if(checkDeviceActiveRes.isActive()){
+    public void onEventBackgroundThread(CheckDeviceActiveRes checkDeviceActiveRes) {
+        log.info("收到-检查-设备激活响应----" + checkDeviceActiveRes.isActive());
+        if (checkDeviceActiveRes.isActive()) {
             activeState = 1;
             setActiveFlag(ACTIVE_OK);
-        }else {
+        } else {
             log.info("monitor-发送-设备激活-----信息");
             NetworkManage.getInstance().sendMessage(new ActiveDevice(mContext));
         }
@@ -89,10 +91,12 @@ public class ActiveDeviceManage{
 
     /**
      * 接受重启的命令
-     * */
-    public void onEventBackgroundThread(RebootDevice rebootDevice){
-        if (rebootDevice.isRebootDeviceFlag()){
-            reboot();
+     */
+    public void onEventBackgroundThread(RebootDevice rebootDevice) {
+        if (rebootDevice.isRebootDeviceFlag()) {
+            if (Monitor.getInstance(mContext).getCarStatus() == CarStatus.OFFLINE) {
+                reboot();
+            }
         }
     }
 

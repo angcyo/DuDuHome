@@ -7,7 +7,6 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.dudu.android.launcher.LauncherApplication;
-import com.dudu.android.launcher.R;
 import com.dudu.event.DeviceEvent;
 
 import de.greenrobot.event.EventBus;
@@ -31,7 +30,7 @@ public class StatusBarManager {
 
     private int isRecording = 1;
 
-    private int bleConnState = 1;
+    private int bleConnState = 0;
 
     public int getBleConnState() {
         return bleConnState;

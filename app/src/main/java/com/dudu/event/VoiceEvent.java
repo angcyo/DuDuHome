@@ -6,7 +6,6 @@ package com.dudu.event;
 public class VoiceEvent {
 
     public static final int INIT_VOICE_SERVICE = 0;
-    public static final int START_VOICE_SERVICE = 1;
     public static final int STOP_VOICE_SERVICE = 2;
 
     private int voiceEvent;

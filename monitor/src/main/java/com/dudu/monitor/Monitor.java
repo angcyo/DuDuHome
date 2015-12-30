@@ -4,6 +4,7 @@ import android.content.Context;
 import android.hardware.Sensor;
 
 import com.amap.api.location.AMapLocation;
+import com.dudu.monitor.event.CarStatus;
 import com.dudu.monitor.repo.ActiveDeviceManage;
 import com.dudu.monitor.repo.ObdManage;
 import com.dudu.monitor.repo.SensorManage;
@@ -104,5 +105,9 @@ public class Monitor {
         }else{
             return false;
         }
+    }
+
+    public CarStatus getCarStatus(){
+        return mObdManage.getCarStatus();
     }
 }

@@ -21,6 +21,7 @@ public class ObdData {
 
     public ObdData(String realTimeObdData) {
         if (!TextUtils.isEmpty(realTimeObdData)) {
+
             String[] realTimeDataArray = realTimeObdData.split(",");
 
             batteryV = Float.parseFloat(realTimeDataArray[1]);

@@ -106,8 +106,6 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     private int log_step;
 
-    private ProgressDialog myProgressDialog;
-
     private class WorkerHandler extends Handler {
         public WorkerHandler(Looper looper) {
             super(looper);
@@ -381,6 +379,7 @@ public class MainActivity extends BaseTitlebarActivity implements
     }
 
     public void onEventMainThread(DeviceEvent.Screen event) {
+        log_init.debug("DeviceEvent.Screen {}",event.getState());
         com.dudu.android.hideapi.SystemPropertiesProxy.getInstance()
                 .set(MainActivity.this, "persist.sys.screen", event.getState() == DeviceEvent.ON ? "on" : "off");
     }
@@ -396,13 +395,7 @@ public class MainActivity extends BaseTitlebarActivity implements
 
                 startRecording();
                 break;
-            case VoiceEvent.START_VOICE_SERVICE:
-                VoiceManager.setUnderstandingOrSpeaking(true);
 
-                stopRecording();
-
-                startRecording();
-                break;
             case VoiceEvent.STOP_VOICE_SERVICE:
                 VoiceManager.setUnderstandingOrSpeaking(false);
 

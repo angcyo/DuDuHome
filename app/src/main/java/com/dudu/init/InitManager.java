@@ -12,21 +12,28 @@ import com.dudu.android.launcher.service.CheckUserService;
 import com.dudu.android.launcher.service.FloatBackButtonService;
 import com.dudu.android.launcher.service.MonitorService;
 import com.dudu.android.launcher.service.NewMessageShowService;
+import com.dudu.android.launcher.utils.CarStatusUtils;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.SharedPreferencesUtil;
 import com.dudu.android.launcher.utils.StatusBarManager;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
+import com.dudu.event.DeviceEvent;
+import com.dudu.monitor.Monitor;
+import com.dudu.monitor.event.CarStatus;
 import com.dudu.navi.NavigationManager;
 import com.dudu.service.MainService;
 import com.dudu.voice.semantic.VoiceManager;
 
+import org.scf4a.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Observable;
 import java.util.concurrent.TimeUnit;
 
 import ch.qos.logback.core.android.SystemPropertiesProxy;
+import de.greenrobot.event.EventBus;
 import rx.functions.Action1;
 
 /**
@@ -63,7 +70,7 @@ public class InitManager {
     }
 
     public void unInit() {
-        logger.debug("反初始化，释放续费占用资源...");
+        logger.debug("反初始化，释放讯飞占用的资源...");
         VoiceManager.getInstance().stopUnderstanding();
         VoiceManager.getInstance().stopSpeaking();
     }
@@ -143,6 +150,7 @@ public class InitManager {
     }
 
     private void initOthers() {
+
         // 关闭ADB调试端口
         if (!Utils.isDemoVersion(mContext)) {
             com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext,
@@ -193,10 +201,20 @@ public class InitManager {
         NavigationManager.getInstance(LauncherApplication.getContext()).initNaviManager();
 
         StatusBarManager.getInstance().registerSignalListener();
+
+        screenOff();
     }
 
     public boolean isFinished() {
         return finished;
     }
+
+    private void screenOff() {
+        if (!CarStatusUtils.isCarOnline()) {
+            logger.debug("[init][{}] 熄火状态下关闭屏幕", log_step++);
+            EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.OFF));
+        }
+    }
+
 
 }

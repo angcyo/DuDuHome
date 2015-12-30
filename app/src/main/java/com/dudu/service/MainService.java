@@ -6,6 +6,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.dudu.android.hideapi.SystemPropertiesProxy;
+import com.dudu.android.launcher.utils.CarStatusUtils;
 import com.dudu.calculation.Calculation;
 import com.dudu.conn.FlowManage;
 import com.dudu.conn.PortalUpdate;
@@ -102,12 +103,14 @@ public class MainService extends Service {
 
 
     public void onEvent(CarStatus event) {
-        switch (event.getCarStatus()) {
-            case CarStatus.CAR_ONLINE:
+        switch (event) {
+            case ONLINE:
                 EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.ON));
+                CarStatusUtils.saveCarStatus(true);
                 break;
-            case CarStatus.CAR_OFFLINE:
+            case OFFLINE:
                 EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.OFF));
+                CarStatusUtils.saveCarStatus(false);
                 break;
 
         }

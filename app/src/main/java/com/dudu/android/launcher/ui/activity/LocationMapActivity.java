@@ -293,6 +293,8 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         NavigationClerk.getInstance().setIsShowAddress(false);
         NavigationClerk.getInstance().setIsManual(false);
         NavigationClerk.getInstance().disMissProgressDialog();
+        NavigationClerk.getInstance().removeCallback();
+        dissMissDialog();
         if (mHandler != null && getLocatinRunable != null) {
             mHandler.removeCallbacks(getLocatinRunable);
         }
@@ -309,11 +311,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
             mapView.onDestroy();
             mapView = null;
         }
-        NavigationClerk.getInstance().disMissProgressDialog();
-        dissMissDialog();
-        NavigationClerk.getInstance().removeCallback();
         super.onDestroy();
-        SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
     }
 
     public void showAddressManual() {

@@ -153,13 +153,9 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
         radioDialog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removeFloatWindow();
-
-                VoiceManager.getInstance().stopUnderstanding();
-
+                logger.debug("点击了语音关闭按钮,停止语音监听和语音合成...");
                 VoiceManager.getInstance().stopSpeaking();
-
-                SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
+                removeFloatWindow();
             }
         });
     }
@@ -429,6 +425,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
                 if (floatWindowLayout != null && windowManager != null && isShowWindow) {
                     removeHasCalled = true;
 
+                    logger.debug("removeFloatWindow方法被调用,移除悬浮框...");
                     VoiceManager.getInstance().setUnderstandingOrSpeaking(false);
 
                     VoiceManager.getInstance().stopUnderstanding();

@@ -44,8 +44,8 @@ public class FlamoutService {
     }
 
     public void onEventBackgroundThread(CarStatus event) {
-        switch (event.getCarStatus()) {
-            case CarStatus.CAR_ONLINE:
+        switch (event) {
+            case ONLINE:
 
                 if (powerOffSub != null) {
                     powerOffSub.unsubscribe();
@@ -61,7 +61,7 @@ public class FlamoutService {
                 }
                 lowCount = 0;
                 break;
-            case CarStatus.CAR_OFFLINE:
+            case OFFLINE:
                 log.debug("---------CAR_OFFLINE");
                 lowVoltageScheduled = Executors.newScheduledThreadPool(1);
                 lowVoltageScheduled.scheduleAtFixedRate(lowVoltageThread, 20, 20, TimeUnit.SECONDS);

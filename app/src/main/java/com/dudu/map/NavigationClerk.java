@@ -95,7 +95,6 @@ public class NavigationClerk {
         @Override
         public void run() {
             FloatWindowUtil.removeFloatWindow();
-            VoiceManager.getInstance().stopUnderstanding();
         }
     };
 
@@ -245,7 +244,7 @@ public class NavigationClerk {
                         ToastUtils.showToast(msg);
                     }else{
                         VoiceManager.getInstance().startSpeaking(msg, SemanticConstants.TTS_DO_NOTHING, true);
-                        removeWindow(REMOVEWINDOW_TIME);
+                        removeWindow();
                     }
                     return;
                 }
@@ -302,13 +301,12 @@ public class NavigationClerk {
     public void onEventMainThread(NaviEvent.NaviVoiceBroadcast event) {
         if (isManual)
             return;
+        navigationManager.getLog().debug("-----NaviVoiceBroadcast stopUnderstanding");
         VoiceManager.getInstance().clearMisUnderstandCount();
         VoiceManager.getInstance().stopUnderstanding();
         removeCallback();
-        if (event.isShow()) {
-            VoiceManager.getInstance().startSpeaking(event.getNaviVoice(), SemanticConstants.TTS_START_UNDERSTANDING, true);
-            removeWindow(REMOVEWINDOW_TIME);
-        }
+        VoiceManager.getInstance().startSpeaking(event.getNaviVoice(), SemanticConstants.TTS_START_UNDERSTANDING, true);
+        removeWindow();
 
     }
 
@@ -359,7 +357,7 @@ public class NavigationClerk {
             case CALCULATEERROR:
                 navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
                 VoiceManager.getInstance().startSpeaking("路径规划出错，请稍后再试", SemanticConstants.TTS_DO_NOTHING, true);
-                removeWindow(REMOVEWINDOW_TIME);
+                removeWindow();
                 return;
             case NAVIGATION_END:
                 navigationManager.setNavigationType(NavigationType.DEFAULT);
@@ -386,14 +384,14 @@ public class NavigationClerk {
                     }
                 }, 200);
                 navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
-                removeWindow(REMOVEWINDOW_TIME);
+                removeWindow();
                 break;
             case SEARCH_PLACE_LOCATION:
                 String playText = "您好，" + navigationManager.getKeyword() + "的位置为："
                         + navigationManager.getPoiResultList().get(0).getAddressDetial();
                 VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_DO_NOTHING, true);
                 navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
-                removeWindow(REMOVEWINDOW_TIME);
+                removeWindow();
                 return;
             case SEARCH_NEAREST:
                 SemanticProcessor.getProcessor().switchSemanticType(
@@ -464,7 +462,6 @@ public class NavigationClerk {
     }
 
     public void showAddressByVoice() {
-
         VoiceManager.getInstance().startSpeaking(
                 "为您找到以下地址，请选择第几个", SemanticConstants.TTS_START_UNDERSTANDING, true);
         FloatWindowUtil.showAddress(
@@ -475,6 +472,7 @@ public class NavigationClerk {
                             View arg1,
                             int position, long arg3) {
                         isAddressManual = true;
+                        navigationManager.getLog().debug("-----manual click showAddressByVoice stopUnderstanding");
                         VoiceManager.getInstance().stopUnderstanding();
                         chooseAddress(position);
                     }
@@ -503,6 +501,7 @@ public class NavigationClerk {
             e.printStackTrace();
             if (!isManual) {
                 if (position > navigationManager.getPoiResultList().size()) {
+                    navigationManager.getLog().debug("----- choose error stopUnderstanding");
                     VoiceManager.getInstance().stopUnderstanding();
                     String playText = "选择错误，请重新选择";
                     VoiceManager.getInstance().startSpeaking(playText,
@@ -524,6 +523,7 @@ public class NavigationClerk {
         CommonAddressUtil.setCommonAddress(addType, mContext, choosePoint.getAddressTitle());
         CommonAddressUtil.setCommonLocation(addType,
                 mContext, choosePoint.getLatitude(), choosePoint.getLongitude());
+        navigationManager.getLog().debug("-----addCommonAddress stopUnderstanding");
         VoiceManager.getInstance().stopUnderstanding();
         mhandler.postDelayed(new Runnable() {
             @Override
@@ -533,9 +533,7 @@ public class NavigationClerk {
             }
         }, 200);
         navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
-        removeWindow(REMOVEWINDOW_TIME);
-
-
+        removeWindow();
     }
 
     /**
@@ -543,16 +541,16 @@ public class NavigationClerk {
      */
     public void showStrategyMethod(int position) {
         isShowAddress = true;
+        navigationManager.getLog().debug("----showStrategyMethod stopUnderstanding");
+        VoiceManager.getInstance().stopUnderstanding();
+        VoiceManager.getInstance().clearMisUnderstandCount();
         if (!isAddressManual && position > navigationManager.getPoiResultList().size()) {
-            VoiceManager.getInstance().stopUnderstanding();
             String playText = "选择错误，请重新选择";
             VoiceManager.getInstance().startSpeaking(playText,
                     SemanticConstants.TTS_START_UNDERSTANDING, false);
             return;
         }
         chooseStep = 2;
-        VoiceManager.getInstance().stopUnderstanding();
-        VoiceManager.getInstance().clearMisUnderstandCount();
         String playText = "请选择路线优先策略。";
         if (navigationManager.getSearchType() == SearchType.SEARCH_NEAREST)
             playText = "已经为您找到最近的" + navigationManager.getKeyword() + ",请选择路线优先策略";
@@ -577,6 +575,7 @@ public class NavigationClerk {
         if (navigationManager.getPoiResultList().isEmpty())
             return;
         if (position > navigationManager.getDriveModeList().size()) {
+            navigationManager.getLog().debug("-----choose error DriveMode stopUnderstanding");
             VoiceManager.getInstance().stopUnderstanding();
             String playText = "选择错误，请重新选择";
             VoiceManager.getInstance().startSpeaking(playText,
@@ -619,6 +618,7 @@ public class NavigationClerk {
                 .subscribe(new Action1<String>() {
                     @Override
                     public void call(String s) {
+                        navigationManager.getLog().debug("----startNavigation stopUnderstanding");
                         VoiceManager.getInstance().stopUnderstanding();
                         VoiceManager.getInstance().clearMisUnderstandCount();
                         VoiceManager.getInstance().startSpeaking("路径规划中，请稍后...", SemanticConstants.TTS_DO_NOTHING, false);
@@ -657,7 +657,7 @@ public class NavigationClerk {
         }
     }
 
-    public void removeWindow(int t) {
+    public void removeWindow() {
         disMissProgressDialog();
         isShowAddress = false;
         if (navigationManager.getNavigationType() != NavigationType.DEFAULT) {
@@ -681,16 +681,18 @@ public class NavigationClerk {
 
     public void onEvent(CarStatus event){
 
-        switch (event.getCarStatus()){
-            case CarStatus.CAR_OFFLINE:
+        switch (event){
+            case OFFLINE:
                 existNavi();
                 break;
         }
     }
 
     public void onEvent(NaviEvent.NavigationInfoBroadcast event){
-        if(!FloatWindowUtil.IsWindowShow())
-             VoiceManager.getInstance().startSpeaking(event.getInfo(), SemanticConstants.TTS_DO_NOTHING, false);
+        if(!FloatWindowUtil.IsWindowShow()){
+            VoiceManager.getInstance().clearMisUnderstandCount();
+            VoiceManager.getInstance().startSpeaking(event.getInfo(), SemanticConstants.TTS_DO_NOTHING, false);
+        }
     }
 
     public void openGaode(){

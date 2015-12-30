@@ -45,6 +45,8 @@ public class ObdManage {
 
     private float cur_batteryV;
 
+    private CarStatus carStatus = CarStatus.OFFLINE;
+
     public static ObdManage getInstance() {
         if (instance == null) {
             synchronized (ObdManage.class) {
@@ -68,7 +70,7 @@ public class ObdManage {
     public void onEventBackgroundThread(EventRead.L1ReadDone event) {
         final byte[] data = event.getData();
         try {
-            log.debug("monitor Receive OBD Data: = {}", new String(data, "UTF-8"));
+            log.info("Receive OBD Data: = {}", new String(data, "UTF-8"));
             parseOBDData(new String(data, "UTF-8"));
         } catch (Exception e) {
             log.error("monitor OBD Parse exception", e);
@@ -108,6 +110,9 @@ public class ObdManage {
         else
             obdData = new ObdData(obdDataString);
 
+        if (carStatus == CarStatus.OFFLINE)
+            obdData.setRunState(0);
+
         curSpeed = obdData.getSpeed();
         curRpm = obdData.getEngineSpeed();
         cur_batteryV = obdData.getBatteryV();
@@ -117,8 +122,9 @@ public class ObdManage {
         if (!isNotice_start && curRpm > 0) {
             isNotice_flamout = false;
             isNotice_start = true;
-            log.info("monitor- 发送CarStatus(CarStatus.CAR_ONLINE))事件");
-            EventBus.getDefault().post(new CarStatus(CarStatus.CAR_ONLINE));
+            log.info("monitor- 发送CarStatus_ONLINE 事件");
+            carStatus = CarStatus.ONLINE;
+            EventBus.getDefault().post(CarStatus.ONLINE);
         }
 
         if (obdData.misMatch()) {
@@ -144,7 +150,7 @@ public class ObdManage {
     }
 
     private void parseFlamoutData(String obdDataString) {
-        log.info(" parseFlamoutData {}", obdDataString);
+
         if (isxfaOBd)
             flamoutData = new FlamoutData(obdDataString, 1);
         else
@@ -153,8 +159,8 @@ public class ObdManage {
         if (!isNotice_flamout) {
             isNotice_start = false;
             isNotice_flamout = true;
-            log.info("monitor- 发送CarStatus(CarStatus.CAR_OFFLINE)事件");
-            EventBus.getDefault().post(new CarStatus(CarStatus.CAR_OFFLINE));
+            carStatus = CarStatus.OFFLINE;
+            EventBus.getDefault().post(CarStatus.OFFLINE);
         }
     }
 
@@ -199,7 +205,8 @@ public class ObdManage {
             if (!isNotice_start) {
                 isNotice_flamout = false;
                 isNotice_start = true;
-                EventBus.getDefault().post(new CarStatus(CarStatus.CAR_ONLINE));
+                carStatus = CarStatus.ONLINE;
+                EventBus.getDefault().post(CarStatus.ONLINE);
             }
         }
 
@@ -225,6 +232,11 @@ public class ObdManage {
 
     public float getCur_batteryV() {
         return cur_batteryV;
+    }
+
+
+    public CarStatus getCarStatus() {
+        return carStatus;
     }
 
 }

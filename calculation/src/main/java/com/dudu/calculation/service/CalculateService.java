@@ -43,7 +43,7 @@ public class CalculateService {
     JSONArray driveLocationInfoArray;
     private Logger log;
 
-    private int carState;
+    private CarStatus carState;
 
     /* 用于比较，过滤掉相同的点*/
     private LocationInfo locationInfoUsedCompare;
@@ -172,14 +172,14 @@ public class CalculateService {
 
 
     public void onEventBackgroundThread(CarStatus event) {
-        carState = event.getCarStatus();
-        log.info("onEvent CarStatus:{}", carState);
-        switch (event.getCarStatus()) {
-            case CarStatus.CAR_ONLINE:
+        log.info("onEvent CarStatus:{}", event);
+        carState = event;
+        switch (event) {
+            case ONLINE:
                 startService();
                 calculateThreadPool.schedule(fatigueDrivingThread, 4 * 60 * 60, TimeUnit.SECONDS);//4个小时
                 break;
-            case CarStatus.CAR_OFFLINE:
+            case OFFLINE:
                 stopService();
                 break;
         }
@@ -192,7 +192,7 @@ public class CalculateService {
         @Override
         public void run() {
             try {
-                if (carState == 1)
+                if (carState == CarStatus.ONLINE)
                     calculateThreadPool.schedule(fatigueDrivingThread, 15 * 60, TimeUnit.SECONDS);//15分钟
                 log.info("车辆运行超过4小时，疲劳驾驶");
                 putLocationInfo(getAndSetTypeLocationInfo(DriveBehaviorType.TYPE_FATIGUEDRIVING));
