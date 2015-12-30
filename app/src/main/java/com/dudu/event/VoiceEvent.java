@@ -7,6 +7,7 @@ public class VoiceEvent {
 
     public static final int INIT_VOICE_SERVICE = 0;
     public static final int STOP_VOICE_SERVICE = 2;
+    public static final int INIT_RECORDING_SERVICE = 3;
 
     private int voiceEvent;
 

@@ -197,7 +197,11 @@ public class MainActivity extends BaseTitlebarActivity implements
         mWlanButton.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+
+                EventBus.getDefault().post(new VoiceEvent(VoiceEvent.INIT_RECORDING_SERVICE));
+
                 AgedUtils.proceedAgeTest(MainActivity.this);
+
                 return true;
             }
         });
@@ -399,6 +403,11 @@ public class MainActivity extends BaseTitlebarActivity implements
             case VoiceEvent.STOP_VOICE_SERVICE:
                 VoiceManager.setUnderstandingOrSpeaking(false);
 
+                stopRecording();
+
+                startRecording();
+                break;
+            case VoiceEvent.INIT_RECORDING_SERVICE:
                 stopRecording();
 
                 startRecording();
