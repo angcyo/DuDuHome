@@ -14,4 +14,5 @@ public interface ILocation {
 
     public void setLocationListener(ILocationListener iLocationListener);
 
+    public boolean isLocation();
 }

@@ -41,7 +41,7 @@ public class AmapLocation implements AMapLocationListener, ILocation {
     private Logger log;
 
     private int GPSdataTime = 0;// 第几个GPS点
-    private AMapLocation last_Location;// 前一个位置点
+    private AMapLocation last_Location,cur_locatopn;// 前一个位置点
     private boolean isAvalable = false; // 标志定位点是否有效
     private boolean isFirstRun = true; // 第一个点
     private boolean isFirstLoc = true; // 是否第一次定位成功
@@ -98,15 +98,25 @@ public class AmapLocation implements AMapLocationListener, ILocation {
         if (mLocationManagerProxy != null) {
             mLocationManagerProxy.removeUpdates(this);
             mLocationManagerProxy.destroy();
-
             locationManager.removeGpsStatusListener(getGpsStatuslistener);
         }
+        locationManager = null;
         mLocationManagerProxy = null;
+        if(cur_locatopn!=null){
+            LocationUtils.getInstance(mContext).setCurrentLocation(cur_locatopn.getLatitude(),
+                    cur_locatopn.getLongitude());
+        }
+
     }
 
     @Override
     public void setLocationListener(ILocationListener iLocationListener) {
         mILocationListener = iLocationListener;
+    }
+
+    @Override
+    public boolean isLocation() {
+        return mLocationManagerProxy!=null;
     }
 
     @Override
@@ -119,7 +129,7 @@ public class AmapLocation implements AMapLocationListener, ILocation {
             GPSdataTime++;
             return;
         }
-
+        cur_locatopn = location;
         // m每秒转换成千米每小时
         if (location.hasSpeed() && location.getSpeed() > 0)
             location.setSpeed(location.getSpeed() * 36 / 10);

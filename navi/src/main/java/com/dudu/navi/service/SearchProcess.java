@@ -3,7 +3,6 @@ package com.dudu.navi.service;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.maps.AMapUtils;
@@ -80,11 +79,15 @@ public class SearchProcess {
     }
 
     public void search(String keyword) {
+        NavigationManager.getInstance(mContext).getLog().debug("开始搜索{}", searchType);
         isNoticeFail = false;
         searchType = NavigationManager.getInstance(mContext).getSearchType();
         cur_location = Monitor.getInstance(mContext).getCurrentLocation();
-        NavigationManager.getInstance(mContext).getLog().debug("开始搜索{}", searchType);
         cityCode = LocationUtils.getInstance(mContext).getCurrentCityCode();
+        if (cur_location != null) {
+            latLonPoint = new LatLonPoint(cur_location.getLatitude(), cur_location.getLongitude());
+        }
+
         switch (searchType) {
             case SEARCH_DEFAULT:
                 return;
@@ -100,7 +103,6 @@ public class SearchProcess {
                 getCur_locationDesc();
                 break;
             default:
-
                 doSearch(keyword);
                 break;
 
@@ -122,17 +124,14 @@ public class SearchProcess {
 
     private void doSearch(String keyword) {
         hasResult = false;
-        if (cur_location != null) {
-            latLonPoint = new LatLonPoint(cur_location.getLatitude(), cur_location.getLongitude());
-        }
         if (!TextUtils.isEmpty(keyword)) {
             query = new PoiSearch.Query(keyword, "", cityCode);
             query.setPageSize(20);// 设置每页最多返回多少条poi item
             query.setPageNum(0);// 设置查第一页
             poiSearch = new PoiSearch(mContext, query);
             if (searchType == SearchType.SEARCH_NEARBY || searchType == SearchType.SEARCH_NEAREST) {
-                if(latLonPoint!=null)
-                 poiSearch.setBound(new PoiSearch.SearchBound(latLonPoint, 2000));
+                if (latLonPoint != null)
+                    poiSearch.setBound(new PoiSearch.SearchBound(latLonPoint, 2000));
             }
             poiSearch.setOnPoiSearchListener(onPoiSearchListener);
             poiSearch.searchPOIAsyn();
@@ -159,15 +158,13 @@ public class SearchProcess {
                 ResourceManager.getInstance(mContext).setCur_locationDesc(playText);
                 if (!isNoticeFail)
                     EventBus.getDefault().post(NaviEvent.SearchResult.SUCCESS);
-            } else {
-                getCurLocation();
+                return;
             }
         }
+        getCurLocation();
     }
 
     private void getCurLocation() {
-
-        latLonPoint = new LatLonPoint(cur_location.getLatitude(), cur_location.getLongitude());
         RegeocodeQuery query = new RegeocodeQuery(latLonPoint, 200,
                 GeocodeSearch.AMAP);
         geocoderSearch.getFromLocationAsyn(query);
@@ -242,10 +239,14 @@ public class SearchProcess {
 
 
     private void setPoiList() {
-        if (Monitor.getInstance(mContext).getCurrentLocation() != null && !poiItems.isEmpty()) {
-            ResourceManager.getInstance(mContext).setPoiItems(poiItems);
-            LatLng startPoints_gaode = new LatLng(Monitor.getInstance(mContext).getCurrentLocation().getLatitude(),
+        LatLng startPoints_gaode = null;
+        if (Monitor.getInstance(mContext).getCurrentLocation() != null) {
+            startPoints_gaode = new LatLng(Monitor.getInstance(mContext).getCurrentLocation().getLatitude(),
                     Monitor.getInstance(mContext).getCurrentLocation().getLongitude());
+        }
+
+        if (startPoints_gaode != null && !poiItems.isEmpty()) {
+            ResourceManager.getInstance(mContext).setPoiItems(poiItems);
             poiResultList.clear();
             for (int i = 0; i < poiItems.size(); i++) {
                 PoiResultInfo poiResultInfo = new PoiResultInfo();
@@ -266,7 +267,6 @@ public class SearchProcess {
             Collections.sort(poiResultList, new PoiResultInfo.MyComparator());
 
             ResourceManager.getInstance(mContext).setPoiResultList(poiResultList);
-            Log.d("------lxh","----poiResultList:"+poiResultList.size());
         }
     }
 }

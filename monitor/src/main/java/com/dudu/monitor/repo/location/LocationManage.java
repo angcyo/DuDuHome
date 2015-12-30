@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
+import com.dudu.monitor.event.CarStatus;
 import com.dudu.monitor.valueobject.LocationInfo;
 
 import org.slf4j.Logger;
@@ -11,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by dengjun on 2015/11/26.
@@ -26,6 +29,8 @@ public class LocationManage implements ILocationListener{
     private LocationInfo mCurLocation; //当前位置点 过滤后的
 
     private Logger log;
+    private Context mContext;
+
     public static  LocationManage getInstance(){
         if (instance == null){
             synchronized (LocationManage.class){
@@ -43,6 +48,9 @@ public class LocationManage implements ILocationListener{
 
         locationInfoList = new ArrayList<>();
         log = LoggerFactory.getLogger("lbs.gps");
+
+        EventBus.getDefault().unregister(this);
+        EventBus.getDefault().register(this);
     }
 
 
@@ -78,10 +86,27 @@ public class LocationManage implements ILocationListener{
 
     public void startLocation(Context context){
 //        mILocation.setLocationListener(this);
+        mContext = context;
         mILocation.startLocation(context);
+
     }
 
     public void stopLocation(){
         mILocation.stopLocation();
+    }
+
+    public void onEventBackgroundThread(CarStatus event){
+
+        switch (event){
+            case ONLINE:
+                if(!mILocation.isLocation())
+                    mILocation.startLocation(mContext);
+                break;
+            case OFFLINE:
+                log.debug("熄火后停止定位");
+                mILocation.stopLocation();
+                break;
+        }
+
     }
 }
