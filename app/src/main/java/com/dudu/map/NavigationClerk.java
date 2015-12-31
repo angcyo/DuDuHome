@@ -90,6 +90,8 @@ public class NavigationClerk {
     private String msg;
     private Subscription naviSubscription = null;
 
+    private long mLastClickTime;
+
     private Runnable removeWindowRunnable = new Runnable() {
 
         @Override
@@ -116,6 +118,7 @@ public class NavigationClerk {
 
     public NavigationClerk() {
         this.mContext = LauncherApplication.getContext();
+        mLastClickTime = System.currentTimeMillis();
         navigationManager = NavigationManager.getInstance(mContext);
 
         EventBus.getDefault().unregister(this);
@@ -132,6 +135,9 @@ public class NavigationClerk {
 
 
     public boolean openNavi(int openType) {
+        if (checkFastClick()) {
+            return false;
+        }
 
         switch (NaviUtils.getOpenMode(mContext)) {
             case INSIDE:
@@ -140,8 +146,20 @@ public class NavigationClerk {
                 openGaode();
                 break;
         }
+
         return true;
     }
+
+    private boolean checkFastClick() {
+        long now = System.currentTimeMillis();
+        if (now - mLastClickTime < 3000) {
+            return true;
+        }
+
+        mLastClickTime = now;
+        return false;
+    }
+
 
     public void closeMap() {
         ActivitiesManager.getInstance().closeTargetActivity(

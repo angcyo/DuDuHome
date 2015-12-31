@@ -86,8 +86,11 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     private Button mVideoButton, mNavigationButton,
             mDiDiButton, mWlanButton;
+
     private TextView mDateTextView, mWeatherView, mTemperatureView;
+
     private ImageView mWeatherImage;
+
     private LinearLayout mSelfCheckingView;
 
     private RecordBindService mRecordService;
