@@ -304,9 +304,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     @Override
     protected void onDestroy() {
-        navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
-        NavigationClerk.getInstance().setIsManual(false);
-        NavigationClerk.getInstance().setIsShowAddress(false);
         if (mapView != null) {
             mapView.onDestroy();
             mapView = null;

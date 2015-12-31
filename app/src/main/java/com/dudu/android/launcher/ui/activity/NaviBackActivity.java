@@ -131,9 +131,6 @@ AMapNaviViewListener{
 		viewOptions.setTrafficBarEnabled(true);
 		mAmapAMapNaviView.setViewOptions(viewOptions);
 		mAmapAMapNaviView.getMap().setTrafficEnabled(true);
-
-
-
 		mAmapAMapNaviView.getMap().setOnMapClickListener(new AMap.OnMapClickListener() {
 			@Override
 			public void onMapClick(LatLng latLng) {

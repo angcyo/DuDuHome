@@ -1,8 +1,6 @@
 package com.dudu.android.launcher.utils;
 
-import java.util.List;
 import android.widget.AdapterView.OnItemClickListener;
-import com.dudu.navi.entity.PoiResultInfo;
 
 public class FloatWindow {
 

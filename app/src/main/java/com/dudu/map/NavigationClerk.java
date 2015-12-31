@@ -44,8 +44,6 @@ import com.dudu.voice.semantic.chain.ChoiseChain;
 import com.dudu.voice.semantic.chain.ChoosePageChain;
 import com.dudu.voice.semantic.engine.SemanticProcessor;
 
-import java.util.concurrent.TimeUnit;
-
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscription;
@@ -89,6 +87,8 @@ public class NavigationClerk {
     private Class intentClass;
     private String msg;
     private Subscription naviSubscription = null;
+    private Subscription choosestrategyMethodSub = null;
+    private Subscription chooseAddressSub = null;
 
     private long mLastClickTime;
 
@@ -138,7 +138,6 @@ public class NavigationClerk {
         if (checkFastClick()) {
             return false;
         }
-
         switch (NaviUtils.getOpenMode(mContext)) {
             case INSIDE:
                 return (openType == OPEN_MAP) ? openMapActivity() : openActivity(openType);
@@ -146,7 +145,6 @@ public class NavigationClerk {
                 openGaode();
                 break;
         }
-
         return true;
     }
 
@@ -155,11 +153,9 @@ public class NavigationClerk {
         if (now - mLastClickTime < 3000) {
             return true;
         }
-
         mLastClickTime = now;
         return false;
     }
-
 
     public void closeMap() {
         ActivitiesManager.getInstance().closeTargetActivity(
@@ -220,7 +216,8 @@ public class NavigationClerk {
 
 
     public void searchControl(String semantic, String service, String keyword, SearchType type) {
-
+        chooseAddressSub = null;
+        choosestrategyMethodSub = null;
         if (navigationManager.getSearchType() == SearchType.SEARCH_COMMONADDRESS)
             type = SearchType.SEARCH_COMMONPLACE;
         navigationManager.setSearchType(type);
@@ -233,20 +230,16 @@ public class NavigationClerk {
     }
 
     public void doSearch() {
-
-
-        msg = "正在搜索" + navigationManager.getKeyword();
-        boolean isShow = false;
-        if(NaviUtils.getOpenMode(mContext)==OpenMode.INSIDE){
-        if (!navigationManager.isNavigatining() && !isMapActivity()) {
-            intentClass = LocationMapActivity.class;
-            intentActivity();
-            return;
-        }
-        isNaviActivity();}else {
+        if (NaviUtils.getOpenMode(mContext) == OpenMode.INSIDE) {
+            if (!navigationManager.isNavigatining() && !isMapActivity()) {
+                intentClass = LocationMapActivity.class;
+                intentActivity();
+                return;
+            }
+            isNaviActivity();
+        } else {
             openGaode();
         }
-
         switch (navigationManager.getSearchType()) {
             case SEARCH_DEFAULT:
                 return;
@@ -255,34 +248,8 @@ public class NavigationClerk {
             case SEARCH_PLACE:
             case SEARCH_PLACE_LOCATION:
             case SEARCH_COMMONPLACE:
-                if(Monitor.getInstance(mContext).getCurrentLocation()==null){
-                    navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
-                    msg = "暂未获取到您的当前位置，不能搜索，请稍后再试";
-                    if(isManual){
-                        ToastUtils.showToast(msg);
-                    }else{
-                        VoiceManager.getInstance().startSpeaking(msg, SemanticConstants.TTS_DO_NOTHING, true);
-                        removeWindow();
-                    }
-                    return;
-                }
-
-                if (TextUtils.isEmpty(navigationManager.getKeyword())) {
-                    VoiceManager.getInstance().startSpeaking("关键字有误，请重新输入！",
-                            SemanticConstants.TTS_START_UNDERSTANDING, true);
-                    return;
-                }
-                msg = "正在搜索 " + navigationManager.getKeyword();
-                if (Constants.CURRENT_POI.equals(navigationManager.getKeyword())) {
-                    navigationManager.setSearchType(SearchType.SEARCH_CUR_LOCATION);
-                    msg = "正在获取您的当前位置";
-                    isShow = true;
-                }
-                if(!isManual)
-                  VoiceManager.getInstance().startSpeaking(msg, SemanticConstants.TTS_DO_NOTHING, isShow);
-                showProgressDialog(msg);
+                searchHint();
                 break;
-
         }
         mhandler.postDelayed(new Runnable() {
             @Override
@@ -291,6 +258,36 @@ public class NavigationClerk {
             }
         }, 2000);
 
+    }
+
+    private void searchHint(){
+        msg = "正在搜索" + navigationManager.getKeyword();
+        boolean isShow = false;
+        if (Monitor.getInstance(mContext).getCurrentLocation() == null) {
+            navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
+            msg = "暂未获取到您的当前位置，不能搜索，请稍后再试";
+            if (isManual) {
+                ToastUtils.showToast(msg);
+            } else {
+                VoiceManager.getInstance().startSpeaking(msg, SemanticConstants.TTS_DO_NOTHING, true);
+                removeWindow();
+            }
+            return;
+        }
+        if (TextUtils.isEmpty(navigationManager.getKeyword())) {
+            VoiceManager.getInstance().startSpeaking("关键字有误，请重新输入！",
+                    SemanticConstants.TTS_START_UNDERSTANDING, true);
+            return;
+        }
+        msg = "正在搜索 " + navigationManager.getKeyword();
+        if (Constants.CURRENT_POI.equals(navigationManager.getKeyword())) {
+            navigationManager.setSearchType(SearchType.SEARCH_CUR_LOCATION);
+            msg = "正在获取您的当前位置";
+            isShow = true;
+        }
+        if (!isManual)
+            VoiceManager.getInstance().startSpeaking(msg, SemanticConstants.TTS_DO_NOTHING, isShow);
+        showProgressDialog(msg);
     }
 
     private boolean isNaviActivity() {
@@ -437,7 +434,7 @@ public class NavigationClerk {
 
     private void initWaitingDialog(String message) {
 
-        if (waitingDialog != null&&waitingDialog.isShowing()) {
+        if (waitingDialog != null && waitingDialog.isShowing()) {
             waitingDialog.dismiss();
             waitingDialog = null;
         }
@@ -480,6 +477,8 @@ public class NavigationClerk {
     }
 
     public void showAddressByVoice() {
+        if (navigationManager.getPoiResultList().isEmpty())
+            return;
         VoiceManager.getInstance().startSpeaking(
                 "为您找到以下地址，请选择第几个", SemanticConstants.TTS_START_UNDERSTANDING, true);
         FloatWindowUtil.showAddress(
@@ -498,36 +497,43 @@ public class NavigationClerk {
     }
 
     public void chooseAddress(int position) {
-        try {
-            choosepoiResult = (isManual || isAddressManual) ? navigationManager.getPoiResultList().get(position)
-                    : navigationManager.getPoiResultList().get(position - 1);
-            endPoint = new Point(choosepoiResult.getLatitude(), choosepoiResult.getLongitude());
-            if (choosepoiResult != null) {
+        if(chooseAddressSub!=null)
+            return;
+        chooseAddressSub = Observable.just(position).subscribe(new Action1<Integer>() {
+            @Override
+            public void call(Integer position) {
 
-                if (navigationManager.getSearchType() == SearchType.SEARCH_COMMONPLACE) {
-                    addCommonAddress(choosepoiResult);
-                    return;
-                }
-                if (isManual) {
-                    EventBus.getDefault().post(MapResultShow.STRATEGY);
-                } else {
-                    showStrategyMethod(position);
-                }
+                try {
+                    choosepoiResult = (isManual || isAddressManual) ? navigationManager.getPoiResultList().get(position)
+                            : navigationManager.getPoiResultList().get(position - 1);
+                    endPoint = new Point(choosepoiResult.getLatitude(), choosepoiResult.getLongitude());
+                    if (choosepoiResult != null) {
 
+                        if (navigationManager.getSearchType() == SearchType.SEARCH_COMMONPLACE) {
+                            addCommonAddress(choosepoiResult);
+                            return;
+                        }
+                        if (isManual) {
+                            EventBus.getDefault().post(MapResultShow.STRATEGY);
+                        } else {
+                            showStrategyMethod(position);
+                        }
+
+                    }
+                } catch (IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                    if (!isManual) {
+                        if (position > navigationManager.getPoiResultList().size()) {
+                            navigationManager.getLog().debug("----- choose error stopUnderstanding");
+                            VoiceManager.getInstance().stopUnderstanding();
+                            String playText = "选择错误，请重新选择";
+                            VoiceManager.getInstance().startSpeaking(playText,
+                                    SemanticConstants.TTS_START_UNDERSTANDING, false);
+                        }
+                    }
+                }
             }
-        } catch (IndexOutOfBoundsException e) {
-            e.printStackTrace();
-            if (!isManual) {
-                if (position > navigationManager.getPoiResultList().size()) {
-                    navigationManager.getLog().debug("----- choose error stopUnderstanding");
-                    VoiceManager.getInstance().stopUnderstanding();
-                    String playText = "选择错误，请重新选择";
-                    VoiceManager.getInstance().startSpeaking(playText,
-                            SemanticConstants.TTS_START_UNDERSTANDING, false);
-                }
-            }
-        }
-
+        });
     }
 
     /**
@@ -558,40 +564,46 @@ public class NavigationClerk {
      * 语音选择路线优先策略
      */
     public void showStrategyMethod(int position) {
-        isShowAddress = true;
-        navigationManager.getLog().debug("----showStrategyMethod stopUnderstanding");
-        VoiceManager.getInstance().stopUnderstanding();
-        VoiceManager.getInstance().clearMisUnderstandCount();
-        if (!isAddressManual && position > navigationManager.getPoiResultList().size()) {
-            String playText = "选择错误，请重新选择";
-            VoiceManager.getInstance().startSpeaking(playText,
-                    SemanticConstants.TTS_START_UNDERSTANDING, false);
+        if (choosestrategyMethodSub != null)
             return;
-        }
-        chooseStep = 2;
-        String playText = "请选择路线优先策略。";
-        if (navigationManager.getSearchType() == SearchType.SEARCH_NEAREST)
-            playText = "已经为您找到最近的" + navigationManager.getKeyword() + ",请选择路线优先策略";
-        VoiceManager.getInstance().startSpeaking(playText,
-                SemanticConstants.TTS_START_UNDERSTANDING, false);
-        FloatWindowUtil.showStrategy(
-                new AdapterView.OnItemClickListener() {
+        choosestrategyMethodSub = Observable.just(position).subscribe(new Action1<Integer>() {
+            @Override
+            public void call(Integer position) {
+                isShowAddress = true;
+                navigationManager.getLog().debug("----showStrategyMethod stopUnderstanding");
+                VoiceManager.getInstance().stopUnderstanding();
+                VoiceManager.getInstance().clearMisUnderstandCount();
+                if (!isAddressManual && position > navigationManager.getPoiResultList().size()) {
+                    String playText = "选择错误，请重新选择";
+                    VoiceManager.getInstance().startSpeaking(playText,
+                            SemanticConstants.TTS_START_UNDERSTANDING, false);
+                    return;
+                }
+                chooseStep = 2;
+                String playText = "请选择路线优先策略。";
+                if (navigationManager.getSearchType() == SearchType.SEARCH_NEAREST)
+                    playText = "已经为您找到最近的" + navigationManager.getKeyword() + ",请选择路线优先策略";
+                VoiceManager.getInstance().startSpeaking(playText,
+                        SemanticConstants.TTS_START_UNDERSTANDING, false);
+                FloatWindowUtil.showStrategy(
+                        new AdapterView.OnItemClickListener() {
 
-                    @Override
-                    public void onItemClick(
-                            AdapterView<?> arg0, View view,
-                            int position, long arg3) {
-                        startNavigation(new Navigation(endPoint, navigationManager.getDriveModeList().get(position),
-                                NavigationType.NAVIGATION));
-                    }
-                });
+                            @Override
+                            public void onItemClick(
+                                    AdapterView<?> arg0, View view,
+                                    int position, long arg3) {
+                                startNavigation(new Navigation(endPoint, navigationManager.getDriveModeList().get(position),
+                                        NavigationType.NAVIGATION));
+                            }
+                        });
+            }
+        });
+
 
     }
 
     // 选择路径规划策略
     public void chooseDriveMode(int position) {
-        if (navigationManager.getPoiResultList().isEmpty())
-            return;
         if (position > navigationManager.getDriveModeList().size()) {
             navigationManager.getLog().debug("-----choose error DriveMode stopUnderstanding");
             VoiceManager.getInstance().stopUnderstanding();
@@ -629,19 +641,19 @@ public class NavigationClerk {
         }
     }
 
-    public void startNavigation(final Navigation navigation) {
-        if (naviSubscription!=null)
+    public void startNavigation(Navigation navigation) {
+        if (naviSubscription != null)
             return;
-        naviSubscription = Observable.just("")
-                .subscribe(new Action1<String>() {
+        naviSubscription = Observable.just(navigation)
+                .subscribe(new Action1<Navigation>() {
                     @Override
-                    public void call(String s) {
+                    public void call(Navigation navigation) {
                         navigationManager.getLog().debug("----startNavigation stopUnderstanding");
                         VoiceManager.getInstance().stopUnderstanding();
                         VoiceManager.getInstance().clearMisUnderstandCount();
                         VoiceManager.getInstance().startSpeaking("路径规划中，请稍后...", SemanticConstants.TTS_DO_NOTHING, false);
                         FloatWindowUtil.removeFloatWindow();
-                        if(NaviUtils.getOpenMode(mContext)==OpenMode.OUTSIDE){
+                        if (NaviUtils.getOpenMode(mContext) == OpenMode.OUTSIDE) {
                             startNaviOutside(navigation);
                             return;
                         }
@@ -655,13 +667,14 @@ public class NavigationClerk {
                 });
 
     }
-    private void startNaviOutside(Navigation navigation){
+
+    private void startNaviOutside(Navigation navigation) {
         NaviPara naviPara = new NaviPara();
         naviPara.setTargetPoint(new LatLng(navigation.getDestination().latitude,
                 navigation.getDestination().longitude));
         naviPara.setNaviStyle(navigation.getDriveMode().ordinal());
         try {
-            AMapUtils.openAMapNavi(naviPara,mContext);
+            AMapUtils.openAMapNavi(naviPara, mContext);
             LauncherApplication.getContext().setReceivingOrder(true);
             naviSubscription = null;
         } catch (AMapException e) {
@@ -697,23 +710,23 @@ public class NavigationClerk {
         }
     }
 
-    public void onEvent(CarStatus event){
+    public void onEvent(CarStatus event) {
 
-        switch (event){
+        switch (event) {
             case OFFLINE:
                 existNavi();
                 break;
         }
     }
 
-    public void onEvent(NaviEvent.NavigationInfoBroadcast event){
-        if(!FloatWindowUtil.IsWindowShow()){
+    public void onEvent(NaviEvent.NavigationInfoBroadcast event) {
+        if (!FloatWindowUtil.IsWindowShow()) {
             VoiceManager.getInstance().clearMisUnderstandCount();
             VoiceManager.getInstance().startSpeaking(event.getInfo(), SemanticConstants.TTS_DO_NOTHING, false);
         }
     }
 
-    public void openGaode(){
+    public void openGaode() {
         EventBus.getDefault().post(NaviEvent.FloatButtonEvent.SHOW);
         Utils.startThirdPartyApp(ActivitiesManager.getInstance().getTopActivity(), "com.autonavi.minimap");
     }
