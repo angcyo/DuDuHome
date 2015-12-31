@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.util.Log;
 
 import com.amap.api.maps.AMapException;
 import com.amap.api.maps.AMapUtils;
@@ -87,6 +88,7 @@ public class AgedUtils {
 
     public static void installGaoDeMap(Context context) {
         if (isAppInstalled(context, AgedContacts.GAO_DE_PACKAGE_NAME)) {
+            Log.v("jjjj", "openMap..");
             openMap(context);
         } else {
             if (gaoApkFile.exists()) {

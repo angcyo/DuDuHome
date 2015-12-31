@@ -106,6 +106,14 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     private int log_step;
 
+    private Handler agedHandler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            EventBus.getDefault().post(new VoiceEvent(VoiceEvent.INIT_RECORDING_SERVICE));
+            AgedUtils.proceedAgeTest(MainActivity.this);
+        }
+    };
+
     private class WorkerHandler extends Handler {
         public WorkerHandler(Looper looper) {
             super(looper);
@@ -194,18 +202,18 @@ public class MainActivity extends BaseTitlebarActivity implements
         mDiDiButton.setOnClickListener(this);
         mWlanButton.setOnClickListener(this);
 
-        mWlanButton.setOnLongClickListener(new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
+        if (Utils.isDemoVersion(this)) {
 
-                EventBus.getDefault().post(new VoiceEvent(VoiceEvent.INIT_RECORDING_SERVICE));
-
-                AgedUtils.proceedAgeTest(MainActivity.this);
-
-                return true;
-            }
-        });
-
+            agedHandler.sendEmptyMessageDelayed(0,10000);
+            mWlanButton.setOnLongClickListener(new OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    EventBus.getDefault().post(new VoiceEvent(VoiceEvent.INIT_RECORDING_SERVICE));
+                    AgedUtils.proceedAgeTest(MainActivity.this);
+                    return true;
+                }
+            });
+        }
         mVideoButton.setOnClickListener(this);
         mNavigationButton.setOnClickListener(this);
 

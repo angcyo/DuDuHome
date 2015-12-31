@@ -38,14 +38,17 @@ import com.dudu.android.launcher.db.DbHelper;
 import com.dudu.android.launcher.service.video.VideoConfigParam;
 import com.dudu.android.launcher.service.video.VideoTransfer;
 import com.dudu.android.launcher.ui.activity.video.VideoListActivity;
+import com.dudu.android.launcher.utils.AgedUtils;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.DeviceIDUtil;
 import com.dudu.android.launcher.utils.FileNameUtil;
 import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
+import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.ViewAnimation;
 import com.dudu.conn.ConnectionEvent;
 import com.dudu.event.DeviceEvent;
+import com.dudu.event.VoiceEvent;
 import com.dudu.http.MultipartRequest;
 import com.dudu.http.MultipartRequestParams;
 import com.dudu.voice.semantic.VoiceManager;
@@ -710,6 +713,11 @@ public class RecordBindService extends Service implements SurfaceHolder.Callback
                 mVideoCacheMaxSize = Float.parseFloat(FileUtils.fileByte2Mb(FileUtils.getTFlashCardSpace()));
 
                 startRecord();
+
+                if (Utils.isDemoVersion(RecordBindService.this)) {
+                    EventBus.getDefault().post(new VoiceEvent(VoiceEvent.INIT_RECORDING_SERVICE));
+                    AgedUtils.proceedAgeTest(RecordBindService.this);
+                }
             } else if (action.equals(Intent.ACTION_MEDIA_REMOVED)) {
                 logger.debug("TFlashCard拔出...");
 

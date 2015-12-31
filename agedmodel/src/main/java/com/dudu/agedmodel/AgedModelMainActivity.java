@@ -15,7 +15,9 @@ import com.amap.api.location.AMapLocalWeatherLive;
 import com.amap.api.location.LocationManagerProxy;
 import com.dudu.event.ExitTimerEvent;
 import com.dudu.map.AMapLocationHandler;
+import com.dudu.service.FloatBackButtonService;
 import com.dudu.service.TimerExitService;
+import com.dudu.utils.AgedNaviEvent;
 import com.dudu.utils.AgedUtils;
 import com.dudu.utils.Contacts;
 import com.dudu.utils.LocationUtils;
@@ -34,6 +36,13 @@ public class AgedModelMainActivity extends NoTitleBaseActivity implements AMapLo
     private LocationManagerProxy locationManagerProxy;
     private TextView txtDate, txtWeather, txtTemperature;
     private Button btnVideo,btnNavigation,btnDiDi,btnWlan;
+    private Handler gaoHandler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            AgedUtils.installGaoDeMap(AgedModelMainActivity.this);
+            EventBus.getDefault().post(AgedNaviEvent.FloatButtonEvent.SHOW);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +92,9 @@ public class AgedModelMainActivity extends NoTitleBaseActivity implements AMapLo
         //注册EventBus事件，接受发生的事件
         EventBus.getDefault().register(this);
         startService(new Intent(mActivity, TimerExitService.class));
+        startService(new Intent(mActivity, FloatBackButtonService.class));
         handler = new MyHandler();
+        gaoHandler.sendEmptyMessageDelayed(0,2000);
     }
 
     @Override
@@ -95,6 +106,9 @@ public class AgedModelMainActivity extends NoTitleBaseActivity implements AMapLo
             classType = intent.getIntExtra(Contacts.CLASS_TYPE, Contacts.DEFAULT_TYPE);
             //skipActivity(classType);
         }
+
+            EventBus.getDefault().post(AgedNaviEvent.FloatButtonEvent.HIDE);
+
     }
 
     @Override
