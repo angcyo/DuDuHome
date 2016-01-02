@@ -127,6 +127,10 @@
             android:theme="@style/AppBaseTheme" />
         <activity android:name=".ui.activity.GsensorChartActivity" />
 
+        <activity
+            android:name=".ui.activity.IpConfigActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppBaseTheme" />
         <service android:name=".service.NewMessageShowService" />
         <service android:name=".service.FloatBackButtonService" />
         <service android:name=".service.MonitorService" />

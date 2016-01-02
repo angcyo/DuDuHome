@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config>
+    <server_ip>119.29.65.127</server_ip>
+    <server_port>8888</server_port>
+    <test_server_ip>119.29.132.60</test_server_ip>
+    <test_server_port>8888</test_server_port>
+    <is_test>1</is_test>
+</config>

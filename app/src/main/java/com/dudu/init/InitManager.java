@@ -14,6 +14,7 @@ import com.dudu.android.launcher.service.MonitorService;
 import com.dudu.android.launcher.service.NewMessageShowService;
 import com.dudu.android.launcher.utils.CarStatusUtils;
 import com.dudu.android.launcher.utils.Constants;
+import com.dudu.android.launcher.utils.IPConfig;
 import com.dudu.android.launcher.utils.SharedPreferencesUtil;
 import com.dudu.android.launcher.utils.StatusBarManager;
 import com.dudu.android.launcher.utils.Utils;
@@ -203,6 +204,8 @@ public class InitManager {
         StatusBarManager.getInstance().registerSignalListener();
 
         screenOff();
+
+        IPConfig.getInstance(mContext).init();
     }
 
     public boolean isFinished() {

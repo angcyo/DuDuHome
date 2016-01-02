@@ -7,6 +7,8 @@ import android.support.annotation.Nullable;
 
 import com.dudu.android.hideapi.SystemPropertiesProxy;
 import com.dudu.android.launcher.utils.CarStatusUtils;
+import com.dudu.android.launcher.utils.IPConfig;
+import com.dudu.android.launcher.utils.Utils;
 import com.dudu.calculation.Calculation;
 import com.dudu.conn.FlowManage;
 import com.dudu.conn.PortalUpdate;
@@ -49,8 +51,7 @@ public class MainService extends Service {
 
         log.info("启动主服务------------");
 
-        networkManage = NetworkManage.getInstance();
-        networkManage.init();
+        initNetWork();
 
         ObdInit.initOBD(this);
 
@@ -70,6 +71,20 @@ public class MainService extends Service {
 
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
+    }
+
+    private void initNetWork() {
+        String ip;
+        int port;
+        if (IPConfig.getInstance(this).isTest_Server()|| Utils.isDemoVersion(this)) {
+            ip = IPConfig.getInstance(this).getTestServerIP();
+            port = IPConfig.getInstance(this).getTestServerPort();
+        } else {
+            ip = IPConfig.getInstance(this).getServerIP();
+            port = IPConfig.getInstance(this).getServerPort();
+        }
+        networkManage = NetworkManage.getInstance();
+        networkManage.init(ip, port);
     }
 
     @Override

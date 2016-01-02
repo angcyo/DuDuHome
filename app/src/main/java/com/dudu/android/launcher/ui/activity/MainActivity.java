@@ -43,6 +43,7 @@ import com.dudu.android.launcher.broadcast.WeatherAlarmReceiver;
 import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
+import com.dudu.android.launcher.ui.dialog.IPConfigDialog;
 import com.dudu.android.launcher.utils.AgedUtils;
 import com.dudu.android.launcher.utils.DialogUtils;
 import com.dudu.android.launcher.utils.FileUtils;
@@ -225,6 +226,15 @@ public class MainActivity extends BaseTitlebarActivity implements
                 }
             });
         }
+
+        mWlanButton.setOnLongClickListener(new OnLongClickListener() {
+
+            @Override
+            public boolean onLongClick(View v) {
+                new IPConfigDialog().showDialog(MainActivity.this);
+                return true;
+            }
+        });
     }
 
     private void initTaxiView() {

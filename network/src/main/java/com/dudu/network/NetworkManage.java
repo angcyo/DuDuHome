@@ -28,8 +28,8 @@ public class NetworkManage {
         networkService = new NetworkService();
     }
 
-    public void init(){
-        networkService.init(new ConnectionParam());
+    public void init(String ip,int port){
+        networkService.init(new ConnectionParam(ip,port));
     }
 
     public void release(){

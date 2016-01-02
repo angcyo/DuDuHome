@@ -208,8 +208,8 @@ public class NetworkService implements IConnectCallBack {
 
         if (sendThreadPool != null && !sendThreadPool.isShutdown()) {
             try {
-                sendThreadPool.awaitTermination(10 * 1000, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
+                sendThreadPool.shutdown();
+            } catch (Exception e) {
                 log.error("异常:" + e);
             }
             sendThreadPool = null;
