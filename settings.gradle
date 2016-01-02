@@ -1,6 +1,5 @@
+include ':agedmodel', ':agewifitest', ':agebluetest', ':calculation', ':storage', ':ext'
 
-include ':agedmodel', ':agewifitest', ':agebluetest', ':calculation', ':storage'
-
-include ':app', ':libble', ':scf4a', ':navi', ':hideapi',':monitor', ':network', ':bluetooth'
+include ':app', ':libble', ':scf4a', ':navi', ':hideapi', ':monitor', ':network', ':bluetooth'
 
 
