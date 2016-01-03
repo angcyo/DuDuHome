@@ -3,6 +3,7 @@ package com.dudu.video;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
+import android.media.AudioManager;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Handler;
@@ -15,10 +16,12 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.dudu.android.hideapi.SystemPropertiesProxy;
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.bean.VideoEntity;
 import com.dudu.android.launcher.db.DbHelper;
+import com.dudu.android.launcher.service.video.VideoConfigParam;
 import com.dudu.android.launcher.service.video.VideoTransfer;
 import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
@@ -40,6 +43,9 @@ import java.util.TimerTask;
  * Created by 赵圣琪 on 2015/12/9.
  */
 public class VideoManager implements SurfaceHolder.Callback {
+
+    /* 录像视频参数*/
+    private VideoConfigParam videoConfigParam;
 
     private static final int VIDEO_CACHE_FULL = 0;
 
@@ -84,6 +90,9 @@ public class VideoManager implements SurfaceHolder.Callback {
 
     private Logger logger;
 
+    /* 当前录制视频的文件名*/
+    private String curVideoName;
+
     private class VideoHandler extends Handler {
         public VideoHandler() {
             super(Looper.getMainLooper());
@@ -109,6 +118,8 @@ public class VideoManager implements SurfaceHolder.Callback {
 
     private VideoManager() {
         logger = LoggerFactory.getLogger("video.VideoManager");
+
+        videoConfigParam = new VideoConfigParam();
 
         mContext = LauncherApplication.getContext();
 
@@ -160,7 +171,7 @@ public class VideoManager implements SurfaceHolder.Callback {
         Camera.Parameters params = mCamera.getParameters();
         params.setPreviewFormat(PixelFormat.YCbCr_420_SP);
         params.setPreviewSize(854, 480);
-        params.setPictureSize(1280, 720);
+        params.setPictureSize(videoConfigParam.getWidth(), videoConfigParam.getHeight());
 
         mCamera.setParameters(params);
         mCamera.setErrorCallback(new Camera.ErrorCallback() {
@@ -267,7 +278,10 @@ public class VideoManager implements SurfaceHolder.Callback {
                 return;
             } catch (Exception e) {
                 logger.error("录像开启出错: " + e.getMessage());
+                SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.boot", "reboot");
             }
+        } else {
+            //TODO 如果初始化Recorder失败要不要重试
         }
 
         stopRecord();
@@ -288,7 +302,7 @@ public class VideoManager implements SurfaceHolder.Callback {
             }
         };
 
-        mTimer.schedule(mTimerTask, VIDEO_INTERVAL, VIDEO_INTERVAL);
+        mTimer.schedule(mTimerTask, videoConfigParam.getVideo_interval(), videoConfigParam.getVideo_interval());
     }
 
     private boolean prepareMediaRecorder() {
@@ -307,9 +321,9 @@ public class VideoManager implements SurfaceHolder.Callback {
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
 
-        CamcorderProfile profile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
-        if (profile.videoBitRate > 2 * 1024 * 1024) {
-            mMediaRecorder.setVideoEncodingBitRate(2 * 1024 * 1024);
+        CamcorderProfile profile = CamcorderProfile.get(videoConfigParam.getQuality());
+        if (profile.videoBitRate > videoConfigParam.getVideoBitRate()) {
+            mMediaRecorder.setVideoEncodingBitRate(videoConfigParam.getVideoBitRate());
         } else {
             mMediaRecorder.setVideoEncodingBitRate(profile.videoBitRate);
         }
@@ -322,10 +336,12 @@ public class VideoManager implements SurfaceHolder.Callback {
 
         mVideoName = mDateFormat.format(new Date()) + ".mp4";
 
-        mMediaRecorder.setOutputFile(mVideoStoragePath + File.separator + mVideoName);
+        curVideoName = mVideoStoragePath + File.separator + mVideoName;
 
-        mMediaRecorder.setVideoFrameRate(30);
+        mMediaRecorder.setOutputFile(curVideoName);
 
+        mMediaRecorder.setVideoFrameRate(videoConfigParam.getRate());
+        mMediaRecorder.setVideoSize(videoConfigParam.getWidth(), videoConfigParam.getHeight());
         try {
             mMediaRecorder.prepare();
         } catch (Exception e) {
@@ -345,6 +361,9 @@ public class VideoManager implements SurfaceHolder.Callback {
                 logger.error("录像关闭异常: " + e.toString());
             }
         }
+
+        //当前的录像上传
+        mVideoTransfer.addVideoFileName(curVideoName);
 
         releaseMediaRecorder();
 
@@ -445,6 +464,14 @@ public class VideoManager implements SurfaceHolder.Callback {
         video.setPath(mVideoStoragePath);
         video.setSize(length);
         mDbHelper.insertVideo(video);
+    }
+
+    public VideoConfigParam getVideoConfigParam() {
+        return videoConfigParam;
+    }
+
+    public void setVideoConfigParam(VideoConfigParam videoConfigParam) {
+        this.videoConfigParam = videoConfigParam;
     }
 
 }

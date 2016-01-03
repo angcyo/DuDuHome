@@ -14,6 +14,7 @@ import com.dudu.android.launcher.utils.TimeUtils;
 import com.dudu.http.MultipartRequest;
 import com.dudu.http.MultipartRequestParams;
 import com.dudu.network.event.UploadVideo;
+import com.dudu.video.VideoManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -87,7 +88,19 @@ public class VideoTransfer {
 
     /* 用新的间隔参数重启摄像*/
     private void restartRecordVideo(boolean optionFlag){
-
+        log.info("用新的间隔参数重启摄像  optionFlag = {}", optionFlag);
+        VideoManager.getInstance().stopRecord();
+        if (optionFlag){
+            VideoManager.getInstance().getVideoConfigParam().resetToDefault();
+        }else {
+            VideoManager.getInstance().getVideoConfigParam().setToUploadParam();
+        }
+        try {
+            Thread.sleep(5*1000);
+        } catch (InterruptedException e) {
+            log.error("异常：{}", e);
+        }
+        VideoManager.getInstance().startRecord();
     }
 
     /* 加入录像路径*/

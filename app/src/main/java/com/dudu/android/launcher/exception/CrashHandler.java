@@ -7,6 +7,7 @@ import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.TimeUtils;
 import com.dudu.init.InitManager;
+import com.dudu.video.VideoManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -60,6 +61,8 @@ public class CrashHandler implements UncaughtExceptionHandler {
 		if (ex == null) {
 			return false;
 		}
+
+		VideoManager.getInstance().stopRecord();
 
 		new Thread(new Runnable() {
 
