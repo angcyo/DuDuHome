@@ -99,8 +99,10 @@ public class LocationManage implements ILocationListener{
 
         switch (event){
             case ONLINE:
-                if(!mILocation.isLocation())
+                if(!mILocation.isLocation()){
+                    log.debug("点火后开始定位");
                     mILocation.startLocation(mContext);
+                }
                 break;
             case OFFLINE:
                 log.debug("熄火后停止定位");

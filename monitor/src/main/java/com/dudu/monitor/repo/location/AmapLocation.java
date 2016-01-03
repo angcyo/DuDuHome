@@ -84,13 +84,10 @@ public class AmapLocation implements AMapLocationListener, ILocation {
     @Override
     public void startLocation(Context context) {
         mContext = context;
-
         mLocationManagerProxy = LocationManagerProxy.getInstance(context);
         mLocationManagerProxy.requestLocationData(
                 LocationProviderProxy.AMapNetwork, 2000, 10, this);
-
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-
     }
 
     @Override
@@ -107,6 +104,9 @@ public class AmapLocation implements AMapLocationListener, ILocation {
                     cur_locatopn.getLongitude());
         }
 
+        isFirstRun = true;
+        isFirstLoc = true;
+
     }
 
     @Override
@@ -121,8 +121,8 @@ public class AmapLocation implements AMapLocationListener, ILocation {
 
     @Override
     public void onLocationChanged(AMapLocation location) {
-        String provider = location.getProvider();
-        log.debug("定到位置 " + provider);
+
+        log.debug("定到位置 " + location.getProvider());
         log.debug("位置信息 " + "纬度:" + location.getLatitude() + "  经度：" + location.getLongitude());
 
         if (GPSdataTime < 2) {
@@ -149,10 +149,6 @@ public class AmapLocation implements AMapLocationListener, ILocation {
         if (mILocationListener != null && location != null) {
             mILocationListener.onLocationResult(location);
         }
-        /*LocationInfo locationInfo = new LocationInfo(location);
-        if (mILocationListener != null) {
-            mILocationListener.onLocationResult(locationInfo);
-        }*/
 
         handlerGPS(location);
     }
@@ -257,8 +253,6 @@ public class AmapLocation implements AMapLocationListener, ILocation {
             log.debug("gps未通过过滤");
         }
     }
-
-
 
     @Override
     public void onLocationChanged(Location location) {

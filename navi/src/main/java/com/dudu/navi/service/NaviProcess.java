@@ -64,6 +64,7 @@ public class NaviProcess {
     private boolean isSucess = false;
 
     private boolean iscalculate = false;
+
     public NaviProcess(Context context) {
         this.mContext = context;
         log = LoggerFactory.getLogger("lbs.navi");
@@ -91,7 +92,9 @@ public class NaviProcess {
 
     public void destoryAmapNavi() {
         log.debug("destoryAmapNavi");
-        AMapNavi.getInstance(mContext).removeAMapNaviListener(mAmapNaviListener);
+        if (mAmapNaviListener != null) {
+            AMapNavi.getInstance(mContext).removeAMapNaviListener(mAmapNaviListener);
+        }
         AMapNavi.getInstance(mContext).stopNavi();
         AMapNavi.getInstance(mContext).destroy();
 
@@ -210,11 +213,11 @@ public class NaviProcess {
                 @Override
                 public void onCalculateRouteSuccess() {
                     log.debug("[{}] 步行或者驾车路径规划成功", step++);
-                   if(iscalculate){
-                       isSucess = true;
-                       iscalculate = false;
-                       EventBus.getDefault().post(navigationType);
-                   }
+                    if (iscalculate) {
+                        isSucess = true;
+                        iscalculate = false;
+                        EventBus.getDefault().post(navigationType);
+                    }
 
 
                 }
