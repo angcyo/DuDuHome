@@ -705,9 +705,6 @@ public class NavigationClerk {
                 | Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(standIntent);
         ActivitiesManager.getInstance().closeTargetActivity(LocationMapActivity.class);
-        if (LauncherApplication.getContext().getRecordService() != null) {
-            LauncherApplication.getContext().getRecordService().updatePreviewSize(1, 1);
-        }
     }
 
     public void onEvent(CarStatus event) {

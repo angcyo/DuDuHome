@@ -1,25 +1,17 @@
 package com.dudu.android.launcher.ui.activity;
 
 import android.app.AlarmManager;
-import android.app.Dialog;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -33,44 +25,30 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.amap.api.maps.AMapException;
-import com.amap.api.maps.AMapUtils;
-import com.amap.api.maps.model.LatLng;
-import com.amap.api.maps.model.RoutePara;
-import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.broadcast.WeatherAlarmReceiver;
-import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
 import com.dudu.android.launcher.ui.dialog.IPConfigDialog;
 import com.dudu.android.launcher.utils.AgedUtils;
-import com.dudu.android.launcher.utils.DialogUtils;
-import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WeatherUtil;
 import com.dudu.android.launcher.utils.WifiApAdmin;
-import com.dudu.android.launcher.utils.cache.AgedContacts;
 import com.dudu.event.DeviceEvent;
 import com.dudu.event.VoiceEvent;
 import com.dudu.init.InitManager;
 import com.dudu.map.NavigationClerk;
 import com.dudu.navi.event.NaviEvent;
 import com.dudu.obd.ObdInit;
+import com.dudu.video.VideoManager;
 import com.dudu.voice.semantic.VoiceManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
-
 import java.util.Calendar;
-
-import java.util.ArrayList;
-
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import de.greenrobot.event.EventBus;
@@ -90,11 +68,11 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     private TextView mDateTextView, mWeatherView, mTemperatureView;
 
+    private VideoManager mVideoManager;
+
     private ImageView mWeatherImage;
 
     private LinearLayout mSelfCheckingView;
-
-    private RecordBindService mRecordService;
 
     private AlarmManager mAlarmManager;
 
@@ -102,13 +80,9 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     private WorkerHandler mWorkerHandler;
 
-    private ServiceConnection mServiceConnection;
-
     private Button mVoiceButton;
 
     private Logger log_init;
-
-    private int log_step;
 
     private class WorkerHandler extends Handler {
         public WorkerHandler(Looper looper) {
@@ -119,10 +93,10 @@ public class MainActivity extends BaseTitlebarActivity implements
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case START_RECORDING:
-                    mRecordService.startRecord();
+                    mVideoManager.startRecord();
                     break;
                 case STOP_RECORDING:
-                    mRecordService.stopRecord();
+                    mVideoManager.stopRecord();
                     break;
                 case START_VOICE_SERVICE:
                     VoiceManager.getInstance().startVoiceService();
@@ -146,7 +120,6 @@ public class MainActivity extends BaseTitlebarActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         log_init = LoggerFactory.getLogger("init.start");
-        log_step = 0;
         super.onCreate(savedInstanceState);
 
         EventBus.getDefault().unregister(this);
@@ -154,11 +127,11 @@ public class MainActivity extends BaseTitlebarActivity implements
 
         InitManager.getInstance().init();
 
-        initVideoService();
-
         initDate();
 
         setWeatherAlarm();
+
+        mVideoManager = VideoManager.getInstance();
 
         mWorkerThread = new HandlerThread("video and voice worker thread");
         mWorkerThread.start();
@@ -261,17 +234,12 @@ public class MainActivity extends BaseTitlebarActivity implements
         InitManager.getInstance().unInit();
 
         cancelWeatherAlarm();
-
-        if (mServiceConnection != null) {
-            unbindService(mServiceConnection);
-        }
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.video_button:
-                mRecordService.startRecord();
                 startActivity(new Intent(MainActivity.this, VideoActivity.class));
                 break;
 
@@ -322,30 +290,6 @@ public class MainActivity extends BaseTitlebarActivity implements
         mDateTextView.setText(dateFormat.format(new Date()));
     }
 
-    /**
-     * 实例化录像服务
-     */
-    private void initVideoService() {
-        log_init.debug("[main][{}]initVideoService", log_step++);
-        mServiceConnection = new ServiceConnection() {
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                mRecordService = null;
-            }
-
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                mRecordService = ((RecordBindService.MyBinder) service).getService();
-                ((LauncherApplication) getApplicationContext())
-                        .setRecordService(mRecordService);
-            }
-        };
-
-        Intent intent = new Intent(MainActivity.this, RecordBindService.class);
-        bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
-    }
-
     private void setWeatherAlarm() {
         mAlarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
@@ -394,7 +338,7 @@ public class MainActivity extends BaseTitlebarActivity implements
     }
 
     public void onEventMainThread(DeviceEvent.Screen event) {
-        log_init.debug("DeviceEvent.Screen {}",event.getState());
+        log_init.debug("DeviceEvent.Screen {}", event.getState());
         com.dudu.android.hideapi.SystemPropertiesProxy.getInstance()
                 .set(MainActivity.this, "persist.sys.screen", event.getState() == DeviceEvent.ON ? "on" : "off");
     }
@@ -446,9 +390,6 @@ public class MainActivity extends BaseTitlebarActivity implements
 
             //关闭热点
             WifiApAdmin.closeWifiAp(this);
-
-            //关闭录像
-            mRecordService.stopCamera();
 
             //stop bluetooth
             ObdInit.uninitOBD(this);

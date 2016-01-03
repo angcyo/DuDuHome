@@ -21,8 +21,6 @@ public class LauncherApplication extends Application {
 
     private boolean mReceivingOrder = false;
 
-    private RecordBindService mRecordService;
-
     private Logger logger;
 
     public static LauncherApplication getContext() {
@@ -56,14 +54,6 @@ public class LauncherApplication extends Application {
         crashHandler.init(getApplicationContext());
 
         NetworkUtils.writePortalConfig(this);
-    }
-
-    public RecordBindService getRecordService() {
-        return mRecordService;
-    }
-
-    public void setRecordService(RecordBindService service) {
-        mRecordService = service;
     }
 
     public boolean isReceivingOrder() {

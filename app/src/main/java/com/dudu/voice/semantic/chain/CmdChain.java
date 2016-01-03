@@ -2,7 +2,6 @@ package com.dudu.voice.semantic.chain;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.bean.CmdEntity;
@@ -16,7 +15,6 @@ import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.GsonUtil;
 import com.dudu.android.launcher.utils.JsonUtils;
-import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.map.NavigationClerk;
 import com.dudu.voice.semantic.SemanticConstants;
@@ -105,10 +103,6 @@ public class CmdChain extends SemanticChain {
             case Constants.OPEN:
             case Constants.START:
             case Constants.KAIQI:
-                if (mApplication.getRecordService() != null) {
-                    mApplication.getRecordService().startRecord();
-                }
-
                 Intent intent = new Intent();
                 intent.setClass(mApplication, VideoActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

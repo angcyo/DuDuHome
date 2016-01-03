@@ -7,7 +7,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-import com.dudu.android.launcher.service.RecordBindService;
+import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.utils.DeviceIDUtil;
 import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.TimeUtils;
@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -50,13 +49,10 @@ public class VideoTransfer {
     /* 用于存放文件路径*/
     private List<String > videoFileNameList;
 
-    private RecordBindService recordBindService;
-
     private VideoConfirmRequest videoConfirmRequest;
 
-    public VideoTransfer(Context context, RecordBindService recordBindService) {
-        mContext = context;
-        this.recordBindService = recordBindService;
+    public VideoTransfer() {
+        mContext = LauncherApplication.getContext();
 
         queue = Volley.newRequestQueue(mContext);
 
@@ -91,19 +87,7 @@ public class VideoTransfer {
 
     /* 用新的间隔参数重启摄像*/
     private void restartRecordVideo(boolean optionFlag){
-        log.info("用新的间隔参数重启摄像  optionFlag = {}", optionFlag);
-        recordBindService.stopRecord();
-        if (optionFlag){
-            recordBindService.getVideoConfigParam().resetToDefault();
-        }else {
-            recordBindService.getVideoConfigParam().setToUploadParam();
-        }
-        try {
-            Thread.sleep(5*1000);
-        } catch (InterruptedException e) {
-            log.error("异常：{}", e);
-        }
-        recordBindService.startRecord();
+
     }
 
     /* 加入录像路径*/
@@ -196,8 +180,6 @@ public class VideoTransfer {
             return null;
         }
     }
-
-
 
     private void doUploadVideo(String videoFileName){
         File videoFileToUpload = new File(videoFileName);

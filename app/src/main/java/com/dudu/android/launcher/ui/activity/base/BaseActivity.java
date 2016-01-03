@@ -2,23 +2,19 @@ package com.dudu.android.launcher.ui.activity.base;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.Bundle;
-import android.view.MotionEvent;
-import com.dudu.android.launcher.utils.ActivitiesManager;
-import com.dudu.android.launcher.utils.DensityUtil;
-import android.content.BroadcastReceiver;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.database.ContentObserver;
 import android.media.AudioManager;
-import android.os.Handler;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.View;
-import android.view.WindowManager;
 import android.view.GestureDetector.OnGestureListener;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.WindowManager;
+
+import com.dudu.android.launcher.utils.ActivitiesManager;
+import com.dudu.android.launcher.utils.DensityUtil;
 
 public abstract class BaseActivity extends Activity implements OnGestureListener, OnTouchListener {
 
@@ -198,53 +194,12 @@ public abstract class BaseActivity extends Activity implements OnGestureListener
 
     @Override
     public void onLongPress(MotionEvent e) {
+
     }
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         return false;
     }
-
-    /**
-     * 处理音量变化时的界面显示
-     */
-    private void myRegisterReceiver() {
-        MyVolumeReceiver mVolumeReceiver = new MyVolumeReceiver();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("android.media.VOLUME_CHANGED_ACTION");
-        registerReceiver(mVolumeReceiver, filter);
-    }
-
-    private class MyVolumeReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals("android.media.VOLUME_CHANGED_ACTION")) {
-                int currVolume = audiomanager.getStreamVolume(AudioManager.STREAM_MUSIC);// 当前的媒体音量
-                int percentage = (currVolume * 100) / maxVolume;
-
-            }
-        }
-    }
-
-    /**
-     * 处理亮度变化时的界面显示
-     */
-    private ContentObserver mBrightnessObserver = new ContentObserver(new Handler()) {
-
-
-        @Override
-        public void onChange(boolean selfChange) {
-
-            currentBrightness = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, -1);
-            int percentage = (currentBrightness * 100) / maxBrightness;
-// 根据当前进度改变亮度
-            WindowManager.LayoutParams wl = getWindow().getAttributes();
-            float tmpFloat = (float) currentBrightness / 255;
-            if (tmpFloat > 0 && tmpFloat <= 1) {
-                wl.screenBrightness = tmpFloat;
-            }
-            getWindow().setAttributes(wl);
-        }
-    };
 
 }
