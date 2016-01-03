@@ -14,7 +14,6 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.RoutePara;
 import com.dudu.agedmodel.R;
 
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -109,9 +108,22 @@ public class AgedUtils {
             }
 
             if (isAppInstalled(context, packageName)) {
-                openMap(context);
+                EventBus.getDefault().post(AgedNaviEvent.FloatButtonEvent.SHOW);
+                startThirdPartyApp(context, "com.autonavi.minimap");
                 break;
             }
+        }
+    }
+
+    public static void startThirdPartyApp(Context context, String packageName) {
+        Intent intent;
+        PackageManager packageManager = context.getPackageManager();
+        intent = packageManager.getLaunchIntentForPackage(packageName);
+        if (intent != null) {
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                    | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
+                    | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            context.startActivity(intent);
         }
     }
 
@@ -136,12 +148,14 @@ public class AgedUtils {
     }
 
 
-
     public static void uninstallGaoApk(final Context context) {
         if (isAppInstalled(context, AgedContacts.GAO_DE_PACKAGE_NAME)) {
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_DELETE);
             intent.setData(Uri.parse(AgedContacts.GAO_AKP_PACKAGE));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                    | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
+                    | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             context.startActivity(intent);
         } else {
             DialogUtils.showCopyMessage(context, context.getString(R.string.deleting_map));

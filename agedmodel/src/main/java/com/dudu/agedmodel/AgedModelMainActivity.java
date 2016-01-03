@@ -1,6 +1,10 @@
 package com.dudu.agedmodel;
 
+import android.app.Application;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -33,14 +37,16 @@ public class AgedModelMainActivity extends NoTitleBaseActivity implements AMapLo
     private Intent mIntent = null;
     private int classType;
     private AgedModelMainActivity mActivity;
+    private Application mApp;
     private LocationManagerProxy locationManagerProxy;
     private TextView txtDate, txtWeather, txtTemperature;
     private Button btnVideo,btnNavigation,btnDiDi,btnWlan;
+    private TFlashCardReceiver mTFlashCardReceiver;
     private Handler gaoHandler=new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            AgedUtils.installGaoDeMap(AgedModelMainActivity.this);
             EventBus.getDefault().post(AgedNaviEvent.FloatButtonEvent.SHOW);
+            AgedUtils.installGaoDeMap(AgedModelMainActivity.this);
         }
     };
 
@@ -48,6 +54,7 @@ public class AgedModelMainActivity extends NoTitleBaseActivity implements AMapLo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActivity = this;
+        mApp = this.getApplication();
         setContentView(R.layout.activity_aged_model_main);
         initView();
         initData();
@@ -93,8 +100,16 @@ public class AgedModelMainActivity extends NoTitleBaseActivity implements AMapLo
         EventBus.getDefault().register(this);
         startService(new Intent(mActivity, TimerExitService.class));
         startService(new Intent(mActivity, FloatBackButtonService.class));
+
         handler = new MyHandler();
-        gaoHandler.sendEmptyMessageDelayed(0,2000);
+        gaoHandler.sendEmptyMessageDelayed(0,5000);
+
+        mTFlashCardReceiver = new TFlashCardReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_MEDIA_MOUNTED);
+        intentFilter.addAction(Intent.ACTION_MEDIA_REMOVED);
+        intentFilter.addDataScheme("file");
+        registerReceiver(mTFlashCardReceiver, intentFilter);
     }
 
     @Override
@@ -107,7 +122,7 @@ public class AgedModelMainActivity extends NoTitleBaseActivity implements AMapLo
             //skipActivity(classType);
         }
 
-            EventBus.getDefault().post(AgedNaviEvent.FloatButtonEvent.HIDE);
+//        EventBus.getDefault().post(AgedNaviEvent.FloatButtonEvent.HIDE);
 
     }
 
@@ -189,6 +204,7 @@ public class AgedModelMainActivity extends NoTitleBaseActivity implements AMapLo
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unregisterReceiver(mTFlashCardReceiver);
         handler.removeMessages(0);
     }
 
@@ -200,4 +216,15 @@ public class AgedModelMainActivity extends NoTitleBaseActivity implements AMapLo
         System.exit(0);
     }
 
+    private class TFlashCardReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals(Intent.ACTION_MEDIA_MOUNTED)) {
+            } else if (action.equals(Intent.ACTION_MEDIA_REMOVED)) {
+                AgedUtils.uninstallGaoApk(mApp);
+            }
+        }
+    }
 }
