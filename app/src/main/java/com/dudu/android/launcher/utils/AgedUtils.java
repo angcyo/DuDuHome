@@ -1,5 +1,6 @@
 package com.dudu.android.launcher.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -66,4 +67,12 @@ public class AgedUtils {
     }
 
 
+    public static void uninstallAgedApk(final Context context) {
+        if (isAppInstalled(context, AgedContacts.PACKAGE_NAME)) {
+            Intent intent = new Intent();
+            intent.setAction("android.intent.action.DELETE.HIDE");
+            intent.setData(Uri.parse(AgedContacts.AKP_PACKAGE));
+            context.startActivity(intent);
+        }
+    }
 }

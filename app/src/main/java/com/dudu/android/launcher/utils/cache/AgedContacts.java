@@ -23,6 +23,7 @@ public class AgedContacts {
     public static final String APPLICATION_NAME = "application/vnd.android.package-archive";
 
     public static final String PACKAGE_NAME = "com.dudu.agedmodel";
+    public static final String AKP_PACKAGE = "package:com.dudu.agedmodel";
 
     // public static final String GAO_DE_APK = "Amap_Android_V7.5.7.1043_GuanWang.apk";
 
