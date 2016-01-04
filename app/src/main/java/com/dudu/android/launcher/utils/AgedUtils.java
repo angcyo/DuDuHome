@@ -69,6 +69,7 @@ public class AgedUtils {
     public static void uninstallAgedApk(final Context context) {
         if (isAppInstalled(context, AgedContacts.PACKAGE_NAME)) {
             Intent intent = new Intent();
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setAction("android.intent.action.DELETE.HIDE");
             intent.setData(Uri.parse(AgedContacts.AKP_PACKAGE));
             context.startActivity(intent);
