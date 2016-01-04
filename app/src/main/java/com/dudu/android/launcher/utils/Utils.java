@@ -11,6 +11,9 @@ import android.text.TextUtils;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
+import com.dudu.navi.event.NaviEvent;
+
+import de.greenrobot.event.EventBus;
 
 public class Utils {
 
@@ -35,7 +38,7 @@ public class Utils {
         }
     }
 
-    public static void startThirdPartyApp(Context context, String packageName, int stringId) {
+    public static boolean startThirdPartyApp(Context context, String packageName, int stringId) {
         Intent intent;
         PackageManager packageManager = context.getPackageManager();
         intent = packageManager.getLaunchIntentForPackage(packageName);
@@ -45,8 +48,10 @@ public class Utils {
                     | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
                     | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             context.startActivity(intent);
+            return true;
         } else {
             ToastUtils.showToast(stringId);
+            return false;
         }
     }
 
@@ -197,20 +202,26 @@ public class Utils {
     }
 
     public static void openJD(Context context) {
+        boolean has_start = false;
         switch (getJDType(context)) {
 
             case "feidi":
-                startThirdPartyApp(context, "com.miu360.feidi.taxi", R.string.error_no_didi);
+                has_start = startThirdPartyApp(context, "com.miu360.feidi.taxi", R.string.error_no_didi);
                 break;
             case "didi":
-                startThirdPartyApp(context, "com.sdu.didi.gsui", R.string.error_no_didi);
+                has_start = startThirdPartyApp(context, "com.sdu.didi.gsui", R.string.error_no_didi);
                 break;
             case "uber":
-                startThirdPartyApp(context, "com.ubercab.driver", R.string.error_no_uber);
+                has_start = startThirdPartyApp(context, "com.ubercab.driver", R.string.error_no_uber);
                 break;
             default:
-                startThirdPartyApp(context, "com.sdu.didi.gsui", R.string.error_no_didi);
+                has_start = startThirdPartyApp(context, "com.sdu.didi.gsui", R.string.error_no_didi);
                 break;
+        }
+
+        //显示返回的按钮
+        if (has_start) {
+            EventBus.getDefault().post(NaviEvent.FloatButtonEvent.SHOW);
         }
     }
 }
