@@ -13,6 +13,7 @@ import com.amap.api.navi.model.AMapLaneInfo;
 import com.amap.api.navi.model.AMapNaviCross;
 import com.amap.api.navi.model.AMapNaviInfo;
 import com.amap.api.navi.model.AMapNaviLocation;
+import com.amap.api.navi.model.AMapNaviTrafficFacilityInfo;
 import com.amap.api.navi.model.NaviInfo;
 import com.amap.api.navi.model.NaviLatLng;
 import com.autonavi.tbt.TrafficFacilityInfo;
@@ -160,6 +161,7 @@ public class NaviProcess {
 
     private AMapNaviListener getAMapNaviListener() {
         if (mAmapNaviListener == null) {
+
             mAmapNaviListener = new AMapNaviListener() {
 
                 @Override
@@ -219,7 +221,6 @@ public class NaviProcess {
                         EventBus.getDefault().post(navigationType);
                     }
 
-
                 }
 
                 @Override
@@ -260,6 +261,11 @@ public class NaviProcess {
                 }
 
                 @Override
+                public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo aMapNaviTrafficFacilityInfo) {
+                    log.debug("[{}] 当前方路况光柱信息有更新时", step++);
+                }
+
+                @Override
                 public void showCross(AMapNaviCross aMapNaviCross) {
 
                 }
@@ -276,6 +282,11 @@ public class NaviProcess {
 
                 @Override
                 public void hideLaneInfo() {
+
+                }
+
+                @Override
+                public void onCalculateMultipleRoutesSuccess(int[] ints) {
 
                 }
             };
