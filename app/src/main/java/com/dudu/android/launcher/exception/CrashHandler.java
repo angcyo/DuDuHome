@@ -49,8 +49,6 @@ public class CrashHandler implements UncaughtExceptionHandler {
 	public void uncaughtException(Thread thread, Throwable ex) {
 		InitManager.getInstance().unInit();
 
-		VideoManager.getInstance().releaseAll();
-
 		if (!handleException(ex) && mDefaultHandler != null) {
 			mDefaultHandler.uncaughtException(thread, ex);
 		} else {
