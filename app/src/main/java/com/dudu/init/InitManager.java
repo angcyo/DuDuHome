@@ -12,6 +12,7 @@ import com.dudu.android.launcher.service.CheckUserService;
 import com.dudu.android.launcher.service.FloatBackButtonService;
 import com.dudu.android.launcher.service.MonitorService;
 import com.dudu.android.launcher.service.NewMessageShowService;
+import com.dudu.android.launcher.utils.AgedUtils;
 import com.dudu.android.launcher.utils.CarStatusUtils;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.IPConfig;
@@ -157,6 +158,9 @@ public class InitManager {
             com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext,
                     "persist.sys.usb.config", "charging");
         }
+
+        //卸载残留的老化软件
+        AgedUtils.uninstallAgedApk(mContext);
 
         rx.Observable.timer(1, TimeUnit.SECONDS)
                 .subscribe(new Action1<Long>() {

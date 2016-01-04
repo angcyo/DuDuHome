@@ -184,6 +184,8 @@ public class Utils {
             String versionName = packageInfo.versionName;
             if (versionName.contains("didi")) {
                 jd = "didi";
+            } else if (versionName.contains("feidi")) {
+                jd = "feidi";
             } else if (versionName.contains("uber")) {
                 jd = "uber";
             }
@@ -197,6 +199,9 @@ public class Utils {
     public static void openJD(Context context) {
         switch (getJDType(context)) {
 
+            case "feidi":
+                startThirdPartyApp(context, "com.miu360.feidi.taxi", R.string.error_no_didi);
+                break;
             case "didi":
                 startThirdPartyApp(context, "com.sdu.didi.gsui", R.string.error_no_didi);
                 break;

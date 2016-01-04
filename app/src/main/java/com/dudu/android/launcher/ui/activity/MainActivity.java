@@ -180,8 +180,6 @@ public class MainActivity extends BaseTitlebarActivity implements
                     return true;
                 }
             });
-        } else {
-            AgedUtils.uninstallAgedApk(this);
         }
 
         mVideoButton.setOnClickListener(this);
