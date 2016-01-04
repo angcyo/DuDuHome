@@ -240,7 +240,7 @@ public class MessageHandler {
         SwitchFlow switchFlow = new SwitchFlow();
         switchFlow.createFromJsonString(messageJsonObject.toString());
 
-        log.info("network-发出AccessGps事件");
+        log.info("network-发出Switchflow事件");
         EventBus.getDefault().post(switchFlow);
     }
 

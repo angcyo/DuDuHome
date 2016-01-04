@@ -173,6 +173,7 @@ public class SendService {
             e.printStackTrace();
         }
         String portalCount = SystemPropertiesProxy.getInstance().get("persist.sys.views", "0");
+        log.debug("portalCount[{}]",portalCount);
         if (Monitor.getInstance(mContext).isDeviceActived()){
             NetworkManage.getInstance().sendMessage(new Portal(mContext,portalCount));
         }

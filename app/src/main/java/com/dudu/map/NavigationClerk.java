@@ -90,7 +90,7 @@ public class NavigationClerk {
     private Subscription choosestrategyMethodSub = null;
     private Subscription chooseAddressSub = null;
 
-    private long mLastClickTime;
+    private long mLastClickTime = 0;
 
     private Runnable removeWindowRunnable = new Runnable() {
 
@@ -118,14 +118,11 @@ public class NavigationClerk {
 
     public NavigationClerk() {
         this.mContext = LauncherApplication.getContext();
-        mLastClickTime = System.currentTimeMillis();
         navigationManager = NavigationManager.getInstance(mContext);
-
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
         mhandler = new Handler();
     }
-
 
     public static NavigationClerk getInstance() {
         if (navigationClerk == null)
@@ -194,15 +191,14 @@ public class NavigationClerk {
         return true;
     }
 
-
     private Activity getTopActivity() {
         return ActivitiesManager.getInstance().getTopActivity();
     }
 
     private boolean isMapActivity() {
-
         return (getTopActivity() != null && getTopActivity() instanceof LocationMapActivity);
     }
+
 
     public void existNavi() {
         navigationManager.existNavigation();
@@ -260,7 +256,7 @@ public class NavigationClerk {
 
     }
 
-    private void searchHint(){
+    private void searchHint() {
         msg = "正在搜索" + navigationManager.getKeyword();
         boolean isShow = false;
         if (Monitor.getInstance(mContext).getCurrentLocation() == null) {
@@ -497,7 +493,7 @@ public class NavigationClerk {
     }
 
     public void chooseAddress(int position) {
-        if(chooseAddressSub!=null)
+        if (chooseAddressSub != null)
             return;
         chooseAddressSub = Observable.just(position).subscribe(new Action1<Integer>() {
             @Override
@@ -705,6 +701,7 @@ public class NavigationClerk {
                 | Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(standIntent);
         ActivitiesManager.getInstance().closeTargetActivity(LocationMapActivity.class);
+        mLastClickTime = 0;
     }
 
     public void onEvent(CarStatus event) {
