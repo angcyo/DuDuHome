@@ -38,7 +38,6 @@ public class AgedUtils {
     }
 
     public static void proceedAgeTest(Context context) {
-        // EventBus.getDefault().post(NaviEvent.FloatButtonEvent.SHOW);
         if (isAppInstalled(context, AgedContacts.PACKAGE_NAME)) {
             Utils.startThirdPartyApp(context, AgedContacts.PACKAGE_NAME);
         } else {

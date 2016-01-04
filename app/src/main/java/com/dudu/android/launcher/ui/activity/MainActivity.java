@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dudu.android.launcher.R;
+import com.dudu.android.launcher.broadcast.TFlashCardReceiver;
 import com.dudu.android.launcher.broadcast.WeatherAlarmReceiver;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
@@ -80,6 +82,8 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     private WorkerHandler mWorkerHandler;
 
+    private TFlashCardReceiver mTFlashCardReceiver;
+
     private Button mVoiceButton;
 
     private Logger log_init;
@@ -119,8 +123,10 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        log_init = LoggerFactory.getLogger("init.start");
         super.onCreate(savedInstanceState);
+        log_init = LoggerFactory.getLogger("init.start");
+
+        log_init.debug("MainActivity 调用onCreate方法初始化...");
 
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
@@ -137,6 +143,18 @@ public class MainActivity extends BaseTitlebarActivity implements
         mWorkerThread.start();
 
         mWorkerHandler = new WorkerHandler(mWorkerThread.getLooper());
+
+       registerTFlashCardReceiver();
+    }
+
+    private void registerTFlashCardReceiver() {
+        mTFlashCardReceiver = new TFlashCardReceiver();
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_MEDIA_MOUNTED);
+        intentFilter.addAction(Intent.ACTION_MEDIA_REMOVED);
+        intentFilter.addDataScheme("file");
+        registerReceiver(mTFlashCardReceiver, intentFilter);
     }
 
     @Override
@@ -230,11 +248,13 @@ public class MainActivity extends BaseTitlebarActivity implements
     protected void onDestroy() {
         super.onDestroy();
 
-        log_init.debug("主界面退出 onDestroy方法调用...");
+        log_init.debug("MainActivity 调用onDestroy释放资源...");
 
         InitManager.getInstance().unInit();
 
         cancelWeatherAlarm();
+
+        unregisterReceiver(mTFlashCardReceiver);
     }
 
     @Override
@@ -388,6 +408,8 @@ public class MainActivity extends BaseTitlebarActivity implements
 
             //关闭Portal
             com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(MainActivity.this, "persist.sys.nodog", "stop");
+
+            mVideoManager.stopRecord();
 
             //关闭热点
             WifiApAdmin.closeWifiAp(this);

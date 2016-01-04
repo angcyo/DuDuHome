@@ -69,16 +69,16 @@ public class VideoActivity extends BaseNoTitlebarAcitivity {
         mVideoView.findViewById(R.id.surfaceView).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                stopDisappearAnimation();
+
+                startDisappearAnimation();
+
                 if (mBackButton.getVisibility() == View.VISIBLE ||
                         mDetailButton.getVisibility() == View.VISIBLE) {
                     return;
                 }
 
                 toggleAnimation();
-
-                stopDisappearAnimation();
-
-                startDisappearAnimation();
             }
         });
 
@@ -106,6 +106,7 @@ public class VideoActivity extends BaseNoTitlebarAcitivity {
     public void initDatas() {
         if (!FileUtils.isTFlashCardExists()) {
             ToastUtils.showToast(R.string.video_sdcard_removed_alert);
+            mVideoManager.startPreview();
         }
     }
 

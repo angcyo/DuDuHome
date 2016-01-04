@@ -48,8 +48,9 @@ public class VideoManager implements SurfaceHolder.Callback {
     private VideoConfigParam videoConfigParam;
 
     private static final int VIDEO_CACHE_FULL = 0;
+    private static final int VIDEO_START_RETRY = 1;
 
-    private static final int VIDEO_INTERVAL = 10 * 60 * 1000;
+    private static final int VIDEO_RETRY_INTERVAL = 3000;
 
     public static VideoManager mInstance;
 
@@ -104,6 +105,11 @@ public class VideoManager implements SurfaceHolder.Callback {
                 case VIDEO_CACHE_FULL:
                     ToastUtils.showToast(R.string.video_cache_space_full_alert);
                     break;
+                case VIDEO_START_RETRY:
+                    setUpCamera();
+
+                    startRecord();
+                    break;
             }
         }
     }
@@ -157,6 +163,10 @@ public class VideoManager implements SurfaceHolder.Callback {
         mVideoTransfer = new VideoTransfer();
     }
 
+    public VideoConfigParam getVideoConfigParam() {
+        return videoConfigParam;
+    }
+
     private void setUpCamera() {
         logger.debug("开始初始化camera...");
         shutdownCamera();
@@ -178,6 +188,7 @@ public class VideoManager implements SurfaceHolder.Callback {
             @Override
             public void onError(int error, Camera camera) {
                 logger.error("相机出错了： " + error);
+                releaseAll();
             }
         });
     }
@@ -214,8 +225,8 @@ public class VideoManager implements SurfaceHolder.Callback {
         try {
             mCamera.setPreviewDisplay(mHolder);
             mCamera.startPreview();
-        } catch (IOException ioe) {
-            logger.error("开始相机预览错误...");
+        } catch (Exception e) {
+            logger.error("开始相机预览错误: " + e.getMessage());
         }
     }
 
@@ -249,7 +260,19 @@ public class VideoManager implements SurfaceHolder.Callback {
         createVideoFragment();
     }
 
+    public void releaseAll() {
+        mRecording = false;
+
+        releaseMediaRecorder();
+
+        shutdownCamera();
+
+        stopRecordTimer();
+    }
+
     public void onTFlashCardInserted() {
+        logger.debug("TFlashCard插入...");
+
         ToastUtils.showToast(R.string.video_sdcard_inserted_alert);
 
         mVideoStoragePath = FileUtils.getVideoStorageDir().getAbsolutePath();
@@ -264,7 +287,7 @@ public class VideoManager implements SurfaceHolder.Callback {
 
         ToastUtils.showToast(R.string.video_sdcard_removed_alert);
 
-        stopRecord();
+        setUpCamera();
 
         startPreview();
     }
@@ -281,10 +304,13 @@ public class VideoManager implements SurfaceHolder.Callback {
                 SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.boot", "reboot");
             }
         } else {
-            //TODO 如果初始化Recorder失败要不要重试
-        }
+            mRecording = false;
 
-        stopRecord();
+            releaseMediaRecorder();
+
+            mHandler.sendMessageDelayed(mHandler.obtainMessage(VIDEO_START_RETRY),
+                    VIDEO_RETRY_INTERVAL);
+        }
     }
 
     private void startRecordTimer() {
@@ -464,14 +490,6 @@ public class VideoManager implements SurfaceHolder.Callback {
         video.setPath(mVideoStoragePath);
         video.setSize(length);
         mDbHelper.insertVideo(video);
-    }
-
-    public VideoConfigParam getVideoConfigParam() {
-        return videoConfigParam;
-    }
-
-    public void setVideoConfigParam(VideoConfigParam videoConfigParam) {
-        this.videoConfigParam = videoConfigParam;
     }
 
 }
