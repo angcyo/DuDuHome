@@ -212,8 +212,7 @@ public class NavigationClerk {
 
 
     public void searchControl(String semantic, String service, String keyword, SearchType type) {
-        chooseAddressSub = null;
-        choosestrategyMethodSub = null;
+
         if (navigationManager.getSearchType() == SearchType.SEARCH_COMMONADDRESS)
             type = SearchType.SEARCH_COMMONPLACE;
         navigationManager.setSearchType(type);
@@ -226,6 +225,8 @@ public class NavigationClerk {
     }
 
     public void doSearch() {
+        chooseAddressSub = null;
+        choosestrategyMethodSub = null;
         if (NaviUtils.getOpenMode(mContext) == OpenMode.INSIDE) {
             if (!navigationManager.isNavigatining() && !isMapActivity()) {
                 intentClass = LocationMapActivity.class;

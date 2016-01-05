@@ -24,6 +24,7 @@ import com.dudu.android.launcher.utils.WeatherUtil;
 import com.dudu.event.BleStateChange;
 import com.dudu.event.DeviceEvent;
 import com.dudu.monitor.Monitor;
+import com.dudu.monitor.event.CarStatus;
 
 import java.util.Iterator;
 
@@ -152,6 +153,14 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
             mGpsSignalImage.setImageResource(R.drawable.gps_signal_normal);
         } else {
             mGpsSignalImage.setImageResource(R.drawable.gps_signal_error);
+        }
+    }
+
+    public void onEventMainThread(CarStatus carStatus){
+        switch (carStatus){
+            case OFFLINE:
+                mGpsSignalImage.setImageResource(R.drawable.gps_signal_error);
+                break;
         }
     }
 

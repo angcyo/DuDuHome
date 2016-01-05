@@ -6,4 +6,5 @@
     <test_server_ip>119.29.132.60</test_server_ip>
     <test_server_port>8888</test_server_port>
     <is_test>0</is_test>
+    <version>0</version>
 </config>

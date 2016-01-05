@@ -79,7 +79,7 @@ public class SearchProcess {
     }
 
     public void search(String keyword) {
-        NavigationManager.getInstance(mContext).getLog().debug("开始搜索{}", searchType);
+
         isNoticeFail = false;
         searchType = NavigationManager.getInstance(mContext).getSearchType();
         cur_location = Monitor.getInstance(mContext).getCurrentLocation();
@@ -107,6 +107,7 @@ public class SearchProcess {
                 break;
 
         }
+        NavigationManager.getInstance(mContext).getLog().debug("开始搜索{}", searchType);
         Observable.timer(25, TimeUnit.SECONDS)
                 .subscribe(new Action1<Long>() {
                     @Override

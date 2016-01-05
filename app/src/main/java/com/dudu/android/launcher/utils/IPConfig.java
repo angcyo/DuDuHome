@@ -1,9 +1,12 @@
 package com.dudu.android.launcher.utils;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.util.Log;
 
 import com.dudu.android.launcher.R;
+import com.dudu.network.utils.DuduLog;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -17,6 +20,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+
+import ch.qos.logback.core.util.FileUtil;
 
 /**
  * Created by lxh on 2016/1/2.
@@ -39,6 +44,8 @@ public class IPConfig {
 
     private boolean isTest_Server = false;
 
+    private int versionCode;
+
     public IPConfig(Context context) {
         this.mContext = context;
     }
@@ -51,14 +58,18 @@ public class IPConfig {
     }
 
     public void init() {
-        configDirectory =  FileUtils.getSdPath() + "/dudu/config";
-        configPath = configDirectory +"/"+CONFIG_FILE_NAME;
+        configDirectory = FileUtils.getSdPath() + "/dudu/config";
+        configPath = configDirectory + "/" + CONFIG_FILE_NAME;
+        versionCode = getVersionCode(mContext);
+
         File configFile = new File(configPath);
+        readDefault_config(READ_RAWFILE, null);
         if (!configFile.exists()) {
-            readDefault_config(READ_RAWFILE, configFile);
             copyDefault(mContext, configFile);
+            changeConfig();
         } else {
             readDefault_config(READ_SDFILE, configFile);
+            checkNewVersion();
         }
 
     }
@@ -82,6 +93,15 @@ public class IPConfig {
     public boolean isTest_Server() {
 
         return isTest_Server;
+    }
+
+    private void checkNewVersion() {
+
+        if (versionCode < getVersionCode(mContext)) {
+            readDefault_config(READ_RAWFILE, null);
+            changeConfig();
+        }
+
     }
 
     private void readDefault_config(int readType, File configFile) {
@@ -119,10 +139,13 @@ public class IPConfig {
                             mTestServerIP = xmlParser.getText();
                             break;
                         case "test_server_port":
-                            mTestServerPort =Integer.parseInt(xmlParser.getText());
+                            mTestServerPort = Integer.parseInt(xmlParser.getText());
                             break;
                         case "is_test":
                             isTest_Server = xmlParser.getText().equals("1");
+                            break;
+                        case "version":
+                            versionCode = Integer.parseInt(xmlParser.getText());
                             break;
                     }
 
@@ -142,8 +165,10 @@ public class IPConfig {
     }
 
     private void copyDefault(Context context, File configFile) {
+        if (!FileUtils.isSdCard())
+            return;
         File fileDir = new File(configDirectory);
-        if(!fileDir.exists()){
+        if (!fileDir.exists()) {
             fileDir.mkdir();
         }
         FileOutputStream fileOutput = null;
@@ -226,6 +251,10 @@ public class IPConfig {
             xmlFile.text(Integer.valueOf(isTest_Server ? 1 : 0).toString());
             xmlFile.endTag(null, "is_test");
 
+            xmlFile.startTag(null, "version");
+            xmlFile.text(getVersionCode(mContext) + "");
+            xmlFile.endTag(null, "version");
+
             xmlFile.endTag(null, "config");
 
             xmlFile.endDocument();
@@ -259,5 +288,14 @@ public class IPConfig {
         return changeConfig();
     }
 
-
+    private int getVersionCode(Context context) {
+        try {
+            PackageManager packageManager = context.getPackageManager();
+            PackageInfo packInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
+            return packInfo.versionCode;
+        } catch (Exception e) {
+            DuduLog.e("读版本异常", e);
+            return 0;
+        }
+    }
 }
