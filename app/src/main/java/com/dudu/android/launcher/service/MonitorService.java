@@ -1,5 +1,6 @@
 package com.dudu.android.launcher.service;
 
+import java.io.PipedReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -46,6 +47,10 @@ public class MonitorService extends Service {
 
     private Logger log;
 
+    private float uploadFlowValue = 300;
+
+    private float totalUsedFlowTmp = 0;
+
     private SimpleDateFormat mFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
             Locale.getDefault());
 
@@ -60,6 +65,8 @@ public class MonitorService extends Service {
         mDbHelper = DbHelper.getDbHelper();
 
         mContext = this;
+
+        uploadFlowValue = Float.valueOf(SharedPreferencesUtil.getStringValue(mContext, Constants.KEY_UPLOAD_FLOW_VALUE, "300"));
 
         log = LoggerFactory.getLogger("monitor");
 
@@ -133,7 +140,7 @@ public class MonitorService extends Service {
                             float totalFlow = mDeltaRx + mDeltaTx;//开机到现在已使用总流量
     //                        log.debug("时间段内接收消耗的总流量：{}", totalFlow);
                             if ( Monitor.getInstance(mContext).isDeviceActived()){
-                                NetworkManage.getInstance().sendMessage(new FlowUpload(mContext, totalFlow, mFormat.format(date)));
+                                decideUploadFlow(totalFlow, date);
                             }
                             mDbHelper.updateFlow(mMobileTotalRx, mMobileTotalTx, 1, date);
                         } else {
@@ -185,6 +192,16 @@ public class MonitorService extends Service {
         float timelyRemainingFlow = primaryRemainingFlow - mDeltaRx - mDeltaTx;//更新剩余流量应该是减去时间段内消耗的流量
 //        log.debug("timelyRemainingFlow剩余总流量：{}", timelyRemainingFlow);
         SharedPreferencesUtil.putStringValue(MonitorService.this, Constants.KEY_REMAINING_FLOW, String.valueOf(timelyRemainingFlow));
+    }
+
+
+    private void decideUploadFlow(float totalUsedFlow, Date date){
+        totalUsedFlowTmp += totalUsedFlow;
+//        log.debug("totalUsedFlowTmp = {}, uploadFlowValue = {}", totalUsedFlowTmp, uploadFlowValue);
+        if (totalUsedFlowTmp > uploadFlowValue){
+            NetworkManage.getInstance().sendMessage(new FlowUpload(mContext, totalUsedFlowTmp, mFormat.format(date)));
+            totalUsedFlowTmp = 0;
+        }
     }
 
 }

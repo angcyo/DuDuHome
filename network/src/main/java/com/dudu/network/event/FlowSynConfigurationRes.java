@@ -42,6 +42,8 @@ public class FlowSynConfigurationRes extends MessagePackage{
     private String gpsFrequency;
     private String portalCountFrequency;
 
+    private String uploadFlowValue;
+
     @Override
     public void setMessageId(String messageId) {
 
@@ -104,6 +106,8 @@ public class FlowSynConfigurationRes extends MessagePackage{
             flowFrequency = StringTools.GetStringValue("flowFrequency", result);
             gpsFrequency = StringTools.GetStringValue("gpsFrequency", result);
             portalCountFrequency = StringTools.GetStringValue("portalCountFrequency", result);
+
+            uploadFlowValue = StringTools.GetStringValue("uploadFlowValue", result);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -204,7 +208,12 @@ public class FlowSynConfigurationRes extends MessagePackage{
         return portalCountFrequency;
     }
 
+
     public String getResultCode() {
         return resultCode;
+    }
+
+    public String getUploadFlowValue(){
+        return uploadFlowValue;
     }
 }

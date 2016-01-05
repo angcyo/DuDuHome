@@ -150,6 +150,8 @@ public class FlowManage {
 //            log.info("FlowUploadResponse剩余流量：{}", flowSynConfigurationRes.getRemainingFlow());
 //            SharedPreferencesUtil.putStringValue(mContext,Constants.KEY_REMAINING_FLOW, flowSynConfigurationRes.getRemainingFlow());
 
+            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_UPLOAD_FLOW_VALUE, flowSynConfigurationRes.getUploadFlowValue());
+
         } catch (Exception e) {
             log.error("异常：{}", e);
         }

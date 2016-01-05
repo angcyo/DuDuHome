@@ -154,6 +154,7 @@ public class Constants {
 	public static final String KEY_FLOW_FREQUENCY = "flowFrequency";
 	public static final String KEY_GPS_FREQUENCU = "gpsFrequency";
 	public static final String KEY_PORTAL_COUNT_FREQUENCY = "portalCountFrequency";
+	public static final String KEY_UPLOAD_FLOW_VALUE= "uploadFlowValue";
 
 	public static final String KEY_USER_IS_ACTIVE = "key_user_is_active";
 
