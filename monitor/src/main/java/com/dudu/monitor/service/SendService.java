@@ -48,8 +48,6 @@ public class SendService {
         public void run() {
             log.info("monitor 发送服务");
             try {
-//                activeDevice();
-
                 sendLocationInfo();
 
                 sendObdData();

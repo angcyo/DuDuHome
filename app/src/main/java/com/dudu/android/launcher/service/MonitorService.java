@@ -4,6 +4,7 @@ import java.io.PipedReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import android.app.Service;
 import android.content.Context;
@@ -23,6 +24,9 @@ import com.dudu.network.event.GetFlow;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import rx.Observable;
+import rx.functions.Action1;
 
 
 public class MonitorService extends Service {
@@ -75,14 +79,19 @@ public class MonitorService extends Service {
         mOldMobileRx = TrafficStats.getMobileRxBytes() / 1024;
         mOldMobileTx = TrafficStats.getMobileTxBytes() / 1024;
 
-        mMonitorThread = new MonitorThread();
-        mMonitorThread.setPriority(Thread.NORM_PRIORITY - 1);
-        mMonitorThread.start();
-
 //        NetworkManage.getInstance().sendMessage(new FlowSynConfiguration(this));
-        if (Monitor.getInstance(mContext).isDeviceActived()){
-            NetworkManage.getInstance().sendMessage(new GetFlow(this));
-        }
+        Observable.timer(30, TimeUnit.SECONDS).subscribe(new Action1<Long>() {
+            @Override
+            public void call(Long aLong) {
+                if (Monitor.getInstance(mContext).isDeviceActived()){
+                    mMonitorThread = new MonitorThread();
+                    mMonitorThread.setPriority(Thread.NORM_PRIORITY - 1);
+                    mMonitorThread.start();
+                    NetworkManage.getInstance().sendMessage(new GetFlow(MonitorService.this));
+                }
+            }
+        });
+
     }
 
 

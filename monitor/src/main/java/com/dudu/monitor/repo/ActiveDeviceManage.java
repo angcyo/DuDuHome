@@ -85,6 +85,8 @@ public class ActiveDeviceManage {
             setActiveFlag(ACTIVE_OK);
         } else {
             log.info("monitor-发送-设备激活-----信息");
+            setActiveFlag(UNACTIVE);
+            activeState = 0;
             NetworkManage.getInstance().sendMessage(new ActiveDevice(mContext));
         }
     }
