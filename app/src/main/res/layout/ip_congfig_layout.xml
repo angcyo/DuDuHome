@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="TestIp:"
+            android:text="Ip:"
             android:textColor="@color/white"
             android:textSize="20sp" />
 
@@ -49,7 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="TestPort:"
+            android:text="Port:"
             android:textColor="@color/white"
             android:textSize="20sp" />
 
@@ -64,7 +64,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="ip:"
+            android:text="TestIp:"
             android:textColor="@color/white"
             android:textSize="20sp" />
 
@@ -80,7 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="Port:"
+            android:text="TestPort:"
             android:textColor="@color/white"
             android:textSize="20sp" />
 

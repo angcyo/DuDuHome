@@ -149,7 +149,6 @@ public class NaviProcess {
             mEndPoints.add(new NaviLatLng(navigation.getDestination().latitude, navigation.getDestination().longitude));
             mStartPoints.clear();
             mStartPoints.add(naviLatLng);
-            log.debug("-----------navigation.getDriveMode().ordinal() {}",navigation.getDriveMode().getnCode());
             if (AMapNavi.getInstance(mContext).calculateDriveRoute(mStartPoints, mEndPoints, null,
                     navigation.getDriveMode().getnCode())) {
                 code = CALCULATESUCCESS;

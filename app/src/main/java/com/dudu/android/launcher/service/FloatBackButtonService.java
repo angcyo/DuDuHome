@@ -4,14 +4,19 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
+import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.MainActivity;
+import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.navi.event.NaviEvent;
+
+import org.scf4a.Event;
 
 import de.greenrobot.event.EventBus;
 
@@ -30,6 +35,8 @@ public class FloatBackButtonService extends Service{
     private View floatButton;
 
     private boolean isShow = false;
+
+    private Handler mHandler;
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -42,6 +49,8 @@ public class FloatBackButtonService extends Service{
         EventBus.getDefault().register(this);
 
         initButton();
+
+        mHandler = new Handler();
     }
 
     @Override
@@ -102,7 +111,14 @@ public class FloatBackButtonService extends Service{
                     isShow = false;
                     windowManager.removeView(floatButton);
                 }
-
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(!ActivitiesManager.getInstance().isTopActivity(FloatBackButtonService.this, "com.dudu.android.launcher")){
+                            EventBus.getDefault().post(NaviEvent.FloatButtonEvent.SHOW);
+                        }
+                    }
+                }, 3000);
                 break;
         }
     }

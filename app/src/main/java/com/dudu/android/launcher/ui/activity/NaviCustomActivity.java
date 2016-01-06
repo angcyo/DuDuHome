@@ -2,6 +2,8 @@ package com.dudu.android.launcher.ui.activity;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.GpsSatellite;
+import android.location.GpsStatus;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -25,18 +27,26 @@ import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.NaviSettingUtil;
 import com.dudu.android.launcher.utils.TimeUtils;
+import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.ViewAnimation;
 import com.dudu.map.NavigationClerk;
+import com.dudu.monitor.Monitor;
 import com.dudu.monitor.utils.LocationUtils;
 import com.dudu.navi.NavigationManager;
 import com.dudu.navi.vauleObject.NavigationType;
+import com.dudu.navi.vauleObject.SearchType;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Iterator;
+
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.Subscription;
+import rx.functions.Action1;
 
 /**
  * 实时导航界面
@@ -77,6 +87,20 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         }
     };
 
+    private int mSatellite = 0;
+
+    private Subscription showDialogSub = null;
+    private Subscription startNaviSub = null;
+
+    private Runnable gpsTimeoutRunable = new Runnable() {
+        @Override
+        public void run() {
+
+            NavigationClerk.getInstance().disMissProgressDialog();
+            ToastUtils.showToast("GPS定位失败，请稍后再试！");
+        }
+    };
+
     @Override
     public int initContentView() {
         return R.layout.activity_navicustom;
@@ -93,6 +117,8 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         setAmapNaviViewOptions();
         back_button = (Button) findViewById(R.id.back_button);
         log = LoggerFactory.getLogger("lbs.navi");
+        EventBus.getDefault().register(this);
+
     }
 
     @Override
@@ -316,8 +342,8 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         setAmapNaviViewOptions();
         NavigationManager.getInstance(this).setNavigationType(NavigationType.NAVIGATION);
         NavigationManager.getInstance(this).setIsNavigatining(true);
-        AMapNavi.getInstance(this).startGPS();
         AMapNavi.getInstance(this).startNavi(AMapNavi.GPSNaviMode);
+        AMapNavi.getInstance(this).startGPS();
         Bundle bundle = getIntent().getExtras();
         processBundle(bundle);
         if (bundle != null) {
@@ -346,6 +372,8 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         }
         mAmapAMapNaviView.onResume();
         backButtonAutoHide();
+        showDialogSub = null;
+
     }
 
     @Override
@@ -367,13 +395,12 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         } catch (Exception e) {
             e.printStackTrace();
         }
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
     @Override
     public void onLockMap(boolean arg0) {
-
-
     }
 
     @Override
@@ -383,9 +410,54 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
-
         return super.onTouchEvent(event);
+    }
+
+    public void onEventMainThread(GpsStatus gpsStatus) {
+        int maxSatellites = gpsStatus.getMaxSatellites();
+        Iterator<GpsSatellite> iterator = gpsStatus.getSatellites()
+                .iterator();
+        mSatellite = 0;
+        while (iterator.hasNext() && mSatellite <= maxSatellites) {
+            mSatellite++;
+        }
+        handleGPSStatus();
+    }
+
+    private void handleGPSStatus() {
+        if (mSatellite > 0 && (!Monitor.getInstance(this).getCurrentLocation().getProvider().equals("lbs"))) {
+            gpsSuccess();
+        } else {
+            noGps();
+        }
+    }
+
+    private void gpsSuccess() {
+        if (startNaviSub != null)
+            return;
+        startNaviSub = Observable.just("").subscribe(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                log.debug("gps定位成功");
+                mHandler.removeCallbacks(gpsTimeoutRunable);
+                NavigationClerk.getInstance().disMissProgressDialog();
+                AMapNavi.getInstance(NaviCustomActivity.this).startNavi(AMapNavi.GPSNaviMode);
+            }
+        });
+    }
+
+    private void noGps() {
+        if (showDialogSub != null)
+            return;
+        showDialogSub = Observable.just("正在搜索GPS").subscribe(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                if(NavigationManager.getInstance(NaviCustomActivity.this).getSearchType() != SearchType.SEARCH_DEFAULT)
+                    return;
+                NavigationClerk.getInstance().showProgressDialog(s);
+            }
+        });
+        mHandler.postDelayed(gpsTimeoutRunable, 60 * 1000);
 
     }
 }

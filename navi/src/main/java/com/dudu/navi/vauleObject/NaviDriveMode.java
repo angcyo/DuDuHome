@@ -1,6 +1,5 @@
 package com.dudu.navi.vauleObject;
 
-import com.amap.api.navi.AMapNavi;
 import com.amap.api.navi.enums.PathPlanningStrategy;
 
 /**
