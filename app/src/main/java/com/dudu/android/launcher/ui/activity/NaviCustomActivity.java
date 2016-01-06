@@ -27,14 +27,12 @@ import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.NaviSettingUtil;
 import com.dudu.android.launcher.utils.TimeUtils;
-import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.ViewAnimation;
 import com.dudu.map.NavigationClerk;
 import com.dudu.monitor.Monitor;
 import com.dudu.monitor.utils.LocationUtils;
 import com.dudu.navi.NavigationManager;
 import com.dudu.navi.vauleObject.NavigationType;
-import com.dudu.navi.vauleObject.SearchType;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.VoiceManager;
 
@@ -86,19 +84,9 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
             buttonAnimation();
         }
     };
-
     private int mSatellite = 0;
 
     private Subscription startNaviSub = null;
-
-    private Runnable gpsTimeoutRunable = new Runnable() {
-        @Override
-        public void run() {
-
-            NavigationClerk.getInstance().disMissProgressDialog();
-            ToastUtils.showToast("GPS定位失败，请稍后再试！");
-        }
-    };
 
     @Override
     public int initContentView() {
@@ -188,9 +176,11 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         viewOptions.setLeaderLineEnabled(Color.RED);
         viewOptions.setCrossDisplayShow(false);
         viewOptions.setCrossDisplayEnabled(false);
+        viewOptions.setAutoDrawRoute(true);
         int time = Integer.parseInt(TimeUtils.format(TimeUtils.format6));
-        if (time > 18 || time < 5)
+        if (time > 18 || time < 5) {
             viewOptions.setNaviNight(true);
+        }
         mAmapAMapNaviView.setViewOptions(viewOptions);
         mAmapAMapNaviView.getMap().setTrafficEnabled(true);
     }
@@ -435,7 +425,6 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
             @Override
             public void call(String s) {
                 log.debug("gps定位成功");
-                mHandler.removeCallbacks(gpsTimeoutRunable);
                 AMapNavi.getInstance(NaviCustomActivity.this).startGPS();
                 AMapNavi.getInstance(NaviCustomActivity.this).startNavi(AMapNavi.GPSNaviMode);
             }

@@ -96,8 +96,13 @@ public class NaviProcess {
         if (mAmapNaviListener != null) {
             AMapNavi.getInstance(mContext).removeAMapNaviListener(mAmapNaviListener);
         }
-        AMapNavi.getInstance(mContext).stopNavi();
-        AMapNavi.getInstance(mContext).destroy();
+        try {
+            AMapNavi.getInstance(mContext).stopNavi();
+            AMapNavi.getInstance(mContext).destroy();
+        }catch (Exception e){
+
+        }
+
 
     }
 

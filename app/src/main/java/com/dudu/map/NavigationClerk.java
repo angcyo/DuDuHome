@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -213,11 +212,9 @@ public class NavigationClerk {
 
 
     public void searchControl(String semantic, String service, String keyword, SearchType type) {
-
         if (navigationManager.getSearchType() == SearchType.SEARCH_COMMONADDRESS)
             type = SearchType.SEARCH_COMMONPLACE;
         navigationManager.setSearchType(type);
-        navigationManager.setKeyword(null);
         if (keyword == null)
             navigationManager.parseKeyword(semantic, service);
         else
@@ -252,7 +249,9 @@ public class NavigationClerk {
         mhandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                navigationManager.search();
+                if (!TextUtils.isEmpty(navigationManager.getKeyword())) {
+                    navigationManager.search();
+                }
             }
         }, 2000);
 
@@ -261,6 +260,12 @@ public class NavigationClerk {
     private void searchHint() {
         msg = "正在搜索" + navigationManager.getKeyword();
         boolean isShow = false;
+        if (TextUtils.isEmpty(navigationManager.getKeyword())) {
+            VoiceManager.getInstance().stopUnderstanding();
+            VoiceManager.getInstance().startSpeaking("关键字有误，请重新输入！",
+                    SemanticConstants.TTS_START_UNDERSTANDING, true);
+            return;
+        }
         if (Monitor.getInstance(mContext).getCurrentLocation() == null) {
             navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
             msg = "暂未获取到您的当前位置，不能搜索，请稍后再试";
@@ -272,19 +277,14 @@ public class NavigationClerk {
             }
             return;
         }
-        if (TextUtils.isEmpty(navigationManager.getKeyword())) {
-            VoiceManager.getInstance().startSpeaking("关键字有误，请重新输入！",
-                    SemanticConstants.TTS_START_UNDERSTANDING, true);
-            return;
-        }
-        msg = "正在搜索 " + navigationManager.getKeyword();
         if (Constants.CURRENT_POI.equals(navigationManager.getKeyword())) {
             navigationManager.setSearchType(SearchType.SEARCH_CUR_LOCATION);
             msg = "正在获取您的当前位置";
             isShow = true;
         }
-        if (!isManual)
+        if (!isManual) {
             VoiceManager.getInstance().startSpeaking(msg, SemanticConstants.TTS_DO_NOTHING, isShow);
+        }
         showProgressDialog(msg);
     }
 
@@ -486,7 +486,8 @@ public class NavigationClerk {
                             AdapterView<?> arg0,
                             View arg1,
                             int position, long arg3) {
-                        isAddressManual = true;
+                        if (position >= navigationManager.getPoiResultList().size())
+                            isAddressManual = true;
                         navigationManager.getLog().debug("-----manual click showAddressByVoice stopUnderstanding");
                         VoiceManager.getInstance().stopUnderstanding();
                         chooseAddress(position);
@@ -590,6 +591,8 @@ public class NavigationClerk {
                             public void onItemClick(
                                     AdapterView<?> arg0, View view,
                                     int position, long arg3) {
+                                if (position >= 6)
+                                    return;
                                 startNavigation(new Navigation(endPoint, navigationManager.getDriveModeList().get(position),
                                         NavigationType.NAVIGATION));
                             }

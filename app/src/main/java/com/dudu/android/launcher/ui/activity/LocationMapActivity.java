@@ -145,7 +145,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(LocationMapActivity.this,MainActivity.class));
+                startActivity(new Intent(LocationMapActivity.this, MainActivity.class));
                 finish();
             }
         });
@@ -193,9 +193,9 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     }
 
     private void searchManual() {
-        if(TextUtils.isEmpty(search_edit.getText().toString()))
+        if (TextUtils.isEmpty(search_edit.getText().toString()))
             return;
-        if(containsEmoji(search_edit.getText().toString())){
+        if (containsEmoji(search_edit.getText().toString())) {
             ToastUtils.showToast("抱歉，您输入的关键字有误，请重新输入");
             return;
         }
@@ -329,6 +329,8 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         addressDialog.setOnListClickListener(new RouteSearchPoiDialog.OnListItemClick() {
             @Override
             public void onListItemClick(int position) {
+                if (position >= 20)
+                    return;
                 addressDialog.dismiss();
                 NavigationClerk.getInstance().chooseAddress(position);
             }

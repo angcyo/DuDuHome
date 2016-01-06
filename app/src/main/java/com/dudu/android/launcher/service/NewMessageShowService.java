@@ -34,6 +34,7 @@ import com.dudu.android.launcher.utils.FloatWindow.MessageShowCallBack;
 import com.dudu.android.launcher.utils.FloatWindow.RemoveFloatWindowCallBack;
 import com.dudu.android.launcher.utils.FloatWindow.StrategyChooseCallBack;
 import com.dudu.event.VoiceEvent;
+import com.dudu.navi.NavigationManager;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.SemanticType;
 import com.dudu.voice.semantic.VoiceManager;
@@ -274,7 +275,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
             wme.setType(type);
             messageDataList.add(wme);
             if (floatWindowLayout != null && messageList != null) {
-                
+
                 if (mMessageAdapter != null)
                     mMessageAdapter.setDataList(messageDataList);
                 if (android.os.Build.VERSION.SDK_INT >= 8) {
@@ -306,18 +307,22 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
     @Override
     public void choosePage(int type, int page) {
+        pageIndex = (int) Math.floor(addressList.getFirstVisiblePosition() / Constants.ADDRESS_VIEW_COUNT);
 
         switch (type) {
             case ChoosePageChain.NEXT_PAGE:
-                if (pageIndex == 4) {
-                    VoiceManager.getInstance().startSpeaking("已经是最后一页", SemanticConstants.TTS_DO_NOTHING, false);
+                if (pageIndex >= 4
+                        || addressList.getLastVisiblePosition() == NavigationManager.getInstance(this).getPoiResultList().size() - 1) {
+                    VoiceManager.getInstance().stopUnderstanding();
+                    VoiceManager.getInstance().startSpeaking("已经是最后一页", SemanticConstants.TTS_START_UNDERSTANDING, false);
                     return;
                 }
                 pageIndex++;
                 break;
             case ChoosePageChain.LAST_PAGE:
                 if (pageIndex <= 0) {
-                    VoiceManager.getInstance().startSpeaking("已经是第一页", SemanticConstants.TTS_DO_NOTHING, false);
+                    VoiceManager.getInstance().stopUnderstanding();
+                    VoiceManager.getInstance().startSpeaking("已经是第一页", SemanticConstants.TTS_START_UNDERSTANDING, false);
                     return;
                 }
                 pageIndex--;
