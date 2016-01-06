@@ -91,14 +91,6 @@ public class SearchProcess {
         switch (searchType) {
             case SEARCH_DEFAULT:
                 return;
-            case OPEN_NAVI:
-                EventBus.getDefault().post(NaviEvent.ChangeSemanticType.NAVIGATION);
-                EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast("您好，请说出您想去的地方或者关键字", true));
-                return;
-            case SEARCH_COMMONADDRESS:
-                EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast("您好，请说出您要添加的地址", true));
-                EventBus.getDefault().post(NaviEvent.ChangeSemanticType.NAVIGATION);
-                return;
             case SEARCH_CUR_LOCATION:
                 getCur_locationDesc();
                 break;

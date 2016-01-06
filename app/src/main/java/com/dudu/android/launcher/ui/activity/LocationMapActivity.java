@@ -213,7 +213,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
         getLocation();
-        NavigationClerk.getInstance().doSearch();
     }
 
     private void setUpMap() {

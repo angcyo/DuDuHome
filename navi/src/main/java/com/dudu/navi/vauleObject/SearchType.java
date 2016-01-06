@@ -22,11 +22,6 @@ public enum SearchType {
     SEARCH_NEARBY,
 
     /**
-     * 打开导航
-     */
-    OPEN_NAVI,
-
-    /**
      *
      * 某个地点的位置（xxx在哪，xxx的位置）
      */

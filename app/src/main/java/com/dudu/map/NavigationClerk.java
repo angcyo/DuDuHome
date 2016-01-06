@@ -181,8 +181,10 @@ public class NavigationClerk {
         } else {
             if (!isMapActivity()) {
                 intentClass = LocationMapActivity.class;
-                if (openType == OPEN_VOICE)
-                    navigationManager.setSearchType(SearchType.OPEN_NAVI);
+                if (openType == OPEN_VOICE) {
+                    VoiceManager.getInstance().startSpeaking("您好，请说出您想去的地方或者关键字", SemanticConstants.TTS_START_UNDERSTANDING, true);
+                    SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NAVIGATION);
+                }
             } else {
                 return false;
             }
@@ -229,9 +231,9 @@ public class NavigationClerk {
             if (!navigationManager.isNavigatining() && !isMapActivity()) {
                 intentClass = LocationMapActivity.class;
                 intentActivity();
-                return;
+            } else {
+                isNaviActivity();
             }
-            isNaviActivity();
         } else {
             openGaode();
         }
@@ -246,14 +248,6 @@ public class NavigationClerk {
                 searchHint();
                 break;
         }
-        mhandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (!TextUtils.isEmpty(navigationManager.getKeyword())) {
-                    navigationManager.search();
-                }
-            }
-        }, 2000);
 
     }
 
@@ -286,6 +280,12 @@ public class NavigationClerk {
             VoiceManager.getInstance().startSpeaking(msg, SemanticConstants.TTS_DO_NOTHING, isShow);
         }
         showProgressDialog(msg);
+        mhandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                navigationManager.search();
+            }
+        }, 2000);
     }
 
     private boolean isNaviActivity() {
@@ -487,7 +487,8 @@ public class NavigationClerk {
                             View arg1,
                             int position, long arg3) {
                         if (position >= navigationManager.getPoiResultList().size())
-                            isAddressManual = true;
+                            return;
+                        isAddressManual = true;
                         navigationManager.getLog().debug("-----manual click showAddressByVoice stopUnderstanding");
                         VoiceManager.getInstance().stopUnderstanding();
                         chooseAddress(position);

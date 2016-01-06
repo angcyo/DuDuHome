@@ -9,6 +9,7 @@ import com.dudu.navi.event.NaviEvent;
 import com.dudu.navi.vauleObject.SearchType;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.SemanticType;
+import com.dudu.voice.semantic.VoiceManager;
 import com.dudu.voice.semantic.engine.SemanticProcessor;
 
 import org.json.JSONObject;
@@ -52,7 +53,9 @@ public class WhetherChain extends SemanticChain {
                 case YES:
                 case YES_TWO:
                 case YES_THREE:
-                    NavigationClerk.getInstance().searchControl(null,null,"", SearchType.SEARCH_COMMONADDRESS);
+                    NavigationClerk.getInstance().searchControl(null, null, "", SearchType.SEARCH_COMMONADDRESS);
+                    VoiceManager.getInstance().startSpeaking("您好，请说出您要添加的地址", SemanticConstants.TTS_START_UNDERSTANDING, true);
+                    SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NAVIGATION);
                     break;
                 case NO:
                 case NO_TWO:
