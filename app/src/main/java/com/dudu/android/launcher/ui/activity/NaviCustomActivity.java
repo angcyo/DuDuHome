@@ -371,12 +371,6 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         mAmapAMapNaviView.onResume();
         backButtonAutoHide();
 
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-             gpsSuccess();
-            }
-        },3000);
     }
 
     @Override
