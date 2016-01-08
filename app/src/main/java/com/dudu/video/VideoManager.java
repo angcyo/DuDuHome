@@ -3,7 +3,6 @@ package com.dudu.video;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
-import android.media.AudioManager;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Handler;
@@ -31,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -42,7 +40,7 @@ import java.util.TimerTask;
 /**
  * Created by 赵圣琪 on 2015/12/9.
  */
-public class VideoManager implements SurfaceHolder.Callback {
+public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErrorListener {
 
     /* 录像视频参数*/
     private VideoConfigParam videoConfigParam;
@@ -89,10 +87,15 @@ public class VideoManager implements SurfaceHolder.Callback {
 
     private VideoTransfer mVideoTransfer;
 
-    private Logger logger;
+    private Logger log;
 
     /* 当前录制视频的文件名*/
     private String curVideoName;
+
+    @Override
+    public void onError(MediaRecorder mr, int what, int extra) {
+            log.info("MediaRecorder 错误：what：{}，extra：{} ", what, extra);
+    }
 
     private class VideoHandler extends Handler {
         public VideoHandler() {
@@ -123,7 +126,7 @@ public class VideoManager implements SurfaceHolder.Callback {
     }
 
     private VideoManager() {
-        logger = LoggerFactory.getLogger("video.VideoManager");
+        log = LoggerFactory.getLogger("video.VideoManager");
 
         videoConfigParam = new VideoConfigParam();
 
@@ -132,12 +135,12 @@ public class VideoManager implements SurfaceHolder.Callback {
         mDbHelper = DbHelper.getDbHelper();
 
         mVideoStoragePath = FileUtils.getVideoStorageDir().getAbsolutePath();
-        logger.debug("录像存储的路径: " + mVideoStoragePath);
+        log.debug("录像存储的路径: " + mVideoStoragePath);
 
         if (FileUtils.isTFlashCardExists()) {
             mVideoCacheMaxSize = Float.parseFloat(FileUtils.fileByte2Mb(
                     FileUtils.getTFlashCardSpace()));
-            logger.debug("录像存储最大可用空间: " + mVideoCacheMaxSize);
+            log.debug("录像存储最大可用空间: " + mVideoCacheMaxSize);
         }
 
         mHandler = new VideoHandler();
@@ -168,13 +171,13 @@ public class VideoManager implements SurfaceHolder.Callback {
     }
 
     private void setUpCamera() {
-        logger.debug("开始初始化camera...");
+        log.debug("开始初始化camera...");
         shutdownCamera();
 
         try {
             mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
         } catch (Exception e) {
-            logger.error("获取相机失败");
+            log.error("获取相机失败");
             return;
         }
 
@@ -187,7 +190,7 @@ public class VideoManager implements SurfaceHolder.Callback {
         mCamera.setErrorCallback(new Camera.ErrorCallback() {
             @Override
             public void onError(int error, Camera camera) {
-                logger.error("相机出错了： " + error);
+                log.error("相机出错了： " + error);
                 releaseAll();
             }
         });
@@ -226,7 +229,7 @@ public class VideoManager implements SurfaceHolder.Callback {
             mCamera.setPreviewDisplay(mHolder);
             mCamera.startPreview();
         } catch (Exception e) {
-            logger.error("开始相机预览错误: " + e.getMessage());
+            log.error("开始相机预览错误: " + e.getMessage());
         }
     }
 
@@ -235,7 +238,7 @@ public class VideoManager implements SurfaceHolder.Callback {
             return;
         }
 
-        logger.debug("调用startRecord方法，开始启动录像...");
+        log.debug("调用startRecord方法，开始启动录像...  sd卡状态：{}", FileUtils.isTFlashCardExists());
 
         if (FileUtils.isTFlashCardExists()) {
             mRecording = true;
@@ -253,7 +256,7 @@ public class VideoManager implements SurfaceHolder.Callback {
 
         mRecording = false;
 
-        logger.debug("调用stopRecord方法，停止录像...");
+        log.debug("调用stopRecord方法，停止录像...");
 
         stopRecordTimer();
 
@@ -271,19 +274,21 @@ public class VideoManager implements SurfaceHolder.Callback {
     }
 
     public void onTFlashCardInserted() {
-        logger.debug("TFlashCard插入...");
+        log.debug("TFlashCard插入...");
 
         ToastUtils.showToast(R.string.video_sdcard_inserted_alert);
 
-        mVideoStoragePath = FileUtils.getVideoStorageDir().getAbsolutePath();
+        mVideoStoragePath = FileUtils.getVideoStorageDirWhenInsertSdcard();
 
-        mVideoCacheMaxSize = Float.parseFloat(FileUtils.fileByte2Mb(FileUtils.getTFlashCardSpace()));
-
-        startRecord();
+        log.info("TFlashCard插入... 获取视频存储路径：{}", mVideoStoragePath);
+        if (mVideoStoragePath != null){
+            mVideoCacheMaxSize = Float.parseFloat(FileUtils.fileByte2Mb(FileUtils.getTFlashCardSpaceWhenInsertSdcard()));
+            startRecord();
+        }
     }
 
     public void onTFlashCardRemoved() {
-        logger.debug("TFlashCard拔出...");
+        log.info("TFlashCard拔出...");
 
         ToastUtils.showToast(R.string.video_sdcard_removed_alert);
 
@@ -293,14 +298,14 @@ public class VideoManager implements SurfaceHolder.Callback {
     }
 
     private void startMediaRecorder() {
-        logger.debug("调用startMediaRecorder方法...");
+        log.debug("调用startMediaRecorder方法...");
         if (prepareMediaRecorder()) {
             try {
                 mMediaRecorder.start();
-                logger.debug("开启录像成功...");
+                log.debug("开启录像成功...");
                 return;
             } catch (Exception e) {
-                logger.error("录像开启出错: " + e.getMessage());
+                log.error("录像开启出错: " + e.getMessage());
                 SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.boot", "reboot");
             }
         } else {
@@ -314,13 +319,13 @@ public class VideoManager implements SurfaceHolder.Callback {
     }
 
     private void startRecordTimer() {
-        logger.debug("开启录像定时器...");
+        log.debug("开启录像定时器...");
         mTimer = new Timer();
         mTimerTask = new TimerTask() {
 
             @Override
             public void run() {
-                logger.debug("TimerTask节点，开始录像...");
+                log.debug("TimerTask节点，开始录像...");
 
                 createVideoFragment();
 
@@ -335,6 +340,8 @@ public class VideoManager implements SurfaceHolder.Callback {
         mCamera.unlock();
 
         mMediaRecorder = new MediaRecorder();
+
+        mMediaRecorder.setOnErrorListener(this);
 
         mMediaRecorder.setPreviewDisplay(mHolder.getSurface());
 
@@ -371,7 +378,7 @@ public class VideoManager implements SurfaceHolder.Callback {
         try {
             mMediaRecorder.prepare();
         } catch (Exception e) {
-            logger.error("准备录像出错: " + e.toString());
+            log.error("准备录像出错: ", e);
             return false;
         }
 
@@ -379,12 +386,12 @@ public class VideoManager implements SurfaceHolder.Callback {
     }
 
     private void createVideoFragment() {
-        logger.debug("调用createVideoFragment方法，生成录像片段...");
+        log.debug("调用createVideoFragment方法，生成录像片段...");
         if (mMediaRecorder != null) {
             try {
                 mMediaRecorder.stop();
             } catch (Exception e) {
-                logger.error("录像关闭异常: " + e.toString());
+                log.error("录像关闭异常: " + e.toString());
             }
         }
 
@@ -411,7 +418,7 @@ public class VideoManager implements SurfaceHolder.Callback {
 
     private void releaseMediaRecorder() {
         if (mMediaRecorder != null) {
-            logger.debug("释放录像资源...");
+            log.debug("释放录像资源...");
             mMediaRecorder.reset();
             mMediaRecorder.release();
             mMediaRecorder = null;
@@ -420,7 +427,7 @@ public class VideoManager implements SurfaceHolder.Callback {
     }
 
     private void stopRecordTimer() {
-        logger.debug("停止录像定时器...");
+        log.debug("停止录像定时器...");
         if (mTimer != null) {
             mTimer.cancel();
             mTimer = null;
@@ -437,19 +444,20 @@ public class VideoManager implements SurfaceHolder.Callback {
 
             @Override
             public void run() {
-                if (!FileUtils.isTFlashCardExists()) {
-                    return;
-                }
-
-                checkTFlashCardSpace();
-
                 try {
+                    log.info("保存视频：{}",videoName);
+                    if (!FileUtils.isTFlashCardExists()) {
+                        return;
+                    }
+
+                    checkTFlashCardSpace();
+
                     File file = new File(mVideoStoragePath, videoName);
                     if (file.exists() && file.length() > 0) {
                         insertVideo(file);
                     }
                 } catch (Exception e) {
-                    logger.error("插入数据库出错了...");
+                    log.error("插入数据库出错了...", e);
                 }
             }
         }).start();
@@ -459,7 +467,7 @@ public class VideoManager implements SurfaceHolder.Callback {
         double totalSpace = FileUtils.getTFlashCardSpace();
         double freeSpace = FileUtils.getTFlashCardFreeSpace();
         if (freeSpace < totalSpace * 0.2) {
-            logger.debug("剩余存储空间小于TFlashCard空间20%，开始清理空间...");
+            log.debug("剩余存储空间小于TFlashCard空间20%，开始清理空间...");
             FileUtils.clearVideoFolder();
         }
     }
@@ -468,10 +476,10 @@ public class VideoManager implements SurfaceHolder.Callback {
         String length = FileUtils.fileByte2Mb(file.length());
 
         float size = Float.parseFloat(length);
-        logger.debug("视频大小: {}M", size);
+        log.debug("视频大小: {}M", size);
 
         while (mVideoCacheMaxSize <= mDbHelper.getTotalSize() + size) {
-            logger.debug("录像存储空间不够，准备释放空间...");
+            log.debug("录像存储空间不够，准备释放空间...");
             if (mDbHelper.isAllVideoLocked()) {
                 mHandler.sendMessage(mHandler.obtainMessage(VIDEO_CACHE_FULL));
 
@@ -479,11 +487,11 @@ public class VideoManager implements SurfaceHolder.Callback {
                 return;
             }
 
-            logger.debug("删除时间最久的视频...");
+            log.debug("删除时间最久的视频...");
             mDbHelper.deleteOldestVideo();
         }
 
-        logger.debug("将视频信息插入数据库...");
+        log.debug("将视频信息插入数据库...");
         VideoEntity video = new VideoEntity();
         video.setName(file.getName());
         video.setFile(file);
