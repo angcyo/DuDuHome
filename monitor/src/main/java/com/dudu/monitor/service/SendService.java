@@ -10,9 +10,9 @@ import com.dudu.monitor.repo.location.LocationManage;
 import com.dudu.monitor.valueobject.LocationInfo;
 import com.dudu.monitor.valueobject.ObdData;
 import com.dudu.network.NetworkManage;
-import com.dudu.network.event.ActiveDevice;
 import com.dudu.network.event.CheckDeviceActive;
 import com.dudu.network.event.DriveDatasUpload;
+import com.dudu.network.event.FlowSynConfiguration;
 import com.dudu.network.event.LocationInfoUpload;
 import com.dudu.network.event.ObdDatasUpload;
 import com.dudu.network.event.Portal;
@@ -54,10 +54,22 @@ public class SendService {
 
                 sendFlamoutData();
 
-                sendPortalCount();
             }catch (Exception e){
                 e.printStackTrace();
                 log.error("monitor-发送服务异常" + e);
+            }
+        }
+    };
+
+    private Thread sendServiceThread2 = new Thread(){
+        @Override
+        public void run() {
+            try {
+                sendPortalCount();
+
+                sendFlowSynConfiguration();
+            } catch (Exception e) {
+                log.error("异常:", e);
             }
         }
     };
@@ -73,6 +85,7 @@ public class SendService {
     public void startSendService(){
         activeDevice();
         sendServiceThreadPool.scheduleAtFixedRate(sendServiceThread, 4, 30, TimeUnit.SECONDS);
+        sendServiceThreadPool.scheduleAtFixedRate(sendServiceThread2, 30, 60*60, TimeUnit.SECONDS);
     }
 
     public void stopSendService(){
@@ -171,9 +184,17 @@ public class SendService {
             e.printStackTrace();
         }
         String portalCount = SystemPropertiesProxy.getInstance().get("persist.sys.views", "0");
-        log.debug("portalCount[{}]",portalCount);
+        log.info("portal累计弹出次数：{}", portalCount);
         if (Monitor.getInstance(mContext).isDeviceActived()){
             NetworkManage.getInstance().sendMessage(new Portal(mContext,portalCount));
+        }
+    }
+
+    /* 发送流量同步流量配置请求*/
+    private void sendFlowSynConfiguration(){
+        log.info("monitor  发送流量同步流量配置请求");
+        if (Monitor.getInstance(mContext).isDeviceActived()){
+            NetworkManage.getInstance().sendMessage(new FlowSynConfiguration(mContext));
         }
     }
 }

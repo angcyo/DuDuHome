@@ -14,11 +14,9 @@ import android.os.IBinder;
 
 import com.dudu.android.launcher.db.DbHelper;
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.SharedPreferencesUtil;
 import com.dudu.monitor.Monitor;
 import com.dudu.network.NetworkManage;
-import com.dudu.network.event.FlowSynConfiguration;
 import com.dudu.network.event.FlowUpload;
 import com.dudu.network.event.GetFlow;
 
@@ -109,10 +107,6 @@ public class MonitorService extends Service {
                     return;
                 }
                 try {
-                    if (Monitor.getInstance(mContext).isDeviceActived()){
-                        NetworkManage.getInstance().sendMessage(new FlowSynConfiguration(mContext));
-                    }
-
                     //单位kb
                     mMobileRx = TrafficStats.getMobileRxBytes() / 1024;//
                     mMobileTx = TrafficStats.getMobileTxBytes() / 1024;
