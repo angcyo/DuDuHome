@@ -1,8 +1,5 @@
 package com.dudu.android.launcher.ui.activity.video;
 
-import java.io.File;
-import java.util.LinkedList;
-
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
@@ -13,6 +10,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.MessageQueue.IdleHandler;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Gravity;
@@ -34,6 +32,9 @@ import com.dudu.android.launcher.ui.view.VideoView;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
+
+import java.io.File;
+import java.util.LinkedList;
 
 public class VideoPlayActivity extends BaseNoTitlebarAcitivity implements OnClickListener {
 
@@ -133,7 +134,7 @@ public class VideoPlayActivity extends BaseNoTitlebarAcitivity implements OnClic
             public boolean onSingleTapUp(MotionEvent e) {
                 if (!mPaused) {
                     mVideoView.pause();
-                    mPaused = !mPaused;
+                    mPaused = true;
                     mPauseButton.setVisibility(View.VISIBLE);
                 }
                 return true;
@@ -237,6 +238,8 @@ public class VideoPlayActivity extends BaseNoTitlebarAcitivity implements OnClic
     public void onClick(View v) {
         if (v.getId() == R.id.previous_button) {
             if (position > 0) {
+                mPauseButton.setVisibility(View.GONE);
+                mPaused = false;
                 position--;
                 mVideoView.setVideoURI(Uri.fromFile(mPlayList.get(position).getFile()));
             } else {
@@ -245,6 +248,8 @@ public class VideoPlayActivity extends BaseNoTitlebarAcitivity implements OnClic
         } else if (v.getId() == R.id.next_button) {
             if (position < mPlayList.size() - 1) {
                 position++;
+                mPauseButton.setVisibility(View.GONE);
+                mPaused = false;
                 mVideoView.setVideoURI(Uri.fromFile(mPlayList.get(position).getFile()));
             } else {
                 ToastUtils.showToast(R.string.video_end_alert);
@@ -252,7 +257,7 @@ public class VideoPlayActivity extends BaseNoTitlebarAcitivity implements OnClic
         } else if (v.getId() == R.id.pause_button) {
             if (mPaused) {
                 mVideoView.start();
-                mPaused = !mPaused;
+                mPaused = false;
                 mPauseButton.setVisibility(View.GONE);
             }
         }

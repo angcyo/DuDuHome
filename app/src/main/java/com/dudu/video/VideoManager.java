@@ -223,8 +223,11 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
     }
 
     public void startPreview() {
-        mCamera.stopPreview();
-
+        try {
+            mCamera.stopPreview();
+        }catch (Exception e){
+            logger.error("结束预览出错",e);
+        }
         try {
             mCamera.setPreviewDisplay(mHolder);
             mCamera.startPreview();

@@ -47,7 +47,7 @@ public class VideoListActivity extends FragmentActivity {
 
     private VideoAdapter mAdapter;
 
-    private List<VideoEntity> mVideoData;
+    private ArrayList<VideoEntity> mVideoData;
 
     private DbHelper mDbHelper;
 
@@ -164,15 +164,15 @@ public class VideoListActivity extends FragmentActivity {
 
         private Context context;
 
-        private List<VideoEntity> data;
+        private ArrayList<VideoEntity> data;
 
-        public VideoAdapter(Context context, List<VideoEntity> data) {
+        public VideoAdapter(Context context, ArrayList<VideoEntity> data) {
             this.context = context;
             this.data = data;
         }
 
-        public void setData(List<VideoEntity> data) {
-            this.data = data;
+        public void setData(ArrayList<VideoEntity> data) {
+            this.data = (ArrayList<VideoEntity>) data.clone();
             notifyDataSetChanged();
         }
 

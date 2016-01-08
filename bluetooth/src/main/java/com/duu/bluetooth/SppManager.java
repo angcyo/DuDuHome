@@ -258,7 +258,7 @@ public class SppManager {
                 log.debug("mmSocket connected {}",mmSocket.isConnected());
                 mmSocket.connect();
 
-            } catch (IOException e) {
+            } catch (Exception e) {
                 log.warn("unable to connect：", e);
 //                try {
 //                    mmSocket.close();
@@ -280,7 +280,7 @@ public class SppManager {
             try {
                 if(mmSocket.isConnected())
                       mmSocket.close();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 log.warn("close() of connect " + mSocketType + " socket failed", e);
             }
         }

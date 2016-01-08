@@ -3,7 +3,7 @@ package com.dudu.android.launcher.ui.activity.video;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -28,9 +28,11 @@ public class VideoActivity extends BaseNoTitlebarAcitivity {
     private ImageButton mDetailButton;
 
     //Back键定时消失的handler
-    private Handler mAnimationHandler = new Handler() {
+    private Handler mAnimationHandler = new Handler();
+
+    private Runnable button_hideRunable = new Runnable() {
         @Override
-        public void handleMessage(Message msg) {
+        public void run() {
             toggleAnimation();
         }
     };
@@ -42,12 +44,13 @@ public class VideoActivity extends BaseNoTitlebarAcitivity {
                 R.anim.camera_image_disappear : R.anim.camera_image_apear, this);
     }
 
-    private void startDisappearAnimation() {
-        mAnimationHandler.sendEmptyMessageDelayed(0, DISAPPEAR_INTERVAL);
-    }
-
-    private void stopDisappearAnimation() {
-        mAnimationHandler.removeMessages(0);
+    private void buttonAutoHide() {
+        if (mBackButton.getVisibility() != View.VISIBLE
+                && mDetailButton.getVisibility() != View.VISIBLE) {
+            toggleAnimation();
+        }
+        mAnimationHandler.removeCallbacks(button_hideRunable);
+        mAnimationHandler.postDelayed(button_hideRunable, DISAPPEAR_INTERVAL);
     }
 
     @Override
@@ -69,16 +72,8 @@ public class VideoActivity extends BaseNoTitlebarAcitivity {
         mVideoView.findViewById(R.id.surfaceView).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                stopDisappearAnimation();
 
-                startDisappearAnimation();
-
-                if (mBackButton.getVisibility() == View.VISIBLE ||
-                        mDetailButton.getVisibility() == View.VISIBLE) {
-                    return;
-                }
-
-                toggleAnimation();
+                buttonAutoHide();
             }
         });
 
@@ -96,6 +91,7 @@ public class VideoActivity extends BaseNoTitlebarAcitivity {
                 startActivity(intent);
             }
         });
+        buttonAutoHide();
     }
 
     public void onBackPressed(View v) {
@@ -114,16 +110,16 @@ public class VideoActivity extends BaseNoTitlebarAcitivity {
     protected void onResume() {
         super.onResume();
         mVideoManager.updatePreviewSize(854, 480);
-
-        startDisappearAnimation();
+        buttonAutoHide();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         mVideoManager.updatePreviewSize(1, 1);
-
-        stopDisappearAnimation();
+        mBackButton.setVisibility(View.GONE);
+        mDetailButton.setVisibility(View.GONE);
+        mAnimationHandler.removeCallbacks(button_hideRunable);
     }
 
 }

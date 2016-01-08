@@ -101,6 +101,13 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         }
     };
 
+    private Runnable buttonRunnable = new Runnable() {
+        @Override
+        public void run() {
+            buttonAnimation();
+        }
+    };
+
     @Override
     public int initContentView() {
         return R.layout.location;
@@ -122,13 +129,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
         mHandler = new Handler();
 
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                ViewAnimation.startAnimation(mBackButton, mBackButton.getVisibility() == View.VISIBLE
-                        ? R.anim.back_key_disappear : R.anim.back_key_appear, LocationMapActivity.this);
-            }
-        }, 3000);
+        backButtonAutoHide();
 
         navigationManager = NavigationManager.getInstance(getApplicationContext());
     }
@@ -192,6 +193,22 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     }
 
+    private void backButtonAutoHide() {
+        if (mBackButton.getVisibility() != View.VISIBLE) {
+            buttonAnimation();
+        }
+
+        mHandler.removeCallbacks(buttonRunnable);
+        mHandler.postDelayed(buttonRunnable, 3000);
+    }
+
+
+    private void buttonAnimation() {
+
+        ViewAnimation.startAnimation(mBackButton, mBackButton.getVisibility() == View.VISIBLE
+                ? R.anim.back_key_disappear : R.anim.back_key_appear, LocationMapActivity.this);
+    }
+
     private void searchManual() {
         if (TextUtils.isEmpty(search_edit.getText().toString()))
             return;
@@ -239,8 +256,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         aMap.setOnMapClickListener(new AMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                ViewAnimation.startAnimation(mBackButton, mBackButton.getVisibility() == View.VISIBLE
-                        ? R.anim.back_key_disappear : R.anim.back_key_appear, LocationMapActivity.this);
+                backButtonAutoHide();
             }
         });
     }
