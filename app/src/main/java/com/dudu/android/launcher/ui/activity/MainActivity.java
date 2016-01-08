@@ -13,6 +13,7 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -156,6 +157,7 @@ public class MainActivity extends BaseTitlebarActivity implements
         mWorkerHandler = new WorkerHandler(mWorkerThread.getLooper());
 
         mWorkerHandler.sendEmptyMessage(DELETE_LITTLE_VIDEOS);
+
         registerTFlashCardReceiver();
     }
 
@@ -324,6 +326,9 @@ public class MainActivity extends BaseTitlebarActivity implements
     }
 
     private void setWeatherAlarm() {
+
+        WeatherUtil.requestWeatherInfo();
+
         mAlarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         Intent intent = new Intent(MainActivity.this, WeatherAlarmReceiver.class);
@@ -331,7 +336,7 @@ public class MainActivity extends BaseTitlebarActivity implements
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.add(Calendar.SECOND, 10);
+        calendar.add(Calendar.MINUTE, 30);
         mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 30 * 60 * 1000, pi);
     }
 

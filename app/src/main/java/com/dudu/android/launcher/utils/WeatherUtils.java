@@ -1,4 +1,4 @@
-package com.dudu.voice.semantic.chain;
+package com.dudu.android.launcher.utils;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -6,16 +6,10 @@ import android.util.Log;
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.bean.WeatherEntity;
 import com.dudu.android.launcher.bean.WeatherSlots;
-import com.dudu.android.launcher.utils.CmdType;
-import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.GsonUtil;
-import com.dudu.android.launcher.utils.JsonUtils;
-import com.dudu.android.launcher.utils.LogUtils;
-import com.dudu.android.launcher.utils.SharedPreferencesUtil;
-import com.dudu.android.launcher.utils.TimeUtils;
 import com.dudu.event.DeviceEvent;
 import com.dudu.monitor.utils.LocationUtils;
 import com.dudu.voice.semantic.SemanticConstants;
+import com.dudu.voice.semantic.VoiceManager;
 import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.TextUnderstander;
 import com.iflytek.cloud.TextUnderstanderListener;
@@ -30,25 +24,50 @@ import java.math.BigDecimal;
 import de.greenrobot.event.EventBus;
 
 /**
- * Created by 赵圣琪 on 2015/10/30.
+ * Created by Administrator on 2016/1/8.
  */
-public class WeatherChain extends SemanticChain {
-
-    private static final String TAG = "WeatherChain";
-
+public class WeatherUtils {
     private TextUnderstander mTextUnderstander;
+    private static WeatherUtils mInstance;
 
-    @Override
-    public boolean matchSemantic(String service) {
-        return CmdType.SERVICE_WEATHER.equals(service);
+    public static WeatherUtils getInstance() {
+        if (mInstance == null) {
+            mInstance = new WeatherUtils();
+        }
+        return mInstance;
     }
 
-    @Override
-    public boolean doSemantic(String json) {
-        handleWeatherSemantic(json);
-        return true;
-    }
+    public void startWeatherUnderstanding(String text) {
+        int ret;
+        mTextUnderstander = TextUnderstander.createTextUnderstander(LauncherApplication.getContext(),
+                null);
+        if (mTextUnderstander.isUnderstanding()) {
+            mTextUnderstander.cancel();
+        } else {
+            ret = mTextUnderstander.understandText(text, new TextUnderstanderListener() {
 
+                @Override
+                public void onResult(UnderstanderResult understanderResult) {
+                    String text = understanderResult.getResultString();
+                    if (!TextUtils.isEmpty(text)) {
+                        handleWeatherSemantic(text);
+                    } else {
+                        LogUtils.e("Weather", "获取天气失败");
+                    }
+
+                    stopWeatherUnderstanding();
+                }
+
+                @Override
+                public void onError(SpeechError speechError) {
+                    stopWeatherUnderstanding();
+                }
+            });
+            if (ret != 0) {
+                LogUtils.e("Weather", "开启语义理解失败");
+            }
+        }
+    }
 
     private void handleWeatherSemantic(String json) {
         String semantic = JsonUtils.parseIatResult(json,
@@ -63,31 +82,17 @@ public class WeatherChain extends SemanticChain {
                 slots.getDateTime().getDateOrig() : "";
 
         String city = slots.getLocation().getCityAddr();
-
-        if (TextUtils.isEmpty(city)) {
-            startWeatherUnderstanding(LocationUtils.getInstance(
-                    LauncherApplication.getContext()).getCurrentCity() + dateOrig
-                    + "天气怎么样?");
-            return;
-        }
-
         String date = slots.getDateTime().getDate();
         if (date.equals("CURRENT_DAY")) {
             date = TimeUtils.format(TimeUtils.format);
         }
-
-        String result = null;
         try {
-            result = parseWeatherResult(json, city, date, dateOrig);
+            parseWeatherResult(json, city, date, dateOrig);
         } catch (JSONException e) {
-            LogUtils.e(TAG, e.getMessage());
+
         }
 
-        if (!TextUtils.isEmpty(result)) {
-            mVoiceManager.startSpeaking(result, SemanticConstants.TTS_START_UNDERSTANDING);
-        } else {
-            mVoiceManager.startSpeaking("抱歉，未能获取天气信息。", SemanticConstants.TTS_START_UNDERSTANDING);
-        }
+
     }
 
     private String parseWeatherResult(String json, String city, String date, String dateOrig) throws JSONException {
@@ -109,7 +114,7 @@ public class WeatherChain extends SemanticChain {
                         weatherText = city + dateOrig + "天气 ：" + "\n"
                                 + weather.getString("weather") + "\n温度" + range
                                 + "\n" + weather.getString("wind");
-                        if (dateOrig.equals("今天")&&LocationUtils.getInstance(LauncherApplication.getContext()).getCurrentCity().contains(city)){
+                        if (dateOrig.equals("今天") && LocationUtils.getInstance(LauncherApplication.getContext()).getCurrentCity().contains(city)) {
                             //四舍五入取整
                             double lowRange = Double.parseDouble(lowStringRange.substring(0, lowStringRange.length() - 1));
                             double highRange = Double.parseDouble(highStringRange.substring(0, highStringRange.length() - 1));
@@ -121,44 +126,7 @@ public class WeatherChain extends SemanticChain {
                 }
             }
         }
-
         return null;
-    }
-
-    // 以文本的形式获取天气
-    private void startWeatherUnderstanding(String text) {
-        int ret;
-        mTextUnderstander = TextUnderstander.createTextUnderstander(LauncherApplication.getContext(),
-                null);
-        if (mTextUnderstander.isUnderstanding()) {
-            mTextUnderstander.cancel();
-        } else {
-            ret = mTextUnderstander.understandText(text, new TextUnderstanderListener() {
-
-                @Override
-                public void onResult(UnderstanderResult understanderResult) {
-                    String text = understanderResult.getResultString();
-                    if (!TextUtils.isEmpty(text)) {
-                        handleWeatherSemantic(text);
-                    } else {
-                        mVoiceManager.startSpeaking("抱歉，未能获取天气信息。", SemanticConstants.TTS_START_UNDERSTANDING);
-                    }
-
-                     stopWeatherUnderstanding();
-                }
-
-                @Override
-                public void onError(SpeechError speechError) {
-                    stopWeatherUnderstanding();
-                }
-            });
-
-            if (ret != 0) {
-                LogUtils.e("Weather", "开启语义理解失败");
-                mVoiceManager.startSpeaking(Constants.UNDERSTAND_NETWORK_PROBLEM, SemanticConstants.TTS_START_UNDERSTANDING);
-                stopWeatherUnderstanding();
-            }
-        }
     }
 
     private void stopWeatherUnderstanding() {
@@ -169,5 +137,4 @@ public class WeatherChain extends SemanticChain {
             mTextUnderstander.destroy();
         }
     }
-
 }
