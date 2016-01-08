@@ -2,9 +2,6 @@ package com.dudu.android.launcher.utils;
 
 import android.content.Context;
 import android.os.Environment;
-import android.util.Log;
-import android.widget.Toast;
-
 
 import com.dudu.android.launcher.bean.VideoEntity;
 import com.dudu.android.launcher.db.DbHelper;
@@ -12,10 +9,7 @@ import com.dudu.android.launcher.db.DbHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -34,7 +28,6 @@ import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
-
 import java.util.zip.ZipOutputStream;
 
 /**
@@ -348,6 +341,12 @@ public class FileUtils {
 
     public static String fileByte2Mb(double size) {
         double mbSize = size / 1024 / 1024;
+        DecimalFormat df = new DecimalFormat("#.##");
+        return df.format(mbSize);
+    }
+
+    public static String fileByte2Kb(double size) {
+        double mbSize = size / 1024;
         DecimalFormat df = new DecimalFormat("#.##");
         return df.format(mbSize);
     }

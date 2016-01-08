@@ -9,6 +9,7 @@ import com.dudu.android.hideapi.SystemPropertiesProxy;
 import com.dudu.android.launcher.utils.CarStatusUtils;
 import com.dudu.android.launcher.utils.IPConfig;
 import com.dudu.android.launcher.utils.Utils;
+import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.calculation.Calculation;
 import com.dudu.conn.FlowManage;
 import com.dudu.conn.PortalUpdate;
@@ -24,7 +25,11 @@ import com.dudu.storage.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.TimeUnit;
+
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.functions.Action1;
 
 
 /**
@@ -76,7 +81,7 @@ public class MainService extends Service {
     private void initNetWork() {
         String ip;
         int port;
-        if (IPConfig.getInstance(this).isTest_Server()|| Utils.isDemoVersion(this)) {
+        if (IPConfig.getInstance(this).isTest_Server() || Utils.isDemoVersion(this)) {
             ip = IPConfig.getInstance(this).getTestServerIP();
             port = IPConfig.getInstance(this).getTestServerPort();
         } else {
@@ -122,10 +127,22 @@ public class MainService extends Service {
             case ONLINE:
                 EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.ON));
                 CarStatusUtils.saveCarStatus(true);
+                log.debug("收到点火通知");
+                WifiApAdmin.startWifiAp(this);
                 break;
             case OFFLINE:
                 EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.OFF));
                 CarStatusUtils.saveCarStatus(false);
+                log.debug("收到熄火通知");
+                Observable.just(5)
+                        .timer(15, TimeUnit.SECONDS)
+                        .subscribe(new Action1<Long>() {
+                            @Override
+                            public void call(Long aLong) {
+                                WifiApAdmin.closeWifiAp(MainService.this);
+                                log.debug("关闭热点");
+                            }
+                        });
                 break;
 
         }

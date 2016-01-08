@@ -94,7 +94,7 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
 
     @Override
     public void onError(MediaRecorder mr, int what, int extra) {
-            log.info("MediaRecorder 错误：what：{}，extra：{} ", what, extra);
+        log.info("MediaRecorder 错误：what：{}，extra：{} ", what, extra);
     }
 
     private class VideoHandler extends Handler {
@@ -225,8 +225,8 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
     public void startPreview() {
         try {
             mCamera.stopPreview();
-        }catch (Exception e){
-            logger.error("结束预览出错",e);
+        } catch (Exception e) {
+            log.error("结束预览出错", e);
         }
         try {
             mCamera.setPreviewDisplay(mHolder);
@@ -284,7 +284,7 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
         mVideoStoragePath = FileUtils.getVideoStorageDirWhenInsertSdcard();
 
         log.info("TFlashCard插入... 获取视频存储路径：{}", mVideoStoragePath);
-        if (mVideoStoragePath != null){
+        if (mVideoStoragePath != null) {
             mVideoCacheMaxSize = Float.parseFloat(FileUtils.fileByte2Mb(FileUtils.getTFlashCardSpaceWhenInsertSdcard()));
             startRecord();
         }
@@ -448,7 +448,7 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
             @Override
             public void run() {
                 try {
-                    log.info("保存视频：{}",videoName);
+                    log.info("保存视频：{}", videoName);
                     if (!FileUtils.isTFlashCardExists()) {
                         return;
                     }
@@ -456,8 +456,15 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
                     checkTFlashCardSpace();
 
                     File file = new File(mVideoStoragePath, videoName);
-                    if (file.exists() && file.length() > 0) {
+                    String length = FileUtils.fileByte2Kb(file.length());
+                    float size = Float.parseFloat(length);
+                    //100Kb以下的文件不保存
+                    if (file.exists() && size > 300) {
                         insertVideo(file);
+                    } else if (file.exists()) {
+                        log.error("300Kb以下的文件不保存");
+                        boolean success = file.delete();
+                        log.error("删除结果:" + success);
                     }
                 } catch (Exception e) {
                     log.error("插入数据库出错了...", e);

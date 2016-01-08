@@ -27,12 +27,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dudu.android.launcher.R;
+import com.dudu.android.launcher.bean.VideoEntity;
 import com.dudu.android.launcher.broadcast.TFlashCardReceiver;
 import com.dudu.android.launcher.broadcast.WeatherAlarmReceiver;
+import com.dudu.android.launcher.db.DbHelper;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
 import com.dudu.android.launcher.ui.dialog.IPConfigDialog;
 import com.dudu.android.launcher.utils.AgedUtils;
+import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WeatherUtil;
 import com.dudu.android.launcher.utils.WifiApAdmin;
@@ -40,6 +43,7 @@ import com.dudu.event.DeviceEvent;
 import com.dudu.event.VoiceEvent;
 import com.dudu.init.InitManager;
 import com.dudu.map.NavigationClerk;
+import com.dudu.monitor.event.CarStatus;
 import com.dudu.navi.event.NaviEvent;
 import com.dudu.obd.ObdInit;
 import com.dudu.video.VideoManager;
@@ -48,9 +52,11 @@ import com.dudu.voice.semantic.VoiceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import de.greenrobot.event.EventBus;
@@ -64,6 +70,8 @@ public class MainActivity extends BaseTitlebarActivity implements
     private static final int STOP_RECORDING = 2;
 
     private static final int START_VOICE_SERVICE = 3;
+
+    private static final int DELETE_LITTLE_VIDEOS = 4;
 
     private Button mVideoButton, mNavigationButton,
             mDiDiButton, mWlanButton;
@@ -105,6 +113,9 @@ public class MainActivity extends BaseTitlebarActivity implements
                 case START_VOICE_SERVICE:
                     VoiceManager.getInstance().startVoiceService();
                     break;
+                case DELETE_LITTLE_VIDEOS:
+                    deleteLittleVideos();
+                    break;
             }
         }
     }
@@ -144,7 +155,8 @@ public class MainActivity extends BaseTitlebarActivity implements
 
         mWorkerHandler = new WorkerHandler(mWorkerThread.getLooper());
 
-       registerTFlashCardReceiver();
+        mWorkerHandler.sendEmptyMessage(DELETE_LITTLE_VIDEOS);
+        registerTFlashCardReceiver();
     }
 
     private void registerTFlashCardReceiver() {
@@ -430,6 +442,25 @@ public class MainActivity extends BaseTitlebarActivity implements
     protected void onResume() {
         super.onResume();
         EventBus.getDefault().post(NaviEvent.FloatButtonEvent.HIDE);
+    }
+
+    private void deleteLittleVideos() {
+        DbHelper dbHelper = DbHelper.getDbHelper();
+        List<VideoEntity> videos = dbHelper.getAllVideos();
+        if (videos != null && !videos.isEmpty()) {
+            for (VideoEntity videoEntity : videos) {
+                File file = new File(videoEntity.getPath(), videoEntity.getName());
+                String length = FileUtils.fileByte2Kb(file.length());
+                float size = Float.parseFloat(length);
+                log_init.debug(videoEntity.getName() + ":" + size + "Kb");
+                //100Kb以下的文件不保存
+                if (!file.exists() || size < 300) {
+                    dbHelper.deleteVideo(file.getName());
+                    boolean success = file.delete();
+                    log_init.debug(videoEntity.getName()+"删除结果："+success);
+                }
+            }
+        }
     }
 
 }
