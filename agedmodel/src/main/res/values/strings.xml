@@ -6,4 +6,12 @@
     <string name="loading_map">正在下载离线地图，请稍等 。。。</string>
     <string name="deleting_map">正在卸载离线地图，请稍等 。。。</string>
 
+
+    <string name="gao_map_uninstall">未安装高德地图</string>
+    <string name="gao_map_installed">已安装高德地图</string>
+    <string name="gao_map_uninstalling"> 正在卸载高德地图</string>
+    <string name="gao_map_uninstalled"> 高德地图已卸载</string>
+    <string name="gao_map_installing">正在安装高德地图</string>
+
+
 </resources>

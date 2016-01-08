@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +19,7 @@ import com.amap.api.location.AMapLocalWeatherListener;
 import com.amap.api.location.AMapLocalWeatherLive;
 import com.amap.api.location.LocationManagerProxy;
 import com.dudu.event.ExitTimerEvent;
+import com.dudu.event.GaoMapEvent;
 import com.dudu.map.AMapLocationHandler;
 import com.dudu.service.FloatBackButtonService;
 import com.dudu.service.TimerExitService;
@@ -40,13 +42,18 @@ public class AgedModelMainActivity extends NoTitleBaseActivity implements AMapLo
     private Application mApp;
     private LocationManagerProxy locationManagerProxy;
     private TextView txtDate, txtWeather, txtTemperature;
-    private Button btnVideo,btnNavigation,btnDiDi,btnWlan;
+    private Button btnVideo, btnNavigation, btnDiDi, btnWlan;
+    private TextView tvGaoMapMessage;
     private TFlashCardReceiver mTFlashCardReceiver;
-    private Handler gaoHandler=new Handler(){
+    private Handler gaoHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            EventBus.getDefault().post(AgedNaviEvent.FloatButtonEvent.SHOW);
-            AgedUtils.installGaoDeMap(AgedModelMainActivity.this);
+            if (msg.what == 0) {
+                EventBus.getDefault().post(AgedNaviEvent.FloatButtonEvent.SHOW);
+                AgedUtils.installGaoDeMap(AgedModelMainActivity.this);
+            } else if (msg.what == 1) {
+                tvGaoMapMessage.setText((String) msg.obj);
+            }
         }
     };
 
@@ -71,10 +78,11 @@ public class AgedModelMainActivity extends NoTitleBaseActivity implements AMapLo
         txtDate = (TextView) findViewById(R.id.data_text);
         txtWeather = (TextView) findViewById(R.id.weather_text);
         txtTemperature = (TextView) findViewById(R.id.temperature_text);
-        btnVideo=(Button)findViewById(R.id.video_button);
-        btnNavigation=(Button)findViewById(R.id.navigation_button);
-        btnDiDi=(Button)findViewById(R.id.didi_button);
-        btnWlan=(Button)findViewById(R.id.wifi_button);
+        btnVideo = (Button) findViewById(R.id.video_button);
+        btnNavigation = (Button) findViewById(R.id.navigation_button);
+        btnDiDi = (Button) findViewById(R.id.didi_button);
+        btnWlan = (Button) findViewById(R.id.wifi_button);
+        tvGaoMapMessage = (TextView) findViewById(R.id.tv_gaoMap_message);
     }
 
     private void initData() {
@@ -92,7 +100,7 @@ public class AgedModelMainActivity extends NoTitleBaseActivity implements AMapLo
          *
          * */
         com.dudu.android.hideapi.SystemPropertiesProxy.getInstance()
-                .set(this, "persist.sys.screen","on");
+                .set(this, "persist.sys.screen", "on");
         locationManagerProxy = LocationManagerProxy.getInstance(this);
         locationManagerProxy.requestWeatherUpdates(LocationManagerProxy.WEATHER_TYPE_LIVE, this);
         handler = null;
@@ -102,7 +110,7 @@ public class AgedModelMainActivity extends NoTitleBaseActivity implements AMapLo
         startService(new Intent(mActivity, FloatBackButtonService.class));
 
         handler = new MyHandler();
-        gaoHandler.sendEmptyMessageDelayed(0,5000);
+        gaoHandler.sendEmptyMessageDelayed(0, 5000);
 
         mTFlashCardReceiver = new TFlashCardReceiver();
         IntentFilter intentFilter = new IntentFilter();
@@ -110,6 +118,15 @@ public class AgedModelMainActivity extends NoTitleBaseActivity implements AMapLo
         intentFilter.addAction(Intent.ACTION_MEDIA_REMOVED);
         intentFilter.addDataScheme("file");
         registerReceiver(mTFlashCardReceiver, intentFilter);
+        checkGaoMap();
+    }
+
+    private void checkGaoMap() {
+        if (AgedUtils.checkGaoMaoStall(this)) {
+            tvGaoMapMessage.setText(getString(R.string.gao_map_installed));
+        } else {
+            tvGaoMapMessage.setText(getString(R.string.gao_map_uninstall));
+        }
     }
 
     @Override
@@ -154,28 +171,27 @@ public class AgedModelMainActivity extends NoTitleBaseActivity implements AMapLo
 
     @Override
     public void onClick(View v) {
-     switch (v.getId()){
-         case R.id.video_button:
-             AgedUtils.installGaoDeMap(this);
-             break;
-         case R.id.navigation_button:
-             AgedUtils.loadOffLine(this);
-             break;
-         case R.id.didi_button:
-             AgedUtils.uninstallGaoApk(this);
-             break;
-         case R.id.wifi_button:
-             break;
-     }
+        switch (v.getId()) {
+            case R.id.video_button:
+                AgedUtils.installGaoDeMap(this);
+                break;
+            case R.id.navigation_button:
+                AgedUtils.loadOffLine(this);
+                break;
+            case R.id.didi_button:
+                AgedUtils.uninstallGaoApk(this);
+                break;
+            case R.id.wifi_button:
+                break;
+        }
     }
 
     private class MyHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-            if (msg.what == 0) {
-                startActivity(mIntent);
-                finish();
-            }
+            startActivity(mIntent);
+            finish();
+
         }
     }
 
@@ -214,6 +230,15 @@ public class AgedModelMainActivity extends NoTitleBaseActivity implements AMapLo
         stopService(new Intent(this, TimerExitService.class));
         EventBus.getDefault().unregister(this);
         System.exit(0);
+    }
+
+    public void onEventMainThread(GaoMapEvent event) {
+        tvGaoMapMessage.setText(event.getMessage());
+        String message = event.getMessage();
+        Message msg = new Message();
+        msg.what = 1;
+        msg.obj = message;
+        gaoHandler.sendMessage(msg);
     }
 
     private class TFlashCardReceiver extends BroadcastReceiver {
