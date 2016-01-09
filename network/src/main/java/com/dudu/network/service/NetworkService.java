@@ -32,6 +32,7 @@ public class NetworkService implements IConnectCallBack {
     ConnectionParam connectionParam;
 
     private Logger log;
+    private int log_step = 0;
 
     //发送数据线程运行标记
     private boolean sendThreadRunFlag = false;
@@ -76,7 +77,7 @@ public class NetworkService implements IConnectCallBack {
                     }
 
                     checkAndStorageMessage();//检查并处理消息是否需要持久化
-
+                    log.debug("准备发送消息---------------------");
                     MessagePackage messagePackageToSend = nextMessagePackage();
 //                    log.debug("----消息---：" + messagePackageToSend.toJsonString() + " 发送消息时： 网络状态：" + iConnection.isConnected());
                     curSendMessagePackage = messagePackageToSend;
@@ -117,7 +118,7 @@ public class NetworkService implements IConnectCallBack {
     public void sendMessage(MessagePackage messagePackage) {
 //        synchronized (stotageMessageLock){//暂不加锁
         try {
-            log.debug("messagePackagesQueue消息队列大小：{}, 消息ID：{}" , messagePackagesQueue.size(), messagePackage.getMessageId());
+            log.debug("发送消息：{}，messagePackagesQueue消息队列大小：{}, 消息ID：{}" , log_step++,messagePackagesQueue.size(), messagePackage.getMessageId());
             messagePackagesQueue.put(messagePackage);
         } catch (InterruptedException e) {
             log.error("异常:",e);
@@ -158,7 +159,7 @@ public class NetworkService implements IConnectCallBack {
     private void waitResponse() {
         try {//是否需要等待，后续待定
             synchronized (sendMessageLock) {
-                log.debug("----发送消息后--等待响应---：");
+                log.debug("----发送消息后--等待响应---");
                 sendMessageLock.wait(30 * 1000);//后续做时间控制,
             }
         } catch (InterruptedException e) {
@@ -253,7 +254,13 @@ public class NetworkService implements IConnectCallBack {
     }
 
     public void removeHeadOfMessageQueue() {
-        messagePackagesQueue.remove();
+        if (messagePackagesQueue.size()>=1){
+            MessagePackage messagePackage = messagePackagesQueue.peek();
+            if (messagePackage.equals(curSendMessagePackage)){
+                log.debug("删除队列头----------");
+                messagePackagesQueue.remove();
+            }
+        }
     }
 
     //通知可以发送下一条

@@ -1,7 +1,5 @@
 package com.dudu.network.valueobject;
 
-import java.io.Serializable;
-
 /**
  * Created by dengjun on 2015/11/23.
  * Description :与服务器通信消息数据的抽象基类，后续所有类型的业务数据继承此类，网络通信模块只对基类进行处理，
@@ -33,4 +31,19 @@ public abstract class MessagePackage{
 
     //标记消息包发送失败的时候，是否需要缓存数据，待网络恢复再次发送
     public abstract boolean isNeedCache();
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        } else {
+            if (object instanceof MessagePackage){
+                MessagePackage messagePackage = (MessagePackage)object;
+                if (messagePackage.getMessageId().equals(this.getMessageId())){
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
 }
