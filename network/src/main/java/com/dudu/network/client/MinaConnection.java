@@ -58,6 +58,8 @@ public class MinaConnection extends IoHandlerAdapter implements IConnection{
 
             // 添加过滤器
             TextLineCodecFactory tlcf = new TextLineCodecFactory(Charset.forName("UTF-8"));
+            tlcf.setDecoderMaxLineLength(20480);
+            tlcf.setEncoderMaxLineLength(20480);
             connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(tlcf));
 
             // 添加业务逻辑处理器类
@@ -139,7 +141,7 @@ public class MinaConnection extends IoHandlerAdapter implements IConnection{
 
     @Override  //当 I/O 处理器的实现或是 Apache MINA 中有异常抛出的时候，此方法被调用。
     public void exceptionCaught(IoSession session, Throwable cause) {
-        log.debug("客户端连接异常" + cause);
+        log.error("客户端连接异常",cause);
         isConnected = false;
         if (iConnectCallBack != null){
             iConnectCallBack.onConnectionState(new ConnectionState(ConnectionState.CONNECTION_FAIL));
