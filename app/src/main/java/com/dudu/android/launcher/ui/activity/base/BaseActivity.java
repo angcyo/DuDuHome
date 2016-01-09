@@ -74,6 +74,12 @@ public abstract class BaseActivity extends Activity implements OnGestureListener
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+       setBrightness();
+    }
+
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
         float touchX = event.getX();
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -121,6 +127,7 @@ public abstract class BaseActivity extends Activity implements OnGestureListener
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+
         // 如果每次触摸屏幕后第一次scroll是调节音量，那之后的scroll事件都处理音量调节，直到离开屏幕执行下一次操作
         if (GESTURE_FLAG == GESTURE_MODIFY_VOLUME) {
             currentVolume = audiomanager.getStreamVolume(AudioManager.STREAM_MUSIC); // 获取当前值
@@ -176,20 +183,11 @@ public abstract class BaseActivity extends Activity implements OnGestureListener
                         Settings.System.SCREEN_BRIGHTNESS, currentBrightness);
                 currentBrightness = Settings.System.getInt(getContentResolver(),
                         Settings.System.SCREEN_BRIGHTNESS, -1);
-                WindowManager.LayoutParams wl = getWindow().getAttributes();
 
-                float tmpFloat = (float) currentBrightness / 255;
-                if (tmpFloat > 0 && tmpFloat <= 1) {
-                    wl.screenBrightness = tmpFloat;
-                }
-                getWindow().setAttributes(wl);
-
+                setBrightness();
             }
-
         }
-
         return false;
-
     }
 
     @Override
@@ -200,6 +198,16 @@ public abstract class BaseActivity extends Activity implements OnGestureListener
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         return false;
+    }
+
+    private void setBrightness(){
+        WindowManager.LayoutParams wl = getWindow().getAttributes();
+
+        float tmpFloat = (float) currentBrightness / 255;
+        if (tmpFloat > 0 && tmpFloat <= 1) {
+            wl.screenBrightness = tmpFloat;
+        }
+        getWindow().setAttributes(wl);
     }
 
 }

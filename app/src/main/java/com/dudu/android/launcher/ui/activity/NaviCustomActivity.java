@@ -367,6 +367,8 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
     public void onPause() {
         mAmapAMapNaviView.onPause();
         NavigationClerk.getInstance().setIsShowAddress(false);
+        back_button.setVisibility(View.GONE);
+        mHandler.removeCallbacks(buttonRunnable);
         super.onPause();
     }
 
