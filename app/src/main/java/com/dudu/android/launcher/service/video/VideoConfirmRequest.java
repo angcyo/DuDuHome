@@ -28,9 +28,9 @@ import java.util.List;
  * Description :
  */
 public class VideoConfirmRequest {
-    private String confirmStartVideoUrl = "http://dudu.gotunnel.org/confirmStartVideo";
+//    private String confirmStartVideoUrl = "http://dudu.gotunnel.org/confirmStartVideo";
     //debug
-//    private String confirmStartVideoUrl = "http://192.168.0.50:8080/confirmStartVideo";
+    private String confirmStartVideoUrl = "http://192.168.0.50:8080/confirmStartVideo";
     private VideoTransfer videoTransfer;
     private Context mContext;
     private Logger log;
@@ -38,7 +38,7 @@ public class VideoConfirmRequest {
     public VideoConfirmRequest(VideoTransfer videoTransfer, Context mContext) {
         this.videoTransfer = videoTransfer;
         this.mContext = mContext;
-        log = LoggerFactory.getLogger("video.service");
+        log = LoggerFactory.getLogger("video.VideoManager");
     }
 
     public void confirmStartVideo(){
@@ -46,14 +46,14 @@ public class VideoConfirmRequest {
             @Override
             public void run() {
                 try {
-                    log.info("发送确认请求--------------");
+                    log.info("发送确认请求-------------确认地址：{}", confirmStartVideoUrl);
 //                    JSONObject paramJsonObject = new JSONObject();
 //                    paramJsonObject.put("obeId", DeviceIDUtil.getIMEI(mContext));
 //                    String param = paramJsonObject.toString();
 //                    log.info("请求参数：{}",param);
                     httpUrlConnection(confirmStartVideoUrl,DeviceIDUtil.getIMEI(mContext));
                 } catch (Exception e) {
-                    log.error("响应错误--confirmStartVideo");
+                    log.error("响应错误--confirmStartVideo", e);
                 }
             }
         }.start();
@@ -73,7 +73,7 @@ public class VideoConfirmRequest {
                 log.error("响应错误");
             }
         } catch (JSONException e) {
-            log.error("异常：{}", e);
+            log.error("异常：", e);
         }
     }
 
@@ -125,14 +125,16 @@ public class VideoConfirmRequest {
                 log.error("响应错误------");
             }
         } catch (MalformedURLException e) {
-            log.error("异常：{}", e);
+            log.error("异常：", e);
         } catch (IOException e) {
-            log.error("异常：{}", e);
+            log.error("异常：", e);
         }catch (Exception e){
-            log.error("异常：{}", e);
+            log.error("异常：", e);
         }
     }
 
 
-
+    public void setConfirmStartVideoUrl(String confirmStartVideoUrl) {
+        this.confirmStartVideoUrl = confirmStartVideoUrl;
+    }
 }

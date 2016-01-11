@@ -36,15 +36,19 @@ import de.greenrobot.event.EventBus;
  * Description :
  */
 public class VideoTransfer {
+    private final static String UPLOAD_VIDEO_URL_SUFFIX = "carVideoUpload";
+    private final static String CONFIRM_START_VIDEO_URL_SUFFIX = "confirmStartVideo";
+
     private Context mContext;
     private ScheduledExecutorService sendServiceThreadPool = null;
 
     /* 标记是否上传视频*/
     private boolean uploadThreadRunFlag = false;
     private Logger log;
-    private String uploadUrl = "http://dudu.gotunnel.org/carVideoUpload";
+//    private String uploadUrl = "http://dudu.gotunnel.org/carVideoUpload";
     //debug
-//    private String uploadUrl = "http://192.168.0.50:8080/carVideoUpload";
+
+    private String uploadUrl = "http://192.168.0.50:8080/carVideoUpload";
 
     private RequestQueue queue;
     /* 用于存放文件路径*/
@@ -58,7 +62,7 @@ public class VideoTransfer {
         queue = Volley.newRequestQueue(mContext);
 
         sendServiceThreadPool = Executors.newScheduledThreadPool(1);
-        log = LoggerFactory.getLogger("video.service");
+        log = LoggerFactory.getLogger("video.VideoManager");
 
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
@@ -70,7 +74,14 @@ public class VideoTransfer {
 
     /* 处理视频上传事件*/
     public void onEventAsync(UploadVideo uploadVideo){
-        log.info("收到并处理UploadVideo事件：isStopUploadVideo：{}",uploadVideo.getIsStopUploadVideo());
+        log.info("收到并处理UploadVideo事件：isStopUploadVideo：{}, hostController：{}", uploadVideo.getIsStopUploadVideo(), uploadVideo.getHostController());
+
+        if (uploadVideo.getHostController() != null){
+            uploadUrl = uploadVideo.getHostController()+"/"+UPLOAD_VIDEO_URL_SUFFIX;
+            log.info("视频上传地址：{}",uploadUrl);
+            videoConfirmRequest.setConfirmStartVideoUrl(uploadVideo.getHostController()+ "/"+ CONFIRM_START_VIDEO_URL_SUFFIX);
+        }
+
         stopUploadThread();//收到事件如果上传线程在运行先停掉
         if (uploadVideo.getIsStopUploadVideo().equals("true")){
             log.info("收到停止上传指令");
@@ -98,7 +109,7 @@ public class VideoTransfer {
         try {
             Thread.sleep(5*1000);
         } catch (InterruptedException e) {
-            log.error("异常：{}", e);
+            log.error("异常：", e);
         }
         VideoManager.getInstance().startRecord();
     }
@@ -143,7 +154,7 @@ public class VideoTransfer {
                         }
                     }
                 } catch (Exception e) {
-                    log.error("异常：{}", e);
+                    log.error("异常：", e);
                 }
             }
         }
@@ -163,7 +174,7 @@ public class VideoTransfer {
                 sendServiceThreadPool.shutdown();
                 sendServiceThreadPool = null;
             } catch (Exception e) {
-                log.error("异常：{}", e);
+                log.error("异常：", e);
             }
         }
     }
@@ -189,7 +200,7 @@ public class VideoTransfer {
                 }
             }
         } catch (Exception e) {
-            log.error("异常：{}", e);
+            log.error("异常：", e);
             return null;
         }
     }
@@ -212,13 +223,13 @@ public class VideoTransfer {
                     public void onErrorResponse(VolleyError error) {
                         try {
                             if (error != null){
-                                log.error("上传视频文件错误响应：{}", error.toString());
+                                log.error("上传视频文件错误响应：", error);
                                 goOnUpload();
                             }else{
                                 log.error("上传视频文件错误响应  null");
                             }
                         } catch (Exception e) {
-                            log.error("异常：{}", e);
+                            log.error("异常：", e);
                         }
                     }
                 });

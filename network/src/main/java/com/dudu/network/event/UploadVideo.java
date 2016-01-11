@@ -19,6 +19,7 @@ public class UploadVideo extends MessagePackage {
     private  String method;
     private String obeId;
     private String isStopUploadVideo = "true";
+    private String hostController = "http://192.168.0.50:8080/";
 
     public UploadVideo() {
     }
@@ -62,6 +63,7 @@ public class UploadVideo extends MessagePackage {
             obeId =  jsonObject.getString("obeId");
             method = jsonObject.getString("method");
             isStopUploadVideo = jsonObject.getString("isStopUploadVideo");
+            hostController = jsonObject.getString("hostController");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -83,5 +85,9 @@ public class UploadVideo extends MessagePackage {
 
     public String getIsStopUploadVideo() {
         return isStopUploadVideo;
+    }
+
+    public String getHostController() {
+        return hostController;
     }
 }

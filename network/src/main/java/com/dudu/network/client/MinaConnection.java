@@ -54,7 +54,7 @@ public class MinaConnection extends IoHandlerAdapter implements IConnection{
     public void connect(ConnectionParam connectionParam) {
         try{
             connector = new NioSocketConnector();
-            connector.setConnectTimeoutMillis(connectionParam.getConnectTimeout());// 设置链接超时时间
+//            connector.setConnectTimeoutMillis(connectionParam.getConnectTimeout());// 设置链接超时时间
 
             // 添加过滤器
             TextLineCodecFactory tlcf = new TextLineCodecFactory(Charset.forName("UTF-8"));
