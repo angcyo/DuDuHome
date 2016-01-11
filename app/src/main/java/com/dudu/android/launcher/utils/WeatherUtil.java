@@ -43,11 +43,11 @@ public class WeatherUtil {
                     public void onWeatherLiveSearched(AMapLocalWeatherLive aMapLocalWeatherLive) {
                         if (aMapLocalWeatherLive != null
                                 && aMapLocalWeatherLive.getAMapException().getErrorCode() == 0) {
-                            String weather = aMapLocalWeatherLive.getWeather();
+                           /* String weather = aMapLocalWeatherLive.getWeather();
 
-                            String temperature = aMapLocalWeatherLive.getTemperature();
+                            String temperature = aMapLocalWeatherLive.getTemperature();*/
 
-                            EventBus.getDefault().post(new DeviceEvent.Weather(weather, temperature));
+                            /*EventBus.getDefault().post(new DeviceEvent.Weather(weather, temperature));*/
 
                             LocationUtils.getInstance(LauncherApplication.getContext()).setCurrentCity(
                                     aMapLocalWeatherLive.getCity());

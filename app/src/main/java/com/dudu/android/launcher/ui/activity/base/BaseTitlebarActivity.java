@@ -21,10 +21,12 @@ import com.dudu.android.launcher.utils.DialogUtils;
 import com.dudu.android.launcher.utils.NetworkUtils;
 import com.dudu.android.launcher.utils.StatusBarManager;
 import com.dudu.android.launcher.utils.WeatherUtil;
+import com.dudu.android.launcher.utils.WeatherUtils;
 import com.dudu.event.BleStateChange;
 import com.dudu.event.DeviceEvent;
 import com.dudu.monitor.Monitor;
 import com.dudu.monitor.event.CarStatus;
+import com.dudu.monitor.utils.LocationUtils;
 
 import java.util.Iterator;
 
@@ -106,8 +108,6 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
                 R.drawable.bluetooth_off : R.drawable.bluetooth_on);
 
 
-
-
     }
 
     private void setSimLevel(int level) {
@@ -121,7 +121,8 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
     private void setSimType(String type) {
         if (type.equals("2G") || type.equals("3G") || type.equals("4G")) {
             // 当网络连接时重新获取天气信息
-            WeatherUtil.requestWeatherInfo();
+
+            WeatherUtils.getInstance().startWeatherUnderstanding(LocationUtils.getInstance(this).getCurrentCity() + "今天的天气");
 
             mSignalTextView.setText(type);
             mSignalImage.setVisibility(View.VISIBLE);
@@ -135,8 +136,11 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            String type = NetworkUtils.getCurrentNetworkType(BaseTitlebarActivity.this);
-            setSimType(type);
+            if (intent.getAction().equals(ACTION_CONNECTIVITY_CHANGE)) {
+                String type = NetworkUtils.getCurrentNetworkType(BaseTitlebarActivity.this);
+                setSimType(type);
+            }
+
         }
     }
 
@@ -156,8 +160,8 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
         }
     }
 
-    public void onEventMainThread(CarStatus carStatus){
-        switch (carStatus){
+    public void onEventMainThread(CarStatus carStatus) {
+        switch (carStatus) {
             case OFFLINE:
                 mGpsSignalImage.setImageResource(R.drawable.gps_signal_error);
                 break;

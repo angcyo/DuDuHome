@@ -336,7 +336,7 @@ public class MainActivity extends BaseTitlebarActivity implements
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.add(Calendar.MINUTE, 30);
+        calendar.add(Calendar.SECOND, 10);
         mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 30 * 60 * 1000, pi);
     }
 
