@@ -1,8 +1,10 @@
 package com.dudu.service;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.support.annotation.Nullable;
 
 import com.dudu.android.hideapi.SystemPropertiesProxy;
@@ -48,6 +50,9 @@ public class MainService extends Service {
     private Calculation calculation;
 
     private Storage storage;
+    private PowerManager mPowerManager;
+    private PowerManager.WakeLock mWakeLock;
+
 
     @Override
     public void onCreate() {
@@ -76,6 +81,7 @@ public class MainService extends Service {
 
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
+        mPowerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
     }
 
     private void initNetWork() {
@@ -112,6 +118,8 @@ public class MainService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        mWakeLock = mPowerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "screenswakelock");
+        mWakeLock.acquire();
         return START_STICKY;
     }
 
@@ -121,19 +129,28 @@ public class MainService extends Service {
         return null;
     }
 
-
     public void onEvent(CarStatus event) {
         switch (event) {
             case ONLINE:
-                EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.ON));
+//                EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.ON));
                 CarStatusUtils.saveCarStatus(true);
-                log.debug("收到点火通知");
+                log.debug("接收到点火通知-亮屏");
                 WifiApAdmin.startWifiAp(this);
+                if (mWakeLock == null) {
+                    log.debug("启动wakelock");
+                    mWakeLock = mPowerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "screenswakelock");
+                    mWakeLock.acquire();
+                }
                 break;
             case OFFLINE:
-                EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.OFF));
+                log.debug("接收到熄火通知-灭屏");
+                if (mWakeLock != null && mWakeLock.isHeld()) {
+                    log.debug("释放wakelock");
+                    mWakeLock.release();
+                    mWakeLock = null;
+                }
+//                EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.OFF));
                 CarStatusUtils.saveCarStatus(false);
-                log.debug("收到熄火通知");
                 Observable.just(5)
                         .timer(15, TimeUnit.SECONDS)
                         .subscribe(new Action1<Long>() {
@@ -151,4 +168,12 @@ public class MainService extends Service {
     public void onEvent(PowerOffEvent event) {
         SystemPropertiesProxy.getInstance().set(this, "persist.sys.boot", "shutdown");
     }
+
+    public void onEventMainThread(DeviceEvent.Screen event) {
+        log.debug("DeviceEvent.Screen {}", event.getState());
+        if (event.getState() == DeviceEvent.ON) {
+            mWakeLock.acquire();
+        }
+    }
+
 }

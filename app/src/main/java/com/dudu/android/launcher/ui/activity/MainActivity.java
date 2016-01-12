@@ -1,7 +1,9 @@
 package com.dudu.android.launcher.ui.activity;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +15,6 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -35,6 +36,7 @@ import com.dudu.android.launcher.db.DbHelper;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
 import com.dudu.android.launcher.ui.dialog.IPConfigDialog;
+import com.dudu.android.launcher.utils.AdminReceiver;
 import com.dudu.android.launcher.utils.AgedUtils;
 import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.Utils;
@@ -44,7 +46,6 @@ import com.dudu.event.DeviceEvent;
 import com.dudu.event.VoiceEvent;
 import com.dudu.init.InitManager;
 import com.dudu.map.NavigationClerk;
-import com.dudu.monitor.event.CarStatus;
 import com.dudu.navi.event.NaviEvent;
 import com.dudu.obd.ObdInit;
 import com.dudu.video.VideoManager;
@@ -96,6 +97,10 @@ public class MainActivity extends BaseTitlebarActivity implements
     private Button mVoiceButton;
 
     private Logger log_init;
+    private DevicePolicyManager mPolicyManager;
+    private ComponentName componentName;
+
+    private static final int MY_REQUEST_CODE = 9999;
 
     private class WorkerHandler extends Handler {
         public WorkerHandler(Looper looper) {
@@ -159,6 +164,10 @@ public class MainActivity extends BaseTitlebarActivity implements
         mWorkerHandler.sendEmptyMessage(DELETE_LITTLE_VIDEOS);
 
         registerTFlashCardReceiver();
+        // 获取设备管理服务
+        mPolicyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+        // 自己的AdminReceiver 继承自 DeviceAdminReceiver
+        componentName = new ComponentName(this, AdminReceiver.class);
     }
 
     private void registerTFlashCardReceiver() {
@@ -280,6 +289,7 @@ public class MainActivity extends BaseTitlebarActivity implements
 
             case R.id.didi_button:
                 Utils.openJD(this);
+//                EventBus.getDefault().post(CarStatus.OFFLINE);
                 break;
 
             case R.id.wlan_button:
@@ -377,8 +387,39 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     public void onEventMainThread(DeviceEvent.Screen event) {
         log_init.debug("DeviceEvent.Screen {}", event.getState());
-        com.dudu.android.hideapi.SystemPropertiesProxy.getInstance()
-                .set(MainActivity.this, "persist.sys.screen", event.getState() == DeviceEvent.ON ? "on" : "off");
+        if(event.getState() == DeviceEvent.OFF) {
+            if (mPolicyManager.isAdminActive(componentName)) {
+                mPolicyManager.lockNow();// 锁屏
+            } else {
+                activeManage(); //获取权限
+            }
+        }
+    }
+
+    private void activeManage() {
+        // 启动设备管理(隐式Intent) - 在AndroidManifest.xml中设定相应过滤器
+        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+
+        // 权限列表
+        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
+
+        // 描述(additional explanation) 在申请权限时出现的提示语句
+        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,
+                "激活后就能一键锁屏了");
+
+        startActivityForResult(intent, MY_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // 获取权限成功，立即锁屏并finish自己，否则继续获取权限
+        if (requestCode == MY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            mPolicyManager.lockNow();
+        } else {
+            //activeManage();
+            //finish();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     public void onEventMainThread(VoiceEvent event) {

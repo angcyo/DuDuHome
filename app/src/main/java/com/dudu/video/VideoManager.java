@@ -254,6 +254,7 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
     }
 
     public void stopRecord() {
+        log.debug("停止录像");
         if (!mRecording) {
             return;
         }
