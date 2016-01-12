@@ -53,6 +53,11 @@ public class VideoTransfer {
     private RequestQueue queue;
     /* 用于存放文件路径*/
     private List<String > videoFileNameList;
+    private String videoFileNameListLock = "videoFileNameListLock";
+
+    private String uploadVideoEventLock = "uploadVideoEventLock";
+
+    private int uploadVideoErrorCount = 0;
 
     private VideoConfirmRequest videoConfirmRequest;
 
@@ -76,24 +81,27 @@ public class VideoTransfer {
     public void onEventAsync(UploadVideo uploadVideo){
         log.info("收到并处理UploadVideo事件：isStopUploadVideo：{}, hostController：{}", uploadVideo.getIsStopUploadVideo(), uploadVideo.getHostController());
 
-        if (uploadVideo.getHostController() != null){
-            uploadUrl = uploadVideo.getHostController()+"/"+UPLOAD_VIDEO_URL_SUFFIX;
-            log.info("视频上传地址：{}",uploadUrl);
-            videoConfirmRequest.setConfirmStartVideoUrl(uploadVideo.getHostController()+ "/"+ CONFIRM_START_VIDEO_URL_SUFFIX);
-        }
+        synchronized (uploadVideoEventLock) {
+            if (uploadVideo.getHostController() != null){
+                uploadUrl = uploadVideo.getHostController()+"/"+UPLOAD_VIDEO_URL_SUFFIX;
+                log.info("视频上传地址：{}",uploadUrl);
+                videoConfirmRequest.setConfirmStartVideoUrl(uploadVideo.getHostController()+ "/"+ CONFIRM_START_VIDEO_URL_SUFFIX);
+            }
 
-        stopUploadThread();//收到事件如果上传线程在运行先停掉
-        if (uploadVideo.getIsStopUploadVideo().equals("true")){
-            log.info("收到停止上传指令");
-            uploadThreadRunFlag = false;
-            videoFileNameList.clear();
-            return;
-        }
+            stopUploadThread();//收到事件如果上传线程在运行先停掉
+            if (uploadVideo.getIsStopUploadVideo().equals("true")){
+                log.info("收到停止上传指令");
+                videoFileNameList.clear();
+                if (uploadThreadRunFlag)
+                    stopUpload();
+                return;
+            }
 
-        if (uploadVideo.getObeId().equals(DeviceIDUtil.getIMEI(mContext))){
-            uploadThreadRunFlag = true;
-            videoConfirmRequest.confirmStartVideo();
-            restartRecordVideo(false);
+            if (uploadVideo.getObeId().equals(DeviceIDUtil.getIMEI(mContext))){
+                uploadThreadRunFlag = true;
+                videoConfirmRequest.confirmStartVideo();
+                restartRecordVideo(false);
+            }
         }
     }
 
@@ -121,8 +129,9 @@ public class VideoTransfer {
         if (uploadThreadRunFlag == true){
             log.debug("新加入文件：{}", videoFileName);
             videoFileNameList.add(videoFileName);
-            synchronized (videoFileNameList){
-                videoFileNameList.notifyAll();
+            synchronized (videoFileNameListLock){
+                log.debug("新加入文件通知-------");
+                videoFileNameListLock.notifyAll();
             }
         }
 
@@ -132,15 +141,15 @@ public class VideoTransfer {
     private  Thread uploadThread = new Thread(){
         @Override
         public void run() {
-            log.info("视频上传线程开始运行----------");
-            while (uploadThreadRunFlag) {
-                try {
+            try {
+                log.info("视频上传线程开始运行----------");
+                while (uploadThreadRunFlag) {
                     String filePath = getNextFilepath();
-                    if (filePath != null){//如果为null，就尝试获取下一个
+                    if (filePath != null) {//如果为null，就尝试获取下一个
                         String fileLength = FileUtils.fileByte2Mb(new File(filePath).length());
-                        log.debug("上传视频  长度：{} M，文件名：{}",fileLength, filePath);
+                        log.debug("上传视频  长度：{} M，文件名：{}", fileLength, filePath);
 
-                        if (Float.valueOf(fileLength) < 0.2 || Float.valueOf(fileLength)  > 4){
+                        if (Float.valueOf(fileLength) < 0.2 || Float.valueOf(fileLength) > 4) {
                             log.info("文件长度 length < 0.2 || length > 4，过滤掉");
                             continue;
                         }
@@ -148,14 +157,14 @@ public class VideoTransfer {
                         doUploadVideo(filePath);
 
                         log.info("视频上传等待响应");
-                        synchronized (uploadThread){
+                        synchronized (uploadThread) {
                             uploadThread.wait();
                             log.info("视频上传等待----结束");
                         }
                     }
-                } catch (Exception e) {
-                    log.error("异常：", e);
                 }
+            } catch (Exception e) {
+                log.error("异常：", e);
             }
         }
     };
@@ -184,15 +193,15 @@ public class VideoTransfer {
         try {
             if (!videoFileNameList.isEmpty()){
                 log.debug("获取到下一个视频文件地址");
-                synchronized (videoFileNameList){
+                synchronized (videoFileNameListLock){
                     if (videoFileNameList.isEmpty())
                         return null;
                     return videoFileNameList.remove(0);
                 }
             }else {
-                synchronized (videoFileNameList){
+                synchronized (videoFileNameListLock){
                     log.debug("videoFileNameList 没有数据，等待有数据");
-                    videoFileNameList.wait();
+                    videoFileNameListLock.wait();
                     log.debug("videoFileNameList 没有数据，等待结束");
                     if (videoFileNameList.isEmpty())
                         return null;
@@ -217,17 +226,23 @@ public class VideoTransfer {
                         log.info("上传视频文件响应信息：{}", response);
                         log.debug("上传结束时间：{}", TimeUtils.format(TimeUtils.format1));
                         proUploadResponseInfo(response);
+
+                        if (uploadVideoErrorCount >= 1){
+                            uploadVideoErrorCount--;
+                        }
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         try {
-                            if (error != null){
-                                log.error("上传视频文件错误响应：", error);
-                                goOnUpload();
-                            }else{
-                                log.error("上传视频文件错误响应  null");
+                            log.error("上传视频文件错误响应：", error);
+                            uploadVideoErrorCount++;
+                            if (uploadVideoErrorCount >=5){
+                                log.info("累计上传错误次数达到：{} 次，停止实时视频上传", uploadVideoErrorCount);
+                                stopUpload();
+                                return;
                             }
+                            goOnUpload();
                         } catch (Exception e) {
                             log.error("异常：", e);
                         }

@@ -458,12 +458,13 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
 
                     File file = new File(mVideoStoragePath, videoName);
                     String length = FileUtils.fileByte2Kb(file.length());
+//                    log.debug("insertVideo 视频文件长度：{}M", FileUtils.fileByte2Mb(file.length()));
                     float size = Float.parseFloat(length);
                     //100Kb以下的文件不保存
-                    if (file.exists() && size > 300) {
+                    if (file.exists() && size > 250) {
                         insertVideo(file);
                     } else if (file.exists()) {
-                        log.error("300Kb以下的文件不保存");
+                        log.error("250Kb以下的文件不保存");
                         boolean success = file.delete();
                         log.error("删除结果:" + success);
                     }
@@ -487,7 +488,7 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
         String length = FileUtils.fileByte2Mb(file.length());
 
         float size = Float.parseFloat(length);
-        log.debug("视频大小: {}M", size);
+        log.debug("insertVideo 视频大小: {}M", size);
 
         while (mVideoCacheMaxSize <= mDbHelper.getTotalSize() + size) {
             log.debug("录像存储空间不够，准备释放空间...");
