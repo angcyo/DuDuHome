@@ -57,15 +57,17 @@ public class WifiActivity extends BaseTitlebarActivity {
 
     @Override
     public void initDatas() {
-        final Calendar c = Calendar.getInstance();
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH) + 1;
+//        final Calendar c = Calendar.getInstance();
+//        int year = c.get(Calendar.YEAR);
+//        int month = c.get(Calendar.MONTH) + 1;
 
-       float usedFlow = mDbHelper.calculateForMonth(year, month, 1) / 1024;
+//       float usedFlow = mDbHelper.calculateForMonth(year, month, 1) / 1024;
         //float remainingFlow = mTotalFlow - usedFlow;
         remainingFlow = Float.parseFloat(SharedPreferencesUtil.getStringValue(this, Constants.KEY_REMAINING_FLOW, DEFAULT_FLOW_VALUE))/1024;
 
         mTotalFlow=Float.parseFloat(SharedPreferencesUtil.getStringValue(this,Constants.KEY_MONTH_MAX_VALUE,DEFAULT_FLOW_VALUE))/1024;
+
+        float usedFlow = mTotalFlow -remainingFlow;//使用流量改用差值
 
         mUsedFlowView.setText(getString(R.string.used_flow, mDecimalFormat.format(usedFlow)));
 
