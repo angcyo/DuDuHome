@@ -106,7 +106,7 @@ public class LocationManage implements ILocationListener{
                 break;
             case OFFLINE:
                 log.debug("熄火后停止定位");
-                mILocation.stopLocation();
+//                mILocation.stopLocation();
                 break;
         }
 
