@@ -23,8 +23,8 @@ android {
         applicationId "com.dudu.android.launcher"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 1203
-        versionName "T-1.2.3-feidi-pod-demo"
+        versionCode 1209
+        versionName "T-1.2.9-didi-pod"
     }
     buildTypes {
         release {

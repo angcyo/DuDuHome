@@ -118,7 +118,7 @@ public class MainService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        mWakeLock = mPowerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "screenswakelock");
+        mWakeLock = mPowerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "screenswakelock");
         mWakeLock.acquire();
         return START_STICKY;
     }
@@ -138,7 +138,7 @@ public class MainService extends Service {
                 WifiApAdmin.startWifiAp(this);
                 if (mWakeLock == null) {
                     log.debug("启动wakelock");
-                    mWakeLock = mPowerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "screenswakelock");
+                    mWakeLock = mPowerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "screenswakelock");
                     mWakeLock.acquire();
                 }
                 break;
@@ -151,7 +151,7 @@ public class MainService extends Service {
                 }
 //                EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.OFF));
                 CarStatusUtils.saveCarStatus(false);
-                Observable.just(5)
+                Observable
                         .timer(15, TimeUnit.SECONDS)
                         .subscribe(new Action1<Long>() {
                             @Override
