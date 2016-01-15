@@ -37,6 +37,7 @@ public class CheckDeviceActive extends MessagePackage {
         activemap.put("method",method);
 
         activemap.put("ro.build.fingerprint", sps.get("ro.build.fingerprint", "UNKNOWN"));
+        activemap.put("ro.fota.version", sps.get("ro.fota.version", "UNKNOWN"));
         activemap.put("ro.serialno", DeviceIDUtil.getAndroidID(context));
         activemap.put("ro.product.model", sps.get("ro.product.model", "UNKNOWN"));
         activemap.put("sim.seralno", DeviceIDUtil.getSimSerialNumber(context));
