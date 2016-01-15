@@ -342,6 +342,14 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
     }
 
     private boolean prepareMediaRecorder() {
+        if (mCamera == null) {
+            try {
+                mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
+            } catch (Exception e) {
+                log.error("重试获取相机失败");
+                return false;
+            }
+        }
         mCamera.unlock();
 
         mMediaRecorder = new MediaRecorder();
