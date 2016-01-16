@@ -1,5 +1,7 @@
 package com.dudu.android.launcher.ui.activity;
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.GpsSatellite;
@@ -385,6 +387,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
             e.printStackTrace();
         }
         EventBus.getDefault().unregister(this);
+        ActivitiesManager.getInstance().closeTargetActivity(SimpleHudActivity.class);
         super.onDestroy();
     }
 

@@ -18,6 +18,7 @@ import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.ui.activity.LocationMapActivity;
 import com.dudu.android.launcher.ui.activity.NaviBackActivity;
 import com.dudu.android.launcher.ui.activity.NaviCustomActivity;
+import com.dudu.android.launcher.ui.activity.SimpleHudActivity;
 import com.dudu.android.launcher.ui.dialog.WaitingDialog;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.CommonAddressUtil;
@@ -376,6 +377,7 @@ public class NavigationClerk {
                 intentClass = LocationMapActivity.class;
                 ActivitiesManager.getInstance().closeTargetActivity(NaviCustomActivity.class);
                 ActivitiesManager.getInstance().closeTargetActivity(NaviBackActivity.class);
+                ActivitiesManager.getInstance().closeTargetActivity(SimpleHudActivity.class);
                 break;
         }
         navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);

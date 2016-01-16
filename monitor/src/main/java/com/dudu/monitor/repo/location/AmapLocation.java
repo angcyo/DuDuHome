@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.GpsStatus;
 import android.location.LocationManager;
-import android.os.Bundle;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -121,13 +120,13 @@ public class AmapLocation implements AMapLocationListener, ILocation {
     public boolean isLocation() {
         return locationClient != null;
     }
-    
+
 
     @Override
     public void onLocationChanged(AMapLocation location) {
 
-        log.debug("定到位置 {}, Satellites[{}]",location.getProvider() ,location.getSatellites());
-        log.debug("位置信息 lat {},lon {}", location.getLatitude(),location.getLongitude());
+        log.debug("定到位置 {}, Satellites[{}]", location.getProvider(), location.getSatellites());
+        log.debug("位置信息 lat {},lon {}", location.getLatitude(), location.getLongitude());
 
         if (GPSdataTime < 2) {
             GPSdataTime++;

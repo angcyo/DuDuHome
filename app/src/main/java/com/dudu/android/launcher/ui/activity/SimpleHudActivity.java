@@ -14,94 +14,97 @@ import com.dudu.navi.NavigationManager;
 
 /**
  * HUD显示界面
- * */
+ */
 public class SimpleHudActivity extends BaseNoTitlebarAcitivity implements
-		AMapHudViewListener {
-	private int code = -1;
+        AMapHudViewListener {
+    private int code = -1;
 
-	private AMapHudView mAmapHudView;
+    private AMapHudView mAmapHudView;
 
-	private Class mclass;
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	}
+    private Class mclass;
 
-	@Override
-	public int initContentView() {
-		return R.layout.activity_simple_hud;
-	}
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
-	@Override
-	public void initView(Bundle savedInstanceState) {
-		mAmapHudView = (AMapHudView) findViewById(R.id.hudview);
-	}
+    @Override
+    public int initContentView() {
+        return R.layout.activity_simple_hud;
+    }
 
-	@Override
-	public void initListener() {
-		mAmapHudView.setHudViewListener(this);
-	}
+    @Override
+    public void initView(Bundle savedInstanceState) {
+        mAmapHudView = (AMapHudView) findViewById(R.id.hudview);
+    }
 
-	@Override
-	public void initDatas() {
-	}
+    @Override
+    public void initListener() {
+        mAmapHudView.setHudViewListener(this);
+    }
 
-	// -----------------HUD返回键按钮事件-----------------------
-	@Override
-	public void onHudViewCancel() {
-		switch (NavigationManager.getInstance(this).getNavigationType()){
-			case  NAVIGATION:
-				mclass = NaviCustomActivity.class;
-				break;
-			case BACKNAVI:
-				mclass = NaviBackActivity.class;
-				break;
-		}
-		Intent customIntent = new Intent(SimpleHudActivity.this,
-				mclass);
-		customIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-		startActivity(customIntent);
-		finish();
-	}
+    @Override
+    public void initDatas() {
+    }
 
-	protected void onResume() {
-		super.onResume();
-		Bundle bundle = getIntent().getExtras();
-		processBundle(bundle);
-	}
+    // -----------------HUD返回键按钮事件-----------------------
+    @Override
+    public void onHudViewCancel() {
+        if (NavigationManager.getInstance(this).isNavigatining()) {
+            switch (NavigationManager.getInstance(this).getNavigationType()) {
+                case NAVIGATION:
+                    mclass = NaviCustomActivity.class;
+                    break;
+                case BACKNAVI:
+                    mclass = NaviBackActivity.class;
+                    break;
+            }
+            Intent customIntent = new Intent(SimpleHudActivity.this,
+                    mclass);
+            customIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(customIntent);
+        }
+        finish();
+    }
 
-	private void processBundle(Bundle bundle) {
-		if (bundle != null) {
+    protected void onResume() {
+        super.onResume();
+        Bundle bundle = getIntent().getExtras();
+        processBundle(bundle);
+    }
 
-			code = bundle.getInt(NaviSettingUtil.ACTIVITYINDEX, -1);
-			if (code == NaviSettingUtil.SIMPLEHUDNAVIE) {
-				AMapNavi.getInstance(this).startNavi(AMapNavi.GPSNaviMode);
-			}
+    private void processBundle(Bundle bundle) {
+        if (bundle != null) {
 
-		}
+            code = bundle.getInt(NaviSettingUtil.ACTIVITYINDEX, -1);
+            if (code == NaviSettingUtil.SIMPLEHUDNAVIE) {
+                AMapNavi.getInstance(this).startNavi(AMapNavi.GPSNaviMode);
+            }
 
-	}
+        }
 
-	/**
-	 * 返回键监听
-	 * */
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			finish();
-		}
-		return super.onKeyDown(keyCode, event);
-	}
+    }
 
-	@Override
-	public void onPause() {
-		super.onPause();
-		mAmapHudView.onPause();
+    /**
+     * 返回键监听
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
-	}
+    @Override
+    public void onPause() {
+        super.onPause();
+        mAmapHudView.onPause();
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		mAmapHudView.onDestroy();
-	}
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mAmapHudView.onDestroy();
+    }
 }
