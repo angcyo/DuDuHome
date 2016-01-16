@@ -15,6 +15,7 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -60,6 +61,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import de.greenrobot.event.EventBus;
 
@@ -331,8 +333,26 @@ public class MainActivity extends BaseTitlebarActivity implements
      */
     private void initDate() {
         SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "yyyy年MM月dd日 EEEE", Locale.getDefault());
-        mDateTextView.setText(dateFormat.format(new Date()));
+                "yyyy年MM月dd日");
+        Calendar c = Calendar.getInstance();
+        c.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+        String mWay = String.valueOf(c.get(Calendar.DAY_OF_WEEK));
+        if("1".equals(mWay)){
+            mWay ="星期天";
+        }else if("2".equals(mWay)){
+            mWay ="星期一";
+        }else if("3".equals(mWay)){
+            mWay ="星期二";
+        }else if("4".equals(mWay)){
+            mWay ="星期三";
+        }else if("5".equals(mWay)){
+            mWay ="星期四";
+        }else if("6".equals(mWay)){
+            mWay ="星期五";
+        }else if("7".equals(mWay)){
+            mWay ="星期六";
+        }
+        mDateTextView.setText(dateFormat.format(new Date())+mWay);
     }
 
     private void setWeatherAlarm() {
