@@ -21,7 +21,7 @@ public class WifiApAdmin {
     public static final String KEY_WIFI_AP_SSID = "wifi_ssid";
     public static final String KEY_WIFI_AP_PASSWORD = "wifi_password";
 
-    public static final String DEFAULT_SSID = "DuduHotSpot";
+    public static final String DEFAULT_SSID = "DUDU_WifiTest";
     public static final String DEFAULT_PASSWORD = "88888888";
 
     private static final String WIFI_CONF_DIRECTORY = "nodogsplash";

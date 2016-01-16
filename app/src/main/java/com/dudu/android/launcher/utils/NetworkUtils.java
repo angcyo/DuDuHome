@@ -65,8 +65,6 @@ public class NetworkUtils {
 	/** Class of broadly defined "4G" networks. */
 	private static final int NETWORK_CLASS_4_G = 3;
 
-    private static String SSID = "\"DuDuHotSpot\"";
-
 	public static String getCurrentNetworkType(Context context) {
 		int networkClass = getNetworkClass(context);
 		String type = "无网络信号";
