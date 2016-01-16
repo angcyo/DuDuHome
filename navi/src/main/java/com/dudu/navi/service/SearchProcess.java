@@ -1,7 +1,6 @@
 package com.dudu.navi.service;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.amap.api.location.AMapLocation;
@@ -56,7 +55,6 @@ public class SearchProcess {
     private PoiSearch.Query query;// Poi查询条件类
     private PoiSearch poiSearch;// POI搜索
 
-    private Bundle locBundle;
     private List<PoiItem> poiItems = null;
     private List<PoiResultInfo> poiResultList = new ArrayList<>();
     private AMapLocation cur_location;
@@ -83,7 +81,7 @@ public class SearchProcess {
         isNoticeFail = false;
         searchType = NavigationManager.getInstance(mContext).getSearchType();
         cur_location = Monitor.getInstance(mContext).getCurrentLocation();
-        cityCode = LocationUtils.getInstance(mContext).getCurrentCityCode();
+        cityCode = LocationUtils.getInstance(mContext).getCurrentCity();
         if (cur_location != null) {
             latLonPoint = new LatLonPoint(cur_location.getLatitude(), cur_location.getLongitude());
         }
@@ -106,9 +104,7 @@ public class SearchProcess {
                     public void call(Long aLong) {
                         if (!hasResult) {
                             isNoticeFail = true;
-                            EventBus.getDefault().
-                                    post(new NaviEvent.NaviVoiceBroadcast("抱歉，搜索失败，请检查网络", true));
-                            EventBus.getDefault().post(NaviEvent.SearchResult.FAIL);
+                            searchFail("抱歉，搜索失败，请检查网络");
                         }
 
                     }
@@ -131,8 +127,7 @@ public class SearchProcess {
 
         } else {
             String playText = "您好，关键字有误，请重新输入";
-            EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast(playText, true));
-            EventBus.getDefault().post(NaviEvent.SearchResult.FAIL);
+            searchFail(playText);
         }
 
     }
@@ -142,15 +137,14 @@ public class SearchProcess {
         NavigationManager.getInstance(mContext).setSearchType(SearchType.SEARCH_CUR_LOCATION);
 
         if (cur_location != null) {
-            locBundle = cur_location.getExtras();
-            if (locBundle != null &&
-                    !TextUtils.isEmpty(locBundle.getString("desc"))) {
-                cur_locationDesc = locBundle.getString("desc");
+            if (!TextUtils.isEmpty(cur_location.getAddress())) {
+                cur_locationDesc = cur_location.getAddress();
                 hasResult = true;
                 String playText = "您好，您现在在" + cur_locationDesc;
                 ResourceManager.getInstance(mContext).setCur_locationDesc(playText);
-                if (!isNoticeFail)
+                if (!isNoticeFail) {
                     EventBus.getDefault().post(NaviEvent.SearchResult.SUCCESS);
+                }
                 return;
             }
         }
@@ -179,24 +173,19 @@ public class SearchProcess {
                             .getSearchSuggestionCitys();// 当搜索不到poiitem数据时，会返回含有搜索关键字的城市信息
                     if (poiItems != null && poiItems.size() > 0) {
                         setPoiList();
-                        if (!isNoticeFail)
+                        if (!isNoticeFail) {
                             EventBus.getDefault().post(NaviEvent.SearchResult.SUCCESS);
+                        }
                     } else {
 
-                        EventBus.getDefault().post(NaviEvent.ChangeSemanticType.NORMAL);
-                        EventBus.getDefault().post(NaviEvent.SearchResult.FAIL);
-                        EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast(mContext.getString(R.string.no_result), true));
+                        searchFail(mContext.getString(R.string.no_result));
                     }
                 } else {
-                    EventBus.getDefault().post(NaviEvent.SearchResult.FAIL);
-                    EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast(mContext.getString(R.string.no_result), true));
-                    EventBus.getDefault().post(NaviEvent.ChangeSemanticType.NORMAL);
+                    searchFail(mContext.getString(R.string.no_result));
                 }
             } else {
-                EventBus.getDefault().post(NaviEvent.SearchResult.FAIL);
                 NavigationManager.getInstance(mContext).getLog().debug("搜索失败 errorcode:{}", code);
-                EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast(mContext.getString(R.string.error_other), true));
-                EventBus.getDefault().post(NaviEvent.ChangeSemanticType.NORMAL);
+                searchFail(mContext.getString(R.string.error_other));
             }
 
 
@@ -261,5 +250,12 @@ public class SearchProcess {
 
             ResourceManager.getInstance(mContext).setPoiResultList(poiResultList);
         }
+    }
+
+    private void searchFail(String text) {
+
+        EventBus.getDefault().post(NaviEvent.SearchResult.FAIL);
+        EventBus.getDefault().post(new NaviEvent.NaviVoiceBroadcast(text, true));
+        EventBus.getDefault().post(NaviEvent.ChangeSemanticType.NORMAL);
     }
 }

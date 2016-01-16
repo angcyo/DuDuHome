@@ -1,6 +1,5 @@
 package com.dudu.android.launcher.ui.activity;
 
-import android.location.Location;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.View;
@@ -9,11 +8,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 
-import com.amap.api.location.AMapLocation;
-import com.amap.api.location.AMapLocationListener;
-import com.amap.api.location.LocationManagerProxy;
-import com.amap.api.location.LocationProviderProxy;
-import com.amap.api.maps.LocationSource;
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
@@ -33,8 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class NearbyRepairActivity extends BaseNoTitlebarAcitivity implements
-		LocationSource, AMapLocationListener {
+public class NearbyRepairActivity extends BaseNoTitlebarAcitivity{
 
 	private ListView mGridView;
 
@@ -44,7 +37,6 @@ public class NearbyRepairActivity extends BaseNoTitlebarAcitivity implements
 
 	private List<Map<String, String>> dataList;
 
-	private LocationManagerProxy mAMapLocationManager;
 
 	private VoiceManager mVoiceManager;
 
@@ -57,11 +49,7 @@ public class NearbyRepairActivity extends BaseNoTitlebarAcitivity implements
 	public void initView(Bundle savedInstanceState) {
 		mGridView = (ListView) findViewById(R.id.nearby_repair_listView);
 		back_button = (Button) findViewById(R.id.back_button);
-		if (mAMapLocationManager == null) {
-			mAMapLocationManager = LocationManagerProxy.getInstance(this);
-			mAMapLocationManager.requestLocationData(
-					LocationProviderProxy.AMapNetwork, 2000, 10, this);
-		}
+
 	}
 
 	@Override
@@ -174,46 +162,6 @@ public class NearbyRepairActivity extends BaseNoTitlebarAcitivity implements
 		map10.put("Rating", "3");
 		map10.put("distance", "5.5");
 		dataList.add(map10);
-	}
-
-	@Override
-	public void onLocationChanged(Location arg0) {
-
-	}
-
-	@Override
-	public void onProviderDisabled(String arg0) {
-
-	}
-
-	@Override
-	public void onProviderEnabled(String arg0) {
-
-	}
-
-	@Override
-	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-
-	}
-
-	@Override
-	public void onLocationChanged(AMapLocation alocation) {
-
-	}
-
-	@Override
-	public void activate(OnLocationChangedListener listener) {
-
-	}
-
-	@Override
-	public void deactivate() {
-		if (mAMapLocationManager != null) {
-			mAMapLocationManager.removeUpdates(this);
-			mAMapLocationManager.destroy();
-		}
-
-		mAMapLocationManager = null;
 	}
 
     public void onBackPressed(View v) {

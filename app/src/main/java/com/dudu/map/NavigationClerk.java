@@ -319,8 +319,6 @@ public class NavigationClerk {
         VoiceManager.getInstance().stopUnderstanding();
         removeCallback();
         VoiceManager.getInstance().startSpeaking(event.getNaviVoice(), SemanticConstants.TTS_START_UNDERSTANDING, true);
-        removeWindow();
-
     }
 
     public void onEventMainThread(NaviEvent.SearchResult event) {
@@ -329,8 +327,9 @@ public class NavigationClerk {
         if (event == NaviEvent.SearchResult.SUCCESS) {
             handlerPoiResult();
         } else {
-            if (isManual)
+            if (isManual) {
                 ToastUtils.showToast("抱歉,搜索失败，请稍后重试");
+            }
             navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
         }
         disMissProgressDialog();
@@ -393,18 +392,16 @@ public class NavigationClerk {
                     @Override
                     public void run() {
                         VoiceManager.getInstance().startSpeaking(navigationManager.getCurlocationDesc(),
-                                SemanticConstants.TTS_DO_NOTHING, true);
+                                SemanticConstants.TTS_START_UNDERSTANDING, true);
                     }
                 }, 200);
                 navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
-                removeWindow();
                 break;
             case SEARCH_PLACE_LOCATION:
                 String playText = "您好，" + navigationManager.getKeyword() + "的位置为："
                         + navigationManager.getPoiResultList().get(0).getAddressDetial();
-                VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_DO_NOTHING, true);
+                VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_START_UNDERSTANDING, true);
                 navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
-                removeWindow();
                 return;
             case SEARCH_NEAREST:
                 SemanticProcessor.getProcessor().switchSemanticType(

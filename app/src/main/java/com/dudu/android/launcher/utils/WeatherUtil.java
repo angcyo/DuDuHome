@@ -1,25 +1,15 @@
 package com.dudu.android.launcher.utils;
 
+import android.text.TextUtils;
+import android.util.Log;
+
+import com.dudu.android.launcher.R;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
-import android.text.TextUtils;
-import android.util.Log;
-
-import com.amap.api.location.AMapLocalWeatherForecast;
-import com.amap.api.location.AMapLocalWeatherListener;
-import com.amap.api.location.AMapLocalWeatherLive;
-import com.amap.api.location.LocationManagerProxy;
-import com.dudu.android.launcher.LauncherApplication;
-import com.dudu.android.launcher.R;
-import com.dudu.event.DeviceEvent;
-import com.dudu.monitor.utils.LocationUtils;
-
-import de.greenrobot.event.EventBus;
 
 public class WeatherUtil {
 
@@ -34,35 +24,6 @@ public class WeatherUtil {
 
     static {
         weatherList = Arrays.asList(WEATHER_STRINGS);
-    }
-
-    public static void requestWeatherInfo() {
-        LocationManagerProxy.getInstance(LauncherApplication.getContext()).requestWeatherUpdates(
-                LocationManagerProxy.WEATHER_TYPE_LIVE, new AMapLocalWeatherListener() {
-                    @Override
-                    public void onWeatherLiveSearched(AMapLocalWeatherLive aMapLocalWeatherLive) {
-                        if (aMapLocalWeatherLive != null
-                                && aMapLocalWeatherLive.getAMapException().getErrorCode() == 0) {
-                           /* String weather = aMapLocalWeatherLive.getWeather();
-
-                            String temperature = aMapLocalWeatherLive.getTemperature();*/
-
-                            /*EventBus.getDefault().post(new DeviceEvent.Weather(weather, temperature));*/
-
-                            LocationUtils.getInstance(LauncherApplication.getContext()).setCurrentCity(
-                                    aMapLocalWeatherLive.getCity());
-                            LocationUtils.getInstance(LauncherApplication.getContext()).setCurrentCitycode(
-                                    aMapLocalWeatherLive.getCityCode());
-                        } else {
-                            EventBus.getDefault().post(new DeviceEvent.Weather("", ""));
-                        }
-                    }
-
-                    @Override
-                    public void onWeatherForecaseSearched(AMapLocalWeatherForecast aMapLocalWeatherForecast) {
-
-                    }
-                });
     }
 
     public static boolean isNight(long time) {

@@ -337,13 +337,11 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     private void setWeatherAlarm() {
 
-        WeatherUtil.requestWeatherInfo();
 
         mAlarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         Intent intent = new Intent(MainActivity.this, WeatherAlarmReceiver.class);
         PendingIntent pi = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
-
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.add(Calendar.SECOND, 10);

@@ -75,7 +75,6 @@ public class TimeUtils {
 	   try {
 		t = sdf.parse(time).getTime();
 	} catch (ParseException e) {
-		// TODO: handle exception
 	}
 	   return t;
    }

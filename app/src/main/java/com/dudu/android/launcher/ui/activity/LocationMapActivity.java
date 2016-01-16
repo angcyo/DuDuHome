@@ -96,6 +96,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 log.debug("LocationMapActivity amapLocation");
                 if (listener != null) {
                     listener.onLocationChanged(amapLocation);// 显示系统小蓝点
+                    aMap.moveCamera(CameraUpdateFactory.zoomTo(15));
                 }
             }
         }
@@ -235,21 +236,16 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     private void setUpMap() {
         double[] curPoint = LocationUtils.getInstance(this).getCurrentLocation();
         latLonPoint = new LatLonPoint(curPoint[0], curPoint[1]);
-        MyLocationStyle myLocationStyle = new MyLocationStyle();
-        myLocationStyle.myLocationIcon(BitmapDescriptorFactory
-                .fromResource(R.drawable.location_marker));// 设置小蓝点的图标
-        myLocationStyle.strokeColor(Color.TRANSPARENT);// 设置圆形的边框颜色
-        myLocationStyle.radiusFillColor(Color.argb(80, 0, 0, 180));// 设置圆形的填充颜色
-        myLocationStyle.strokeWidth(0.1f);// 设置圆形的边框粗细
+        setLocationStyle();
         aMap.getUiSettings().setZoomControlsEnabled(false);// 隐藏地图放大缩小按钮
-        aMap.setMyLocationStyle(myLocationStyle);
         aMap.setMyLocationRotateAngle(180);
         aMap.setLocationSource(this);// 设置定位监听
         aMap.getUiSettings().setMyLocationButtonEnabled(true);// 设置默认定位按钮是否显示
         aMap.setMyLocationEnabled(true);// 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
         //设置定位的类型为定位模式 ，可以由定位、跟随或地图根据面向方向旋转几种
         aMap.setMyLocationType(AMap.LOCATION_TYPE_LOCATE);
-        aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(curPoint[0], curPoint[1]), 15));
+
+        aMap.moveCamera(CameraUpdateFactory.zoomTo(15));
         // 初始语音播报资源
         setVolumeControlStream(AudioManager.STREAM_MUSIC);// 设置声音控制
 
@@ -259,6 +255,16 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 backButtonAutoHide();
             }
         });
+    }
+
+    private void setLocationStyle(){
+        MyLocationStyle myLocationStyle = new MyLocationStyle();
+        myLocationStyle.myLocationIcon(BitmapDescriptorFactory
+                .fromResource(R.drawable.location_marker));// 设置小蓝点的图标
+        myLocationStyle.strokeColor(Color.TRANSPARENT);// 设置圆形的边框颜色
+        myLocationStyle.radiusFillColor(Color.argb(80, 0, 0, 180));// 设置圆形的填充颜色
+        myLocationStyle.strokeWidth(0.1f);// 设置圆形的边框粗细
+        aMap.setMyLocationStyle(myLocationStyle);
     }
 
     private void getLocation() {

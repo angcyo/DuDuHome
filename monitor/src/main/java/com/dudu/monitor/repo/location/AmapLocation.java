@@ -4,14 +4,13 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.GpsStatus;
-import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 
 import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
-import com.amap.api.location.LocationManagerProxy;
-import com.amap.api.location.LocationProviderProxy;
 import com.dudu.monitor.utils.LocationFilter;
 import com.dudu.monitor.utils.LocationUtils;
 import com.dudu.monitor.utils.TimeUtils;
@@ -34,19 +33,19 @@ import static android.support.v4.content.PermissionChecker.checkSelfPermission;
 public class AmapLocation implements AMapLocationListener, ILocation {
     private Context mContext;
 
-    private LocationManagerProxy mLocationManagerProxy;
+    private AMapLocationClient locationClient = null;
+    private AMapLocationClientOption locationOption = null;
     private LocationManager locationManager;
     private ILocationListener mILocationListener = null;
 
     private Logger log;
 
     private int GPSdataTime = 0;// 第几个GPS点
-    private AMapLocation last_Location,cur_locatopn;// 前一个位置点
+    private AMapLocation last_Location, cur_locatopn;// 前一个位置点
     private boolean isAvalable = false; // 标志定位点是否有效
     private boolean isFirstRun = true; // 第一个点
     private boolean isFirstLoc = true; // 是否第一次定位成功
     private List<AMapLocation> unAvalableList = new ArrayList<>(); // 存放通过第一阶段但没通过第二阶段过滤的点
-//    private List<LocationInfo> gpsDataListToSend; // 通过过滤后的定位点的集合
 
     // 状态监听
     GpsStatus.Listener getGpsStatuslistener = new GpsStatus.Listener() {
@@ -61,7 +60,7 @@ public class AmapLocation implements AMapLocationListener, ILocation {
                 // 卫星状态改变
                 case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
                     log.debug("卫星状态改变");
-                    if (last_Location != null)
+                    if (last_Location != null && locationManager != null)
                         EventBus.getDefault().post(locationManager.getGpsStatus(null));
                     break;
                 // 定位启动
@@ -84,26 +83,29 @@ public class AmapLocation implements AMapLocationListener, ILocation {
     @Override
     public void startLocation(Context context) {
         mContext = context;
-        mLocationManagerProxy = LocationManagerProxy.getInstance(context);
-        mLocationManagerProxy.requestLocationData(
-                LocationProviderProxy.AMapNetwork, 2000, 10, this);
+        locationClient = new AMapLocationClient(mContext);
+        locationOption = new AMapLocationClientOption();
+        locationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+        locationClient.setLocationListener(this);
+        locationOption.setNeedAddress(true);
+        locationOption.setInterval(2000);
+        locationClient.startLocation();
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
     }
 
     @Override
     public void stopLocation() {
-        if (mLocationManagerProxy != null) {
-            mLocationManagerProxy.removeUpdates(this);
-            mLocationManagerProxy.destroy();
+        if (locationClient != null) {
+            locationClient.unRegisterLocationListener(this);
+            locationClient.stopLocation();
+            locationClient.onDestroy();
             locationManager.removeGpsStatusListener(getGpsStatuslistener);
         }
         locationManager = null;
-        mLocationManagerProxy = null;
-        if(cur_locatopn!=null){
+        if (cur_locatopn != null) {
             LocationUtils.getInstance(mContext).setCurrentLocation(cur_locatopn.getLatitude(),
                     cur_locatopn.getLongitude());
         }
-
         isFirstRun = true;
         isFirstLoc = true;
 
@@ -114,16 +116,18 @@ public class AmapLocation implements AMapLocationListener, ILocation {
         mILocationListener = iLocationListener;
     }
 
+
     @Override
     public boolean isLocation() {
-        return mLocationManagerProxy!=null;
+        return locationClient != null;
     }
+    
 
     @Override
     public void onLocationChanged(AMapLocation location) {
 
-        log.debug("定到位置 " + location.getProvider());
-        log.debug("位置信息 " + "纬度:" + location.getLatitude() + "  经度：" + location.getLongitude());
+        log.debug("定到位置 {}, Satellites[{}]",location.getProvider() ,location.getSatellites());
+        log.debug("位置信息 lat {},lon {}", location.getLatitude(),location.getLongitude());
 
         if (GPSdataTime < 2) {
             GPSdataTime++;
@@ -137,13 +141,10 @@ public class AmapLocation implements AMapLocationListener, ILocation {
             if (checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 locationManager.addGpsStatusListener(getGpsStatuslistener);
             }
-            Bundle locBundle = location.getExtras();
-            if (locBundle != null) {
-                LocationUtils.getInstance(mContext).setCurrentCitycode(locBundle.getString("citycode"));
-                LocationUtils.getInstance(mContext).setCurrentLocation(location.getLatitude(), location.getLongitude());
-                last_Location = location;
-                isFirstLoc = false;
-            }
+            LocationUtils.getInstance(mContext).setCurrentCity(location.getCity());
+            LocationUtils.getInstance(mContext).setCurrentLocation(location.getLatitude(), location.getLongitude());
+            last_Location = location;
+            isFirstLoc = false;
         }
 
         if (mILocationListener != null && location != null) {
@@ -254,24 +255,5 @@ public class AmapLocation implements AMapLocationListener, ILocation {
         }
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        log.debug("定位 onLocationChanged");
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        log.debug("定位 onStatusChanged");
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-        log.debug("定位 onProviderEnabled");
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-        log.debug("定位 onProviderDisabled");
-    }
 
 }
