@@ -53,7 +53,6 @@ public class SendService {
                 sendObdData();
 
                 sendFlamoutData();
-
             }catch (Exception e){
                 e.printStackTrace();
                 log.error("monitor-发送服务异常" + e);
@@ -85,7 +84,7 @@ public class SendService {
     public void startSendService(){
         activeDevice();
         sendServiceThreadPool.scheduleAtFixedRate(sendServiceThread, 4, 30, TimeUnit.SECONDS);
-        sendServiceThreadPool.scheduleAtFixedRate(sendServiceThread2, 30, 60*60, TimeUnit.SECONDS);
+        sendServiceThreadPool.scheduleAtFixedRate(sendServiceThread2, 30, 30*60, TimeUnit.SECONDS);
     }
 
     public void stopSendService(){

@@ -8,6 +8,7 @@ import com.dudu.monitor.event.CarStatus;
 import com.dudu.network.NetworkManage;
 import com.dudu.network.event.ActiveDevice;
 import com.dudu.network.event.ActiveDeviceRes;
+import com.dudu.network.event.CheckDeviceActive;
 import com.dudu.network.event.CheckDeviceActiveRes;
 import com.dudu.network.event.RebootDevice;
 
@@ -15,7 +16,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+import java.util.concurrent.TimeUnit;
+
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.functions.Action1;
 
 /**
  * Created by dengjun on 2015/12/2.
@@ -75,6 +80,14 @@ public class ActiveDeviceManage {
         if (activeDeviceRes.isActive()) {
             activeState = 1;
             setActiveFlag(ACTIVE_OK);
+        }else {
+            Observable.timer(5*60, TimeUnit.SECONDS).subscribe(new Action1<Long>() {
+                @Override
+                public void call(Long aLong) {
+                    log.info("再次检查设备激活----");
+                    NetworkManage.getInstance().sendMessage(new CheckDeviceActive(mContext));
+                }
+            });
         }
     }
 
