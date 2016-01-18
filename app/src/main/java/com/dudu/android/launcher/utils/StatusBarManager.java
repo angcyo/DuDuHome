@@ -28,7 +28,7 @@ public class StatusBarManager {
 
     private TelephonyManager mPhoneManager;
 
-    private int isRecording = 1;
+    private int isRecording = 0;
 
     private int bleConnState = 0;
 

@@ -8,6 +8,7 @@ import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -23,7 +24,9 @@ import com.dudu.android.launcher.db.DbHelper;
 import com.dudu.android.launcher.service.video.VideoConfigParam;
 import com.dudu.android.launcher.service.video.VideoTransfer;
 import com.dudu.android.launcher.utils.FileUtils;
+import com.dudu.android.launcher.utils.StatusBarManager;
 import com.dudu.android.launcher.utils.ToastUtils;
+import com.dudu.event.DeviceEvent;
 import com.dudu.voice.semantic.VoiceManager;
 
 import org.slf4j.Logger;
@@ -35,6 +38,8 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import de.greenrobot.event.EventBus;
 
 
 /**
@@ -307,10 +312,12 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
         if (prepareMediaRecorder()) {
             try {
                 mMediaRecorder.start();
+                EventBus.getDefault().post(new DeviceEvent.Video(DeviceEvent.ON));
                 log.debug("开启录像成功...");
                 return;
             } catch (Exception e) {
                 log.error("录像开启出错: " + e.getMessage());
+                EventBus.getDefault().post(new DeviceEvent.Video(DeviceEvent.OFF));
                 SystemPropertiesProxy.getInstance().set(mContext, "persist.sys.boot", "reboot");
             }
         } else {
@@ -403,6 +410,7 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
         if (mMediaRecorder != null) {
             try {
                 mMediaRecorder.stop();
+                EventBus.getDefault().post(DeviceEvent.OFF);
             } catch (Exception e) {
                 log.error("录像关闭异常: " + e.toString());
             }
@@ -436,6 +444,7 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
             mMediaRecorder.release();
             mMediaRecorder = null;
             mCamera.lock();
+            EventBus.getDefault().post(new DeviceEvent.Video(DeviceEvent.OFF));
         }
     }
 
