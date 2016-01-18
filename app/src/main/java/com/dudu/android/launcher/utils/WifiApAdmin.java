@@ -145,9 +145,13 @@ public class WifiApAdmin {
 
     public static boolean startWifiAp(Context context) {
         log_init.debug("读取配置，然后打开热点");
-        String ssid = SharedPreferencesUtil.getStringValue(context, KEY_WIFI_AP_SSID, DEFAULT_SSID);
-        String password = SharedPreferencesUtil.getStringValue(context, KEY_WIFI_AP_PASSWORD, DEFAULT_PASSWORD);
-        return startWifiAp(context, ssid, password, null);
+        if (Utils.isTaxiVersion()) {
+            return startWifiAp(context, DEFAULT_SSID, "", null);
+        } else {
+            String ssid = SharedPreferencesUtil.getStringValue(context, KEY_WIFI_AP_SSID, DEFAULT_SSID);
+            String password = SharedPreferencesUtil.getStringValue(context, KEY_WIFI_AP_PASSWORD, DEFAULT_PASSWORD);
+            return startWifiAp(context, ssid, password, null);
+        }
     }
 
     public static boolean startWifiAp(final Context context, String ssid,
