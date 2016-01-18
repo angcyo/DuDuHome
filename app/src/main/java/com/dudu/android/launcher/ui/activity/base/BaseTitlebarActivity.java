@@ -160,14 +160,6 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
         }
     }
 
-    public void onEventMainThread(CarStatus carStatus) {
-        switch (carStatus) {
-            case OFFLINE:
-                mGpsSignalImage.setImageResource(R.drawable.gps_signal_error);
-                break;
-        }
-    }
-
     public void onEventMainThread(DeviceEvent.Video event) {
         StatusBarManager.getInstance().setRecording(event.getState());
         mVideoSignalImage.setImageResource(event.getState() == DeviceEvent.ON ?
