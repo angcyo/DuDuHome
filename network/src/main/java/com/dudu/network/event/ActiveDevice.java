@@ -52,6 +52,7 @@ public class ActiveDevice extends MessagePackage{
 
         activemap.put("ro.board.platform",sps.get("ro.board.platform","UNKNOWN"));
         activemap.put("ro.build.fingerprint",sps.get("ro.build.fingerprint","UNKNOWN"));
+        activemap.put("ro.fota.version", sps.get("ro.fota.version", "UNKNOWN"));
         activemap.put("ro.product.manufacturer",sps.get("ro.product.manufacturer","UNKNOWN"));
         activemap.put("ro.product.model",sps.get("ro.product.model", "UNKNOWN"));
         activemap.put("ro.serialno", DeviceIDUtil.getAndroidID(context));
