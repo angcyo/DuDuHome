@@ -42,6 +42,8 @@ public class SendService {
 
     private Logger log;
     private Context mContext;
+    /*portal弹出次数 */
+    private int portalCountTmp = 0;
 
     private Thread sendServiceThread = new Thread(){
         @Override
@@ -84,7 +86,7 @@ public class SendService {
     public void startSendService(){
         activeDevice();
         sendServiceThreadPool.scheduleAtFixedRate(sendServiceThread, 4, 30, TimeUnit.SECONDS);
-        sendServiceThreadPool.scheduleAtFixedRate(sendServiceThread2, 30, 30*60, TimeUnit.SECONDS);
+        sendServiceThreadPool.scheduleAtFixedRate(sendServiceThread2, 60, 30*60, TimeUnit.SECONDS);
     }
 
     public void stopSendService(){
@@ -184,8 +186,15 @@ public class SendService {
         }
         String portalCount = SystemPropertiesProxy.getInstance().get("persist.sys.views", "0");
         log.info("portal累计弹出次数：{}", portalCount);
+
+        int periodPortalCount = Integer.parseInt(portalCount.trim()) - portalCountTmp;
+        portalCountTmp = Integer.parseInt(portalCount.trim());
+        log.info("portal周期内弹出次数：{}", periodPortalCount);
+        if (periodPortalCount == 0)
+            return;
+
         if (Monitor.getInstance(mContext).isDeviceActived()){
-            NetworkManage.getInstance().sendMessage(new Portal(mContext,portalCount));
+            NetworkManage.getInstance().sendMessage(new Portal(mContext,String.valueOf(periodPortalCount)));
         }
     }
 
