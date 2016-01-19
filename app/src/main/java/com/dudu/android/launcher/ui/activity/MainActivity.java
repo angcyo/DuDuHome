@@ -242,16 +242,16 @@ public class MainActivity extends BaseTitlebarActivity implements
                     return true;
                 }
             });
+
+            mWlanButton.setOnLongClickListener(new OnLongClickListener() {
+
+                @Override
+                public boolean onLongClick(View v) {
+                    new IPConfigDialog().showDialog(MainActivity.this);
+                    return true;
+                }
+            });
         }
-
-        mWlanButton.setOnLongClickListener(new OnLongClickListener() {
-
-            @Override
-            public boolean onLongClick(View v) {
-                new IPConfigDialog().showDialog(MainActivity.this);
-                return true;
-            }
-        });
     }
 
     private void initTaxiView() {
