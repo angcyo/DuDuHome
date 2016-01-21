@@ -8,7 +8,7 @@ import android.media.CamcorderProfile;
  */
 public class VideoConfigParam {
     /* 默认录像间隔*/
-    public static final int DEFAULT_VIDEO_INTERVAL = 5*60*1000;
+    public static final int DEFAULT_VIDEO_INTERVAL = 2*60*1000;
 
     public static final   int DEFAULT_VIDEOBITRATE = 2 * 1024 * 1024;//2M
     public static  final  int DEFAULT_WIDTH = 1280;
