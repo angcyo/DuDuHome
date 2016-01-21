@@ -50,9 +50,9 @@ public class ConnectionConstants {
 
     public static final String RESULT_CODE_FAILURE = "400"; // 操作失败
 
-    public static final int RESULT_TRAFFIC_CONTROL_CLOSE = 0;
+    public static final int RESULT_TRAFFIC_CONTROL_CLOSE = 1;
 
-    public static final int RESULT_TRAFFIC_CONTROL_OPEN = 1;
+    public static final int RESULT_TRAFFIC_CONTROL_OPEN = 0;
 
     public static final int FIELD_ALARM_LEVEL_OPEN = 0;
 

@@ -56,7 +56,7 @@ public class FlowManage {
      */
     public void onEventBackgroundThread(GetFlowResponse getFlowResponse) {
         float remianFlow = getFlowResponse.getRemainingFlow();
-        log.info("GetFlowResponse剩余流量：{}",remianFlow);
+        log.info("GetFlowResponse剩余流量：{}", remianFlow);
         SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_REMAINING_FLOW, String.valueOf(remianFlow));
     }
 
@@ -69,6 +69,12 @@ public class FlowManage {
         float remianFlow = flowUploadResponse.getRemainingFlow();
         log.info("FlowUploadResponse剩余流量：{}",remianFlow);
         SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_REMAINING_FLOW, String.valueOf(remianFlow));
+
+        log.info("流量开关：{}", flowUploadResponse.getTrafficControl());
+        proSwitchFlow(flowUploadResponse.getTrafficControl());
+
+        log.info("当日流量超限异常状态：{}", flowUploadResponse.getExceptionState());
+        log.info("每月流量告警状态：{}", flowUploadResponse.getTrafficState());
     }
 
     /**
@@ -164,13 +170,16 @@ public class FlowManage {
      */
     public void onEventBackgroundThread(SwitchFlow switchFlow) {
         log.info("流量开关：{}",switchFlow.getTrafficControl());
-        switch (switchFlow.getTrafficControl()) {
-            case ConnectionConstants.RESULT_TRAFFIC_CONTROL_CLOSE:
-                WifiApAdmin.closeWifiAp(mContext);
-                break;
+        proSwitchFlow(switchFlow.getTrafficControl());
+    }
 
+    private void proSwitchFlow(int switchState){
+        switch (switchState) {
             case ConnectionConstants.RESULT_TRAFFIC_CONTROL_OPEN:
                 WifiApAdmin.initWifiApState(mContext);
+                break;
+            case ConnectionConstants.RESULT_TRAFFIC_CONTROL_CLOSE:
+                WifiApAdmin.closeWifiAp(mContext);
                 break;
         }
     }

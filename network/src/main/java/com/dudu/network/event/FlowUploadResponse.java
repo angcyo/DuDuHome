@@ -18,8 +18,13 @@ public class FlowUploadResponse extends MessagePackage{
     //业务方法名
     private String method = "";
     //该月剩余总流量
-    private float remainingFlow;
-
+    private float remainingFlow = 1048576;
+    /* 流量开关*/
+    private  int trafficControl = -1;
+    /* 当日流量超限异常*/
+    private int exceptionState = 0;
+    /*每月流量告警 */
+    private int trafficState = -1;
     @Override
     public void setMessageId(String messageId) {
 
@@ -62,6 +67,21 @@ public class FlowUploadResponse extends MessagePackage{
             }else {
                 remainingFlow = Float.valueOf(remainFlow);
             }
+
+            String trafficControl = StringTools.GetStringValue("trafficControl", resultJson);
+            if (trafficControl != null){
+                this.trafficControl = Integer.valueOf(trafficControl.trim());
+            }
+
+            String exceptionState = StringTools.GetStringValue("exceptionState", resultJson);
+            if (exceptionState != null){
+                this.exceptionState = Integer.valueOf(exceptionState.trim());
+            }
+
+            String trafficState = StringTools.GetStringValue("trafficState", resultJson);
+            if (trafficState != null){
+                this.exceptionState = Integer.valueOf(trafficState.trim());
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -93,5 +113,17 @@ public class FlowUploadResponse extends MessagePackage{
 
     public String getResultCode() {
         return resultCode;
+    }
+
+    public int getTrafficControl() {
+        return trafficControl;
+    }
+
+    public int getExceptionState() {
+        return exceptionState;
+    }
+
+    public int getTrafficState() {
+        return trafficState;
     }
 }
