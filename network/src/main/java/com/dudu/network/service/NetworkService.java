@@ -1,6 +1,8 @@
 package com.dudu.network.service;
 
+import com.dudu.commonlib.CommonLib;
 import com.dudu.network.client.MinaConnection;
+import com.dudu.network.event.Login;
 import com.dudu.network.interfaces.IConnectCallBack;
 import com.dudu.network.interfaces.IConnection;
 import com.dudu.network.utils.Encrypt;
@@ -28,8 +30,8 @@ public class NetworkService implements IConnectCallBack {
     //阻塞队列，用于存放要发送的消息
     private BlockingQueue<MessagePackage> messagePackagesQueue;
 
-    IConnection iConnection = null;
-    ConnectionParam connectionParam;
+    private IConnection iConnection = null;
+    private ConnectionParam connectionParam;
 
     private Logger log;
     private int log_step = 0;
@@ -53,6 +55,9 @@ public class NetworkService implements IConnectCallBack {
     //存储数据的时候对队列上锁
     private String stotageMessageLock = "StotageMessageLock";
 
+    /* 登录状态，设备发送其他消息前，需要先登录*/
+    private boolean isLogined = false;
+
     public NetworkService() {
         iConnection = new MinaConnection();
         iConnection.setConnectCallBack(this);
@@ -69,30 +74,43 @@ public class NetworkService implements IConnectCallBack {
         public void run() {
             while (sendThreadRunFlag) {
                 try {
-                    if (iConnection.isConnected() == false) {
-                        synchronized (sendThread) {
-                            log.debug("----发送线程等待---：");
-                            sendThread.wait(30 * 1000);
+                    if (CommonLib.getInstance().getVersionManage().isDemoVersionFlag()){
+                        if (isLogined()) {
+                            sendMessage();
+                        }else {
+                            sendThreadWait();
+                        }
+                    }else {
+                        if (iConnection.isConnected()) {
+                            sendMessage();
+                        }else {
+                            sendThreadWait();
                         }
                     }
 
                     checkAndStorageMessage();//检查并处理消息是否需要持久化
-                    log.debug("准备发送消息---------------------");
-                    MessagePackage messagePackageToSend = nextMessagePackage();
-//                    log.debug("----消息---：" + messagePackageToSend.toJsonString() + " 发送消息时： 网络状态：" + iConnection.isConnected());
-                    curSendMessagePackage = messagePackageToSend;
-                    if (iConnection.isConnected()) {
-                        sendMessageReal(messagePackageToSend);
-                        if (messagePackageToSend.isNeedWaitResponse())
-                            waitResponse();//等待响应
-                    }
                 } catch (Exception e) {
-                    log.error("异常:" + e);
+                    log.error("异常:", e);
                     e.printStackTrace();
                 }
             }
         }
     };
+
+    /* 发送线程等待*/
+    private void sendThreadWait() throws InterruptedException{
+        synchronized (sendThread) {
+            log.debug("----发送线程等待---：");
+            sendThread.wait(30 * 1000);
+        }
+    }
+
+    private void sendMessage(){
+        MessagePackage messagePackageToSend = nextMessagePackage();
+        sendMessageReal(messagePackageToSend);
+        if (messagePackageToSend.isNeedWaitResponse())
+            waitResponse();//等待响应
+    }
 
     //检查是否需要对消息队列的数据进行持久化处理，如果大小大于200条就进行持久化
     private void checkAndStorageMessage() {
@@ -126,24 +144,10 @@ public class NetworkService implements IConnectCallBack {
         synchronized (messagePackagesQueue) {
             messagePackagesQueue.notifyAll();
         }
-
-        synchronized (sendThread) {
-//            log.debug("sendMessage 通知发送线程，可以发送消息了--------");
-            sendThread.notifyAll();
-        }
-//        }
     }
 
     private MessagePackage nextMessagePackage() {
         MessagePackage messagePackage = null;
-        /*while ((messagePackage = messagePackagesQueue.poll()) == null){
-            try {//为null的情况说明队列里面没有要发送的消息，等待有发送的消息
-                messagePackagesQueue.wait();
-            } catch (InterruptedException e) {
-                log.error("异常:" + e);
-            }
-        }*/
-
         while ((messagePackage = messagePackagesQueue.peek()) == null) {//只取，不删，发送成功才删除
             try {//为null的情况说明队列里面没有要发送的消息，等待有发送的消息
                 synchronized (messagePackagesQueue) {
@@ -168,6 +172,7 @@ public class NetworkService implements IConnectCallBack {
     }
 
     private void sendMessageReal(MessagePackage messagePackage) {
+        curSendMessagePackage = messagePackage;
         String sendMessage = messagePackage.toJsonString();
         log.info("发送消息_加密前 messageID：" + messagePackage.getMessageId() + "  消息内容：" + sendMessage);
         try {
@@ -230,13 +235,16 @@ public class NetworkService implements IConnectCallBack {
             case ConnectionState.CONNECTION_CREATE:
                 break;
             case ConnectionState.CONNECTION_FAIL://当连接被关闭的时候，此方法被调用。
-                break;
             case ConnectionState.CONNECTION_IDLE://默认情况不会有限制状态
+                if (CommonLib.getInstance().getVersionManage().isDemoVersionFlag()){
+                    setIsLogined(false);
+                }
                 break;
             case ConnectionState.CONNECTION_SUCCESS:
-                synchronized (sendThread) {
-                    log.debug("通知发送线程，可以发送消息了--------");
-                    sendThread.notify();
+                if (CommonLib.getInstance().getVersionManage().isDemoVersionFlag()){
+                    sendLoginMessage();
+                }else {
+                    notifySendThread();
                 }
                 break;
             default:
@@ -250,6 +258,20 @@ public class NetworkService implements IConnectCallBack {
             messageHandler.processReceivedMessage(new JSONObject(messageReceived));
         } catch (JSONException e) {
             log.error("异常:",e);
+        }
+    }
+
+    /*发送登录消息 */
+    public void sendLoginMessage(){
+        curSendMessagePackage = new Login();
+        sendMessageReal(curSendMessagePackage);
+    }
+
+    /* 通知发送线程可以发送消息了*/
+    public void notifySendThread(){
+        synchronized (sendThread) {
+            log.debug("通知发送线程，可以发送消息了--------");
+            sendThread.notify();
         }
     }
 
@@ -303,4 +325,13 @@ public class NetworkService implements IConnectCallBack {
             }
         }
     };
+
+
+    public synchronized boolean isLogined() {
+        return isLogined;
+    }
+
+    public synchronized void setIsLogined(boolean isLogined) {
+        this.isLogined = isLogined;
+    }
 }

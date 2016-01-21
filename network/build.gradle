@@ -27,4 +27,6 @@ dependencies {
     compile project(':hideapi')
     compile 'de.greenrobot:eventbus:2.4.0'
     compile project(':storage')
+    compile project(':commonlib')
+    compile 'io.reactivex:rxjava:1.0.12'
 }

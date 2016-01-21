@@ -7,6 +7,7 @@ import com.dudu.android.launcher.exception.CrashHandler;
 import com.dudu.android.launcher.service.RecordBindService;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.NetworkUtils;
+import com.dudu.commonlib.CommonLib;
 import com.dudu.init.InitManager;
 import com.iflytek.cloud.Setting;
 
@@ -34,6 +35,8 @@ public class LauncherApplication extends Application {
 
         logger = LoggerFactory.getLogger("init.application");
         logger.debug("正在初始化application");
+
+        CommonLib.getInstance().init(this);
 
         if (Constants.DEBUG_STRICT_MODE) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()

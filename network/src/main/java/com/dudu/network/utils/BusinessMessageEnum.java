@@ -14,6 +14,7 @@ public enum BusinessMessageEnum {
     LOGSUPLOAD_DATA(1010, "设备上传Logs日志文件"),
     PORTALUPDATE_DATA(1011, "portal更新"),
     PORTAL_DATA(1012, "portal弹出次数"),
+    LOGIN_DATA(1013, "设备登录"),
 
     FLOW_SWITCH(2001, "流量开关推送指令服务"),
     FLOW_ARLAM(2002, "流量超限预警推送指令服务"),

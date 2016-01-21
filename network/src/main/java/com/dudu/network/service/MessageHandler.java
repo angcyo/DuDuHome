@@ -2,6 +2,7 @@ package com.dudu.network.service;
 
 import com.dudu.network.event.AccessGps;
 import com.dudu.network.event.ActiveDeviceRes;
+
 import com.dudu.network.event.CheckDeviceActiveRes;
 import com.dudu.network.event.DataExceptionAlarm;
 import com.dudu.network.event.DataOverstepAlarm;
@@ -9,25 +10,27 @@ import com.dudu.network.event.FlowSynConfigurationRes;
 import com.dudu.network.event.FlowUploadResponse;
 import com.dudu.network.event.GeneralResponse;
 import com.dudu.network.event.GetFlowResponse;
-import com.dudu.network.event.LocationInfoUpload;
+
 import com.dudu.network.event.LogSend;
+import com.dudu.network.event.LoginRes;
 import com.dudu.network.event.MessageMethod;
 import com.dudu.network.event.PortalUpdateRes;
 import com.dudu.network.event.RebootDevice;
 import com.dudu.network.event.SwitchFlow;
 import com.dudu.network.event.UpdatePortal;
 import com.dudu.network.event.UploadVideo;
-import com.dudu.network.utils.DuduLog;
-import com.dudu.network.utils.Encrypt;
-import com.dudu.network.valueobject.MessagePackage;
 
-import org.json.JSONArray;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.TimeUnit;
+
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.functions.Action1;
 
 /**
  * Created by dengjun on 2015/11/30.
@@ -84,6 +87,9 @@ public class MessageHandler {
                     break;
                 case MessageMethod.PORTAL:
                     proGeneralResponse(messageJsonObject);
+                    break;
+                case MessageMethod.LOGIN:
+                    proLoginRes(messageJsonObject);
                     break;
 
 
@@ -223,6 +229,26 @@ public class MessageHandler {
     //
     private void proPortalRes(JSONObject messageJsonObject){
 
+    }
+
+
+    private void proLoginRes(JSONObject messageJsonObject){
+        LoginRes loginRes = new LoginRes();
+        loginRes.createFromJsonString(messageJsonObject.toString());
+        if (mNetworkService.getCurSendMessagePackage().getMessageId().equals(loginRes.getMessageId())
+                && "200".equals(loginRes.getResultCode())){
+            log.info("登录成功------");
+            mNetworkService.setIsLogined(true);
+            mNetworkService.notifySendThread();
+        }else {
+            Observable.timer(30, TimeUnit.SECONDS).subscribe(new Action1<Long>() {
+                @Override
+                public void call(Long aLong) {
+                    log.info("再次发送登录消息----");
+                    mNetworkService.sendLoginMessage();
+                }
+            });
+        }
     }
 
 

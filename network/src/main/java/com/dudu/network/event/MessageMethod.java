@@ -19,6 +19,8 @@ public class MessageMethod {
     public static final String PORTALUPDATE = "portalupdate";      //portal更新
     public static final String PORTAL= "portal";      //portal更新
 
+    public static final String LOGIN= "login";      //登录消息
+
     //设备被动接收消息
     public static final String ACCESS = "access";                          // 接人指令  GPS（微信接口）
     public static final String SWITCHFLOW = "switchFlow";                    // 流量开关

@@ -69,4 +69,5 @@ dependencies {
     compile project(':bluetooth')
     compile project(':calculation')
     compile project(':storage')
+    compile project(':commonlib')
 }
