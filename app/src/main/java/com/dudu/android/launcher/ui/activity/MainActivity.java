@@ -356,15 +356,12 @@ public class MainActivity extends BaseTitlebarActivity implements
     }
 
     private void setWeatherAlarm() {
-
-
         mAlarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
         Intent intent = new Intent(MainActivity.this, WeatherAlarmReceiver.class);
         PendingIntent pi = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.add(Calendar.SECOND, 10);
+        calendar.add(Calendar.SECOND, 20);
         mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 30 * 60 * 1000, pi);
     }
 

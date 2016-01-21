@@ -13,6 +13,7 @@ import com.dudu.android.launcher.utils.JsonUtils;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.SharedPreferencesUtil;
 import com.dudu.android.launcher.utils.TimeUtils;
+import com.dudu.android.launcher.utils.WeatherUtil;
 import com.dudu.event.DeviceEvent;
 import com.dudu.monitor.utils.LocationUtils;
 import com.dudu.voice.semantic.SemanticConstants;
@@ -27,6 +28,7 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 
+import ch.qos.logback.core.util.LocationUtil;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -51,6 +53,9 @@ public class WeatherChain extends SemanticChain {
 
 
     private void handleWeatherSemantic(String json) {
+
+        LogUtils.v("weather", json);
+
         String semantic = JsonUtils.parseIatResult(json,
                 "semantic");
 
@@ -64,9 +69,25 @@ public class WeatherChain extends SemanticChain {
 
         String city = slots.getLocation().getCityAddr();
 
-        if (TextUtils.isEmpty(city)) {
-            startWeatherUnderstanding(LocationUtils.getInstance(
-                    LauncherApplication.getContext()).getCurrentCity() + dateOrig
+        LogUtils.v("weather", "dateOrig:" + dateOrig);
+
+        if (WeatherUtil.getCurrentCity(LauncherApplication.getContext()) != null&&LocationUtils.getInstance(LauncherApplication.getContext()).getCurrentCityWeather()!=null) {
+            LogUtils.v("weather", "city:" + WeatherUtil.getCurrentCity(LauncherApplication.getContext()));
+            if (dateOrig.equals("今天")) {
+                if (TextUtils.isEmpty(city)) {
+                    playGaoWeather(dateOrig);
+                    return;
+                } else {
+                    if (WeatherUtil.getCurrentCity(LauncherApplication.getContext()).contains(city)) {
+                        playGaoWeather(dateOrig);
+                        return;
+                    }
+                }
+            }
+        }
+
+         if ((TextUtils.isEmpty(city))) {
+            startWeatherUnderstanding(WeatherUtil.getCurrentCity(LauncherApplication.getContext()) + dateOrig
                     + "天气怎么样?");
             return;
         }
@@ -121,7 +142,6 @@ public class WeatherChain extends SemanticChain {
                 }
             }
         }
-
         return null;
     }
 
@@ -144,7 +164,7 @@ public class WeatherChain extends SemanticChain {
                         mVoiceManager.startSpeaking("抱歉，未能获取天气信息。", SemanticConstants.TTS_START_UNDERSTANDING);
                     }
 
-                     stopWeatherUnderstanding();
+                    stopWeatherUnderstanding();
                 }
 
                 @Override
@@ -170,4 +190,17 @@ public class WeatherChain extends SemanticChain {
         }
     }
 
+    private void playGaoWeather(String dateOrig) {
+        String weatherText = LocationUtils.getInstance(LauncherApplication.getContext()).getCurrentCityWeather();
+        LogUtils.v("weather", "weatherText:" + weatherText);
+        if (!TextUtils.isEmpty(weatherText)) {
+            String currentCity = WeatherUtil.getCurrentCity(LauncherApplication.getContext());
+            if (!TextUtils.isEmpty(currentCity)) {
+                String playText = currentCity + dateOrig + "的天气 ：" + "\n" + weatherText;
+                mVoiceManager.startSpeaking(playText, SemanticConstants.TTS_START_UNDERSTANDING);
+            }
+        } else {
+            mVoiceManager.startSpeaking("抱歉，未能获取天气信息。", SemanticConstants.TTS_START_UNDERSTANDING);
+        }
+    }
 }

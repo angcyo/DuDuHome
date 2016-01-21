@@ -21,7 +21,6 @@ import com.dudu.android.launcher.utils.DialogUtils;
 import com.dudu.android.launcher.utils.NetworkUtils;
 import com.dudu.android.launcher.utils.StatusBarManager;
 import com.dudu.android.launcher.utils.WeatherUtil;
-import com.dudu.android.launcher.utils.WeatherUtils;
 import com.dudu.event.BleStateChange;
 import com.dudu.event.DeviceEvent;
 import com.dudu.monitor.Monitor;
@@ -122,7 +121,7 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
         if (type.equals("2G") || type.equals("3G") || type.equals("4G")) {
             // 当网络连接时重新获取天气信息
 
-            WeatherUtils.getInstance().startWeatherUnderstanding(LocationUtils.getInstance(this).getCurrentCity() + "今天的天气");
+           WeatherUtil.requestWeather(this);
 
             mSignalTextView.setText(type);
             mSignalImage.setVisibility(View.VISIBLE);

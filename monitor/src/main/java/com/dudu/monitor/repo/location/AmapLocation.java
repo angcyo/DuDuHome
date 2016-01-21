@@ -140,6 +140,7 @@ public class AmapLocation implements AMapLocationListener, ILocation {
             if (checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 locationManager.addGpsStatusListener(getGpsStatuslistener);
             }
+            log.debug("定到位置 当前城市{}",location.getCity());
             LocationUtils.getInstance(mContext).setCurrentCity(location.getCity());
             LocationUtils.getInstance(mContext).setCurrentLocation(location.getLatitude(), location.getLongitude());
             last_Location = location;

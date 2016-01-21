@@ -1,15 +1,34 @@
 package com.dudu.android.launcher.utils;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.amap.api.services.weather.LocalDayWeatherForecast;
+import com.amap.api.services.weather.LocalWeatherForecast;
+import com.amap.api.services.weather.LocalWeatherForecastResult;
+import com.amap.api.services.weather.LocalWeatherLive;
+import com.amap.api.services.weather.LocalWeatherLiveResult;
+import com.amap.api.services.weather.WeatherSearch;
+import com.amap.api.services.weather.WeatherSearchQuery;
+import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
+import com.dudu.event.DeviceEvent;
+import com.dudu.monitor.Monitor;
+import com.dudu.monitor.utils.LocationUtils;
+import com.github.mikephil.charting.utils.ColorTemplate;
+
+import org.scf4a.Event;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import ch.qos.logback.core.util.LocationUtil;
+import de.greenrobot.event.EventBus;
 
 public class WeatherUtil {
 
@@ -108,5 +127,67 @@ public class WeatherUtil {
             default:
                 return R.drawable.weather_cloudy;
         }
+    }
+
+    public static void requestWeather(Context context) {
+        String currentCity = getCurrentCity(context);
+        if (currentCity != null) {
+            LogUtils.v("weather", "获取当前的额城市为：" + currentCity);
+            WeatherSearchQuery mQuery = new WeatherSearchQuery(currentCity, WeatherSearchQuery.WEATHER_TYPE_LIVE);
+            WeatherSearch mSearch = new WeatherSearch(context);
+            mSearch.setOnWeatherSearchListener(new MyWeatherSearchListener());
+            mSearch.setQuery(mQuery);
+            mSearch.searchWeatherAsyn(); //异步搜索
+        }
+
+    }
+
+    private static class MyWeatherSearchListener implements WeatherSearch.OnWeatherSearchListener {
+        @Override
+        public void onWeatherLiveSearched(LocalWeatherLiveResult localWeatherLiveResult, int i) {
+            if (i == 0) {
+                if (localWeatherLiveResult != null && localWeatherLiveResult.getLiveResult() != null) {
+                    LocalWeatherLive weatherLive = localWeatherLiveResult.getLiveResult();
+                    String weather = weatherLive.getWeather();
+                    String temperature = weatherLive.getTemperature();
+                    String wind = weatherLive.getWindDirection() + "风" + weatherLive.getWindPower() + "级";
+                    String weatherText = weather + "\n温度" + temperature + "℃\n" + wind;
+                    LocationUtils.getInstance(LauncherApplication.getContext()).setCurrentCityWeather(weatherText);
+                    EventBus.getDefault().post(new DeviceEvent.Weather(weather, temperature));
+                } else {
+                    LogUtils.v("weather", "获取天气失败...");
+                }
+            } else {
+                LogUtils.v("weather", "获取天气失败..");
+            }
+        }
+
+
+        @Override
+        public void onWeatherForecastSearched(LocalWeatherForecastResult localWeatherForecastResult, int i) {
+            if (i == 0) {
+                if (localWeatherForecastResult != null && localWeatherForecastResult.getWeatherForecastQuery() != null) {
+                    LocalWeatherForecast mForecast = localWeatherForecastResult.getForecastResult();
+                    List<LocalDayWeatherForecast> list = mForecast.getWeatherForecast();
+                    for (LocalDayWeatherForecast forecast : list) {
+                        LogUtils.v("weather", "date:" + forecast.getDate());
+                        LogUtils.v("weather", "tem:" + forecast.getDayTemp() + "-" + forecast.getNightTemp());
+                    }
+                } else {
+                    LogUtils.v("weather", "获取天气失败...");
+                }
+            } else {
+                LogUtils.v("weather", "获取天气失败..");
+            }
+        }
+    }
+
+    public static String getCurrentCity(Context context) {
+        String currentCity = null;
+        if (Monitor.getInstance(context).getCurrentLocation() != null) {
+            currentCity = Monitor.getInstance(context).getCurrentLocation().getCity();
+        }
+
+        return currentCity;
     }
 }
