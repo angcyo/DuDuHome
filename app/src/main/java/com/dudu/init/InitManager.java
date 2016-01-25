@@ -25,6 +25,7 @@ import com.dudu.monitor.Monitor;
 import com.dudu.monitor.event.CarStatus;
 import com.dudu.navi.NavigationManager;
 import com.dudu.service.MainService;
+import com.dudu.video.VideoManager;
 import com.dudu.voice.semantic.VoiceManager;
 
 import org.scf4a.Event;
@@ -74,6 +75,7 @@ public class InitManager {
     public void unInit() {
         logger.debug("反初始化，释放讯飞占用的资源...");
         VoiceManager.getInstance().stopUnderstanding();
+
         VoiceManager.getInstance().stopSpeaking();
     }
 
@@ -152,7 +154,6 @@ public class InitManager {
     }
 
     private void initOthers() {
-
         // 关闭ADB调试端口
         if (!Utils.isDemoVersion(mContext)) {
             com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext,
@@ -210,6 +211,10 @@ public class InitManager {
         screenOff();
 
         IPConfig.getInstance(mContext).init();
+
+        VideoManager.getInstance().init();
+
+        VoiceManager.getInstance().startWakeup();
     }
 
     public boolean isFinished() {

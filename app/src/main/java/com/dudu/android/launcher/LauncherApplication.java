@@ -10,6 +10,8 @@ import com.dudu.android.launcher.utils.NetworkUtils;
 import com.dudu.commonlib.CommonLib;
 import com.dudu.init.InitManager;
 import com.iflytek.cloud.Setting;
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechUtility;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +59,14 @@ public class LauncherApplication extends Application {
         crashHandler.init(getApplicationContext());
 
         NetworkUtils.writePortalConfig(this);
+
+        StringBuffer param = new StringBuffer();
+        param.append("appid=" + Constants.XUFEIID);
+        param.append(",");
+        param.append(SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC);
+        SpeechUtility.createUtility(this, param.toString());
+
+        Setting.showLogcat(false);
     }
 
     public boolean isReceivingOrder() {

@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 
-import com.dudu.android.hideapi.SystemPropertiesProxy;
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FloatWindow;
@@ -18,7 +17,6 @@ import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.voice.semantic.engine.SemanticProcessor;
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
-import com.iflytek.cloud.Setting;
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SpeechSynthesizer;
@@ -34,9 +32,6 @@ import com.iflytek.cloud.util.ResourceUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.text.SimpleDateFormat;
-import java.util.Locale;
 
 /**
  * Created by 赵圣琪 on 2015/10/27.
@@ -66,6 +61,11 @@ public class VoiceManager {
      */
     private int mMisunderstandCount = 0;
 
+    /**
+     * 语音唤醒
+     */
+    private VoiceWakeuper mWakeuper = null;
+
     private Handler mHandler;
 
     private boolean mShowMessageWindow = true;
@@ -73,8 +73,6 @@ public class VoiceManager {
     private Logger log;
 
     private int log_step;
-
-    private volatile static boolean isUnderstandingOrSpeaking = false;
 
     /**
      * 获取整个应用唯一语音控制对象
@@ -87,7 +85,6 @@ public class VoiceManager {
         return mInstance;
     }
 
-
     private VoiceManager() {
         mContext = LauncherApplication.mApplication;
 
@@ -95,13 +92,11 @@ public class VoiceManager {
         log_step = 0;
         log.debug("[voice][{}]初始化语音manager...", log_step++);
 
-        Setting.showLogcat(false);
+        setUnderstanderParams();
 
-        StringBuffer param = new StringBuffer();
-        param.append("appid=" + Constants.XUFEIID);
-        param.append(",");
-        param.append(SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC);
-        SpeechUtility.createUtility(mContext, param.toString());
+        setTtsParameter();
+
+        registerWakeuper();
 
         mHandler = new Handler(Looper.getMainLooper());
     }
@@ -118,10 +113,10 @@ public class VoiceManager {
         log.debug("[voice][{}]startVoiceService", log_step++);
         mMisunderstandCount = 0;
 
-        setTtsParameter();
-
         if (!NetworkUtils.isNetworkConnected(mContext)) {
+
             startSpeaking(Constants.WAKEUP_NETWORK_UNAVAILABLE);
+
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -134,35 +129,80 @@ public class VoiceManager {
         startSpeaking(Constants.WAKEUP_WORDS, SemanticConstants.TTS_START_UNDERSTANDING);
     }
 
+    private void registerWakeuper() {
+        StringBuffer params = new StringBuffer();
+        String resPath = ResourceUtil.generateResourcePath(mContext,
+                ResourceUtil.RESOURCE_TYPE.assets, "ivw/55bda6e9.jet");
+        params.append(ResourceUtil.IVW_RES_PATH + "=" + resPath);
+        params.append("," + ResourceUtil.ENGINE_START + "="
+                + SpeechConstant.ENG_IVW);
+
+        SpeechUtility.getUtility().setParameter(ResourceUtil.ENGINE_START, params.toString());
+
+        mWakeuper = VoiceWakeuper.createWakeuper(mContext, null);
+    }
+
+    public void startWakeup() {
+        mWakeuper = VoiceWakeuper.getWakeuper();
+        if (mWakeuper != null) {
+            mWakeuper.setParameter(SpeechConstant.IVW_THRESHOLD, "0:"
+                    + 10);
+            mWakeuper.setParameter(SpeechConstant.IVW_SST, "wakeup");
+            mWakeuper.setParameter(SpeechConstant.KEEP_ALIVE, "1");
+            mWakeuper.startListening(mWakeuperListener);
+        }
+    }
+
+    public void stopWakeup() {
+        mWakeuper = VoiceWakeuper.getWakeuper();
+        if (mWakeuper != null) {
+            mWakeuper.stopListening();
+        }
+    }
+
+    private WakeuperListener mWakeuperListener = new WakeuperListener() {
+        public void onResult(WakeuperResult result) {
+            startVoiceService();
+        }
+
+        public void onError(SpeechError error) {
+            FloatWindowUtil.removeFloatWindow();
+            if (error.getErrorCode() == 20006) {
+                ToastUtils.showTip(mContext, "录音失败，请查看是否有其他进程正在占用麦克风");
+            }
+
+        }
+
+        public void onBeginOfSpeech() {
+
+        }
+
+        @Override
+        public void onEvent(int eventType, int arg1, int arg2, Bundle obj) {
+
+        }
+
+    };
+
     /**
      * 开始语义理解
      */
     public void startUnderstanding() {
         log.debug("[voice][{}]开始语义理解", log_step++);
 
-        setUnderstanderParams();
+        stopWakeup();
 
         if (mSpeechUnderstander.isUnderstanding()) {
-            mSpeechUnderstander.stopUnderstanding();
-        } else {
-            final int ret = mSpeechUnderstander.startUnderstanding(mRecognizerListener);
-            log.debug("[voice][{}]开始语义理解结果:{}", log_step++, ret);
+            return;
         }
-    }
 
-    public static void setUnderstandingOrSpeaking(boolean understandingOrSpeaking) {
-        isUnderstandingOrSpeaking = understandingOrSpeaking;
-    }
-
-    public static boolean isUnderstandingOrSpeaking() {
-        return isUnderstandingOrSpeaking;
+        final int ret = mSpeechUnderstander.startUnderstanding(mRecognizerListener);
+        log.debug("[voice][{}]开始语义理解结果:{}", log_step++, ret);
     }
 
     public void stopSpeaking() {
         if (mSpeechSynthesizer != null) {
             mSpeechSynthesizer.stopSpeaking();
-            mSpeechSynthesizer.destroy();
-            mSpeechSynthesizer = null;
         }
     }
 
@@ -173,9 +213,9 @@ public class VoiceManager {
         log.debug("[voice][{}]停止语义理解", log_step++);
         if (mSpeechUnderstander != null) {
             mSpeechUnderstander.cancel();
-            mSpeechUnderstander.destroy();
-            mSpeechUnderstander = null;
         }
+
+        startWakeup();
     }
 
     /**
@@ -184,6 +224,7 @@ public class VoiceManager {
     private void setUnderstanderParams() {
         mSpeechUnderstander = SpeechUnderstander.createUnderstander(mContext,
                 mSpeechUnderstanderListener);
+
         log.debug("[voice][{}]设置语义理解相关参数", log_step++);
         mSpeechUnderstander.setParameter(SpeechConstant.RESULT_TYPE, "json");
 
@@ -276,8 +317,6 @@ public class VoiceManager {
     }
 
     public void startSpeaking(String playText, int type, boolean showMessage) {
-        setTtsParameter();
-
         if (mMisunderstandCount >= MISUNDERSTAND_REPEAT_COUNT) {
             playText = Constants.UNDERSTAND_EXIT;
         }

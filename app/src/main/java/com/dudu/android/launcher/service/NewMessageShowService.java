@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +32,6 @@ import com.dudu.android.launcher.utils.FloatWindow.FloatVoiceChangeCallBack;
 import com.dudu.android.launcher.utils.FloatWindow.MessageShowCallBack;
 import com.dudu.android.launcher.utils.FloatWindow.RemoveFloatWindowCallBack;
 import com.dudu.android.launcher.utils.FloatWindow.StrategyChooseCallBack;
-import com.dudu.event.VoiceEvent;
 import com.dudu.navi.NavigationManager;
 import com.dudu.voice.semantic.SemanticConstants;
 import com.dudu.voice.semantic.SemanticType;
@@ -47,16 +45,12 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
-
 /**
  * 消息弹框Window管理服务
  */
 public class NewMessageShowService extends Service implements MessageShowCallBack, AddressShowCallBack,
         StrategyChooseCallBack, FloatVoiceChangeCallBack,
         AddressListItemClickCallback, RemoveFloatWindowCallBack, CreateFloatWindowCallBack, FloatWindow.ChooseAddressPageCallBack {
-
-    private static final int MESSAGE_WINDOW_REMOVED = 1001;
 
     private FloatWindow mFloatWindow;
 
@@ -93,7 +87,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
 
     private Context mContext;
 
-    private boolean removeHasCalled = false;
+    private Handler mHandler = new Handler();
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -132,7 +126,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
                 windowParams.flags = LayoutParams.FLAG_NOT_TOUCH_MODAL
                         | LayoutParams.FLAG_NOT_FOCUSABLE;
                 windowParams.width = getWmWidth();
-                windowParams.height = getWmHeigth();
+                windowParams.height = getWmHeight();
 
                 windowParams.x = 0;
                 windowParams.y = 0;
@@ -160,17 +154,6 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
             }
         });
     }
-
-    private Handler mHandler = new Handler() {
-
-        @Override
-        public void handleMessage(Message msg) {
-            if (removeHasCalled == true) {
-                logger.debug("八秒内没有重新打开窗口, 语音已经退出");
-                EventBus.getDefault().post(new VoiceEvent(VoiceEvent.STOP_VOICE_SERVICE));
-            }
-        }
-    };
 
     @Override
     public void onCreate() {
@@ -205,7 +188,6 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
         if (!isShowWindow) {
             if (windowManager != null && floatWindowLayout != null && windowParams != null) {
                 windowManager.addView(floatWindowLayout, windowParams);
-                showWindowCallback();
             }
         }
         if (messageList != null)
@@ -230,7 +212,6 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
         if (!isShowWindow) {
             if (windowManager != null && floatWindowLayout != null && windowParams != null) {
                 windowManager.addView(floatWindowLayout, windowParams);
-                showWindowCallback();
             }
         }
         if (messageList != null)
@@ -259,7 +240,6 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
         if (!isShowWindow) {
             if (windowManager != null && floatWindowLayout != null && windowParams != null) {
                 windowManager.addView(floatWindowLayout, windowParams);
-                showWindowCallback();
             }
         }
         if (addressList != null)
@@ -417,7 +397,7 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
         return getWindowManager().getDefaultDisplay().getWidth();// 屏幕宽度
     }
 
-    private int getWmHeigth() {
+    private int getWmHeight() {
         return getWindowManager().getDefaultDisplay().getHeight();// 屏幕高度
     }
 
@@ -428,14 +408,8 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
             @Override
             public void run() {
                 if (floatWindowLayout != null && windowManager != null && isShowWindow) {
-                    removeHasCalled = true;
-
-                    logger.debug("removeFloatWindow方法被调用,移除悬浮框...");
-                    VoiceManager.getInstance().setUnderstandingOrSpeaking(false);
 
                     VoiceManager.getInstance().stopUnderstanding();
-
-                    mHandler.sendEmptyMessageDelayed(MESSAGE_WINDOW_REMOVED, 8000);
 
                     windowManager.removeView(floatWindowLayout);
                 }
@@ -454,17 +428,10 @@ public class NewMessageShowService extends Service implements MessageShowCallBac
         if (!isShowWindow) {
             if (windowManager != null && floatWindowLayout != null && windowParams != null) {
                 windowManager.addView(floatWindowLayout, windowParams);
-                showWindowCallback();
             }
         }
 
         isShowWindow = true;
-    }
-
-    private void showWindowCallback() {
-        mHandler.removeMessages(MESSAGE_WINDOW_REMOVED);
-
-        removeHasCalled = false;
     }
 
 }

@@ -8,11 +8,13 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.dialog.WifiPasswordSetDialog;
 import com.dudu.android.launcher.ui.view.SlideSwitch;
 import com.dudu.android.launcher.ui.view.SlideSwitch.OnSwitchChangedListener;
+import com.dudu.android.launcher.utils.DeviceIDUtil;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 
 public class ActivationActivity extends BaseTitlebarActivity {

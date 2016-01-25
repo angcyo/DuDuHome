@@ -24,7 +24,7 @@ public class DeviceIDUtil {
 
 
     /**
-     * SIM 卡的序列号
+     * SIM 卡的序列号`
      * @param context
      * @return
      */

@@ -10,12 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
-import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -30,59 +25,40 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dudu.android.launcher.R;
-import com.dudu.android.launcher.bean.VideoEntity;
 import com.dudu.android.launcher.broadcast.TFlashCardReceiver;
 import com.dudu.android.launcher.broadcast.WeatherAlarmReceiver;
-import com.dudu.android.launcher.db.DbHelper;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
 import com.dudu.android.launcher.ui.dialog.IPConfigDialog;
 import com.dudu.android.launcher.utils.AdminReceiver;
 import com.dudu.android.launcher.utils.AgedUtils;
-import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WeatherUtil;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.event.DeviceEvent;
-import com.dudu.event.VoiceEvent;
 import com.dudu.init.InitManager;
 import com.dudu.map.NavigationClerk;
 import com.dudu.navi.event.NaviEvent;
 import com.dudu.obd.ObdInit;
-import com.dudu.video.VideoManager;
 import com.dudu.voice.semantic.VoiceManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 import java.util.TimeZone;
 
 import de.greenrobot.event.EventBus;
 
-
 public class MainActivity extends BaseTitlebarActivity implements
         OnClickListener {
-
-    private static final int START_RECORDING = 1;
-
-    private static final int STOP_RECORDING = 2;
-
-    private static final int START_VOICE_SERVICE = 3;
-
-    private static final int DELETE_LITTLE_VIDEOS = 4;
 
     private Button mVideoButton, mNavigationButton,
             mDiDiButton, mWlanButton;
 
     private TextView mDateTextView, mWeatherView, mTemperatureView;
-
-    private VideoManager mVideoManager;
 
     private ImageView mWeatherImage;
 
@@ -90,55 +66,17 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     private AlarmManager mAlarmManager;
 
-    private HandlerThread mWorkerThread;
-
-    private WorkerHandler mWorkerHandler;
-
     private TFlashCardReceiver mTFlashCardReceiver;
 
     private Button mVoiceButton;
 
     private Logger log_init;
+
     private DevicePolicyManager mPolicyManager;
+
     private ComponentName componentName;
 
     private static final int MY_REQUEST_CODE = 9999;
-
-    private class WorkerHandler extends Handler {
-        public WorkerHandler(Looper looper) {
-            super(looper);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case START_RECORDING:
-                    mVideoManager.startRecord();
-                    break;
-                case STOP_RECORDING:
-                    mVideoManager.stopRecord();
-                    break;
-                case START_VOICE_SERVICE:
-                    VoiceManager.getInstance().startVoiceService();
-                    break;
-                case DELETE_LITTLE_VIDEOS:
-                    deleteLittleVideos();
-                    break;
-            }
-        }
-    }
-
-    private void startRecording() {
-        mWorkerHandler.sendMessage(mWorkerHandler.obtainMessage(START_RECORDING));
-    }
-
-    private void stopRecording() {
-        mWorkerHandler.sendMessage(mWorkerHandler.obtainMessage(STOP_RECORDING));
-    }
-
-    private void startVoiceService() {
-        mWorkerHandler.sendMessage(mWorkerHandler.obtainMessage(START_VOICE_SERVICE));
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,18 +94,11 @@ public class MainActivity extends BaseTitlebarActivity implements
 
         setWeatherAlarm();
 
-        mVideoManager = VideoManager.getInstance();
-
-        mWorkerThread = new HandlerThread("video and voice worker thread");
-        mWorkerThread.start();
-
-        mWorkerHandler = new WorkerHandler(mWorkerThread.getLooper());
-
-        mWorkerHandler.sendEmptyMessage(DELETE_LITTLE_VIDEOS);
-
         registerTFlashCardReceiver();
+
         // 获取设备管理服务
         mPolicyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+
         // 自己的AdminReceiver 继承自 DeviceAdminReceiver
         componentName = new ComponentName(this, AdminReceiver.class);
     }
@@ -218,7 +149,6 @@ public class MainActivity extends BaseTitlebarActivity implements
             mWlanButton.setOnLongClickListener(new OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    EventBus.getDefault().post(new VoiceEvent(VoiceEvent.INIT_RECORDING_SERVICE));
                     AgedUtils.proceedAgeTest(MainActivity.this);
                     return true;
                 }
@@ -291,7 +221,6 @@ public class MainActivity extends BaseTitlebarActivity implements
 
             case R.id.didi_button:
                 Utils.openJD(this);
-//                EventBus.getDefault().post(CarStatus.OFFLINE);
                 break;
 
             case R.id.wlan_button:
@@ -311,11 +240,7 @@ public class MainActivity extends BaseTitlebarActivity implements
                 break;
 
             case R.id.voice_button:
-                if (VoiceManager.getInstance().isUnderstandingOrSpeaking()) {
-                    return;
-                }
-
-                EventBus.getDefault().post(new VoiceEvent(VoiceEvent.INIT_VOICE_SERVICE));
+                VoiceManager.getInstance().startVoiceService();
                 break;
         }
     }
@@ -337,22 +262,23 @@ public class MainActivity extends BaseTitlebarActivity implements
         Calendar c = Calendar.getInstance();
         c.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
         String mWay = String.valueOf(c.get(Calendar.DAY_OF_WEEK));
-        if("1".equals(mWay)){
-            mWay ="星期天";
-        }else if("2".equals(mWay)){
-            mWay ="星期一";
-        }else if("3".equals(mWay)){
-            mWay ="星期二";
-        }else if("4".equals(mWay)){
-            mWay ="星期三";
-        }else if("5".equals(mWay)){
-            mWay ="星期四";
-        }else if("6".equals(mWay)){
-            mWay ="星期五";
-        }else if("7".equals(mWay)){
-            mWay ="星期六";
+        if ("1".equals(mWay)) {
+            mWay = "星期天";
+        } else if ("2".equals(mWay)) {
+            mWay = "星期一";
+        } else if ("3".equals(mWay)) {
+            mWay = "星期二";
+        } else if ("4".equals(mWay)) {
+            mWay = "星期三";
+        } else if ("5".equals(mWay)) {
+            mWay = "星期四";
+        } else if ("6".equals(mWay)) {
+            mWay = "星期五";
+        } else if ("7".equals(mWay)) {
+            mWay = "星期六";
         }
-        mDateTextView.setText(dateFormat.format(new Date())+mWay);
+
+        mDateTextView.setText(dateFormat.format(new Date()) + mWay);
     }
 
     private void setWeatherAlarm() {
@@ -402,7 +328,7 @@ public class MainActivity extends BaseTitlebarActivity implements
 
     public void onEventMainThread(DeviceEvent.Screen event) {
         log_init.debug("DeviceEvent.Screen {}", event.getState());
-        if(event.getState() == DeviceEvent.OFF) {
+        if (event.getState() == DeviceEvent.OFF) {
             if (mPolicyManager.isAdminActive(componentName)) {
                 mPolicyManager.lockNow();// 锁屏
             } else {
@@ -430,38 +356,8 @@ public class MainActivity extends BaseTitlebarActivity implements
         // 获取权限成功，立即锁屏并finish自己，否则继续获取权限
         if (requestCode == MY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             mPolicyManager.lockNow();
-        } else {
-            //activeManage();
-            //finish();
         }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    public void onEventMainThread(VoiceEvent event) {
-        switch (event.getVoiceEvent()) {
-            case VoiceEvent.INIT_VOICE_SERVICE:
-                VoiceManager.setUnderstandingOrSpeaking(true);
-
-                stopRecording();
-
-                startVoiceService();
-
-                startRecording();
-                break;
-
-            case VoiceEvent.STOP_VOICE_SERVICE:
-                VoiceManager.setUnderstandingOrSpeaking(false);
-
-                stopRecording();
-
-                startRecording();
-                break;
-            case VoiceEvent.INIT_RECORDING_SERVICE:
-                stopRecording();
-
-                startRecording();
-                break;
-        }
     }
 
     public void onEventMainThread(DeviceEvent.Weather weather) {
@@ -481,8 +377,6 @@ public class MainActivity extends BaseTitlebarActivity implements
 
             //关闭Portal
             com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(MainActivity.this, "persist.sys.nodog", "stop");
-
-            mVideoManager.releaseAll();
 
             //关闭热点
             WifiApAdmin.closeWifiAp(this);
@@ -505,23 +399,5 @@ public class MainActivity extends BaseTitlebarActivity implements
         EventBus.getDefault().post(NaviEvent.FloatButtonEvent.HIDE);
     }
 
-    private void deleteLittleVideos() {
-        DbHelper dbHelper = DbHelper.getDbHelper();
-        List<VideoEntity> videos = dbHelper.getAllVideos();
-        if (videos != null && !videos.isEmpty()) {
-            for (VideoEntity videoEntity : videos) {
-                File file = new File(videoEntity.getPath(), videoEntity.getName());
-                String length = FileUtils.fileByte2Kb(file.length());
-                float size = Float.parseFloat(length);
-                log_init.debug(videoEntity.getName() + ":" + size + "Kb");
-                //100Kb以下的文件不保存
-                if (!file.exists() || size < 300) {
-                    dbHelper.deleteVideo(file.getName());
-                    boolean success = file.delete();
-                    log_init.debug(videoEntity.getName()+"删除结果："+success);
-                }
-            }
-        }
-    }
 
 }

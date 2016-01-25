@@ -151,24 +151,6 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
         mHandler = new VideoHandler();
 
         mWindowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-
-        mVideoView = LayoutInflater.from(mContext).
-                inflate(R.layout.video_recoder, null, false);
-
-        SurfaceView surfaceView = (SurfaceView) mVideoView.findViewById(R.id.surfaceView);
-
-        SurfaceHolder holder = surfaceView.getHolder();
-        holder.addCallback(this);
-
-        mLayoutParams = new WindowManager.LayoutParams(1, 1, WindowManager.LayoutParams.TYPE_PHONE,
-                WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
-        mLayoutParams.gravity = Gravity.LEFT | Gravity.TOP;
-
-        mWindowManager.addView(mVideoView, mLayoutParams);
-
-        setUpCamera();
-
-        mVideoTransfer = new VideoTransfer();
     }
 
     public VideoConfigParam getVideoConfigParam() {
@@ -199,6 +181,26 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
                 releaseAll();
             }
         });
+    }
+
+    public void init() {
+        mVideoView = LayoutInflater.from(mContext).
+                inflate(R.layout.video_recoder, null, false);
+
+        SurfaceView surfaceView = (SurfaceView) mVideoView.findViewById(R.id.surfaceView);
+
+        SurfaceHolder holder = surfaceView.getHolder();
+        holder.addCallback(this);
+
+        mLayoutParams = new WindowManager.LayoutParams(1, 1, WindowManager.LayoutParams.TYPE_PHONE,
+                WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
+        mLayoutParams.gravity = Gravity.LEFT | Gravity.TOP;
+
+        mWindowManager.addView(mVideoView, mLayoutParams);
+
+        setUpCamera();
+
+        mVideoTransfer = new VideoTransfer();
     }
 
     @Override
@@ -367,9 +369,7 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
 
         mMediaRecorder.setCamera(mCamera);
 
-        if (!VoiceManager.isUnderstandingOrSpeaking()) {
-            mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
-        }
+        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
 
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
@@ -381,9 +381,7 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
             mMediaRecorder.setVideoEncodingBitRate(profile.videoBitRate);
         }
 
-        if (!VoiceManager.isUnderstandingOrSpeaking()) {
-            mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        }
+        mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_WB);
 
         mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
 
