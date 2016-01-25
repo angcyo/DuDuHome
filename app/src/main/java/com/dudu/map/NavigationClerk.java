@@ -356,16 +356,20 @@ public class NavigationClerk {
         disMissProgressDialog();
         removeCallback();
         naviSubscription = null;
+
         switch (event) {
             case NAVIGATION:
                 navigationManager.setNavigationType(NavigationType.NAVIGATION);
                 intentClass = NaviCustomActivity.class;
-                if (isMapActivity())
+                intentActivity();
+                if (isMapActivity()) {
                     ActivitiesManager.getInstance().closeTargetActivity(LocationMapActivity.class);
+                }
                 break;
             case BACKNAVI:
                 navigationManager.setNavigationType(NavigationType.BACKNAVI);
                 intentClass = NaviBackActivity.class;
+                intentActivity();
                 break;
             case CALCULATEERROR:
                 navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
@@ -378,10 +382,11 @@ public class NavigationClerk {
                 ActivitiesManager.getInstance().closeTargetActivity(NaviCustomActivity.class);
                 ActivitiesManager.getInstance().closeTargetActivity(NaviBackActivity.class);
                 ActivitiesManager.getInstance().closeTargetActivity(SimpleHudActivity.class);
+                intentActivity();
                 break;
         }
         navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
-        intentActivity();
+
 
     }
 
@@ -705,7 +710,6 @@ public class NavigationClerk {
         standIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                 | Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(standIntent);
-        ActivitiesManager.getInstance().closeTargetActivity(LocationMapActivity.class);
         mLastClickTime = 0;
     }
 

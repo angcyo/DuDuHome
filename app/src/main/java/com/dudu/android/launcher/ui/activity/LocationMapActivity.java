@@ -38,7 +38,6 @@ import com.dudu.android.launcher.utils.ViewAnimation;
 import com.dudu.event.MapResultShow;
 import com.dudu.map.NavigationClerk;
 import com.dudu.monitor.Monitor;
-import com.dudu.monitor.utils.LocationUtils;
 import com.dudu.navi.NavigationManager;
 import com.dudu.navi.entity.Navigation;
 import com.dudu.navi.entity.PoiResultInfo;
@@ -72,8 +71,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
 
     private Logger log;
 
-    private LatLonPoint latLonPoint;
-
     private NavigationManager navigationManager;
 
     private Handler mHandler;
@@ -83,7 +80,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     private RouteSearchPoiDialog addressDialog; // 地址选择弹出框
 
     private StrategyChoiseDialog strategyDialog;// 优先策略选择弹出框
-
 
     private Runnable getLocatinRunable = new Runnable() {
         @Override
@@ -234,8 +230,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     }
 
     private void setUpMap() {
-        double[] curPoint = LocationUtils.getInstance(this).getCurrentLocation();
-        latLonPoint = new LatLonPoint(curPoint[0], curPoint[1]);
         setLocationStyle();
         aMap.getUiSettings().setZoomControlsEnabled(false);// 隐藏地图放大缩小按钮
         aMap.setMyLocationRotateAngle(180);
@@ -257,7 +251,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         });
     }
 
-    private void setLocationStyle(){
+    private void setLocationStyle() {
         MyLocationStyle myLocationStyle = new MyLocationStyle();
         myLocationStyle.myLocationIcon(BitmapDescriptorFactory
                 .fromResource(R.drawable.location_marker));// 设置小蓝点的图标
@@ -294,6 +288,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 break;
         }
     }
+
 
     @Override
     public void activate(OnLocationChangedListener onLocationChangedListener) {
@@ -430,4 +425,5 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 ((codePoint >= 0xE000) && (codePoint <= 0xFFFD)) ||
                 ((codePoint >= 0x10000) && (codePoint <= 0x10FFFF)));
     }
+
 }

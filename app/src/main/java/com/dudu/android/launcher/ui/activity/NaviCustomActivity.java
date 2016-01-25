@@ -1,7 +1,5 @@
 package com.dudu.android.launcher.ui.activity;
 
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.GpsSatellite;
@@ -26,7 +24,6 @@ import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FloatWindowUtil;
-import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.NaviSettingUtil;
 import com.dudu.android.launcher.utils.TimeUtils;
 import com.dudu.android.launcher.utils.ViewAnimation;
@@ -54,18 +51,12 @@ import rx.functions.Action1;
 public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         AMapNaviViewListener {
 
-    private static final String TAG = "NaviCustomActivity";
-
-    private AMapNaviView mAmapAMapNaviView;
-    // 导航可以设置的参数
-    private boolean mDayNightFlag = NaviSettingUtil.DAY_MODE;// 默认为白天模式
     private boolean mDeviationFlag = NaviSettingUtil.YES_MODE;// 默认进行偏航重算
     private boolean mJamFlag = NaviSettingUtil.YES_MODE;// 默认进行拥堵重算
     private boolean mTrafficFlag = NaviSettingUtil.OPEN_MODE;// 默认进行交通播报
     private boolean mCameraFlag = NaviSettingUtil.OPEN_MODE;// 默认进行摄像头播报
-    // 导航界面风格
-    private int mThemeStle;
-    // 导航监听
+
+    private AMapNaviView mAmapAMapNaviView;
 
     @Override
     protected void onPostResume() {
@@ -90,6 +81,15 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 
     private Subscription startNaviSub = null;
 
+    private AMapNavi mAMapNavi;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        mAMapNavi = AMapNavi.getInstance(getApplicationContext());
+        super.onCreate(savedInstanceState);
+
+    }
+
     @Override
     public int initContentView() {
         return R.layout.activity_navicustom;
@@ -103,10 +103,10 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
         mAmapAMapNaviView = (AMapNaviView) findViewById(R.id.customnavimap);
         mAmapAMapNaviView.onCreate(savedInstanceState);
         mAmapAMapNaviView.setAMapNaviViewListener(this);
-        setAmapNaviViewOptions();
         back_button = (Button) findViewById(R.id.back_button);
         log = LoggerFactory.getLogger("lbs.navi");
         EventBus.getDefault().register(this);
+
 
     }
 
@@ -120,7 +120,6 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
                             MainActivity.class));
                     back_button.setVisibility(View.INVISIBLE);
                 } catch (Exception e) {
-                    LogUtils.e(TAG, e.getMessage());
                     startActivity(new Intent(NaviCustomActivity.this, MainActivity.class));
                     finish();
                 }
@@ -141,6 +140,12 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
             }
         });
         backButtonAutoHide();
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setAmapNaviViewOptions();
+            }
+        }, 3000);
     }
 
     private void backButtonAutoHide() {
@@ -167,18 +172,13 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
             return;
         }
         AMapNaviViewOptions viewOptions = new AMapNaviViewOptions();
-        viewOptions.setSettingMenuEnabled(true);// 设置导航setting可用
-        viewOptions.setNaviNight(mDayNightFlag);// 设置导航是否为黑夜模式
         viewOptions.setReCalculateRouteForYaw(mDeviationFlag);// 设置导偏航是否重算
         viewOptions.setReCalculateRouteForTrafficJam(mJamFlag);// 设置交通拥挤是否重算
         viewOptions.setCameraInfoUpdateEnabled(mCameraFlag);// 设置摄像头播报
-        viewOptions.setNaviViewTopic(mThemeStle);// 设置导航界面主题样式
         viewOptions.setTrafficLayerEnabled(true);
         viewOptions.setTrafficLine(true);
         viewOptions.setLeaderLineEnabled(Color.RED);
-        viewOptions.setCrossDisplayShow(false);
-        viewOptions.setCrossDisplayEnabled(false);
-        viewOptions.setAutoDrawRoute(true);
+
         int time = Integer.parseInt(TimeUtils.format(TimeUtils.format6));
         if (time > 18 || time < 5) {
             viewOptions.setNaviNight(true);
@@ -292,19 +292,6 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
 
     }
 
-    private void processBundle(Bundle bundle) {
-        if (bundle != null) {
-            mDayNightFlag = bundle.getBoolean(NaviSettingUtil.DAY_NIGHT_MODE,
-                    mDayNightFlag);
-            mDeviationFlag = bundle.getBoolean(NaviSettingUtil.DEVIATION, mDeviationFlag);
-            mJamFlag = bundle.getBoolean(NaviSettingUtil.JAM, mJamFlag);
-            mTrafficFlag = bundle.getBoolean(NaviSettingUtil.TRAFFIC, mTrafficFlag);
-            mCameraFlag = bundle.getBoolean(NaviSettingUtil.CAMERA, mCameraFlag);
-            mThemeStle = bundle.getInt(NaviSettingUtil.THEME);
-
-        }
-    }
-
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -324,18 +311,19 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mAmapAMapNaviView.onSaveInstanceState(outState);
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        setAmapNaviViewOptions();
+        mAMapNavi.startNavi(AMapNavi.GPSNaviMode);
+        mAmapAMapNaviView.onResume();
+
         NavigationManager.getInstance(this).setNavigationType(NavigationType.NAVIGATION);
         NavigationManager.getInstance(this).setIsNavigatining(true);
-        AMapNavi.getInstance(this).startGPS();
-        AMapNavi.getInstance(this).startNavi(AMapNavi.GPSNaviMode);
+
         Bundle bundle = getIntent().getExtras();
-        processBundle(bundle);
         if (bundle != null) {
             String type = bundle.getString("type");
             if (!TextUtils.isEmpty(type)) {
@@ -360,7 +348,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
                 }
             }
         }
-        mAmapAMapNaviView.onResume();
+
         backButtonAutoHide();
 
     }
@@ -430,8 +418,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
             @Override
             public void call(String s) {
                 log.debug("gps定位成功");
-                AMapNavi.getInstance(NaviCustomActivity.this).startGPS();
-                AMapNavi.getInstance(NaviCustomActivity.this).startNavi(AMapNavi.GPSNaviMode);
+                mAMapNavi.startNavi(AMapNavi.GPSNaviMode);
             }
         });
     }
