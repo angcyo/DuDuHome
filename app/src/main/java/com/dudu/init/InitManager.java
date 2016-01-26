@@ -15,6 +15,7 @@ import com.dudu.android.launcher.service.NewMessageShowService;
 import com.dudu.android.launcher.utils.AgedUtils;
 import com.dudu.android.launcher.utils.CarStatusUtils;
 import com.dudu.android.launcher.utils.Constants;
+import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.IPConfig;
 import com.dudu.android.launcher.utils.SharedPreferencesUtil;
 import com.dudu.android.launcher.utils.StatusBarManager;
@@ -215,6 +216,8 @@ public class InitManager {
         VideoManager.getInstance().init();
 
         VoiceManager.getInstance().startWakeup();
+
+//        checkTFlashCardSpace();
     }
 
     public boolean isFinished() {
@@ -228,5 +231,13 @@ public class InitManager {
         }
     }
 
+    private void checkTFlashCardSpace() {
+        double totalSpace = FileUtils.getTFlashCardSpace();
+        double freeSpace = FileUtils.getTFlashCardFreeSpace();
+        if (freeSpace < totalSpace * 0.2) {
+            logger.debug("剩余存储空间小于TFlashCard空间20%，开始清理空间...");
+            FileUtils.clearVideoFolder();
+        }
+    }
 
 }

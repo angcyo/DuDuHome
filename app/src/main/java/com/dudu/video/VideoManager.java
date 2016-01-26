@@ -470,11 +470,10 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
                         return;
                     }
 
-                    checkTFlashCardSpace();
-
                     File file = new File(mVideoStoragePath, videoName);
                     String length = FileUtils.fileByte2Kb(file.length());
-//                    log.debug("insertVideo 视频文件长度：{}M", FileUtils.fileByte2Mb(file.length()));
+
+                    log.debug("insertVideo 视频文件长度：{}M", FileUtils.fileByte2Mb(file.length()));
                     float size = Float.parseFloat(length);
                     //100Kb以下的文件不保存
                     if (file.exists() && size > 250) {
@@ -489,15 +488,6 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
                 }
             }
         }).start();
-    }
-
-    private void checkTFlashCardSpace() {
-        double totalSpace = FileUtils.getTFlashCardSpace();
-        double freeSpace = FileUtils.getTFlashCardFreeSpace();
-        if (freeSpace < totalSpace * 0.2) {
-            log.debug("剩余存储空间小于TFlashCard空间20%，开始清理空间...");
-            FileUtils.clearVideoFolder();
-        }
     }
 
     private void insertVideo(final File file) throws Exception {
