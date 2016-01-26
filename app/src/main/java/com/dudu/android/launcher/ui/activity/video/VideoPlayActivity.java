@@ -32,6 +32,7 @@ import com.dudu.android.launcher.ui.view.VideoView;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
+import com.dudu.android.launcher.utils.ViewAnimation;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -39,6 +40,8 @@ import java.util.LinkedList;
 public class VideoPlayActivity extends BaseNoTitlebarAcitivity implements OnClickListener {
 
     private final static int MESSAGE_PROGRESS_CHANGED = 0;
+
+    private static final long DISAPPEAR_INTERVAL = 3000;
 
     private LinkedList<VideoEntity> mPlayList = new LinkedList<>();
 
@@ -69,6 +72,17 @@ public class VideoPlayActivity extends BaseNoTitlebarAcitivity implements OnClic
     private Button mPauseButton;
 
     private int position;
+
+    private Button mBackButton;
+    //Back键定时消失的handler
+    private Handler mAnimationHandler = new Handler();
+
+    private Runnable hide_button_runnable = new Runnable() {
+        @Override
+        public void run() {
+            toggleAnimation();
+        }
+    };
 
     private Handler mHandler = new Handler() {
 
@@ -112,6 +126,8 @@ public class VideoPlayActivity extends BaseNoTitlebarAcitivity implements OnClic
             }
         });
 
+        mBackButton = (Button) findViewById(R.id.back_button);
+
         mVideoView = (VideoView) findViewById(R.id.video_view);
         mPauseButton = (Button) findViewById(R.id.pause_button);
 
@@ -136,6 +152,7 @@ public class VideoPlayActivity extends BaseNoTitlebarAcitivity implements OnClic
                     mVideoView.pause();
                     mPaused = true;
                     mPauseButton.setVisibility(View.VISIBLE);
+                    buttonAutoHide();
                 }
                 return true;
             }
@@ -263,6 +280,25 @@ public class VideoPlayActivity extends BaseNoTitlebarAcitivity implements OnClic
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        buttonAutoHide();
+    }
+
+    private void buttonAutoHide() {
+        if (mBackButton.getVisibility() != View.VISIBLE) {
+            toggleAnimation();
+        }
+        mAnimationHandler.removeCallbacks(hide_button_runnable);
+        mAnimationHandler.postDelayed(hide_button_runnable, DISAPPEAR_INTERVAL);
+    }
+
+    private void toggleAnimation() {
+        ViewAnimation.startAnimation(mBackButton, mBackButton.getVisibility() == View.VISIBLE ?
+                R.anim.back_key_disappear : R.anim.back_key_appear, this);
+    }
+
     private void getVideoFile(final LinkedList<VideoEntity> list, File file) {
         DbHelper dbHelper = DbHelper.getDbHelper();
         list.addAll(dbHelper.getAllVideos());
@@ -291,6 +327,7 @@ public class VideoPlayActivity extends BaseNoTitlebarAcitivity implements OnClic
         if (mControlWindow.isShowing()) {
             mControlWindow.dismiss();
         }
+        mAnimationHandler.removeCallbacks(hide_button_runnable);
     }
 
 }
