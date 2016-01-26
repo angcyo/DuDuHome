@@ -59,9 +59,9 @@ public class FileUtils {
 
     public static String getVideoStorageDirWhenInsertSdcard() {
         File dir;
-        if (getStorageDir() != null){
+        if (getStorageDir() != null) {
             dir = new File(getStorageDirWhenInsertSdcard(), "/video");
-        }else {
+        } else {
             return null;
         }
         if (!dir.exists()) {
@@ -71,6 +71,15 @@ public class FileUtils {
         FileUtils.makeNoMediaFile(dir);
         log.debug("VideoPath:{}", dir.getAbsolutePath());
         return dir.getAbsolutePath();
+    }
+
+    public static void clearLostDirFolder() {
+        if (FileUtils.isTFlashCardExists()) {
+            File root = new File(T_FLASH_PATH, "LOST.DIR");
+            if (root != null && root.exists()) {
+                delectAllFiles(root);
+            }
+        }
     }
 
     public static void clearVideoFolder() {
@@ -121,7 +130,7 @@ public class FileUtils {
         boolean tfExistsFlag = false;
         tfExistsFlag = new File(T_FLASH_PATH, "Android").exists();
 
-        if (getStorageDirWhenInsertSdcard() != null && testNewTfFile() == true){
+        if (getStorageDirWhenInsertSdcard() != null && testNewTfFile() == true) {
             tfExistsFlag = true;
         }
         return tfExistsFlag;
@@ -181,7 +190,7 @@ public class FileUtils {
         File dir;
         try {
             dir = new File(T_FLASH_PATH, getMainDirName());
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
 
@@ -193,36 +202,23 @@ public class FileUtils {
         return dir;
     }
 
-    public static boolean testNewTfFile(){
+    public static boolean testNewTfFile() {
         File testFile = new File(T_FLASH_PATH, "testNewFile");
         boolean returnFlag = false;
-        if(!testFile.exists()){
+        if (!testFile.exists()) {
             try {
-                if (testFile.createNewFile()){
+                if (testFile.createNewFile()) {
                     returnFlag = true;
                     testFile.delete();
                 }
             } catch (IOException e) {
-                returnFlag =  false;
+                returnFlag = false;
             }
-        }else {
+        } else {
             testFile.delete();
             returnFlag = true;
         }
         return returnFlag;
-    }
-
-
-
-
-    public static File getSdcardVideoStorageDir() {
-        File dir = new File(getSdPath(), "/dudu/video");
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-
-        log.debug("VideoPath:{}", dir.getAbsolutePath());
-        return dir;
     }
 
     public static String getMainDirName() {

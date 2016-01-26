@@ -470,6 +470,8 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
                         return;
                     }
 
+                    checkTFlashCardSpace();
+
                     File file = new File(mVideoStoragePath, videoName);
                     String length = FileUtils.fileByte2Kb(file.length());
 
@@ -516,6 +518,15 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
         video.setPath(mVideoStoragePath);
         video.setSize(length);
         mDbHelper.insertVideo(video);
+    }
+
+    private void checkTFlashCardSpace() {
+        double totalSpace = FileUtils.getTFlashCardSpace();
+        double freeSpace = FileUtils.getTFlashCardFreeSpace();
+        if (freeSpace < totalSpace * 0.2) {
+            log.debug("剩余存储空间小于TFlashCard空间20%，开始清理空间...");
+            FileUtils.clearLostDirFolder();
+        }
     }
 
 }

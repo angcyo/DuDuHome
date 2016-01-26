@@ -202,6 +202,8 @@ public class InitManager {
         logger.debug("[init][{}]检查sim卡状态", log_step++);
         Utils.checkSimCardState(mContext);
 
+        FileUtils.clearVideoFolder();
+
         logger.debug("[init][{}]打开用户激活状态检查", log_step++);
         startCheckUserService();
 
@@ -216,8 +218,6 @@ public class InitManager {
         VideoManager.getInstance().init();
 
         VoiceManager.getInstance().startWakeup();
-
-//        checkTFlashCardSpace();
     }
 
     public boolean isFinished() {
@@ -228,15 +228,6 @@ public class InitManager {
         if (!CarStatusUtils.isCarOnline()) {
             logger.debug("[init][{}] 熄火状态下关闭屏幕", log_step++);
             EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.OFF));
-        }
-    }
-
-    private void checkTFlashCardSpace() {
-        double totalSpace = FileUtils.getTFlashCardSpace();
-        double freeSpace = FileUtils.getTFlashCardFreeSpace();
-        if (freeSpace < totalSpace * 0.2) {
-            logger.debug("剩余存储空间小于TFlashCard空间20%，开始清理空间...");
-            FileUtils.clearVideoFolder();
         }
     }
 

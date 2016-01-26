@@ -13,6 +13,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.TextUtils;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.bean.VideoEntity;
@@ -268,6 +269,9 @@ public class DbHelper extends SQLiteOpenHelper {
                 if (file.exists()) {
                     video.setFile(file);
                 } else {
+                    if (!TextUtils.isEmpty(name)) {
+                        deleteVideo(name);
+                    }
                     continue;
                 }
 
