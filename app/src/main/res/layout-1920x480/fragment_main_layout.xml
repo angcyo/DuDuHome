@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp">
+
+        <LinearLayout
+            android:id="@+id/date_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:orientation="vertical">
+
+            <DigitalClock
+                android:id="@+id/digital_clock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="35sp" />
+
+            <TextView
+                android:id="@+id/text_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/weather_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+           android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@+id/date_container"
+            android:orientation="vertical">
+
+            <com.dudu.aios.ui.utils.customFontUtils.NeoLightTextView
+                android:id="@+id/text_temperature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="9℃"
+                android:textColor="@android:color/white"
+                android:textSize="25sp" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.NeoLightTextView
+                android:id="@+id/text_weather"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="3dp"
+                android:maxWidth="50dp"
+                android:minWidth="30dp"
+                android:singleLine="true"
+                android:text="天晴多云"
+                android:textColor="@android:color/white"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/weather_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/weather_container"
+            android:src="@drawable/weather_cloudy" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp">
+
+        <LinearLayout
+            android:id="@+id/vehicle_inspection"
+            style="@style/main_grid_linearLayout_style"
+            android:background="@drawable/menu_button_selector">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/menu_vehicle_inspection" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="@string/vehicle_inspection_chinese"
+                android:textColor="@android:color/white"
+                android:textSize="8sp" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="3dp"
+                android:text="@string/vehicle_inspection_english"
+                android:textColor="@android:color/white"
+                android:textSize="6sp" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/driving_record_button"
+            style="@style/main_grid_linearLayout_style"
+            android:background="@drawable/menu_button_selector">
+
+            <ImageButton
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/menu_driving_record" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="@string/driving_record_chinese"
+                android:textColor="@android:color/white"
+                android:textSize="8sp" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="3dp"
+                android:text="@string/driving_record_english"
+                android:textColor="@android:color/white"
+                android:textSize="6sp" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navigation_button"
+            style="@style/main_grid_linearLayout_style"
+            android:background="@drawable/menu_button_selector">
+
+            <ImageButton
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/menu_navigation" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="@string/navigation_chinese"
+                android:textColor="@android:color/white"
+                android:textSize="8sp" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="3dp"
+                android:text="@string/navigation_english"
+                android:textColor="@android:color/white"
+                android:textSize="6sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/main_grid_linearLayout_style"
+            android:layout_gravity="top">
+
+            <RelativeLayout
+                android:id="@+id/voice_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/menu_voice_circle" />
+
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/menu_voice_ring" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/bluetooth_phone_button"
+            style="@style/main_grid_linearLayout_style"
+            android:background="@drawable/menu_button_selector">
+
+            <ImageButton
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/menu_bluetooth_phone" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="@string/bluetooth_phone__chinese"
+                android:textColor="@android:color/white"
+                android:textSize="8sp" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="3dp"
+                android:text="@string/bluetooth_phone_english"
+                android:textColor="@android:color/white"
+                android:textSize="6sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/flow_button"
+            style="@style/main_grid_linearLayout_style"
+            android:background="@drawable/menu_button_selector">
+
+            <ImageButton
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/menu_flow" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="@string/flow_chinese"
+                android:textColor="@android:color/white"
+                android:textSize="8sp" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="3dp"
+                android:text="@string/flow_english"
+                android:textColor="@android:color/white"
+                android:textSize="6sp" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/prevent_rob"
+            style="@style/main_grid_linearLayout_style"
+            android:background="@drawable/menu_button_selector">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/menu_prevent_rob" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="@string/prevent_rob_chinese"
+                android:textColor="@android:color/white"
+                android:textSize="8sp" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="3dp"
+                android:text="@string/prevent_rob_english"
+                android:textColor="@android:color/white"
+                android:textSize="6sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

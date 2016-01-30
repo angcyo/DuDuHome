@@ -95,4 +95,17 @@
         <item>取消选择</item>
     </string-array>
 
+    <string name="vehicle_inspection_chinese">行车自检</string>
+    <string name="vehicle_inspection_english">VEHICLE INSPECTION</string>
+    <string name="driving_record_chinese">行车记录</string>
+    <string name="driving_record_english">DRIVING RECORD</string>
+    <string name="navigation_chinese">导航定位</string>
+    <string name="navigation_english">NAVIGATION</string>
+    <string name="bluetooth_phone__chinese">蓝牙电话</string>
+    <string name="bluetooth_phone_english">BLUETOOTH PHONE</string>
+    <string name="flow_chinese">移动热点</string>
+    <string name="flow_english">4G-LTE WIFI</string>
+    <string name="prevent_rob_chinese">防盗防劫</string>
+    <string name="prevent_rob_english">SAFETY CENTER</string>
+
 </resources>

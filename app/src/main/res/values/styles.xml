@@ -51,7 +51,9 @@
     <style name="Widget.SeekBar.Normal" parent="@android:style/Widget.SeekBar">
         <item name="android:maxHeight">8dip</item>
         <item name="android:indeterminateOnly">false</item>
-        <item name="android:indeterminateDrawable">@android:drawable/progress_indeterminate_horizontal</item>
+        <item name="android:indeterminateDrawable">
+            @android:drawable/progress_indeterminate_horizontal
+        </item>
         <item name="android:progressDrawable">@drawable/seekbar_horizontal</item>
         <item name="android:minHeight">8dip</item>
         <item name="android:thumb">@drawable/seek_thumb</item>
@@ -95,11 +97,12 @@
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
     </style>
-	<style name="RoomRatingBar" parent="@android:style/Widget.RatingBar">
-		<item name="android:progressDrawable">@drawable/room_rating_bar</item>
-		<item name="android:minHeight">16dip</item>
-		<item name="android:maxHeight">16dip</item>
-	</style>
+
+    <style name="RoomRatingBar" parent="@android:style/Widget.RatingBar">
+        <item name="android:progressDrawable">@drawable/room_rating_bar</item>
+        <item name="android:minHeight">16dip</item>
+        <item name="android:maxHeight">16dip</item>
+    </style>
 
     <style name="GeneralDialogStyle" parent="@android:style/Theme.Dialog">
         <item name="android:windowFrame">@null</item>
@@ -139,6 +142,17 @@
         <item name="android:indeterminateDrawable">@anim/base_loading_small_anim</item>
         <item name="android:minWidth">25.0dip</item>
         <item name="android:minHeight">25.0dip</item>
+    </style>
+
+    <style name="main_grid_linearLayout_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:layout_gravity">bottom</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:layout_marginLeft">13dp</item>
+        <item name="android:layout_marginRight">13dp</item>
     </style>
 
 </resources>
