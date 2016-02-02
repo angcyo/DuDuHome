@@ -4,12 +4,15 @@ import android.content.Context;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.utils.Constants;
+import com.dudu.event.DeviceEvent;
 import com.dudu.voice.semantic.constant.TTSType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.atomic.AtomicInteger;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by 赵圣琪 on 2015/12/24.
@@ -38,6 +41,8 @@ public abstract class BaseVoiceManager implements VoiceManager {
     @Override
     public void startVoiceService() {
         log.debug("开启语义服务...");
+
+        EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.ON));
 
         clearMisUnderstandCount();
 

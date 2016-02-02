@@ -6,10 +6,7 @@ import android.content.Intent;
 
 import com.dudu.android.launcher.utils.AgedUtils;
 import com.dudu.android.launcher.utils.Utils;
-import com.dudu.event.VoiceEvent;
 import com.dudu.video.VideoManager;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Created by 赵圣琪 on 2016/1/3.
@@ -24,8 +21,6 @@ public class TFlashCardReceiver extends BroadcastReceiver {
             VideoManager.getInstance().onTFlashCardInserted();
 
             if (Utils.isDemoVersion(context)) {
-                EventBus.getDefault().post(new VoiceEvent(VoiceEvent.INIT_RECORDING_SERVICE));
-
                 AgedUtils.proceedAgeTest(context);
             }
         } else if (action.equals(Intent.ACTION_MEDIA_REMOVED)) {

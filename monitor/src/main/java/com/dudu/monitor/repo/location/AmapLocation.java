@@ -58,7 +58,7 @@ public class AmapLocation implements AMapLocationListener, ILocation {
                     break;
                 // 卫星状态改变
                 case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
-                    log.debug("卫星状态改变");
+                    log.trace("卫星状态改变");
                     if (last_Location != null && locationManager != null)
                         EventBus.getDefault().post(locationManager.getGpsStatus(null));
                     break;

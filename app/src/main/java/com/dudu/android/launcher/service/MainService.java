@@ -113,13 +113,14 @@ public class MainService extends Service {
 
         storage.release();
 
+        releaseWakeLock();
+
         EventBus.getDefault().unregister(this);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        mWakeLock = mPowerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "screenswakelock");
-        mWakeLock.acquire();
+        acquireLock();
         return START_STICKY;
     }
 
@@ -132,25 +133,16 @@ public class MainService extends Service {
     public void onEvent(CarStatus event) {
         switch (event) {
             case ONLINE:
-//                EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.ON));
                 CarStatusUtils.saveCarStatus(true);
                 log.debug("接收到点火通知-亮屏");
                 WifiApAdmin.startWifiAp(this);
                 if (mWakeLock == null) {
-                    log.debug("启动wakelock");
-                    mWakeLock = mPowerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "screenswakelock");
-                    mWakeLock.acquire();
+                    acquireLock();
                 }
                 break;
             case OFFLINE:
                 log.debug("接收到熄火通知-灭屏");
-                if (mWakeLock != null && mWakeLock.isHeld()) {
-                    log.debug("释放wakelock");
-                    mWakeLock.release();
-                    mWakeLock = null;
-                }
-//                EventBus.getDefault().post(new DeviceEvent.Screen(DeviceEvent.OFF));
-                CarStatusUtils.saveCarStatus(false);
+                releaseWakeLock();
                 Observable
                         .timer(15, TimeUnit.SECONDS)
                         .subscribe(new Action1<Long>() {
@@ -165,6 +157,21 @@ public class MainService extends Service {
         }
     }
 
+    private void acquireLock() {
+        log.debug("启动wakelock");
+        mWakeLock = mPowerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "screenswakelock");
+        mWakeLock.acquire();
+    }
+
+    private void releaseWakeLock() {
+        log.debug("释放wakelock");
+        if (mWakeLock != null && mWakeLock.isHeld()) {
+            mWakeLock.release();
+            mWakeLock = null;
+        }
+        CarStatusUtils.saveCarStatus(false);
+    }
+
     public void onEvent(PowerOffEvent event) {
         SystemPropertiesProxy.getInstance().set(this, "persist.sys.boot", "shutdown");
     }
@@ -172,7 +179,8 @@ public class MainService extends Service {
     public void onEventMainThread(DeviceEvent.Screen event) {
         log.debug("DeviceEvent.Screen {}", event.getState());
         if (event.getState() == DeviceEvent.ON) {
-            mWakeLock.acquire();
+            releaseWakeLock();
+            acquireLock();
         }
     }
 
