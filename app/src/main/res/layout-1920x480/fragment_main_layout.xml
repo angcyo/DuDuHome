@@ -23,7 +23,7 @@
                 android:textColor="@android:color/white"
                 android:textSize="35sp" />
 
-            <TextView
+            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                 android:id="@+id/text_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -36,9 +36,10 @@
             android:id="@+id/weather_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-           android:layout_centerVertical="true"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
             android:layout_toRightOf="@+id/date_container"
+            android:gravity="center_vertical"
             android:orientation="vertical">
 
             <com.dudu.aios.ui.utils.customFontUtils.NeoLightTextView
@@ -46,23 +47,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="9℃"
                 android:textColor="@android:color/white"
                 android:textSize="25sp" />
 
-            <com.dudu.aios.ui.utils.customFontUtils.NeoLightTextView
+            <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
                 android:id="@+id/text_weather"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="3dp"
                 android:ellipsize="marquee"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                android:gravity="center_horizontal"
-                android:layout_marginTop="3dp"
                 android:maxWidth="50dp"
                 android:minWidth="30dp"
                 android:singleLine="true"
-                android:text="天晴多云"
+                android:text="@string/fetching_weather"
                 android:textColor="@android:color/white"
                 android:textSize="10sp" />
         </LinearLayout>

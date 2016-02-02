@@ -165,7 +165,7 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
 
         Camera.Parameters params = mCamera.getParameters();
         params.setPreviewFormat(PixelFormat.YCbCr_420_SP);
-        params.setPreviewSize(854, 480);
+        params.setPreviewSize(mContext.getResources().getDisplayMetrics().widthPixels, mContext.getResources().getDisplayMetrics().heightPixels);
         params.setPictureSize(videoConfigParam.getWidth(), videoConfigParam.getHeight());
 
         mCamera.setParameters(params);

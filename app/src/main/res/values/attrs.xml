@@ -37,4 +37,11 @@
         <attr name="ringColor" format="color" />
     </declare-styleable>
 
+    <declare-styleable name="FlowCompletedView">
+        <attr name="mRadius" format="dimension" />
+        <attr name="mStrokeWidth" format="dimension" />
+        <attr name="mCircleColor" format="color" />
+        <attr name="mRingColor" format="color" />
+    </declare-styleable>
+
 </resources>

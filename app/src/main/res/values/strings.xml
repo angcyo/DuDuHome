@@ -3,12 +3,10 @@
 
     <string name="app_name">Launcher</string>
     <string name="versin_info">版本信息</string>
-    <string name="weixin_recharge">微信充值</string>
-    <string name="zhifubao_recharge">支付宝充值</string>
     <string name="pay_info">请使用微信或者支付宝扫一扫支付充值金额</string>
     <string name="ok">确认</string>
     <string name="cancel">取消</string>
-    <string name="temperature_degree">度</string>
+    <string name="temperature_degree">°C</string>
     <string name="weather_turn">转</string>
     <string name="error_no_didi">后续加入接单软件，敬请期待!</string>
     <string name="error_no_uber">后续加入接单软件，敬请期待!</string>
@@ -46,6 +44,7 @@
     <string name="bluetooth_device_enable">可用设备</string>
     <string name="action_lock">锁定</string>
     <string name="action_delete">删除</string>
+    <string name="action_upload">上传</string>
     <string name="action_details">详情</string>
     <string name="action_title">行车记录</string>
     <string name="action_choice">选择</string>
@@ -108,6 +107,7 @@
     <string name="prevent_rob_chinese">防盗防劫</string>
     <string name="prevent_rob_english">SAFETY CENTER</string>
 
+
     <string name="bluetooth_phone_dialing">正在拨号...</string>
     
     <string name="vehicle_guard_ch">车辆防盗</string>
@@ -115,7 +115,33 @@
 
     <string name="vehicle_robbery_ch">车辆防劫</string>
     <string name="vehicle_robbery_en">FRONT CAMERA</string>
-
     <string name="vehicle_locked">LOCKED</string>
     <string name="vehicle_unlock">UNLOCK</string>
+    <string name="prepositive_video_chinese">前置录像</string>
+    <string name="prepositive_video_english">FRONT CAMERA</string>
+    <string name="postposition_video_chinese">后置录像</string>
+    <string name="postposition_video_english">PEAR CAMERA</string>
+    <string name="uploading_video_to_app">正在上传至APP</string>
+    <string name="uploading_successful">上传成功</string>
+    <string name="video_empty">暂无视频...</string>
+    <string name="photo_empty_chinese">暂无图片</string>
+    <string name="photo_empty_english">NO CONTENT</string>
+
+    <string name="no_choose_photo">你还没有选择图片</string>
+
+    <string name="flow_residual_chinese">流量统计</string>
+    <string name="flow_residual_english">RESIDUAL FLOW</string>
+    <string name="close_flow">关闭热点</string>
+    <string name="open_flow">打开热点</string>
+    <string name="passwordSet_chinese">密码设置</string>
+    <string name="passwordSet_english">PASSWORD</string>
+    <string name="weChat_recharge_chinese">微信充值</string>
+    <string name="aliPay_recharge_chinese">支付宝充值</string>
+    <string name="weChat_recharge_english">WECHAT DEPOSTIT</string>
+    <string name="aliPay_recharge_english">ALIPAY DEPOSTIT</string>
+    <string name="flow_password_set_chinese">热点密码设置</string>
+    <string name="flow_password_set_english">CHANGE PASSWORD</string>
+    <string name="wifi">热点</string>
+    <string name="password">密码</string>
+
 </resources>

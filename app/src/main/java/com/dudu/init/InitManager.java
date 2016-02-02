@@ -230,7 +230,7 @@ public class InitManager {
 
         IPConfig.getInstance(mContext).init();
 
-        VideoManager.getInstance().init();
+        //VideoManager.getInstance().init();
 
         VoiceManagerProxy.getInstance().onInit();
     }

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/main_bg"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/pay_container"
@@ -22,35 +22,35 @@
                 android:id="@+id/weixin_qr_code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="20dp"
                 android:layout_centerHorizontal="true"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
                 android:src="@drawable/qr_code" />
 
             <TextView
                 style="@style/activation_sub_text_style"
                 android:layout_below="@id/weixin_qr_code"
-                android:text="@string/weixin_recharge" />
+                android:text="@string/weChat_recharge_chinese" />
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/zhifubao_bg"
-            android:layout_marginLeft="20dp">
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/zhifubao_bg">
 
             <ImageView
                 android:id="@+id/zhifubao_qr_code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
                 android:src="@drawable/qr_code" />
 
             <TextView
-                android:layout_below="@id/zhifubao_qr_code"
                 style="@style/activation_sub_text_style"
-                android:text="@string/zhifubao_recharge" />
+                android:layout_below="@id/zhifubao_qr_code"
+                android:text="@string/aliPay_recharge_chinese" />
         </RelativeLayout>
     </LinearLayout>
 
@@ -70,7 +70,7 @@
         android:layout_height="match_parent"
         android:layout_alignLeft="@id/divider"
         android:layout_alignRight="@id/divider"
-        android:layout_below="@id/divider" >
+        android:layout_below="@id/divider">
 
         <com.dudu.android.launcher.ui.view.SlideSwitch
             android:id="@+id/switch_wifi"
@@ -119,7 +119,6 @@
         android:layout_centerVertical="true"
         android:layout_marginBottom="30dp"
         android:background="@drawable/back_button_selector"
-        android:onClick="onBackPressed" >
-    </Button>
+        android:onClick="onBackPressed"></Button>
 
 </RelativeLayout>
