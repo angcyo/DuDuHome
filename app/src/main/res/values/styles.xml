@@ -155,4 +155,10 @@
         <item name="android:layout_marginRight">13dp</item>
     </style>
 
+    <style name="calling_button_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">10dp</item>
+    </style>
+
 </resources>

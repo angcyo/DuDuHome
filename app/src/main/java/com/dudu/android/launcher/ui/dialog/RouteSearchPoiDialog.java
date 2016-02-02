@@ -3,7 +3,6 @@ package com.dudu.android.launcher.ui.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -14,11 +13,8 @@ import android.widget.ListView;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.adapter.RouteSearchAdapter;
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.navi.entity.PoiResultInfo;
-import com.dudu.voice.semantic.SemanticConstants;
-import com.dudu.voice.semantic.VoiceManager;
-
-import java.util.List;
+import com.dudu.voice.VoiceManagerProxy;
+import com.dudu.voice.semantic.constant.TTSType;
 
 public class RouteSearchPoiDialog extends Dialog implements
 		OnItemClickListener, OnItemSelectedListener {
@@ -28,8 +24,7 @@ public class RouteSearchPoiDialog extends Dialog implements
 	protected OnListItemClick mOnClickListener;
 	private Button back_button;
 	private ListView listView;
-	private int pageIndex = 0;				// 当前页的索引
-
+	private int pageIndex = 0;
 
 	public RouteSearchPoiDialog(Context context) {
 		this(context, R.style.RouteSearchPoiDialogStyle);
@@ -93,7 +88,8 @@ public class RouteSearchPoiDialog extends Dialog implements
 
 	public void nextPage(){
 		if(pageIndex>=4){
-			VoiceManager.getInstance().startSpeaking("已经是最后一页", SemanticConstants.TTS_DO_NOTHING,false);
+			VoiceManagerProxy.getInstance().startSpeaking("已经是最后一页",
+					TTSType.TTS_DO_NOTHING,false);
 			return;
 		}
 
@@ -103,7 +99,8 @@ public class RouteSearchPoiDialog extends Dialog implements
 
 	public void lastPage() {
 		if(pageIndex>=0){
-			VoiceManager.getInstance().startSpeaking("已经是第一页", SemanticConstants.TTS_DO_NOTHING,false);
+			VoiceManagerProxy.getInstance().startSpeaking("已经是第一页",
+					TTSType.TTS_DO_NOTHING,false);
 			return;
 		}
 
@@ -115,9 +112,11 @@ public class RouteSearchPoiDialog extends Dialog implements
 		if(pageIndex > 5)
 			return;
 		if(page > 5|| page < 1){
-			VoiceManager.getInstance().startSpeaking("选择错误，请重新选择",SemanticConstants.TTS_DO_NOTHING,false);
+			VoiceManagerProxy.getInstance().startSpeaking("选择错误，请重新选择",
+					TTSType.TTS_DO_NOTHING,false);
 			return;
 		}
+
 		pageIndex = page-1;
 		listView.setSelection(pageIndex*Constants.ADDRESS_VIEW_COUNT);
 	}

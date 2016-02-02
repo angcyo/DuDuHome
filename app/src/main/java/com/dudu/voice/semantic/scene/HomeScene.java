@@ -17,7 +17,6 @@ public class HomeScene extends SemanticScene {
         mChainMap.put(SemanticConstant.SERVICE_MAP, mChainFactory.getMapPlaceChain());
         mChainMap.put(SemanticConstant.SERVICE_NEARBY, mChainFactory.getMapNearbyChain());
         mChainMap.put(SemanticConstant.SERVICE_NAVI, mChainFactory.getNavigationChain());
-        mChainMap.put(SemanticConstant.SERVICE_WEATHER, mChainFactory.getWeatherChain());
         mChainMap.put(SemanticConstant.SERVICE_DATE_TIME, mChainFactory.getDatetimeChain());
         mChainMap.put(SemanticConstant.SERVICE_DIM, mChainFactory.getDimScreenChain());
         mChainMap.put(SemanticConstant.SERVICE_VIDEO, mChainFactory.getVideoPlayChain());

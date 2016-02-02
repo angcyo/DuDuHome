@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
-import com.dudu.android.launcher.utils.Constant;
+import com.dudu.android.launcher.utils.Constants;
 
 public class BtOutCallActivity extends BaseTitlebarActivity implements View.OnClickListener {
 
@@ -37,11 +37,11 @@ public class BtOutCallActivity extends BaseTitlebarActivity implements View.OnCl
     public void initDatas() {
         Intent intent = getIntent();
         if (intent != null) {
-            String name = intent.getStringExtra(Constant.EXTRA_CONTACT_NAME);
+            String name = intent.getStringExtra(Constants.EXTRA_CONTACT_NAME);
             if (!TextUtils.isEmpty(name)) {
                 mContactNameView.setText(name);
             } else {
-                String number = intent.getStringExtra(Constant.EXTRA_PHONE_NUMBER);
+                String number = intent.getStringExtra(Constants.EXTRA_PHONE_NUMBER);
                 mContactNameView.setText(number);
             }
         }

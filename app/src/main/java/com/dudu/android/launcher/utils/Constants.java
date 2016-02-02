@@ -38,6 +38,7 @@ public class Constants {
     public static final String ALREADY_LAST_PAGE = "已经是最后一页";
     public static final String MAP_CHOISE_ERROR = "选择错误，请重新选择";
     public static final String NETWORK_UNAVAILABLE = "网络状态关闭，请打开网络连接";
+    public static final String UNDERSTAND_CHOISE_INPUT_TIPS = "您可以说第几个或者上一页、下一页";
 
 	public static final String ONE1 = "1";
 	public static final String ONE = "一";

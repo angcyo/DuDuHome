@@ -124,6 +124,10 @@ public class NavigationProxy {
         return mInstance;
     }
 
+    public int getChooseStep() {
+        return chooseStep;
+    }
+
     public void setIsShowAddress(boolean isShowAddress) {
         this.isShowAddress = isShowAddress;
     }

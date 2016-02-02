@@ -91,8 +91,14 @@ public class RouteSearchAdapter extends BaseAdapter {
 		distanceTV.setText("距离" + s);
 		return convertView;
 	}
+
 	private double formatMapDouble(double value) {
 		DecimalFormat decimalFormat = new DecimalFormat("#.##");
 		return Double.parseDouble(decimalFormat.format(value));
+	}
+
+	public void initPoiData(Context context) {
+		mPoiItems = NavigationManager.getInstance(context).getPoiResultList();
+		notifyDataSetChanged();
 	}
 }

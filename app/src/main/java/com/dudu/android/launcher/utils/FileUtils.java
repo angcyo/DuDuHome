@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Environment;
 
 import com.dudu.android.launcher.db.DbHelper;
+import com.dudu.android.launcher.model.VideoEntity;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

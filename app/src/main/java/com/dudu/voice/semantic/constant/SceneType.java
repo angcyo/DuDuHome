@@ -7,5 +7,6 @@ public enum SceneType {
     HOME,
     NAVIGATION,
     MAP_CHOISE,
-    COMMON_WHETHER
+    COMMON_WHETHER,
+    CAR_CHECKING
 }

@@ -1,7 +1,7 @@
 package com.dudu.voice.semantic.chain.map;
 
 import com.dudu.android.launcher.utils.ChoiseUtil;
-import com.dudu.android.launcher.utils.Constant;
+import com.dudu.android.launcher.utils.Constants;
 import com.dudu.map.NavigationProxy;
 import com.dudu.voice.semantic.bean.SemanticBean;
 import com.dudu.voice.semantic.chain.DefaultChain;
@@ -44,7 +44,7 @@ public class MapChoiseDefaultChain extends DefaultChain {
             mVoiceManager.startUnderstanding();
         } else {
             if (!handleChoosePageOrNumber(text)) {
-                mVoiceManager.startSpeaking(Constant.UNDERSTAND_CHOISE_INPUT_TIPS,
+                mVoiceManager.startSpeaking(Constants.UNDERSTAND_CHOISE_INPUT_TIPS,
                         TTSType.TTS_START_UNDERSTANDING, false);
                 return false;
             }

@@ -44,8 +44,8 @@ import com.dudu.navi.entity.PoiResultInfo;
 import com.dudu.navi.entity.Point;
 import com.dudu.navi.vauleObject.NavigationType;
 import com.dudu.navi.vauleObject.SearchType;
-import com.dudu.voice.semantic.SemanticType;
-import com.dudu.voice.semantic.engine.SemanticProcessor;
+import com.dudu.voice.semantic.constant.SceneType;
+import com.dudu.voice.semantic.engine.SemanticEngine;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -304,7 +304,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
     @Override
     public void onPause() {
         EventBus.getDefault().unregister(this);
-        SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
+        SemanticEngine.getProcessor().switchSemanticType(SceneType.HOME);
         navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
         NavigationProxy.getInstance().setIsShowAddress(false);
         NavigationProxy.getInstance().setIsManual(false);

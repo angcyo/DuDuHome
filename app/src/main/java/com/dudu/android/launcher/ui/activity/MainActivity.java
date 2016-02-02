@@ -40,7 +40,7 @@ import com.dudu.init.InitManager;
 import com.dudu.map.NavigationProxy;
 import com.dudu.navi.event.NaviEvent;
 import com.dudu.obd.ObdInit;
-import com.dudu.voice.semantic.VoiceManager;
+import com.dudu.voice.VoiceManagerProxy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,10 +93,8 @@ public class MainActivity extends BaseTitlebarActivity implements
 
         registerTFlashCardReceiver();
 
-        // 获取设备管理服务
         mPolicyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
 
-        // 自己的AdminReceiver 继承自 DeviceAdminReceiver
         componentName = new ComponentName(this, AdminReceiver.class);
     }
 
@@ -217,7 +215,9 @@ public class MainActivity extends BaseTitlebarActivity implements
                 break;
 
             case R.id.didi_button:
-                Utils.openJD(this);
+//                Utils.openJD(this);
+                
+                startActivity(new Intent(MainActivity.this, CarCheckingActivity.class));
                 break;
 
             case R.id.wlan_button:
@@ -233,11 +233,11 @@ public class MainActivity extends BaseTitlebarActivity implements
                 break;
 
             case R.id.self_checking_container:
-                startActivity(new Intent(MainActivity.this, OBDCheckingActivity.class));
+
                 break;
 
             case R.id.voice_button:
-                VoiceManager.getInstance().startVoiceService();
+                VoiceManagerProxy.getInstance().startVoiceService();
                 break;
         }
     }
@@ -370,7 +370,7 @@ public class MainActivity extends BaseTitlebarActivity implements
             }
 
             //关闭语音
-            VoiceManager.getInstance().stopUnderstanding();
+            VoiceManagerProxy.getInstance().stopUnderstanding();
 
             //关闭Portal
             com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(MainActivity.this, "persist.sys.nodog", "stop");

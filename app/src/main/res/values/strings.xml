@@ -108,4 +108,6 @@
     <string name="prevent_rob_chinese">防盗防劫</string>
     <string name="prevent_rob_english">SAFETY CENTER</string>
 
+    <string name="bluetooth_phone_dialing">正在拨号...</string>
+
 </resources>

@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.db.DbHelper;
+import com.dudu.android.launcher.model.VideoEntity;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.ui.view.VideoView;
 import com.dudu.android.launcher.utils.Constants;

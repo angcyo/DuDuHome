@@ -23,6 +23,7 @@ import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
+import com.dudu.android.launcher.utils.FloatWindowUtils;
 import com.dudu.android.launcher.utils.NaviSettingUtil;
 import com.dudu.android.launcher.utils.TimeUtils;
 import com.dudu.android.launcher.utils.ViewAnimation;
@@ -31,8 +32,8 @@ import com.dudu.monitor.Monitor;
 import com.dudu.monitor.utils.LocationUtils;
 import com.dudu.navi.NavigationManager;
 import com.dudu.navi.vauleObject.NavigationType;
-import com.dudu.voice.semantic.SemanticConstants;
-import com.dudu.voice.semantic.VoiceManager;
+import com.dudu.voice.VoiceManagerProxy;
+import com.dudu.voice.semantic.constant.TTSType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -189,7 +190,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
     // 全程预览
     public void mapPriview() {
         if (mAmapAMapNaviView != null && mAmapAMapNaviView.getMap() != null) {
-            FloatWindowUtil.removeFloatWindow();
+            FloatWindowUtils.removeFloatWindow();
             mAmapAMapNaviView.getMap().moveCamera(CameraUpdateFactory.zoomTo(11));
         }
 
@@ -198,7 +199,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
     // 路况播报
     public void trafficInfo() {
         if (mAmapAMapNaviView != null && mAmapAMapNaviView.getViewOptions() != null) {
-            FloatWindowUtil.removeFloatWindow();
+            FloatWindowUtils.removeFloatWindow();
             playText = "路况播报已打开";
             if (mAmapAMapNaviView.getViewOptions().isTrafficInfoUpdateEnabled()) {
                 playText = "已经为您打开路况播报";
@@ -209,35 +210,35 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
             }
             mAmapAMapNaviView.getViewOptions().setTrafficInfoUpdateEnabled(true);
 
-            VoiceManager.getInstance().startSpeaking(playText, SemanticConstants.TTS_DO_NOTHING);
+            VoiceManagerProxy.getInstance().startSpeaking(playText, TTSType.TTS_DO_NOTHING);
         }
     }
 
     // 关闭路况播报
     public void closeTraffic() {
         if (mAmapAMapNaviView != null && mAmapAMapNaviView.getViewOptions() != null) {
-            FloatWindowUtil.removeFloatWindow();
+            FloatWindowUtils.removeFloatWindow();
             if (mAmapAMapNaviView.getViewOptions().isTrafficInfoUpdateEnabled()) {
                 AMapNaviViewOptions viewOptions = new AMapNaviViewOptions();
                 viewOptions.setTrafficInfoUpdateEnabled(false);
                 mAmapAMapNaviView.setViewOptions(viewOptions);
             }
-            VoiceManager.getInstance().startSpeaking("路况播报已关闭", SemanticConstants.TTS_DO_NOTHING);
+            VoiceManagerProxy.getInstance().startSpeaking("路况播报已关闭", TTSType.TTS_DO_NOTHING);
         }
     }
 
     public void closePriview() {
-        FloatWindowUtil.removeFloatWindow();
+        FloatWindowUtils.removeFloatWindow();
         mAmapAMapNaviView.getMap().moveCamera(CameraUpdateFactory.zoomTo(18));
     }
 
     // 返程
     public void goBack() {
         final double[] points = LocationUtils.getInstance(this).getNaviStartPoint();
-        FloatWindowUtil.removeFloatWindow();
+        FloatWindowUtils.removeFloatWindow();
 
         if (points != null) {
-//            VoiceManager.getInstance().startSpeaking("正在为您进行路线规划", SemanticConstants.TTS_DO_NOTHING, false);
+//            VoiceManagerProxy.getInstance().startSpeaking("正在为您进行路线规划", TTSType.TTS_DO_NOTHING, false);
 //            mHandler.postDelayed(new Runnable() {
 //
 //                @Override
@@ -366,8 +367,8 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         NavigationManager.getInstance(this).existNavigation();
-        VoiceManager.getInstance().clearMisUnderstandCount();
-        VoiceManager.getInstance().startSpeaking("导航结束", SemanticConstants.TTS_DO_NOTHING, false);
+        VoiceManagerProxy.getInstance().clearMisUnderstandCount();
+        VoiceManagerProxy.getInstance().startSpeaking("导航结束", TTSType.TTS_DO_NOTHING, false);
         try {
             mAmapAMapNaviView.onDestroy();
         } catch (Exception e) {

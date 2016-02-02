@@ -7,15 +7,16 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.ui.dialog.CarCheckingDialog;
 import com.dudu.android.launcher.ui.view.VideoView;
 import com.dudu.android.launcher.utils.LogUtils;
-import com.dudu.voice.semantic.SemanticConstants;
-import com.dudu.voice.semantic.SemanticType;
-import com.dudu.voice.semantic.VoiceManager;
-import com.dudu.voice.semantic.engine.SemanticProcessor;
+import com.dudu.voice.VoiceManagerProxy;
+import com.dudu.voice.semantic.constant.SceneType;
+import com.dudu.voice.semantic.constant.TTSType;
+import com.dudu.voice.semantic.engine.SemanticEngine;
 
 /**
  * Created by 赵圣琪 on 2015/11/4.
@@ -26,7 +27,8 @@ public class OBDCheckingActivity extends BaseNoTitlebarAcitivity {
 
     private VideoView mSelfCheckView;
 
-    private VoiceManager mVoiceManager;
+    private VoiceManagerProxy mVoiceManager;
+    
 
     @Override
     public int initContentView() {
@@ -48,7 +50,7 @@ public class OBDCheckingActivity extends BaseNoTitlebarAcitivity {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 mVoiceManager.clearMisUnderstandCount();
-                mVoiceManager.startSpeaking("检测到您的左前轮破损，是否立即更换?", SemanticConstants.TTS_START_UNDERSTANDING, false);
+                mVoiceManager.startSpeaking("检测到您的左前轮破损，是否立即更换?", TTSType.TTS_START_UNDERSTANDING, false);
 
                 showCarCheckingDialog();
             }
@@ -57,12 +59,12 @@ public class OBDCheckingActivity extends BaseNoTitlebarAcitivity {
 
     @Override
     public void initDatas() {
-        mVoiceManager = VoiceManager.getInstance();
-        SemanticProcessor.getProcessor().switchSemanticType(SemanticType.CAR_CHECKING);
+        mVoiceManager = VoiceManagerProxy.getInstance();
+        SemanticEngine.getProcessor().switchSemanticType(SceneType.CAR_CHECKING);
     }
 
     public void onBackPressed(View v) {
-        SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
+        SemanticEngine.getProcessor().switchSemanticType(SceneType.HOME);
         finish();
     }
 

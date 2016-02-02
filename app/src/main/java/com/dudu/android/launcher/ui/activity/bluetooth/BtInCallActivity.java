@@ -7,7 +7,7 @@ import android.widget.TextView;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.view.SliderRelativeLayout;
-import com.dudu.android.launcher.utils.Constant;
+import com.dudu.android.launcher.utils.Constants;
 
 /**
  * Created by Administrator on 2016/1/19.
@@ -48,7 +48,7 @@ public class BtInCallActivity extends BaseTitlebarActivity {
     public void initDatas() {
         Intent intent = getIntent();
         if (intent != null) {
-            mPhoneNumberView.setText(intent.getStringExtra(Constant.EXTRA_PHONE_NUMBER));
+            mPhoneNumberView.setText(intent.getStringExtra(Constants.EXTRA_PHONE_NUMBER));
         }
     }
 }
