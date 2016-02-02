@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/main_bg"
+    android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/back_button_selector" />
+
+    <TableLayout
+        android:id="@+id/number_table"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/number_table_marginLeft">
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/number_button01"
+                style="@style/dial_button_style"
+                android:background="@drawable/blue_keyboard_one_selector"
+                android:tag="1" />
+
+            <Button
+                android:id="@+id/number_button02"
+                style="@style/dial_button_style"
+                android:background="@drawable/blue_keyboard_two_selector"
+                android:tag="2" />
+
+            <Button
+                android:id="@+id/number_button03"
+                style="@style/dial_button_style"
+                android:background="@drawable/blue_keyboard_three_selector"
+                android:tag="3" />
+
+            <Button
+                android:id="@+id/well_button"
+                style="@style/dial_button_style"
+                android:background="@drawable/blue_keyboard_well_selector"
+                android:tag="#" />
+        </TableRow>
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/number_button04"
+                style="@style/dial_button_style"
+                android:background="@drawable/blue_keyboard_four_selector"
+                android:tag="4" />
+
+            <Button
+                android:id="@+id/number_button05"
+                style="@style/dial_button_style"
+                android:background="@drawable/blue_keyboard_five_selector"
+                android:tag="5" />
+
+            <Button
+                android:id="@+id/number_button06"
+                style="@style/dial_button_style"
+                android:background="@drawable/blue_keyboard_six_selector"
+                android:tag="6" />
+
+            <Button
+                android:id="@+id/number_button0"
+                style="@style/dial_button_style"
+                android:background="@drawable/blue_keyboard_zero_selector"
+                android:tag="0" />
+        </TableRow>
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/number_button07"
+                style="@style/dial_button_style"
+                android:background="@drawable/blue_keyboard_seven_selector"
+                android:tag="7" />
+
+            <Button
+                android:id="@+id/number_button08"
+                style="@style/dial_button_style"
+                android:background="@drawable/blue_keyboard_eight_selector"
+                android:tag="8" />
+
+            <Button
+                android:id="@+id/number_button09"
+                style="@style/dial_button_style"
+                android:background="@drawable/blue_keyboard_nine_selector"
+                android:tag="9" />
+
+            <Button
+                android:id="@+id/rice_button"
+                style="@style/dial_button_style"
+                android:background="@drawable/blue_keyboard_rice_selector"
+                android:tag="*" />
+        </TableRow>
+    </TableLayout>
+
+    <RelativeLayout
+        android:id="@+id/right_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="6dp"
+        android:layout_marginTop="30dp"
+        android:gravity="center_horizontal">
+
+        <LinearLayout
+            android:id="@+id/linear_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <com.dudu.android.launcher.ui.view.DigitsEditText
+                android:id="@+id/dial_digits"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="@android:color/transparent"
+                android:maxLines="1"
+                android:textSize="@dimen/tv_phone_number_textSize"
+                android:freezesText="true"
+                android:focusableInTouchMode="true"
+                android:editable="true"
+                android:textColor="@color/white"
+                android:cursorVisible="false"
+                android:fontFamily="sans-serif-light"
+                android:textStyle="normal" />
+
+            <Button
+                android:id="@+id/delete_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
+                android:background="@drawable/blue_delete_button_selector"
+                android:visibility="invisible" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/dial_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/linear_container"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/blue_dial_button_selector" />
+
+    </RelativeLayout>
+
+
+</LinearLayout>

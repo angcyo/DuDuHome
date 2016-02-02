@@ -6,11 +6,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Message;
-import android.widget.Toast;
 
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.SharedPreferencesUtil;
+import com.dudu.android.launcher.utils.SharedPreferencesUtils;
 import com.dudu.android.launcher.utils.Utils;
 
 import java.util.concurrent.Executors;
@@ -63,7 +62,7 @@ public class CheckUserService {
             if (!Utils.checkUserStateIsActive(context)) {
 //                Toast.makeText(context, context.getString(R.string.user_is_not_active), Toast.LENGTH_SHORT).show();
             } else {
-                SharedPreferencesUtil.putBooleanValue(context, Constants.KEY_USER_IS_ACTIVE, true);
+                SharedPreferencesUtils.putBooleanValue(context, Constants.KEY_USER_IS_ACTIVE, true);
                 stopSendService();
             }
         } else {

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.SharedPreferencesUtil;
+import com.dudu.android.launcher.utils.SharedPreferencesUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.network.event.DataExceptionAlarm;
 import com.dudu.network.event.DataOverstepAlarm;
@@ -57,7 +57,7 @@ public class FlowManage {
     public void onEventBackgroundThread(GetFlowResponse getFlowResponse) {
         float remianFlow = getFlowResponse.getRemainingFlow();
         log.info("GetFlowResponse剩余流量：{}", remianFlow);
-        SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_REMAINING_FLOW, String.valueOf(remianFlow));
+        SharedPreferencesUtils.putStringValue(mContext, Constants.KEY_REMAINING_FLOW, String.valueOf(remianFlow));
     }
 
     /**
@@ -68,7 +68,7 @@ public class FlowManage {
     public void onEventBackgroundThread(FlowUploadResponse flowUploadResponse) {
         float remianFlow = flowUploadResponse.getRemainingFlow();
         log.info("FlowUploadResponse剩余流量：{}",remianFlow);
-        SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_REMAINING_FLOW, String.valueOf(remianFlow));
+        SharedPreferencesUtils.putStringValue(mContext, Constants.KEY_REMAINING_FLOW, String.valueOf(remianFlow));
 
         log.info("流量开关：{}", flowUploadResponse.getTrafficControl());
         proSwitchFlow(flowUploadResponse.getTrafficControl());
@@ -93,70 +93,70 @@ public class FlowManage {
             log.error("异常：{}", e);
         }
         try {
-//            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_TRAFFICE_CONTROL,
+//            SharedPreferencesUtils.putStringValue(mContext, Constants.KEY_TRAFFICE_CONTROL,
 //                    flowSynConfigurationRes.getTrafficControl());
 
-            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_MONTH_MAX_VALUE,
+            SharedPreferencesUtils.putStringValue(mContext, Constants.KEY_MONTH_MAX_VALUE,
                     flowSynConfigurationRes.getMonthMaxValue());
 
-            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_FREE_ADD_VALUE,
+            SharedPreferencesUtils.putStringValue(mContext, Constants.KEY_FREE_ADD_VALUE,
                     flowSynConfigurationRes.getFreeAddValue());
 
-            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_DAILY_MAX_VALUE,
+            SharedPreferencesUtils.putStringValue(mContext, Constants.KEY_DAILY_MAX_VALUE,
                     flowSynConfigurationRes.getDailyMaxValue());
 
-            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_UP_LIMIT_MAX_VALUE,
+            SharedPreferencesUtils.putStringValue(mContext, Constants.KEY_UP_LIMIT_MAX_VALUE,
                     flowSynConfigurationRes.getUpLimitMaxValue());
 
-            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_PORTAL_ADDRESS,
+            SharedPreferencesUtils.putStringValue(mContext, Constants.KEY_PORTAL_ADDRESS,
                     flowSynConfigurationRes.getPortalAddress());
 
-            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_PORTAL_VERSION,
+            SharedPreferencesUtils.putStringValue(mContext, Constants.KEY_PORTAL_VERSION,
                     flowSynConfigurationRes.getPortalVersion());
 
-            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_DOWN_LIMIT_MAX_VALUE,
+            SharedPreferencesUtils.putStringValue(mContext, Constants.KEY_DOWN_LIMIT_MAX_VALUE,
                     flowSynConfigurationRes.getDownLimitMaxValue());
 
-            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_LIFE_TYPE,
+            SharedPreferencesUtils.putStringValue(mContext, Constants.KEY_LIFE_TYPE,
                     flowSynConfigurationRes.getLifeType());
 
-            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_UPLOAD_LIMIT,
+            SharedPreferencesUtils.putStringValue(mContext, Constants.KEY_UPLOAD_LIMIT,
                     flowSynConfigurationRes.getUploadLimit());
 
-            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_FREE_ADD_TIMES,
+            SharedPreferencesUtils.putStringValue(mContext, Constants.KEY_FREE_ADD_TIMES,
                     flowSynConfigurationRes.getFreeAddTimes());
 
-            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_MIDDLE_ARLAM_VALUE,
+            SharedPreferencesUtils.putStringValue(mContext, Constants.KEY_MIDDLE_ARLAM_VALUE,
                     flowSynConfigurationRes.getMiddleArlamValue());
 
-            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_HIGH_ARLAM_VALUE,
+            SharedPreferencesUtils.putStringValue(mContext, Constants.KEY_HIGH_ARLAM_VALUE,
                     flowSynConfigurationRes.getHighArlamValue());
 
-            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_LOW_ARLAM_VALUE,
+            SharedPreferencesUtils.putStringValue(mContext, Constants.KEY_LOW_ARLAM_VALUE,
                     flowSynConfigurationRes.getLowArlamValue());
 
-            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_DOWNLOAD_LIMIT,
+            SharedPreferencesUtils.putStringValue(mContext, Constants.KEY_DOWNLOAD_LIMIT,
                     flowSynConfigurationRes.getDownloadLimit());
 
-            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_FREE_ARRIVE_VALUE,
+            SharedPreferencesUtils.putStringValue(mContext, Constants.KEY_FREE_ARRIVE_VALUE,
                     flowSynConfigurationRes.getFreeArriveValue());
 
-            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_CLOSER_ARLAM_VALUE,
+            SharedPreferencesUtils.putStringValue(mContext, Constants.KEY_CLOSER_ARLAM_VALUE,
                     flowSynConfigurationRes.getCloseArlamValue());
 
-            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_FLOW_FREQUENCY,
+            SharedPreferencesUtils.putStringValue(mContext, Constants.KEY_FLOW_FREQUENCY,
                     flowSynConfigurationRes.getFlowFrequency());
 
-            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_GPS_FREQUENCU,
+            SharedPreferencesUtils.putStringValue(mContext, Constants.KEY_GPS_FREQUENCU,
                     flowSynConfigurationRes.getGpsFrequency());
 
-            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_PORTAL_COUNT_FREQUENCY,
+            SharedPreferencesUtils.putStringValue(mContext, Constants.KEY_PORTAL_COUNT_FREQUENCY,
                     flowSynConfigurationRes.getPortalCountFrequency());
 
 //            log.info("FlowUploadResponse剩余流量：{}", flowSynConfigurationRes.getRemainingFlow());
-//            SharedPreferencesUtil.putStringValue(mContext,Constants.KEY_REMAINING_FLOW, flowSynConfigurationRes.getRemainingFlow());
+//            SharedPreferencesUtils.putStringValue(mContext,Constants.KEY_REMAINING_FLOW, flowSynConfigurationRes.getRemainingFlow());
 
-            SharedPreferencesUtil.putStringValue(mContext, Constants.KEY_UPLOAD_FLOW_VALUE, flowSynConfigurationRes.getUploadFlowValue());
+            SharedPreferencesUtils.putStringValue(mContext, Constants.KEY_UPLOAD_FLOW_VALUE, flowSynConfigurationRes.getUploadFlowValue());
 
         } catch (Exception e) {
             log.error("异常：{}", e);

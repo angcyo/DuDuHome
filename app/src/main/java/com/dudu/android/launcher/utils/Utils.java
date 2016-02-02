@@ -83,11 +83,11 @@ public class Utils {
     }
 
     public static void checkSimCardSerialNumber(Context context) {
-        String serialNumber = SharedPreferencesUtil.getStringValue(context,
+        String serialNumber = SharedPreferencesUtils.getStringValue(context,
                 Constants.KEY_SIM_CARD_SERIAL_NUMBER, "");
         if (TextUtils.isEmpty(serialNumber)) {
             serialNumber = DeviceIDUtil.getSimSerialNumber(context);
-            SharedPreferencesUtil.putStringValue(context, Constants.KEY_SIM_CARD_SERIAL_NUMBER,
+            SharedPreferencesUtils.putStringValue(context, Constants.KEY_SIM_CARD_SERIAL_NUMBER,
                     serialNumber);
             return;
         }

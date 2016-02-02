@@ -3,11 +3,10 @@ package com.dudu.conn;
 import android.content.Context;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.SharedPreferencesUtil;
+import com.dudu.android.launcher.utils.SharedPreferencesUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 
 import org.json.JSONException;
@@ -157,7 +156,7 @@ public class FlowMonitor {
 
         String value = object.getString(field);
         if (!TextUtils.isEmpty(value)) {
-            SharedPreferencesUtil.putStringValue(mContext, key, value);
+            SharedPreferencesUtils.putStringValue(mContext, key, value);
         }
     }
 

@@ -39,8 +39,8 @@ public class WifiApAdmin {
      */
     public static boolean setWifiApPassword(Context context, String password) {
         log_init.debug("热点:设置密码");
-        SharedPreferencesUtil.putStringValue(context, KEY_WIFI_AP_PASSWORD, password);
-        return startWifiAp(context, SharedPreferencesUtil.getStringValue(context,
+        SharedPreferencesUtils.putStringValue(context, KEY_WIFI_AP_PASSWORD, password);
+        return startWifiAp(context, SharedPreferencesUtils.getStringValue(context,
                 KEY_WIFI_AP_SSID, DEFAULT_SSID), password, null);
     }
 
@@ -119,9 +119,9 @@ public class WifiApAdmin {
                         if (Utils.isTaxiVersion()) {
                             startWifiAp(context, DEFAULT_SSID, "", null);
                         } else {
-                            if (SharedPreferencesUtil.getBooleanValue(context, KEY_WIFI_AP_STATE, false)) {
-                                String ssid = SharedPreferencesUtil.getStringValue(context, KEY_WIFI_AP_SSID, DEFAULT_SSID);
-                                String password = SharedPreferencesUtil.getStringValue(context, KEY_WIFI_AP_PASSWORD, DEFAULT_PASSWORD);
+                            if (SharedPreferencesUtils.getBooleanValue(context, KEY_WIFI_AP_STATE, false)) {
+                                String ssid = SharedPreferencesUtils.getStringValue(context, KEY_WIFI_AP_SSID, DEFAULT_SSID);
+                                String password = SharedPreferencesUtils.getStringValue(context, KEY_WIFI_AP_PASSWORD, DEFAULT_PASSWORD);
                                 startWifiAp(context, ssid, password, null);
                             }
                         }
@@ -148,8 +148,8 @@ public class WifiApAdmin {
         if (Utils.isTaxiVersion()) {
             return startWifiAp(context, DEFAULT_SSID, "", null);
         } else {
-            String ssid = SharedPreferencesUtil.getStringValue(context, KEY_WIFI_AP_SSID, DEFAULT_SSID);
-            String password = SharedPreferencesUtil.getStringValue(context, KEY_WIFI_AP_PASSWORD, DEFAULT_PASSWORD);
+            String ssid = SharedPreferencesUtils.getStringValue(context, KEY_WIFI_AP_SSID, DEFAULT_SSID);
+            String password = SharedPreferencesUtils.getStringValue(context, KEY_WIFI_AP_PASSWORD, DEFAULT_PASSWORD);
             return startWifiAp(context, ssid, password, null);
         }
     }
@@ -171,7 +171,7 @@ public class WifiApAdmin {
                     public void call(final Long aLong) {
                         if (isWifiApEnabled(context)) {
                             log_init.debug("打开热点成功，保存状态");
-                            SharedPreferencesUtil.putBooleanValue(context, KEY_WIFI_AP_STATE, true);
+                            SharedPreferencesUtils.putBooleanValue(context, KEY_WIFI_AP_STATE, true);
 
                             startPortal(context);
                         } else {
@@ -242,7 +242,7 @@ public class WifiApAdmin {
                 setWifiApEnabled = mWifiManager.getClass().getMethod(
                         "setWifiApEnabled", WifiConfiguration.class, boolean.class);
                 setWifiApEnabled.invoke(mWifiManager, null, false);
-                SharedPreferencesUtil.putBooleanValue(context, KEY_WIFI_AP_STATE, false);
+                SharedPreferencesUtils.putBooleanValue(context, KEY_WIFI_AP_STATE, false);
             } catch (Exception e) {
                 log_init.debug("反射关闭热点异常", e);
             }

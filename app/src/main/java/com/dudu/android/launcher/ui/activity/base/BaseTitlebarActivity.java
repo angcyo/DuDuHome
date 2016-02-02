@@ -7,10 +7,6 @@ import android.content.IntentFilter;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.os.Bundle;
-import android.telephony.PhoneStateListener;
-import android.telephony.SignalStrength;
-import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
@@ -20,13 +16,11 @@ import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.DialogUtils;
 import com.dudu.android.launcher.utils.NetworkUtils;
 import com.dudu.android.launcher.utils.StatusBarManager;
-import com.dudu.android.launcher.utils.WeatherUtil;
+import com.dudu.android.launcher.utils.WeatherUtils;
 
 import com.dudu.event.BleStateChange;
 import com.dudu.event.DeviceEvent;
 import com.dudu.monitor.Monitor;
-import com.dudu.monitor.event.CarStatus;
-import com.dudu.monitor.utils.LocationUtils;
 
 import java.util.Iterator;
 
@@ -122,7 +116,7 @@ public abstract class BaseTitlebarActivity extends BaseActivity {
         if (type.equals("2G") || type.equals("3G") || type.equals("4G")) {
             // 当网络连接时重新获取天气信息
 
-            WeatherUtil.requestWeather(this);
+            WeatherUtils.requestWeather(this);
 
             mSignalTextView.setText(type);
             mSignalImage.setVisibility(View.VISIBLE);

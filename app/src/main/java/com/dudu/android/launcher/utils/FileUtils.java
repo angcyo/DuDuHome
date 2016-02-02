@@ -3,7 +3,6 @@ package com.dudu.android.launcher.utils;
 import android.content.Context;
 import android.os.Environment;
 
-import com.dudu.android.launcher.bean.VideoEntity;
 import com.dudu.android.launcher.db.DbHelper;
 
 import org.slf4j.Logger;

@@ -3,19 +3,15 @@ package com.dudu.android.launcher.ui.activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.db.DbHelper;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.view.TasksCompletedView;
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.LogUtils;
-import com.dudu.android.launcher.utils.SharedPreferencesUtil;
-import com.dudu.android.launcher.utils.WifiApAdmin;
+import com.dudu.android.launcher.utils.SharedPreferencesUtils;
 
 import java.text.DecimalFormat;
-import java.util.Calendar;
 
 /**
  * Created by Administrator on 2015/10/30.
@@ -63,9 +59,9 @@ public class WifiActivity extends BaseTitlebarActivity {
 
 //       float usedFlow = mDbHelper.calculateForMonth(year, month, 1) / 1024;
         //float remainingFlow = mTotalFlow - usedFlow;
-        remainingFlow = Float.parseFloat(SharedPreferencesUtil.getStringValue(this, Constants.KEY_REMAINING_FLOW, DEFAULT_FLOW_VALUE))/1024;
+        remainingFlow = Float.parseFloat(SharedPreferencesUtils.getStringValue(this, Constants.KEY_REMAINING_FLOW, DEFAULT_FLOW_VALUE))/1024;
 
-        mTotalFlow=Float.parseFloat(SharedPreferencesUtil.getStringValue(this,Constants.KEY_MONTH_MAX_VALUE,DEFAULT_FLOW_VALUE))/1024;
+        mTotalFlow=Float.parseFloat(SharedPreferencesUtils.getStringValue(this, Constants.KEY_MONTH_MAX_VALUE, DEFAULT_FLOW_VALUE))/1024;
 
         float usedFlow = mTotalFlow -remainingFlow;//使用流量改用差值
 

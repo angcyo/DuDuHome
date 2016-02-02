@@ -36,7 +36,7 @@ import com.dudu.android.launcher.ui.view.CleanableCompletaTextView;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.ViewAnimation;
 import com.dudu.event.MapResultShow;
-import com.dudu.map.NavigationClerk;
+import com.dudu.map.NavigationProxy;
 import com.dudu.monitor.Monitor;
 import com.dudu.navi.NavigationManager;
 import com.dudu.navi.entity.Navigation;
@@ -215,8 +215,8 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         }
         navigationManager.setKeyword(search_edit.getText().toString());
         navigationManager.setSearchType(SearchType.SEARCH_PLACE);
-        NavigationClerk.getInstance().setIsManual(true);
-        NavigationClerk.getInstance().doSearch();
+        NavigationProxy.getInstance().setIsManual(true);
+        NavigationProxy.getInstance().doSearch();
     }
 
 
@@ -284,7 +284,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 showAddressManual();
                 break;
             case STRATEGY:
-                showStrategyDialog(NavigationClerk.getInstance().getChoosepoiResult());
+                showStrategyDialog(NavigationProxy.getInstance().getChoosePoiResult());
                 break;
         }
     }
@@ -306,10 +306,10 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         EventBus.getDefault().unregister(this);
         SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
         navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
-        NavigationClerk.getInstance().setIsShowAddress(false);
-        NavigationClerk.getInstance().setIsManual(false);
-        NavigationClerk.getInstance().disMissProgressDialog();
-        NavigationClerk.getInstance().removeCallback();
+        NavigationProxy.getInstance().setIsShowAddress(false);
+        NavigationProxy.getInstance().setIsManual(false);
+        NavigationProxy.getInstance().disMissProgressDialog();
+        NavigationProxy.getInstance().removeCallback();
         dissMissDialog();
         if (mHandler != null && getLocatinRunable != null) {
             mHandler.removeCallbacks(getLocatinRunable);
@@ -348,7 +348,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 if (position >= 20)
                     return;
                 addressDialog.dismiss();
-                NavigationClerk.getInstance().chooseAddress(position);
+                NavigationProxy.getInstance().chooseAddress(position);
             }
         });
     }
@@ -385,7 +385,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                     public void onStrategyClick(int position) {
                         strategyDialog.dismiss();
                         Point point = new Point(choosePoint.getLatitude(), choosePoint.getLongitude());
-                        NavigationClerk.getInstance().startNavigation(new Navigation(point, navigationManager.getDriveModeList().get(position),
+                        NavigationProxy.getInstance().startNavigation(new Navigation(point, navigationManager.getDriveModeList().get(position),
                                 NavigationType.NAVIGATION));
                     }
                 });

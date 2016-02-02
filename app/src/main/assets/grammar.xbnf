@@ -1,0 +1,53 @@
+$DIGIT = (1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0);
+
+$NUM = (    $DIGIT/min=1,max=11,k="number"/);
+$PERSON = (张三 | 李四);
+$PERSONX = ($PERSON)/k="person"/;
+$BT_ACTION_PREFIX_01 = ([请]给 | 跟);
+$BT_ACTION_SUFFIX_01 = (致电 | 通话 | 拨号 | 通电 | 电话 | [拨]打电话)/action="call"/;
+$BT_ACTION_PREFIX_02 = (打给 | 打电话给 | 电话给 | 呼叫 | 联系 | 致电 | 拨通 | 拨打)/action="call"/;
+$BT_ACTION_PREFIX_03 = ( 拨打 | 拨通)/action="call"/;
+$BT_ACTION_SUFFIX_03 = (的电话);
+$BT_CMD = (($BT_ACTION_PREFIX_01 ($PERSONX | $NUM) $BT_ACTION_SUFFIX_01)
+				| ($BT_ACTION_PREFIX_02 ($PERSONX | $NUM))
+				| ($BT_ACTION_PREFIX_03 ($PERSONX | $NUM) $BT_ACTION_SUFFIX_03))/domain="phone"/;
+
+$VOLUME_UP = (增大 | 调大 | 调高 | 升高 | 增加 | 大点);
+$VOLUME_MAX = 调[到]最大;
+$VOLUME_DOWN = (减小 | 调小 | 调低 | 降低 | 小点);
+$VOLUME_MIN = 调[到]最小;
+$VOLUME_NAME = (音量 | 声音 | 音响);
+$VOLUME_MUTE_NAME = (静音);
+$VOLUME_MUTE_ON = (打开);
+$VOLUME_MUTE_OFF = (关闭);
+$VOLUME_UP_CMD = (($VOLUME_UP $VOLUME_NAME) | ($VOLUME_NAME $VOLUME_UP))/action="+"/;
+$VOLUME_DOWN_CMD = (($VOLUME_DOWN $VOLUME_NAME) | ($VOLUME_NAME $VOLUME_DOWN))/action="-"/;
+$VOLUME_MAX_CMD = (($VOLUME_MAX $VOLUME_NAME) | ($VOLUME_NAME $VOLUME_MAX))/action="max"/;
+$VOLUME_MIN_CMD = (($VOLUME_MIN $VOLUME_NAME) | ($VOLUME_NAME $VOLUME_MIN))/action="min"/;
+$VOLUME_MUTE_ON_CMD = (($VOLUME_MUTE_NAME)
+					| ($VOLUME_MUTE_OFF $VOLUME_NAME))/action="mute_on"/;
+$VOLUME_MUTE_OFF_CMD = (($VOLUME_MUTE_ON $VOLUME_NAME)/action="mute_off"/;
+$VOLUME_CMD = (($VOLUME_UP_CMD) | ($VOLUME_DOWN_CMD) |($VOLUME_MAX_CMD) | ($VOLUME_MIN_CMD)| ($VOLUME_MUTE_ON_CMD) | ($VOLUME_MUTE_OFF_CMD))/domain="volume"/;
+
+$SELF_CHECKING = ([车辆]自检)/k="target", v="自检"/;
+$SELF_CHECKING_OPEN = (打开 | 开启 | 启动)/k="action"/;
+$SELF_CHECKING_CLOSE = (关闭 | 关掉 | 结束 | 退出)/k="action"/;
+$SELF_CHECKING_OPEN_CMD = ($SELF_CHECKING_OPEN) ($SELF_CHECKING);
+$SELF_CHECKING_CLOSE_CMD = ($SELF_CHECKING_CLOSE) ($SELF_CHECKING);
+$SELF_CHECKING_CMD = (($SELF_CHECKING_OPEN_CMD) | ($SELF_CHECKING_CLOSE_CMD))/domain="cmd"/;
+
+$VIDEO_NAME = (录像)/k="target", v="录像"/;
+$VIDEO_OPEN = (打开 | 开启 | 启动)/k="action"/;
+$VIDEO_CLOSE = (关闭 | 关掉 | 退出)/k="action"/;
+$VIDEO_OPEN_CMD = ($VIDEO_OPEN) ($VIDEO_NAME);
+$VIDEO_CLOSE_CMD = ($VIDEO_CLOSE) ($VIDEO_NAME);
+$VIDEO_CMD = (($VIDEO_OPEN_CMD) | ($VIDEO_CLOSE_CMD))/domain="cmd"/;
+
+$SPEECH_NAME = (语音)/k="target", v="语音"/;
+$SPEECH_CLOSE = (关闭 | 关掉 | 退出);
+$SPEECH_CLOSE_CMD = ($SPEECH_CLOSE) ($SPEECH_NAME);
+$SPEECH_CMD =  ($SPEECH_CLOSE_CMD)/domain="cmd"/;
+
+    $MESSAGE = ($BT_CMD) | ($VOLUME_CMD) | ($SELF_CHECKING_CMD) | ($VIDEO_CMD) | ($SPEECH_CMD);
+
+( \<s\> ($MESSAGE) \<\/s\> )

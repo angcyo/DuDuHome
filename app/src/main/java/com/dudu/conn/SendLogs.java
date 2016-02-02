@@ -2,7 +2,6 @@ package com.dudu.conn;
 
 
 import android.content.Context;
-import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -11,8 +10,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.dudu.android.launcher.utils.DeviceIDUtil;
 import com.dudu.android.launcher.utils.FileUtils;
-import com.dudu.http.MultipartRequest;
-import com.dudu.http.MultipartRequestParams;
+import com.dudu.android.launcher.model.volley.MultipartRequest;
+import com.dudu.android.launcher.model.volley.MultipartRequestParams;
 import com.dudu.network.event.LogSend;
 
 import org.slf4j.Logger;

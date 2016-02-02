@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.dudu.android.launcher.R;
-import com.dudu.android.launcher.utils.SharedPreferencesUtil;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 

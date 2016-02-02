@@ -1,6 +1,5 @@
 package com.dudu.android.launcher.service;
 
-import java.io.PipedReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -14,7 +13,7 @@ import android.os.IBinder;
 
 import com.dudu.android.launcher.db.DbHelper;
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.SharedPreferencesUtil;
+import com.dudu.android.launcher.utils.SharedPreferencesUtils;
 import com.dudu.monitor.Monitor;
 import com.dudu.network.NetworkManage;
 import com.dudu.network.event.FlowUpload;
@@ -68,11 +67,11 @@ public class MonitorService extends Service {
 
         mContext = this;
 
-        uploadFlowValue = Float.valueOf(SharedPreferencesUtil.getStringValue(mContext, Constants.KEY_UPLOAD_FLOW_VALUE, "300"));
+        uploadFlowValue = Float.valueOf(SharedPreferencesUtils.getStringValue(mContext, Constants.KEY_UPLOAD_FLOW_VALUE, "300"));
 
         log = LoggerFactory.getLogger("monitor");
 
-        WAKE_INTERVAL_MS = Integer.valueOf(SharedPreferencesUtil.getStringValue(mContext, Constants.KEY_FLOW_FREQUENCY, "30")) * 1000;
+        WAKE_INTERVAL_MS = Integer.valueOf(SharedPreferencesUtils.getStringValue(mContext, Constants.KEY_FLOW_FREQUENCY, "30")) * 1000;
 
         mOldMobileRx = TrafficStats.getMobileRxBytes() / 1024;
         mOldMobileTx = TrafficStats.getMobileTxBytes() / 1024;
@@ -188,13 +187,13 @@ public class MonitorService extends Service {
      * 更新SharedPreferences里面的剩余流量的数据
      */
     private void refreshFlowData() {
-        float primaryRemainingFlow = Float.parseFloat(SharedPreferencesUtil.getStringValue(MonitorService.this, Constants.KEY_REMAINING_FLOW, "1024000"));//无值的时候先给1024M
+        float primaryRemainingFlow = Float.parseFloat(SharedPreferencesUtils.getStringValue(MonitorService.this, Constants.KEY_REMAINING_FLOW, "1024000"));//无值的时候先给1024M
         log.debug("refreshFlowData剩余总流量：{}，mDeltaRx + mDeltaTx = {}", primaryRemainingFlow, (mDeltaRx + mDeltaTx));
 //        float timelyRemainingFlow = primaryRemainingFlow - mMobileTotalRx - mMobileTotalTx;
 
         float timelyRemainingFlow = primaryRemainingFlow - mDeltaRx - mDeltaTx;//更新剩余流量应该是减去时间段内消耗的流量
 //        log.debug("timelyRemainingFlow剩余总流量：{}", timelyRemainingFlow);
-        SharedPreferencesUtil.putStringValue(MonitorService.this, Constants.KEY_REMAINING_FLOW, String.valueOf(timelyRemainingFlow));
+        SharedPreferencesUtils.putStringValue(MonitorService.this, Constants.KEY_REMAINING_FLOW, String.valueOf(timelyRemainingFlow));
     }
 
 

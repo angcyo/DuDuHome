@@ -3,81 +3,60 @@ package com.dudu.voice.semantic.chain;
 import android.app.Activity;
 import android.content.Intent;
 
-import com.dudu.android.launcher.LauncherApplication;
-import com.dudu.android.launcher.bean.CmdEntity;
-import com.dudu.android.launcher.bean.CmdSlots;
 import com.dudu.android.launcher.ui.activity.MainActivity;
 import com.dudu.android.launcher.ui.activity.OBDCheckingActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
-import com.dudu.android.launcher.ui.activity.video.VideoListActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.FloatWindowUtil;
-import com.dudu.android.launcher.utils.GsonUtil;
-import com.dudu.android.launcher.utils.JsonUtils;
-import com.dudu.android.launcher.utils.Utils;
-import com.dudu.map.NavigationClerk;
-import com.dudu.voice.semantic.SemanticConstants;
-import com.dudu.voice.semantic.SemanticType;
-import com.dudu.voice.semantic.engine.SemanticProcessor;
+import com.dudu.android.launcher.utils.FloatWindowUtils;
+import com.dudu.map.NavigationProxy;
+import com.dudu.voice.semantic.bean.CmdBean;
+import com.dudu.voice.semantic.bean.SemanticBean;
+import com.dudu.voice.semantic.constant.SceneType;
+import com.dudu.voice.semantic.constant.SemanticConstant;
+import com.dudu.voice.semantic.engine.SemanticEngine;
 
 /**
  * Created by 赵圣琪 on 2015/10/29.
  */
 public class CmdChain extends SemanticChain {
 
-    private LauncherApplication mApplication;
-
-    public CmdChain() {
-        super();
-        mApplication = LauncherApplication.getContext();
-    }
-
     @Override
     public boolean matchSemantic(String service) {
-        return SemanticConstants.SERVICE_CMD.equals(service);
+        return SemanticConstant.SERVICE_CMD.equals(service);
     }
 
     @Override
-    public boolean doSemantic(String json) {
-        String semantic = JsonUtils.parseIatResult(json,
-                "semantic");
-        CmdEntity cmdEntity = (CmdEntity) GsonUtil
-                .jsonToObject(semantic, CmdEntity.class);
-        CmdSlots slots = cmdEntity.getSlots();
-        return handleCmd(slots);
+    public boolean doSemantic(SemanticBean semantic) {
+        return handleCmd((CmdBean) semantic);
     }
 
-    private boolean handleCmd(CmdSlots slots) {
-        String type = slots.getCmd().getType();
-        String option = slots.getCmd().getOption();
-        if (type == null) {
-            type = option;
-        }
+    private boolean handleCmd(CmdBean bean) {
+        String action = bean.getAction();
+        String target = bean.getTarget();
 
-        if (type.contains(Constants.NAVIGATION)) {
-            return handleNavigationCmd(option);
-        } else if (type.contains(Constants.LUXIANG) ||
-                type.contains(Constants.CAMERA)) {
-            handleVideoCmd(option);
-            return true;
-        } else if (type.contains(Constants.JIE)) {
-            handleOrderCmd();
-            return true;
-        } else if (type.contains(Constants.SPEECH)) {
-            handleExitCmd();
-            return true;
-        } else if (type.contains(Constants.EXIT)) {
-            handleExitCmd();
-            return true;
-        } else if (type.contains(Constants.BACK)) {
-            handleBackCmd();
-            return true;
-        } else if (type.contains(Constants.CAR_RECORD)) {
-            handleCarRecord(option);
-            return true;
-        } else if (type.contains(Constants.MAP)) {
-            return handleMapCmd(option);
+        if (target == null) {
+
+        } else {
+            if (target.contains(Constants.NAVIGATION)) {
+                return handleNavigationCmd(action);
+            } else if (target.contains(SemanticConstant.RECORD_CN)) {
+                handleVideoCmd(action);
+                return true;
+            } else if (target.contains(Constants.SPEECH)) {
+                handleExitCmd();
+                return true;
+            } else if (target.contains(Constants.EXIT)) {
+                handleExitCmd();
+                return true;
+            } else if (target.contains(Constants.BACK)) {
+                handleBackCmd();
+                return true;
+            } else if (target.contains(Constants.MAP)) {
+                return handleMapCmd(action);
+            } else if (target.contains(Constants.SELF_CHECKING)) {
+                return handleSelfChecking(action);
+            }
         }
 
         return false;
@@ -87,101 +66,96 @@ public class CmdChain extends SemanticChain {
         switch (option) {
             case Constants.OPEN:
             case Constants.START:
-                return NavigationClerk.getInstance().openNavi(NavigationClerk.OPEN_VOICE);
+                return NavigationProxy.getInstance().openNavi(NavigationProxy.OPEN_VOICE);
             case Constants.CLOSE:
             case Constants.EXIT:
-                FloatWindowUtil.removeFloatWindow();
-                NavigationClerk.getInstance().existNavi();
+                FloatWindowUtils.removeFloatWindow();
+                NavigationProxy.getInstance().existNavi();
                 break;
         }
         return true;
     }
 
     private void handleVideoCmd(String option) {
-        FloatWindowUtil.removeFloatWindow();
+        FloatWindowUtils.removeFloatWindow();
         switch (option) {
             case Constants.OPEN:
-            case Constants.START:
+            case Constants.QIDONG:
             case Constants.KAIQI:
                 Intent intent = new Intent();
-                intent.setClass(mApplication, VideoActivity.class);
+                intent.setClass(mContext, VideoActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                mApplication.startActivity(intent);
+                mContext.startActivity(intent);
                 break;
             case Constants.CLOSE:
             case Constants.EXIT:
+            case Constants.GUANDIAO:
                 ActivitiesManager.getInstance().closeTargetActivity(
                         VideoActivity.class);
                 break;
         }
     }
 
-    private void handleOrderCmd() {
-        FloatWindowUtil.removeFloatWindow();
-        Utils.openJD(mApplication);
-    }
-
     private void handleBackCmd() {
-        FloatWindowUtil.removeFloatWindow();
-        if (mApplication.isReceivingOrder()) {
-            mApplication.setReceivingOrder(false);
-            Intent intent = new Intent(mApplication, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mApplication.startActivity(intent);
-        }
+        FloatWindowUtils.removeFloatWindow();
+
         Activity topActivity = ActivitiesManager.getInstance()
                 .getTopActivity();
         if (topActivity != null && !(topActivity instanceof MainActivity)) {
-            if (topActivity instanceof OBDCheckingActivity) {
-                mVoiceManager.setShowMessageWindow(true);
-            }
-
-            topActivity.startActivity(new Intent(topActivity,
-                    MainActivity.class));
+            Intent intent = new Intent(topActivity,
+                    MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            topActivity.startActivity(intent);
         }
     }
 
     private void handleExitCmd() {
-        FloatWindowUtil.removeFloatWindow();
-        SemanticProcessor.getProcessor().clearSemanticStack();
-        SemanticProcessor.getProcessor().switchSemanticType(SemanticType.NORMAL);
-    }
-
-    private void handleCarRecord(String option) {
-        FloatWindowUtil.removeFloatWindow();
-        switch (option) {
-            case Constants.OPEN:
-            case Constants.START:
-            case Constants.KAIQI:
-                Intent intent = new Intent();
-                intent.setClass(mApplication, VideoListActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                mApplication.startActivity(intent);
-                break;
-            case Constants.CLOSE:
-            case Constants.EXIT:
-                ActivitiesManager.getInstance().closeTargetActivity(
-                        VideoListActivity.class);
-                break;
-        }
+        FloatWindowUtils.removeFloatWindow();
+        SemanticEngine.getProcessor().clearSemanticStack();
+        SemanticEngine.getProcessor().switchSemanticType(SceneType.HOME);
     }
 
     private boolean handleMapCmd(String option) {
-        FloatWindowUtil.removeFloatWindow();
+        FloatWindowUtils.removeFloatWindow();
         switch (option) {
             case Constants.OPEN:
             case Constants.START:
             case Constants.KAIQI:
-                if (NavigationClerk.getInstance().openNavi(NavigationClerk.OPEN_MAP)) {
-                    FloatWindowUtil.removeFloatWindow();
+                if (NavigationProxy.getInstance().openNavi(NavigationProxy.OPEN_MAP)) {
+                    FloatWindowUtils.removeFloatWindow();
                     return true;
                 }
                 return false;
             case Constants.CLOSE:
             case Constants.EXIT:
-                NavigationClerk.getInstance().closeMap();
+                NavigationProxy.getInstance().closeMap();
                 break;
         }
+        return true;
+    }
+
+    private boolean handleSelfChecking(String action) {
+        switch (action) {
+            case Constants.OPEN:
+            case Constants.QIDONG:
+            case Constants.KAIQI:
+                FloatWindowUtils.removeFloatWindow();
+                Intent intent = new Intent(mContext, OBDCheckingActivity.class);
+//                Intent intent=new Intent(mContext,CarCheckActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivity(intent);
+                break;
+            case Constants.CLOSE:
+            case Constants.EXIT:
+            case Constants.GUANDIAO:
+                FloatWindowUtils.removeFloatWindow();
+
+                ActivitiesManager.getInstance().closeTargetActivity(OBDCheckingActivity.class);
+                break;
+            default:
+                return false;
+        }
+
         return true;
     }
 

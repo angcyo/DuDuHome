@@ -1,6 +1,10 @@
 package com.dudu.voice.semantic.chain;
 
-import com.dudu.voice.semantic.VoiceManager;
+import android.content.Context;
+
+import com.dudu.android.launcher.LauncherApplication;
+import com.dudu.voice.VoiceManagerProxy;
+import com.dudu.voice.semantic.bean.SemanticBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,16 +14,20 @@ import java.util.List;
  */
 public abstract class SemanticChain {
 
-    protected VoiceManager mVoiceManager;
+    protected Context mContext;
+
+    protected VoiceManagerProxy mVoiceManager;
 
     private List<SemanticChain> mChildren = new ArrayList<>();
 
     public abstract boolean matchSemantic(String service);
 
-    public abstract boolean doSemantic(String json);
+    public abstract boolean doSemantic(SemanticBean bean);
 
     public SemanticChain() {
-        mVoiceManager = VoiceManager.getInstance();
+        mContext = LauncherApplication.getContext();
+
+        mVoiceManager = VoiceManagerProxy.getInstance();
     }
 
     public SemanticChain getNextChild() {

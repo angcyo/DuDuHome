@@ -4,24 +4,21 @@ public class Constants {
 
 	public static final boolean DEBUG = true;
 	public static final boolean DEBUG_STRICT_MODE = false;
-	public static final String XUFEIID = "55bda6e9";
-
 
 	public static final String NAVIGATION = "导航";
 	public static final String SPEECH = "语音";
 	public static final String LUXIANG = "录像";
-	public static final String CAMERA = "摄像头";
-    public static final String CAR_RECORD = "行车记录仪";
+    public static final String SELF_CHECKING = "自检";
     public static final String MAP = "地图";
 
 	public static final String EXIT = "退出";
 	public static final String OPEN = "打开";
     public static final String KAIQI = "开启";
+    public static final String QIDONG = "启动";
 	public static final String START = "开始";
 	public static final String CLOSE = "关闭";
-	public static final String END = "结束";
 	public static final String BACK = "返回";
-	public static final String JIE = "单";
+    public static final String GUANDIAO = "关掉";
 
     public static final String REFUEL = "加油";
 	public static final String GAS_STATION = "加油站";
@@ -34,13 +31,13 @@ public class Constants {
 
 
 	public static final String WAKEUP_WORDS = "您好";
-	public static final String WAKEUP_NETWORK_UNAVAILABLE = "网络状态关闭，请检查网络";
-	
 	public static final String UNDERSTAND_EXIT = "嘟嘟累了，稍后与你再见";
 	public static final String UNDERSTAND_MISUNDERSTAND = "嘟嘟无法识别，请重说";
 	public static final String UNDERSTAND_NO_INPUT = "没有检测到语音输入";
-	public static final String UNDERSTAND_NETWORK_PROBLEM = "当前网络较差，请稍后再试";
-	public static final String UNDERSTAND_CHOISE_INPUT_TIPS = "您可以说第几个或者上一页、下一页";
+    public static final String ALREADY_FIRST_PAGE = "已经是第一页";
+    public static final String ALREADY_LAST_PAGE = "已经是最后一页";
+    public static final String MAP_CHOISE_ERROR = "选择错误，请重新选择";
+    public static final String NETWORK_UNAVAILABLE = "网络状态关闭，请打开网络连接";
 
 	public static final String ONE1 = "1";
 	public static final String ONE = "一";
@@ -126,10 +123,26 @@ public class Constants {
     public static final int VERSION_TYPE_TAXI = 1;
 
     // Activity传递参数的常量
-    public static final String EXTRA_VIDEO_POSITION = "video_position";
+	public static final String EXTRA_VIDEO_POSITION = "video_position";
+	public static final String EXTRA_CONTACT_NAME = "contact_name";
+	public static final String EXTRA_PHONE_NUMBER = "phone_number";
+	public static final String EXTRA_STATE = "android.bluetooth.profile.extra.STATE";
+	public static final String EXTRA_PREVIOUS_STATE = "android.bluetooth.profile.extra.PREVIOUS_STATE";
 
 	// 广播常量
 	public static final String VIDEO_PREVIEW_BROADCAST = "broadcast_video_preview";
+	public static final String ACTION_BLUETOOTH_PHONE_INCALL = "android.intent.action.incall";
+	public static final String ACTION_BLUETOOTH_PHONE_OUTCALL = "android.intent.action.outcall";
+	public static final String ACTION_BLUETOOTH_PHONE_CONNECT = "android.intent.action.connect";
+	public static final String ACTION_BLUETOOTH_PHONE_END = "android.intent.action.end";
+
+	public static final String BLUETOOTH_SHOW_CONNECT_FAIL = "wld.btphone.bluetooth.SHOW_CONNECT_FAIL";
+	public static final String BLUETOOTH_SHOW_WAITDIALOG = "wld.btphone.bluetooth.SHOW_WAITDIALOG";
+	public static final String BLUETOOTH_PULL_PHONE_BOOK = "wld.show.wait_dialog";
+	public static final String BLUETOOTH_ACL_DISCONNECTED = "android.bluetooth.device.action.ACL_DISCONNECTED";
+
+	public static final String ACTION_NEW_BLUETOOTH_DEVICE = "org.codeaurora.bluetooth.action.NEW_BLUETOOTH_DEVICE";
+	public static final String ACTION_CONNECTION_STATE_CHANGED = "org.codeaurora.handsfreeclient.profile.action.CONNECTION_STATE_CHANGED";
 
     // SharePreference常量
     public static final String KEY_SIM_CARD_SERIAL_NUMBER = "sim_card_serial_number";

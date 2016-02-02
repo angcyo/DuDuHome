@@ -16,7 +16,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
 
 import com.dudu.android.launcher.LauncherApplication;
-import com.dudu.android.launcher.bean.VideoEntity;
+import com.dudu.android.launcher.model.VideoEntity;
 
 public class DbHelper extends SQLiteOpenHelper {
 

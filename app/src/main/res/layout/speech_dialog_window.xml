@@ -1,5 +1,4 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:semantic="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,25 +8,27 @@
         android:id="@+id/radioDialog"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        semantic:circleDrawable="@drawable/semantic" 
+        semantic:circleDrawable="@drawable/semantic"
         android:layout_marginLeft="-10dp"/>
-     <ListView 
-         android:layout_width="match_parent"
-         android:layout_height="fill_parent"
-         android:id="@+id/show_addressListView"
-         android:visibility="gone"
-         android:divider="@android:color/white"
-         android:dividerHeight="1dip"
-         android:focusable="true"
-         android:layout_marginLeft="200dp"/>
-     <ListView
-        android:id="@+id/message_listview"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+
+    <ListView
+        android:id="@+id/map_ListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/map_ListView_marginLeft"
+        android:divider="@android:color/white"
+        android:dividerHeight="1dp"
+        android:focusable="true"
+        android:visibility="gone" />
+
+    <ListView
+        android:id="@+id/message_listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/message_listView_marginLeft"
+        android:background="@color/color_161616"
         android:divider="@null"
         android:footerDividersEnabled="false"
-        android:scrollbars="none"
-        android:background="@color/color_161616"
-        android:layout_marginLeft="200dp"
-        android:visibility="gone"/>
+        android:scrollbars="none" />
+
 </FrameLayout>

@@ -49,7 +49,7 @@ android {
 
 
 dependencies {
-    compile fileTree(include: ['*.jar'], exclude: ['mina-core-2.0.9.jar'], dir: 'libs')
+    compile fileTree(dir: 'libs', exclude: ['mina-core-2.0.9.jar'], include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.github.tony19:logback-android-core:1.1.1-4'
@@ -70,4 +70,5 @@ dependencies {
     compile project(':calculation')
     compile project(':storage')
     compile project(':commonlib')
+    compile files('libs/AISpeech-SDK-for-Android-1.9.5.8.jar')
 }

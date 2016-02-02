@@ -22,8 +22,6 @@ public class LauncherApplication extends Application {
 
     public static LauncherApplication mApplication;
 
-    private boolean mReceivingOrder = false;
-
     private Logger logger;
 
     public static LauncherApplication getContext() {
@@ -59,22 +57,6 @@ public class LauncherApplication extends Application {
         crashHandler.init(getApplicationContext());
 
         NetworkUtils.writePortalConfig(this);
-
-        StringBuffer param = new StringBuffer();
-        param.append("appid=" + Constants.XUFEIID);
-        param.append(",");
-        param.append(SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC);
-        SpeechUtility.createUtility(this, param.toString());
-
-        Setting.showLogcat(false);
-    }
-
-    public boolean isReceivingOrder() {
-        return mReceivingOrder;
-    }
-
-    public void setReceivingOrder(boolean receivingOrder) {
-        mReceivingOrder = receivingOrder;
     }
 
 }

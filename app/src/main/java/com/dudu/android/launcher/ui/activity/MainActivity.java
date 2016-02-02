@@ -33,11 +33,11 @@ import com.dudu.android.launcher.ui.dialog.IPConfigDialog;
 import com.dudu.android.launcher.utils.AdminReceiver;
 import com.dudu.android.launcher.utils.AgedUtils;
 import com.dudu.android.launcher.utils.Utils;
-import com.dudu.android.launcher.utils.WeatherUtil;
+import com.dudu.android.launcher.utils.WeatherUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.event.DeviceEvent;
 import com.dudu.init.InitManager;
-import com.dudu.map.NavigationClerk;
+import com.dudu.map.NavigationProxy;
 import com.dudu.navi.event.NaviEvent;
 import com.dudu.obd.ObdInit;
 import com.dudu.voice.semantic.VoiceManager;
@@ -84,9 +84,6 @@ public class MainActivity extends BaseTitlebarActivity implements
         log_init = LoggerFactory.getLogger("init.start");
 
         log_init.debug("MainActivity 调用onCreate方法初始化...");
-
-        EventBus.getDefault().unregister(this);
-        EventBus.getDefault().register(this);
 
         InitManager.getInstance().init();
 
@@ -232,7 +229,7 @@ public class MainActivity extends BaseTitlebarActivity implements
                 break;
 
             case R.id.navigation_button:
-                NavigationClerk.getInstance().openNavi(NavigationClerk.OPEN_MANUAL);
+                NavigationProxy.getInstance().openNavi(NavigationProxy.OPEN_MANUAL);
                 break;
 
             case R.id.self_checking_container:
@@ -314,8 +311,8 @@ public class MainActivity extends BaseTitlebarActivity implements
                 lps.addRule(RelativeLayout.CENTER_HORIZONTAL);
             }
             mWeatherView.setText(weather);
-            mWeatherImage.setImageResource(WeatherUtil
-                    .getWeatherIcon(WeatherUtil.getWeatherType(weather)));
+            mWeatherImage.setImageResource(WeatherUtils
+                    .getWeatherIcon(WeatherUtils.getWeatherType(weather)));
         } else {
             Toast.makeText(this, R.string.get_weather_info_failed,
                     Toast.LENGTH_SHORT).show();

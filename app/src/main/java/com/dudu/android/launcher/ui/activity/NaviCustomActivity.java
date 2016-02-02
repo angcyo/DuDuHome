@@ -23,11 +23,10 @@ import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.FloatWindowUtil;
 import com.dudu.android.launcher.utils.NaviSettingUtil;
 import com.dudu.android.launcher.utils.TimeUtils;
 import com.dudu.android.launcher.utils.ViewAnimation;
-import com.dudu.map.NavigationClerk;
+import com.dudu.map.NavigationProxy;
 import com.dudu.monitor.Monitor;
 import com.dudu.monitor.utils.LocationUtils;
 import com.dudu.navi.NavigationManager;
@@ -356,7 +355,7 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
     @Override
     public void onPause() {
         mAmapAMapNaviView.onPause();
-        NavigationClerk.getInstance().setIsShowAddress(false);
+        NavigationProxy.getInstance().setIsShowAddress(false);
         back_button.setVisibility(View.GONE);
         mHandler.removeCallbacks(buttonRunnable);
         super.onPause();

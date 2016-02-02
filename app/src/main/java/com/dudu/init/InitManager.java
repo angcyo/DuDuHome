@@ -5,35 +5,32 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-
+import android.os.Handler;
+import android.os.HandlerThread;
 
 import com.dudu.android.launcher.LauncherApplication;
+import com.dudu.android.launcher.service.BluetoothService;
 import com.dudu.android.launcher.service.CheckUserService;
 import com.dudu.android.launcher.service.FloatBackButtonService;
+import com.dudu.android.launcher.service.MainService;
 import com.dudu.android.launcher.service.MonitorService;
-import com.dudu.android.launcher.service.NewMessageShowService;
 import com.dudu.android.launcher.utils.AgedUtils;
 import com.dudu.android.launcher.utils.CarStatusUtils;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.IPConfig;
-import com.dudu.android.launcher.utils.SharedPreferencesUtil;
+import com.dudu.android.launcher.utils.SharedPreferencesUtils;
 import com.dudu.android.launcher.utils.StatusBarManager;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.event.DeviceEvent;
-import com.dudu.monitor.Monitor;
-import com.dudu.monitor.event.CarStatus;
 import com.dudu.navi.NavigationManager;
-import com.dudu.service.MainService;
 import com.dudu.video.VideoManager;
-import com.dudu.voice.semantic.VoiceManager;
+import com.dudu.voice.VoiceManagerProxy;
 
-import org.scf4a.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Observable;
 import java.util.concurrent.TimeUnit;
 
 import ch.qos.logback.core.android.SystemPropertiesProxy;
@@ -55,9 +52,19 @@ public class InitManager {
 
     private Context mContext;
 
+    private HandlerThread mInitThread;
+
+    private Handler mInitHandler;
+
     private InitManager() {
         logger = LoggerFactory.getLogger("init.manager");
+
         mContext = LauncherApplication.getContext();
+
+        mInitThread = new HandlerThread("init thread");
+        mInitThread.start();
+
+        mInitHandler = new Handler(mInitThread.getLooper());
     }
 
     public static InitManager getInstance() {
@@ -69,27 +76,27 @@ public class InitManager {
     }
 
     public boolean init() {
-        initOthers();
+        mInitHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                initOthers();
+            }
+        });
+
         return true;
     }
 
     public void unInit() {
-        logger.debug("反初始化，释放讯飞占用的资源...");
-        VoiceManager.getInstance().stopUnderstanding();
+        VoiceManagerProxy.getInstance().stopUnderstanding();
+        VoiceManagerProxy.getInstance().stopSpeaking();
 
-        VoiceManager.getInstance().stopSpeaking();
+        mInitThread.quitSafely();
     }
 
     /**
-     * 开启语音对话框服务
+     * 开启悬浮按钮服务
      */
-    private void startFloatMessageService() {
-        Intent intent = new Intent(mContext, NewMessageShowService.class);
-        mContext.startService(intent);
-
-        /**
-         * 悬浮按钮服务
-         */
+    private void startFloatButtonService() {
         Intent i = new Intent(mContext, FloatBackButtonService.class);
         mContext.startService(i);
     }
@@ -98,7 +105,7 @@ public class InitManager {
      * 开启用户激活状态检查服务
      */
     private void startCheckUserService() {
-        if (!SharedPreferencesUtil.getBooleanValue(mContext, Constants.KEY_USER_IS_ACTIVE, false)) {
+        if (!SharedPreferencesUtils.getBooleanValue(mContext, Constants.KEY_USER_IS_ACTIVE, false)) {
             CheckUserService service = CheckUserService.getInstance(mContext);
             service.startService();
         }
@@ -114,6 +121,11 @@ public class InitManager {
 
     private void startMonitorService() {
         Intent intent = new Intent(mContext, MonitorService.class);
+        mContext.startService(intent);
+    }
+
+    private void startBluetoothService() {
+        Intent intent = new Intent(mContext, BluetoothService.class);
         mContext.startService(intent);
     }
 
@@ -196,16 +208,19 @@ public class InitManager {
         logger.debug("[init][{}]启动监听服务", log_step++);
         startMonitorService();
 
-        logger.debug("[init][{}]启动语音悬浮框服务", log_step++);
-        startFloatMessageService();
+        logger.debug("[init][{}]启动悬浮返回按钮服务", log_step++);
+        startFloatButtonService();
+
+        logger.debug("[init][{}]开启蓝牙电话服务", log_step++);
+        startBluetoothService();
+
+        logger.debug("[init][{}]打开用户激活状态检查", log_step++);
+        startCheckUserService();
 
         logger.debug("[init][{}]检查sim卡状态", log_step++);
         Utils.checkSimCardState(mContext);
 
         FileUtils.clearVideoFolder();
-
-        logger.debug("[init][{}]打开用户激活状态检查", log_step++);
-        startCheckUserService();
 
         NavigationManager.getInstance(LauncherApplication.getContext()).initNaviManager();
 
@@ -217,7 +232,7 @@ public class InitManager {
 
         VideoManager.getInstance().init();
 
-        VoiceManager.getInstance().startWakeup();
+        VoiceManagerProxy.getInstance().onInit();
     }
 
     public boolean isFinished() {

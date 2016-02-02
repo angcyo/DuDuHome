@@ -6,7 +6,7 @@ import android.util.Log;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.LogUtils;
-import com.dudu.android.launcher.utils.SharedPreferencesUtil;
+import com.dudu.android.launcher.utils.SharedPreferencesUtils;
 import com.dudu.fdfs.common.MyException;
 import com.dudu.fdfs.fastdfs.FileProcessUtil;
 import com.dudu.network.event.UpdatePortal;
@@ -68,7 +68,7 @@ public class PortalUpdate {
     }
 
     public void updatePortal(Context context, String version, String address) {
-        String localVersion = SharedPreferencesUtil.getStringValue(context, Constants.KEY_PORTAL_VERSION, "0");
+        String localVersion = SharedPreferencesUtils.getStringValue(context, Constants.KEY_PORTAL_VERSION, "0");
         if (!version.equals(localVersion)) {
             String[] portalAddress = address.split(",");
             String groupName = portalAddress[0];
@@ -79,9 +79,9 @@ public class PortalUpdate {
 
     private void updatePortalVersion(Context context) {
         try {
-            int version = Integer.valueOf(SharedPreferencesUtil.getStringValue(context,
+            int version = Integer.valueOf(SharedPreferencesUtils.getStringValue(context,
                     Constants.KEY_PORTAL_VERSION, "0"));
-            SharedPreferencesUtil.putStringValue(context, Constants.KEY_PORTAL_VERSION,
+            SharedPreferencesUtils.putStringValue(context, Constants.KEY_PORTAL_VERSION,
                     String.valueOf(version + 1));
         } catch (NumberFormatException e) {
             // ignore

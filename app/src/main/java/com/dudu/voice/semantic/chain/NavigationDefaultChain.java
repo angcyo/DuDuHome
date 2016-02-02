@@ -1,9 +1,9 @@
 package com.dudu.voice.semantic.chain;
 
 
-import com.dudu.android.launcher.utils.JsonUtils;
-import com.dudu.map.NavigationClerk;
+import com.dudu.map.NavigationProxy;
 import com.dudu.navi.vauleObject.SearchType;
+import com.dudu.voice.semantic.bean.SemanticBean;
 
 /**
  * Created by lxh on 2015/11/10.
@@ -16,12 +16,10 @@ public class NavigationDefaultChain extends DefaultChain {
     }
 
     @Override
-    public boolean doSemantic(String json) {
-        String text = JsonUtils.getRsphead(json).getText();
-        if(text == null)
-            text = json;
-
-        NavigationClerk.getInstance().searchControl(null,null,text, SearchType.SEARCH_PLACE);
+    public boolean doSemantic(SemanticBean semantic) {
+        NavigationProxy.getInstance().searchControl(null, null,
+                semantic.getText(), SearchType.SEARCH_PLACE);
         return true;
     }
+
 }

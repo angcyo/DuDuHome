@@ -132,10 +132,31 @@
             android:screenOrientation="landscape"
             android:theme="@style/AppBaseTheme" />
 
-        <service android:name=".service.NewMessageShowService" />
+        <activity
+            android:name=".ui.activity.bluetooth.BtCallingActivity"
+            android:screenOrientation="landscape"
+            android:launchMode="singleTop"
+            android:theme="@style/AppBaseTheme"></activity>
+        <activity
+            android:name=".ui.activity.bluetooth.BtInCallActivity"
+            android:screenOrientation="landscape"
+            android:launchMode="singleTop"
+            android:theme="@style/AppBaseTheme"></activity>
+        <activity
+            android:name=".ui.activity.bluetooth.BtDialActivity"
+            android:screenOrientation="landscape"
+            android:launchMode="singleTop"
+            android:theme="@style/AppBaseTheme"></activity>
+        <activity
+            android:name=".ui.activity.bluetooth.BtOutCallActivity"
+            android:screenOrientation="landscape"
+            android:launchMode="singleTop"
+            android:theme="@style/AppBaseTheme"></activity>
+
+        <service android:name=".service.BluetoothService" />
         <service android:name=".service.FloatBackButtonService" />
         <service android:name=".service.MonitorService" />
-        <service android:name="com.dudu.service.MainService" />
+        <service android:name=".service.MainService" />
         <service android:name="com.amap.api.location.APSService" />
 
         <receiver android:name=".broadcast.SimCardReceiver" >
@@ -143,14 +164,14 @@
                 <action android:name="android.intent.action.SIM_STATE_CHANGED" />
             </intent-filter>
         </receiver>
+
         <receiver
             android:name=".broadcast.WeatherAlarmReceiver"
             android:enabled="true"
             android:exported="true" />
+
         <receiver
             android:name=".utils.AdminReceiver"
-            android:description="@string/app_name"
-            android:label="@string/app_name"
             android:permission="android.permission.BIND_DEVICE_ADMIN" >
             <meta-data
                 android:name="android.app.device_admin"
@@ -158,6 +179,15 @@
 
             <intent-filter>
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".broadcast.BtCallReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.outcall" />
+                <action android:name="android.intent.action.incall" />
+                <action android:name="android.intent.action.connect" />
+                <action android:name="android.intent.action.end" />
             </intent-filter>
         </receiver>
 
