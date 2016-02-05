@@ -71,4 +71,7 @@ dependencies {
     compile project(':storage')
     compile project(':commonlib')
     compile files('libs/AISpeech-SDK-for-Android-1.9.5.8.jar')
+    compile files('libs/jg_filter_sdk_1.1.jar')
+    compile files('libs/wup-1.0.0.E-SNAPSHOT.jar')
+    compile files('libs/Xg_sdk_v2.42_20160111_1539.jar')
 }

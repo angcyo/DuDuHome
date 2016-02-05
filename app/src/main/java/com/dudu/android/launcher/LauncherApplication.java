@@ -1,12 +1,16 @@
 package com.dudu.android.launcher;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.StrictMode;
 
 import com.dudu.android.launcher.exception.CrashHandler;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.NetworkUtils;
 import com.dudu.commonlib.CommonLib;
+import com.tencent.android.tpush.XGIOperateCallback;
+import com.tencent.android.tpush.XGPushConfig;
+import com.tencent.android.tpush.XGPushManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +54,20 @@ public class LauncherApplication extends Application {
         crashHandler.init(getApplicationContext());
 
         NetworkUtils.writePortalConfig(this);
+        // 开启logcat输出，方便debug，发布时请关闭
+        XGPushConfig.enableDebug(this, true);
+        Context context = getApplicationContext();
+        XGPushManager.registerPush(context, "18520339890", new XGIOperateCallback() {
+            @Override
+            public void onSuccess(Object o, int i) {
+                logger.debug("注册成功");
+            }
+
+            @Override
+            public void onFail(Object o, int i, String s) {
+                logger.debug("注册失败"+s);
+            }
+        });
     }
 
 }

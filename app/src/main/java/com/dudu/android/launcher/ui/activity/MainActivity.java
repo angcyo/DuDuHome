@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.broadcast.TFlashCardReceiver;
 import com.dudu.android.launcher.broadcast.WeatherAlarmReceiver;
+import com.dudu.android.launcher.robbery.RobberyModeActivity;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
 import com.dudu.android.launcher.ui.dialog.IPConfigDialog;
@@ -216,8 +217,9 @@ public class MainActivity extends BaseTitlebarActivity implements
 
             case R.id.didi_button:
 //                Utils.openJD(this);
-                
-                startActivity(new Intent(MainActivity.this, CarCheckingActivity.class));
+
+//                startActivity(new Intent(MainActivity.this, CarCheckingActivity.class));
+                startActivity(new Intent(MainActivity.this, RobberyModeActivity.class));
                 break;
 
             case R.id.wlan_button:

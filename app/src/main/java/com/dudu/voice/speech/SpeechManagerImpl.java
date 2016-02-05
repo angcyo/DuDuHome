@@ -209,7 +209,7 @@ public class SpeechManagerImpl extends BaseVoiceManager {
     public void onInit() {
         initWakeupEngine();
 
-        initAuthEngine();
+//        initAuthEngine();
 
         initGrammarEngine();
 
