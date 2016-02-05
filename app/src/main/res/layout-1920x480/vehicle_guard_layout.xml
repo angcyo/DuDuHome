@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/vehicle_lock_bg"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="3dp"
+            android:src="@drawable/vehicle_locked"
+            android:id="@+id/vehicle_locked_image"
+            android:layout_gravity="center_vertical"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:id="@+id/vehicle_locked_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:layout_marginRight="@dimen/dp_15"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/unlock_icon"
+                android:layout_gravity="center_horizontal"/>
+
+            <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_5"
+                android:text="@string/vehicle_locked"
+                android:textSize="8sp" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/vehicle_unlock_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:layout_marginLeft="@dimen/dp_10"
+            >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/lock_icon"
+                android:layout_gravity="center_horizontal"/>
+
+            <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_5"
+                android:text="@string/vehicle_unlock"
+                android:textSize="8sp" />
+        </LinearLayout>
+
+
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/vehicle_unlock_image"
+            android:src="@drawable/vehicle_unlock"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="3dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

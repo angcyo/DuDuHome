@@ -109,5 +109,13 @@
     <string name="prevent_rob_english">SAFETY CENTER</string>
 
     <string name="bluetooth_phone_dialing">正在拨号...</string>
+    
+    <string name="vehicle_guard_ch">车辆防盗</string>
+    <string name="vehicle_guard_en">THEFT DEVICE</string>
 
+    <string name="vehicle_robbery_ch">车辆防劫</string>
+    <string name="vehicle_robbery_en">FRONT CAMERA</string>
+
+    <string name="vehicle_locked">LOCKED</string>
+    <string name="vehicle_unlock">UNLOCK</string>
 </resources>

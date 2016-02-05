@@ -161,4 +161,25 @@
         <item name="android:layout_margin">10dp</item>
     </style>
 
+    <style name="prevent_rob_button_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="vehicle_text_ch_style">
+
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">10sp</item>
+
+    </style>
+
+    <style name="vehicle_text_en_style">
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">8sp</item>
+    </style>
+
 </resources>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+
+    <LinearLayout
+        android:id="@+id/vehicle_left_layout"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/dp_40"
+        android:layout_marginRight="20dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+
+        <ImageView
+            android:id="@+id/button_vehicle_guard"
+            style="@style/prevent_rob_button_style"
+            android:src="@drawable/vehicle_guard_normal" />
+
+        <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+            android:id="@+id/text_vehicle_guard_ch"
+            style="@style/vehicle_text_ch_style"
+            android:text="@string/vehicle_guard_ch" />
+
+        <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
+            android:id="@+id/text_vehicle_guard_en"
+            style="@style/vehicle_text_ch_style"
+            android:text="@string/vehicle_guard_en" />
+
+
+        <ImageView
+            android:id="@+id/button_vehicle_robbery"
+            style="@style/prevent_rob_button_style"
+            android:layout_marginTop="@dimen/dp_30"
+            android:src="@drawable/vehicle_robbery_normal" />
+
+        <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+            android:id="@+id/text_vehicle_robbery"
+            style="@style/vehicle_text_ch_style"
+            android:text="@string/vehicle_robbery_ch" />
+
+        <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
+            android:id="@+id/text_vehicle_robbery_en"
+            style="@style/vehicle_text_ch_style"
+            android:text="@string/vehicle_robbery_en" />
+
+
+    </LinearLayout>
+
+
+    <include
+        android:id="@+id/vehicle_right_layout"
+        layout="@layout/vehicle_guard_layout"></include>
+
+
+</LinearLayout>
