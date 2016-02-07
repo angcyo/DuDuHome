@@ -3,6 +3,7 @@ package com.dudu.android.launcher;
 import android.app.Application;
 import android.content.Context;
 import android.os.StrictMode;
+import android.support.multidex.MultiDex;
 
 import com.dudu.android.launcher.exception.CrashHandler;
 import com.dudu.android.launcher.utils.Constants;
@@ -27,6 +28,8 @@ public class LauncherApplication extends Application {
 
     @Override
     public void onCreate() {
+        MultiDex.install(this);
+
         super.onCreate();
         mApplication = this;
 
