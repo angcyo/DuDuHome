@@ -1,6 +1,7 @@
 package com.dudu.aios.ui.fragment;
 
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -8,6 +9,7 @@ import android.widget.TextView;
 
 import com.dudu.aios.ui.fragment.base.BaseFragment;
 import com.dudu.android.launcher.R;
+import com.dudu.android.launcher.ui.activity.CarCheckingActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -83,6 +85,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.vehicle_inspection:
+                startActivity(new Intent(getActivity(), CarCheckingActivity.class));
                 break;
             case R.id.driving_record_button:
                 break;
