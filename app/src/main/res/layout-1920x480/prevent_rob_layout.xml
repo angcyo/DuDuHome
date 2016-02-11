@@ -2,59 +2,117 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_horizontal"
     android:orientation="horizontal">
 
-
     <LinearLayout
-        android:id="@+id/vehicle_left_layout"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="@dimen/dp_40"
-        android:layout_marginRight="20dp"
-        android:gravity="center_horizontal"
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="0dip"
+            android:layout_weight="40"></View>
 
-        <ImageView
-            android:id="@+id/button_vehicle_guard"
-            style="@style/prevent_rob_button_style"
-            android:src="@drawable/vehicle_guard_normal" />
+        <LinearLayout
+            android:id="@+id/vehicle_guard_btn"
+            android:layout_width="120dp"
+            android:layout_height="0dip"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="20dp"
+            android:layout_weight="180"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:weightSum="1">
 
-        <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
-            android:id="@+id/text_vehicle_guard_ch"
-            style="@style/vehicle_text_ch_style"
-            android:text="@string/vehicle_guard_ch" />
+            <ImageView
+                android:id="@+id/vehicle_guard_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/vehicle_guard_icon" />
 
-        <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
-            android:id="@+id/text_vehicle_guard_en"
-            style="@style/vehicle_text_ch_style"
-            android:text="@string/vehicle_guard_en" />
+            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                android:id="@+id/text_vehicle_guard_ch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="@string/vehicle_guard_ch"
+                android:textSize="15sp"
+                android:layout_marginTop="5dp"/>
 
+            <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
+                android:id="@+id/text_vehicle_guard_en"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:layout_weight="0.03"
+                android:singleLine="true"
+                android:text="@string/vehicle_guard_en"
+                android:textSize="14sp" />
 
-        <ImageView
-            android:id="@+id/button_vehicle_robbery"
-            style="@style/prevent_rob_button_style"
-            android:layout_marginTop="@dimen/dp_30"
-            android:src="@drawable/vehicle_robbery_normal" />
+        </LinearLayout>
 
-        <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
-            android:id="@+id/text_vehicle_robbery"
-            style="@style/vehicle_text_ch_style"
-            android:text="@string/vehicle_robbery_ch" />
+        <LinearLayout
+            android:id="@+id/vehicle_robbery_btn"
+            android:layout_width="120dp"
+            android:layout_height="0dip"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="20dp"
+            android:layout_weight="180"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:weightSum="1">
 
-        <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
-            android:id="@+id/text_vehicle_robbery_en"
-            style="@style/vehicle_text_ch_style"
-            android:text="@string/vehicle_robbery_en" />
+            <ImageView
+                android:id="@+id/vehicle_robbery_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/vehicle_robbery_icon" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                android:id="@+id/text_vehicle_robbery_ch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:singleLine="true"
+                android:text="@string/vehicle_robbery_ch"
+                android:textSize="15sp" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
+                android:id="@+id/text_vehicle_robbery_en"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:singleLine="true"
+                android:text="@string/vehicle_robbery_en"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dip"
+            android:layout_weight="80"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/back_button"
+                android:layout_width="32dp"
+                android:layout_height="26dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/button_back_selector" />
+
+        </LinearLayout>
 
 
     </LinearLayout>
 
+    <RelativeLayout
 
-    <include
         android:id="@+id/vehicle_right_layout"
-        layout="@layout/vehicle_guard_layout"></include>
-
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></RelativeLayout>
 
 </LinearLayout>

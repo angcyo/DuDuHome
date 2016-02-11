@@ -1,9 +1,7 @@
 package com.dudu.aios.ui.fragment;
 
 
-
 import android.content.Intent;
-
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -16,11 +14,9 @@ import android.widget.Toast;
 import com.dudu.aios.ui.fragment.base.BaseFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.R;
-
 import com.dudu.android.launcher.ui.activity.CarCheckingActivity;
 import com.dudu.android.launcher.utils.WeatherUtils;
 import com.dudu.event.DeviceEvent;
-
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -130,10 +126,11 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
 
             case R.id.flow_button:
 //                replaceFragment(FragmentConstants.FRAGMENT_FLOW);
-                getFragmentManager().beginTransaction().replace(R.id.container,new FlowFragment()).commit();
+                getFragmentManager().beginTransaction().replace(R.id.container, new FlowFragment()).commit();
                 break;
 
             case R.id.prevent_rob:
+                getFragmentManager().beginTransaction().replace(R.id.container, new VehicleFragment()).commit();
                 break;
         }
     }
