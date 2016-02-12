@@ -115,6 +115,16 @@
 
     <string name="vehicle_robbery_ch">车辆防劫</string>
     <string name="vehicle_robbery_en">FRONT CAMERA</string>
+
+    <string name="vehicle_robbery_mode_ch">防劫模式</string>
+    <string name="vehicle_flash_rate_times_cn">闪大灯次数限制10次</string>
+    <string name="vehicle_emergency_cutoff_cn">紧急停车后下车</string>
+    <string name="vehicle_step_on_gas_cn">连续踩油门限制3次</string>
+    <string name="vehicle_robbery_mode_en">ROBBERY MODE</string>
+    <string name="vehicle_flash_rate_times_en">FLASH RATE 10 TIMES</string>
+    <string name="vehicle_emergency_cutoff_en">EMERGENCY CUTOFF</string>
+    <string name="vehicle_step_on_gas_en">STEP ON THE GAS</string>
+
     <string name="vehicle_locked">LOCKED</string>
     <string name="vehicle_unlock">UNLOCK</string>
     <string name="prepositive_video_chinese">前置录像</string>

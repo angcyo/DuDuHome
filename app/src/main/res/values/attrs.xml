@@ -42,6 +42,11 @@
         <attr name="mStrokeWidth" format="dimension" />
         <attr name="mCircleColor" format="color" />
         <attr name="mRingColor" format="color" />
+	</declare-styleable>
+    <declare-styleable name="SwitchButton">
+        <attr name="switchBackground" format="reference" />
+        <attr name="onThumbDrawble" format="dimension" />
+        <attr name="offThumbDrawble" format="color" />
     </declare-styleable>
 
 </resources>
