@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <SurfaceView
+        android:id="@+id/preview_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <ImageButton
+            android:id="@+id/button_video_switch"
+            android:layout_width="23dp"
+            android:layout_height="22.5dp"
+            android:layout_marginBottom="16dp"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@+id/video_button_bottom"
+            android:background="@drawable/button_video_switch_selector"/>
+
+        <RelativeLayout
+            android:id="@+id/video_button_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true">
+            <ImageButton
+                android:id="@+id/button_check_video"
+                android:layout_width="56dp"
+                android:layout_height="43.5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/button_check_video_selector"/>
+
+            <ImageButton
+                android:id="@+id/button_photograph"
+                android:layout_width="23dp"
+                android:layout_height="22.5dp"
+                android:layout_toLeftOf="@+id/button_check_video"
+                android:layout_marginRight="30dp"
+                android:layout_centerVertical="true"
+                android:background="@drawable/button_photograph_selector"/>
+
+            <ImageButton
+                android:id="@+id/button_check_photo"
+                android:layout_width="23dp"
+                android:layout_height="22.5dp"
+                android:layout_marginLeft="30dp"
+                android:layout_toRightOf="@+id/button_check_video"
+                android:layout_centerVertical="true"
+                android:background="@drawable/button_check_photo_selector"/>
+
+        </RelativeLayout>
+    </RelativeLayout>
+</FrameLayout>

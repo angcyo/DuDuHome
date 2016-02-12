@@ -60,7 +60,7 @@ public class VideoActivity extends BaseNoTitlebarAcitivity {
 
     @Override
     public void initView(Bundle savedInstanceState) {
-        mVideoManager = VideoManager.getInstance();
+//        mVideoManager = VideoManager.getInstance();
         mVideoView = mVideoManager.getVideoView();
 
         mBackButton = (Button) mVideoView.findViewById(R.id.back_button);
@@ -102,21 +102,21 @@ public class VideoActivity extends BaseNoTitlebarAcitivity {
     public void initDatas() {
         if (!FileUtils.isTFlashCardExists()) {
             ToastUtils.showToast(R.string.video_sdcard_removed_alert);
-            mVideoManager.startPreview();
+//            mVideoManager.startPreview();
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mVideoManager.updatePreviewSize(854, 480);
+//        mVideoManager.updatePreviewSize(854, 480);
         buttonAutoHide();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mVideoManager.updatePreviewSize(1, 1);
+//        mVideoManager.updatePreviewSize(1, 1);
         mBackButton.setVisibility(View.GONE);
         mDetailButton.setVisibility(View.GONE);
         mAnimationHandler.removeCallbacks(button_hideRunable);

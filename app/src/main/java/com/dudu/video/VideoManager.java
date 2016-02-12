@@ -8,6 +8,7 @@ import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -18,11 +19,15 @@ import android.view.WindowManager;
 import com.dudu.android.hideapi.SystemPropertiesProxy;
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
+
 import com.dudu.android.launcher.db.DbHelper;
 import com.dudu.android.launcher.model.VideoEntity;
+
 import com.dudu.android.launcher.utils.FileUtils;
+import com.dudu.android.launcher.utils.StatusBarManager;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.event.DeviceEvent;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,13 +122,13 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
         }
     }
 
-    public static VideoManager getInstance() {
+    /*public static VideoManager getInstance() {
         if (mInstance == null) {
             mInstance = new VideoManager();
         }
 
         return mInstance;
-    }
+    }*/
 
     private VideoManager() {
         log = LoggerFactory.getLogger("video.VideoManager");
@@ -146,6 +151,8 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
         mHandler = new VideoHandler();
 
         mWindowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+
+        init();
     }
 
     public VideoConfigParam getVideoConfigParam() {
@@ -159,13 +166,13 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
         try {
             mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
         } catch (Exception e) {
-            log.error("获取相机失败");
+            log.error("获取相机失败",e);
             return;
         }
 
         Camera.Parameters params = mCamera.getParameters();
         params.setPreviewFormat(PixelFormat.YCbCr_420_SP);
-        params.setPreviewSize(mContext.getResources().getDisplayMetrics().widthPixels, mContext.getResources().getDisplayMetrics().heightPixels);
+        params.setPreviewSize(854, 480);
         params.setPictureSize(videoConfigParam.getWidth(), videoConfigParam.getHeight());
 
         mCamera.setParameters(params);
@@ -403,7 +410,7 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
         if (mMediaRecorder != null) {
             try {
                 mMediaRecorder.stop();
-                EventBus.getDefault().post(DeviceEvent.OFF);
+                EventBus.getDefault().post(new DeviceEvent.Video(DeviceEvent.OFF));
             } catch (Exception e) {
                 log.error("录像关闭异常: " + e.toString());
             }

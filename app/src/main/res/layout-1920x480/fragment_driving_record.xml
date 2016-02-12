@@ -1,67 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="drivingRecordObservable"
+            type="com.dudu.aios.ui.fragment.video.observable.DrivingRecordObservable">
+        </variable>
+    </data>
+
 
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        tools:context=".ui.fragment.video.DrivingRecordFragment">
+
+        <FrameLayout
+            android:id="@+id/camera_preview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/rear_camera_preview"
+                android:layout_width="640dp"
+                android:layout_height="320dp"/>
+
+           <!-- <SurfaceView
+                android:id="@+id/front_camera_preview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>-->
+        </FrameLayout>
+
 
         <ImageButton
             android:id="@+id/switch_video"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_above="@+id/video_button_bottom"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/button_video_switch_selector" />
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/button_video_switch_selector"/>
 
-        <LinearLayout
-            android:id="@+id/linear_container"
-            android:layout_width="wrap_content"
+
+        <RelativeLayout
+            android:id="@+id/video_button_bottom"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/switch_video"
-            android:layout_marginBottom="4dp"
-            android:layout_marginTop="12dp"
-            android:orientation="horizontal">
-
-            <ImageButton
-                android:id="@+id/take_photo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="4dp"
-                android:background="@drawable/button_photograph_selector" />
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true">
 
             <ImageButton
                 android:id="@+id/check_video"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/button_check_video_selector" />
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/button_check_video_selector"/>
+
+            <ImageButton
+                android:id="@+id/take_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="30dp"
+                android:layout_toLeftOf="@+id/check_video"
+                android:background="@drawable/button_photograph_selector"/>
 
             <ImageButton
                 android:id="@+id/check_photo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="4dp"
-                android:background="@drawable/button_check_photo_selector" />
-        </LinearLayout>
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="30dp"
+                android:layout_toRightOf="@+id/check_video"
+                android:background="@drawable/button_check_photo_selector"
+                android:onClick="@{drivingRecordObservable.changeFrontAndRearPreview}"/>
 
+            <ImageButton
+                android:id="@+id/button_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_centerVertical="true"
+                android:background="@drawable/button_back_selector"
+                android:onClick="onButtonBack"/>
+        </RelativeLayout>
     </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
-
-        <ImageButton
-            android:id="@+id/button_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/button_back_selector" />
-    </RelativeLayout>
-
-</RelativeLayout>
+</layout>

@@ -1,7 +1,6 @@
 package com.dudu.aios.ui.fragment.base;
 
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -64,6 +63,8 @@ public abstract class BaseFragment extends Fragment {
 
     private LinearLayout childViewContainer;
 
+    protected View childView;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -108,7 +109,9 @@ public abstract class BaseFragment extends Fragment {
 
         mBluetoothImage = (ImageView) view.findViewById(R.id.bluetooth_img);
 
-        childViewContainer.addView(getChildView());
+        childView = getChildView();
+
+        childViewContainer.addView(childView);
 
         mVideoSignalImage.setImageResource(StatusBarManager.getInstance().isRecording() == DeviceEvent.ON ?
                 R.drawable.video_signal_recording : R.drawable.video_signal_stop);

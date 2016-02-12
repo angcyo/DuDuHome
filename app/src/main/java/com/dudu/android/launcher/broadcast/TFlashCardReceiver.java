@@ -18,13 +18,13 @@ public class TFlashCardReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         if (action.equals(Intent.ACTION_MEDIA_MOUNTED)) {
 
-            VideoManager.getInstance().onTFlashCardInserted();
+//            VideoManager.getInstance().onTFlashCardInserted();
 
             if (Utils.isDemoVersion(context)) {
                 AgedUtils.proceedAgeTest(context);
             }
         } else if (action.equals(Intent.ACTION_MEDIA_REMOVED)) {
-            VideoManager.getInstance().onTFlashCardRemoved();
+//            VideoManager.getInstance().onTFlashCardRemoved();
         }
     }
 

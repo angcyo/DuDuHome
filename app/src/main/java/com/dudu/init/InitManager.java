@@ -23,6 +23,7 @@ import com.dudu.android.launcher.utils.SharedPreferencesUtils;
 import com.dudu.android.launcher.utils.StatusBarManager;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
+import com.dudu.drivevideo.DriveVideo;
 import com.dudu.event.DeviceEvent;
 import com.dudu.navi.NavigationManager;
 import com.dudu.video.VideoManager;
@@ -176,7 +177,10 @@ public class InitManager {
         //卸载残留的老化软件
         AgedUtils.uninstallAgedApk(mContext);
 
-        rx.Observable.timer(1, TimeUnit.SECONDS)
+//        VideoManager.getInstance();
+        DriveVideo.getInstance().startDriveVideo();
+
+        /*rx.Observable.timer(1, TimeUnit.SECONDS)
                 .subscribe(new Action1<Long>() {
                     @Override
                     public void call(final Long aLong) {
@@ -184,7 +188,7 @@ public class InitManager {
 //                        WifiApAdmin.initWifiApState(mContext);
 
                     }
-                });
+                });*/
         rx.Observable.timer(10, TimeUnit.SECONDS)
                 .subscribe(new Action1<Long>() {
                     @Override

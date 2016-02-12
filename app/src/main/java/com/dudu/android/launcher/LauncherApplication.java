@@ -9,6 +9,8 @@ import com.dudu.android.launcher.exception.CrashHandler;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.NetworkUtils;
 import com.dudu.commonlib.CommonLib;
+import com.dudu.drivevideo.DriveVideo;
+import com.dudu.video.VideoManager;
 import com.tencent.android.tpush.XGIOperateCallback;
 import com.tencent.android.tpush.XGPushConfig;
 import com.tencent.android.tpush.XGPushManager;
@@ -68,9 +70,10 @@ public class LauncherApplication extends Application {
 
             @Override
             public void onFail(Object o, int i, String s) {
-                logger.debug("注册失败"+s);
+                logger.debug("注册失败" + s);
             }
         });
+
     }
 
 }

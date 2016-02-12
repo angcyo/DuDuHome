@@ -62,7 +62,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
 			return false;
 		}
 
-		VideoManager.getInstance().stopRecord();
+//		VideoManager.getInstance().stopRecord();
 
 		new Thread(new Runnable() {
 

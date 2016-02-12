@@ -11,10 +11,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.view.MotionEvent;
 import android.view.Window;
+import android.widget.FrameLayout;
 
-import com.dudu.aios.ui.fragment.DrivingRecordFragment;
+import com.dudu.aios.ui.fragment.video.DrivingRecordFragment;
 import com.dudu.aios.ui.fragment.FlowFragment;
 import com.dudu.aios.ui.fragment.MainFragment;
 import com.dudu.aios.ui.fragment.PhotoFragment;
@@ -28,6 +32,8 @@ import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.broadcast.TFlashCardReceiver;
 import com.dudu.android.launcher.broadcast.WeatherAlarmReceiver;
 import com.dudu.android.launcher.utils.AdminReceiver;
+import com.dudu.android.launcher.utils.ToastUtils;
+import com.dudu.drivevideo.DriveVideo;
 import com.dudu.event.DeviceEvent;
 import com.dudu.init.InitManager;
 
@@ -39,6 +45,7 @@ import java.util.Calendar;
 import de.greenrobot.event.EventBus;
 
 public class MainRecordActivity extends Activity {
+    private static final int SET_PREVIEW = 0;
 
     private FragmentTransaction ft;
 
@@ -58,12 +65,19 @@ public class MainRecordActivity extends Activity {
 
     public  VolBrightnessSetting volBrightnessSetting;
 
+    private boolean isPreviewIng = false;
+    private FrameLayout previewFrameLayout;
+    private MainHandler mainHandler = new MainHandler();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_record);
         initData();
+
+        initView();
     }
 
     private void initData() {
@@ -88,6 +102,38 @@ public class MainRecordActivity extends Activity {
 
         // 自己的AdminReceiver 继承自 DeviceAdminReceiver
         componentName = new ComponentName(this, AdminReceiver.class);
+    }
+
+    private void initView(){
+        previewFrameLayout = (FrameLayout)findViewById(R.id.preview);
+
+        mainHandler.sendEmptyMessageDelayed(MainRecordActivity.SET_PREVIEW, 5 * 1000);
+    }
+
+
+    private class MainHandler extends Handler {
+        public MainHandler() {
+            super(Looper.getMainLooper());
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case SET_PREVIEW:
+                    initFrontPreview();
+                    break;
+            }
+        }
+    }
+
+
+    private void initFrontPreview(){
+        if(DriveVideo.getInstance().getFrontCameraDriveVideo().getmCamera()  != null){
+            log_init.debug("初始化前置预览");
+            previewFrameLayout.addView(DriveVideo.getInstance().getFrontCameraDriveVideo().getCameraPreview());
+        }else {
+            mainHandler.sendEmptyMessageDelayed(MainRecordActivity.SET_PREVIEW, 5*1000);
+        }
     }
 
     private void initFragment() {

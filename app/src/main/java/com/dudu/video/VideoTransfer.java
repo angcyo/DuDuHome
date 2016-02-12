@@ -107,18 +107,18 @@ public class VideoTransfer {
     /* 用新的间隔参数重启摄像*/
     private void restartRecordVideo(boolean optionFlag){
         log.info("用新的间隔参数重启摄像  optionFlag = {}", optionFlag);
-        VideoManager.getInstance().stopRecord();
+//        VideoManager.getInstance().stopRecord();
         if (optionFlag){
-            VideoManager.getInstance().getVideoConfigParam().resetToDefault();
+//            VideoManager.getInstance().getVideoConfigParam().resetToDefault();
         }else {
-            VideoManager.getInstance().getVideoConfigParam().setToUploadParam();
+//            VideoManager.getInstance().getVideoConfigParam().setToUploadParam();
         }
         try {
             Thread.sleep(5*1000);
         } catch (InterruptedException e) {
             log.error("异常：", e);
         }
-        VideoManager.getInstance().startRecord();
+//        VideoManager.getInstance().startRecord();
     }
 
     /* 加入录像路径*/
