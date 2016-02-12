@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dudu.aios.ui.fragment.base.BaseFragment;
+import com.dudu.aios.ui.map.GaodeMapFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.CarCheckingActivity;
@@ -119,6 +120,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
                 break;
 
             case R.id.navigation_button:
+                getFragmentManager().beginTransaction().replace(R.id.container, new GaodeMapFragment()).commit();
                 break;
 
             case R.id.bluetooth_phone_button:

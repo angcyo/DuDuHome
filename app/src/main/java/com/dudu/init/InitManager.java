@@ -181,7 +181,7 @@ public class InitManager {
                     @Override
                     public void call(final Long aLong) {
                         logger.debug("[init][{}]打开热点", log_step++);
-                        WifiApAdmin.initWifiApState(mContext);
+//                        WifiApAdmin.initWifiApState(mContext);
 
                     }
                 });
