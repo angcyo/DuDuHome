@@ -207,9 +207,9 @@ public class SpeechManagerImpl extends BaseVoiceManager {
 
     @Override
     public void onInit() {
-        initWakeupEngine();
+        initAuthEngine();
 
-//        initAuthEngine();
+        initWakeupEngine();
 
         initGrammarEngine();
 
