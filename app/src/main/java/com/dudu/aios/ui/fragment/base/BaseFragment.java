@@ -1,6 +1,7 @@
 package com.dudu.aios.ui.fragment.base;
 
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -72,6 +73,10 @@ public abstract class BaseFragment extends Fragment {
         initData();
 
         initView(view);
+
+        MainRecordActivity activity = (MainRecordActivity) getActivity();
+
+        activity.volBrightnessSetting = new VolBrightnessSetting(activity,view);
 
         return view;
     }

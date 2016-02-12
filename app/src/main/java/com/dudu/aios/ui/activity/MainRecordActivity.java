@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.Window;
 
 import com.dudu.aios.ui.fragment.DrivingRecordFragment;
@@ -21,6 +22,7 @@ import com.dudu.aios.ui.fragment.PhotoListFragment;
 import com.dudu.aios.ui.fragment.VehicleFragment;
 import com.dudu.aios.ui.fragment.VideoFragment;
 import com.dudu.aios.ui.fragment.VideoListFragment;
+import com.dudu.aios.ui.fragment.base.VolBrightnessSetting;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.broadcast.TFlashCardReceiver;
@@ -53,6 +55,8 @@ public class MainRecordActivity extends Activity {
     private ComponentName componentName;
 
     private static final int MY_REQUEST_CODE = 9999;
+
+    public  VolBrightnessSetting volBrightnessSetting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -205,5 +209,10 @@ public class MainRecordActivity extends Activity {
             mPolicyManager.lockNow();
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return volBrightnessSetting.getOnTouchEventReturnFlag(event);
     }
 }
