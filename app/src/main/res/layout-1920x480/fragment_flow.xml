@@ -15,17 +15,17 @@
 
     <RelativeLayout
         android:id="@+id/flowView_container"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="4dp"
+        android:layout_marginLeft="10dp"
         android:layout_toRightOf="@+id/button_back"
         android:gravity="center">
 
         <com.dudu.aios.ui.view.FlowCompletedView
             android:id="@+id/flowCompletedView"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             android:layout_centerInParent="true" />
 
         <LinearLayout
@@ -40,21 +40,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                android:textSize="25sp" />
+                android:textSize="35sp" />
 
             <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="4dp"
                 android:text="@string/flow_residual_chinese"
-                android:textSize="10sp" />
+                android:textSize="14sp" />
 
             <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="3dp"
                 android:text="@string/flow_residual_english"
-                android:textSize="8sp" />
+                android:textSize="12sp" />
 
         </LinearLayout>
     </RelativeLayout>
@@ -64,6 +64,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:layout_marginLeft="30dp"
         android:layout_toRightOf="@+id/flowView_container"
         android:orientation="vertical">
 
@@ -73,8 +74,8 @@
             android:orientation="horizontal">
 
             <Button
-                android:layout_width="8dp"
-                android:layout_height="8dp"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
                 android:layout_gravity="center_vertical"
                 android:background="@color/white"
                 android:clickable="false" />
@@ -84,11 +85,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="4dp"
+                android:layout_marginLeft="6dp"
                 android:singleLine="true"
                 android:text="@string/used_flow"
                 android:textColor="@color/white"
-                android:textSize="10sp"
+                android:textSize="16sp"
                 android:textStyle="italic" />
 
         </LinearLayout>
@@ -96,12 +97,12 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:orientation="horizontal">
 
             <Button
-                android:layout_width="8dp"
-                android:layout_height="8dp"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
                 android:layout_gravity="center_vertical"
                 android:background="@color/color_6b"
                 android:clickable="false" />
@@ -111,11 +112,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="4dp"
+                android:layout_marginLeft="6dp"
                 android:singleLine="true"
                 android:text="@string/remaining_flow"
                 android:textColor="@color/white"
-                android:textSize="10sp"
+                android:textSize="16sp"
                 android:textStyle="italic" />
 
         </LinearLayout>
@@ -128,7 +129,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="20dp"
+        android:layout_marginLeft="40dp"
         android:layout_toRightOf="@+id/flow_text_container"
         android:orientation="vertical">
 
@@ -142,7 +143,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -153,13 +155,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/close_flow"
-                    android:textSize="8sp" />
+                    android:textSize="16sp" />
 
                 <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/flow_english"
-                    android:textSize="8sp" />
+                    android:textSize="16sp" />
 
             </LinearLayout>
 
@@ -168,8 +170,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:visibility="gone">
+                android:orientation="vertical">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -180,13 +181,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/open_flow"
-                    android:textSize="8sp" />
+                    android:textSize="16sp" />
 
                 <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/flow_english"
-                    android:textSize="8sp" />
+                    android:textSize="16sp" />
 
             </LinearLayout>
         </FrameLayout>
@@ -209,20 +210,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/passwordSet_chinese"
-                android:textSize="9sp" />
+                android:textSize="16sp" />
 
             <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/passwordSet_english"
-                android:textSize="8sp" />
+                android:textSize="16sp" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="32dp"
             android:orientation="horizontal">
 
             <ImageView
@@ -234,10 +235,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="2dp"
+                android:layout_marginLeft="3dp"
                 android:singleLine="true"
                 android:text="@string/pay_info"
-                android:textSize="6sp" />
+                android:textSize="12sp" />
 
         </LinearLayout>
 
@@ -248,7 +249,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="20dp"
+        android:layout_marginLeft="60dp"
         android:layout_toRightOf="@+id/passwordSet_flow_container"
         android:gravity="center_horizontal"
         android:orientation="vertical">
@@ -261,16 +262,16 @@
         <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="8dp"
             android:text="@string/weChat_recharge_chinese"
-            android:textSize="10sp" />
+            android:textSize="16sp" />
 
         <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="4dp"
             android:text="@string/weChat_recharge_english"
-            android:textSize="8sp" />
+            android:textSize="14sp" />
 
     </LinearLayout>
 
@@ -278,7 +279,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="35dp"
         android:layout_toRightOf="@+id/wechat_pay_container"
         android:gravity="center_horizontal"
         android:orientation="vertical">
@@ -291,16 +292,16 @@
         <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="8dp"
             android:text="@string/aliPay_recharge_chinese"
-            android:textSize="10sp" />
+            android:textSize="16sp" />
 
         <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="4dp"
             android:text="@string/aliPay_recharge_english"
-            android:textSize="8sp" />
+            android:textSize="14sp" />
 
     </LinearLayout>
 

@@ -7,12 +7,14 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.dudu.aios.ui.utils.KeyboardUtil;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.LogUtils;
+import java.lang.reflect.Method;
 
 public class PasswordSetDialog extends Dialog implements View.OnClickListener {
 
@@ -39,14 +41,34 @@ public class PasswordSetDialog extends Dialog implements View.OnClickListener {
     }
 
     private void initClickListener() {
+
         btnOk.setOnClickListener(this);
         btnCancel.setOnClickListener(this);
-        txtWifiName.setInputType(InputType.TYPE_NULL);
+
+        if (android.os.Build.VERSION.SDK_INT <= 10) {
+            txtWifiName.setInputType(InputType.TYPE_NULL);
+        } else {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+            try {
+                Class<EditText> cls = EditText.class;
+                Method setSoftInputOnFocus;
+//	setShowSoftInputOnFocus = cls.getMethod("setShowSoftInputOnFocus", boolean.class);
+                setSoftInputOnFocus = cls.getMethod("setSoftInputOnFocus", boolean.class);
+
+//4.0的是setShowSoftInputOnFocus,4.2的是setSoftInputOnFocus
+                setSoftInputOnFocus.setAccessible(false);
+                setSoftInputOnFocus.invoke(txtWifiName, false);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
         txtWifiName.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 LogUtils.v("flow", "name");
-                new KeyboardUtil(act, ctx, txtWifiName).showKeyboard();
+             new KeyboardUtil(act, ctx, txtWifiName).showKeyboard();
                 return false;
             }
         });

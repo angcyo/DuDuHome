@@ -6,13 +6,13 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp">
+        android:layout_marginTop="20dp">
 
         <LinearLayout
             android:id="@+id/date_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
+            android:layout_marginLeft="60dp"
             android:orientation="vertical">
 
             <DigitalClock
@@ -21,7 +21,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:textColor="@android:color/white"
-                android:textSize="35sp" />
+                android:textSize="45sp" />
 
             <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                 android:id="@+id/text_date"
@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:textColor="@android:color/white"
-                android:textSize="10sp" />
+                android:textSize="12sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -47,8 +47,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:text="9°C"
                 android:textColor="@android:color/white"
-                android:textSize="25sp" />
+                android:textSize="28sp" />
 
             <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
                 android:id="@+id/text_weather"
@@ -62,9 +63,10 @@
                 android:maxWidth="50dp"
                 android:minWidth="30dp"
                 android:singleLine="true"
-                android:text="@string/fetching_weather"
+                android:text="多云"
                 android:textColor="@android:color/white"
-                android:textSize="10sp" />
+                android:textSize="12sp" />
+            <!-- android:text="@string/fetching_weather"-->
         </LinearLayout>
 
         <ImageView
@@ -79,7 +81,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="150dp"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
         android:paddingLeft="30dp"
@@ -103,16 +105,16 @@
                 android:layout_marginTop="3dp"
                 android:text="@string/vehicle_inspection_chinese"
                 android:textColor="@android:color/white"
-                android:textSize="8sp" />
+                android:textSize="11sp" />
 
             <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="8dp"
                 android:layout_marginTop="3dp"
                 android:text="@string/vehicle_inspection_english"
                 android:textColor="@android:color/white"
-                android:textSize="6sp" />
+                android:textSize="9sp" />
         </LinearLayout>
 
 
@@ -135,16 +137,16 @@
                 android:layout_marginTop="3dp"
                 android:text="@string/driving_record_chinese"
                 android:textColor="@android:color/white"
-                android:textSize="8sp" />
+                android:textSize="11sp" />
 
             <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="8dp"
                 android:layout_marginTop="3dp"
                 android:text="@string/driving_record_english"
                 android:textColor="@android:color/white"
-                android:textSize="6sp" />
+                android:textSize="9sp" />
 
 
         </LinearLayout>
@@ -168,16 +170,16 @@
                 android:layout_marginTop="3dp"
                 android:text="@string/navigation_chinese"
                 android:textColor="@android:color/white"
-                android:textSize="8sp" />
+                android:textSize="11sp" />
 
             <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="8dp"
                 android:layout_marginTop="3dp"
                 android:text="@string/navigation_english"
                 android:textColor="@android:color/white"
-                android:textSize="6sp" />
+                android:textSize="9sp" />
 
         </LinearLayout>
 
@@ -227,16 +229,16 @@
                 android:layout_marginTop="3dp"
                 android:text="@string/bluetooth_phone__chinese"
                 android:textColor="@android:color/white"
-                android:textSize="8sp" />
+                android:textSize="11sp" />
 
             <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="8dp"
                 android:layout_marginTop="3dp"
                 android:text="@string/bluetooth_phone_english"
                 android:textColor="@android:color/white"
-                android:textSize="6sp" />
+                android:textSize="9sp" />
 
         </LinearLayout>
 
@@ -259,16 +261,16 @@
                 android:layout_marginTop="3dp"
                 android:text="@string/flow_chinese"
                 android:textColor="@android:color/white"
-                android:textSize="8sp" />
+                android:textSize="11sp" />
 
             <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="8dp"
                 android:layout_marginTop="3dp"
                 android:text="@string/flow_english"
                 android:textColor="@android:color/white"
-                android:textSize="6sp" />
+                android:textSize="9sp" />
 
 
         </LinearLayout>
@@ -291,16 +293,16 @@
                 android:layout_marginTop="3dp"
                 android:text="@string/prevent_rob_chinese"
                 android:textColor="@android:color/white"
-                android:textSize="8sp" />
+                android:textSize="11sp" />
 
             <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="8dp"
                 android:layout_marginTop="3dp"
                 android:text="@string/prevent_rob_english"
                 android:textColor="@android:color/white"
-                android:textSize="6sp" />
+                android:textSize="9sp" />
         </LinearLayout>
     </LinearLayout>
 

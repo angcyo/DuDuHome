@@ -51,8 +51,8 @@ public class FlowCompletedView extends View {
 
     private void initAttrs(Context context, AttributeSet attrs) {
         TypedArray array = context.getTheme().obtainStyledAttributes(attrs, R.styleable.FlowCompletedView, 0, 0);
-        mRadius = array.getDimension(R.styleable.FlowCompletedView_mRadius, 140);
-        mStrokeWidth = array.getDimensionPixelSize(R.styleable.FlowCompletedView_mStrokeWidth, 18);
+        mRadius = array.getDimension(R.styleable.FlowCompletedView_mRadius, 130);
+        mStrokeWidth = array.getDimensionPixelSize(R.styleable.FlowCompletedView_mStrokeWidth, 16);
         mCircleColor = array.getColor(R.styleable.FlowCompletedView_mCircleColor, 0x00000000);
         mRingColor = array.getColor(R.styleable.FlowCompletedView_mRingColor, getResources().getColor(R.color.chat_list_item_background_color));
         mRingColor2 = array.getColor(R.styleable.FlowCompletedView_mRingColor, getResources().getColor(R.color.color_6b));

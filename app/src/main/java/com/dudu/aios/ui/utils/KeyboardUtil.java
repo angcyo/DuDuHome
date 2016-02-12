@@ -7,35 +7,28 @@ import android.inputmethodservice.KeyboardView;
 import android.text.Editable;
 import android.view.View;
 import android.widget.EditText;
-import android.inputmethodservice.Keyboard.Key;
 
 import com.dudu.android.launcher.R;
 
 import java.util.List;
 
+/**
+ * Created by Administrator on 2016/2/12.
+ */
 public class KeyboardUtil {
-    private Context ctx;
-    private Activity act;
     private KeyboardView keyboardView;
-    private Keyboard k1;// 字母键盘
-    private Keyboard k2;// 数字键盘
-    private Keyboard k3;
-    public boolean isnun = false;// 是否数据键盘
+    private Keyboard k1;
     public boolean isupper = false;// 是否大写
-
+    boolean isShow=false;
     private EditText ed;
 
     public KeyboardUtil(Activity act, Context ctx, EditText edit) {
-        this.act = act;
-        this.ctx = ctx;
         this.ed = edit;
-        k1 = new Keyboard(ctx, R.xml.digit);
-        k3 = new Keyboard(ctx, R.xml.capital);
-        k2 = new Keyboard(ctx, R.xml.capital);
+        k1 = new Keyboard(ctx, R.xml.custom);
         keyboardView = (KeyboardView) act.findViewById(R.id.keyboard_view);
         keyboardView.setKeyboard(k1);
         keyboardView.setEnabled(true);
-        keyboardView.setPreviewEnabled(true);
+
         keyboardView.setOnKeyboardActionListener(listener);
     }
 
@@ -83,15 +76,6 @@ public class KeyboardUtil {
             } else if (primaryCode == Keyboard.KEYCODE_SHIFT) {// 大小写切换
                 changeKey();
                 keyboardView.setKeyboard(k1);
-
-            } else if (primaryCode == Keyboard.KEYCODE_MODE_CHANGE) {// 数字键盘切换
-                if (isnun) {
-                    isnun = false;
-                    keyboardView.setKeyboard(k1);
-                } else {
-                    isnun = true;
-                    keyboardView.setKeyboard(k2);
-                }
             } else if (primaryCode == 57419) { // go left
                 if (start > 0) {
                     ed.setSelection(start - 1);
@@ -110,21 +94,26 @@ public class KeyboardUtil {
      * 键盘大小写切换
      */
     private void changeKey() {
-        List<Key> keylist = k1.getKeys();
+        List<Keyboard.Key> keylist = k1.getKeys();
         if (isupper) {//大写切换小写
             isupper = false;
-            for (Key key : keylist) {
-                if (key.label != null && isword(key.label.toString())) {
+            for(Keyboard.Key key:keylist){
+                if (key.label!=null && isword(key.label.toString())) {
                     key.label = key.label.toString().toLowerCase();
-                    key.codes[0] = key.codes[0] + 32;
+                    key.codes[0] = key.codes[0]+32;
+                }else if(key.label.toString().equals("小写")){
+                    key.label="大写";
                 }
+
             }
         } else {//小写切换大写
             isupper = true;
-            for (Key key : keylist) {
-                if (key.label != null && isword(key.label.toString())) {
+            for(Keyboard.Key key:keylist){
+                if (key.label!=null && isword(key.label.toString())) {
                     key.label = key.label.toString().toUpperCase();
-                    key.codes[0] = key.codes[0] - 32;
+                    key.codes[0] = key.codes[0]-32;
+                }  else if(key.label.toString().equals("大写")){
+                    key.label="小写";
                 }
             }
         }
@@ -134,6 +123,7 @@ public class KeyboardUtil {
         int visibility = keyboardView.getVisibility();
         if (visibility == View.GONE || visibility == View.INVISIBLE) {
             keyboardView.setVisibility(View.VISIBLE);
+            isShow=true;
         }
     }
 
@@ -141,15 +131,15 @@ public class KeyboardUtil {
         int visibility = keyboardView.getVisibility();
         if (visibility == View.VISIBLE) {
             keyboardView.setVisibility(View.INVISIBLE);
+            isShow=false;
         }
     }
 
-    private boolean isword(String str) {
+    private boolean isword(String str){
         String wordstr = "abcdefghijklmnopqrstuvwxyz";
-        if (wordstr.indexOf(str.toLowerCase()) > -1) {
+        if (wordstr.indexOf(str.toLowerCase())>-1) {
             return true;
         }
         return false;
     }
-
 }
