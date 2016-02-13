@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.android.databinding'
+apply plugin: 'me.tatarka.retrolambda'
 
 Properties props = new Properties()
 if (project.hasProperty("dudu.properties")
@@ -45,6 +47,11 @@ android {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/LICENSE'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
