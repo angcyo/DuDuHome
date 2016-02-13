@@ -3,14 +3,18 @@ package com.dudu.aios.ui.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.inputmethodservice.Keyboard;
+
 import android.inputmethodservice.KeyboardView;
 import android.text.Editable;
 import android.view.View;
 import android.widget.EditText;
 
+
 import com.dudu.android.launcher.R;
+import com.dudu.android.launcher.utils.LogUtils;
 
 import java.util.List;
+
 
 /**
  * Created by Administrator on 2016/2/12.
@@ -18,18 +22,23 @@ import java.util.List;
 public class KeyboardUtil {
     private KeyboardView keyboardView;
     private Keyboard k1;
-    public boolean isupper = false;// 是否大写
-    boolean isShow=false;
+    public boolean isUpper = false;// 是否大写
+    public boolean isSymbol = false;
+    boolean isShow = false;
     private EditText ed;
+    private Context ctx;
+    private Keyboard k2;
 
-    public KeyboardUtil(Activity act, Context ctx, EditText edit) {
+    public KeyboardUtil(Context ctx, EditText edit, KeyboardView keyboardView) {
         this.ed = edit;
+        this.ctx = ctx;
         k1 = new Keyboard(ctx, R.xml.custom);
-        keyboardView = (KeyboardView) act.findViewById(R.id.keyboard_view);
-        keyboardView.setKeyboard(k1);
-        keyboardView.setEnabled(true);
-
-        keyboardView.setOnKeyboardActionListener(listener);
+        k2 = new Keyboard(ctx, R.xml.symbol);
+        this.keyboardView = keyboardView;
+        this.keyboardView.setKeyboard(k1);
+        this.keyboardView.setEnabled(true);
+        this.keyboardView.setPreviewEnabled(false);
+        this.keyboardView.setOnKeyboardActionListener(listener);
     }
 
     private KeyboardView.OnKeyboardActionListener listener = new KeyboardView.OnKeyboardActionListener() {
@@ -84,36 +93,54 @@ public class KeyboardUtil {
                 if (start < ed.length()) {
                     ed.setSelection(start + 1);
                 }
+            } else if (primaryCode == Keyboard.KEYCODE_MODE_CHANGE) {
+                changeMode();
             } else {
                 editable.insert(start, Character.toString((char) primaryCode));
             }
         }
     };
 
+    private void changeMode() {
+        if (isSymbol) {
+            isSymbol = false;
+            keyboardView.setKeyboard(k1);
+        } else {
+            isSymbol = true;
+            keyboardView.setKeyboard(k2);
+        }
+
+    }
+
     /**
      * 键盘大小写切换
      */
     private void changeKey() {
-        List<Keyboard.Key> keylist = k1.getKeys();
-        if (isupper) {//大写切换小写
-            isupper = false;
-            for(Keyboard.Key key:keylist){
-                if (key.label!=null && isword(key.label.toString())) {
+        List<Keyboard.Key> keyList = k1.getKeys();
+        LogUtils.v("flow", ".." + keyList.size());
+        if (isUpper) {//大写切换小写
+            isUpper = false;
+            for (Keyboard.Key key : keyList) {
+                if (key.codes != null && key.label != null && isword(key.label.toString())) {
                     key.label = key.label.toString().toLowerCase();
-                    key.codes[0] = key.codes[0]+32;
-                }else if(key.label.toString().equals("小写")){
-                    key.label="大写";
+                    key.codes[0] = key.codes[0] + 32;
+                } else if (key.codes != null) {
+                    if (key.codes[0] == Keyboard.KEYCODE_SHIFT) {
+                        LogUtils.v("flow", "  " + key.codes[0]);
+                        key.icon = ctx.getResources().getDrawable(R.drawable.capital_arrows);
+                    }
                 }
-
             }
         } else {//小写切换大写
-            isupper = true;
-            for(Keyboard.Key key:keylist){
-                if (key.label!=null && isword(key.label.toString())) {
+            isUpper = true;
+            for (Keyboard.Key key : keyList) {
+                if (key.codes != null && key.label != null && isword(key.label.toString())) {
                     key.label = key.label.toString().toUpperCase();
-                    key.codes[0] = key.codes[0]-32;
-                }  else if(key.label.toString().equals("大写")){
-                    key.label="小写";
+                    key.codes[0] = key.codes[0] - 32;
+                } else if (key.codes != null) {
+                    if (key.codes[0] == Keyboard.KEYCODE_SHIFT) {
+                        key.icon = ctx.getResources().getDrawable(R.drawable.lowercase_arrows);
+                    }
                 }
             }
         }
@@ -123,7 +150,7 @@ public class KeyboardUtil {
         int visibility = keyboardView.getVisibility();
         if (visibility == View.GONE || visibility == View.INVISIBLE) {
             keyboardView.setVisibility(View.VISIBLE);
-            isShow=true;
+            isShow = true;
         }
     }
 
@@ -131,13 +158,13 @@ public class KeyboardUtil {
         int visibility = keyboardView.getVisibility();
         if (visibility == View.VISIBLE) {
             keyboardView.setVisibility(View.INVISIBLE);
-            isShow=false;
+            isShow = false;
         }
     }
 
-    private boolean isword(String str){
+    private boolean isword(String str) {
         String wordstr = "abcdefghijklmnopqrstuvwxyz";
-        if (wordstr.indexOf(str.toLowerCase())>-1) {
+        if (wordstr.indexOf(str.toLowerCase()) > -1) {
             return true;
         }
         return false;

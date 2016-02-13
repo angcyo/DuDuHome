@@ -1,5 +1,6 @@
 package com.dudu.aios.ui.fragment;
 
+import android.app.Activity;
 import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.View;
