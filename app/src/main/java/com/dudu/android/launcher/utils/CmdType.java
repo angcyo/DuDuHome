@@ -112,7 +112,7 @@ public interface CmdType {
 
 	public static final String SERVICE_WIFI = "mwifi";
 
-	public static final String SERVICE_VOICE = "voice";
+	public static final String SERVICE_VOICE = "voice_ripple";
 
 	public static final String SERVICE_MCALL = "mcall";
 

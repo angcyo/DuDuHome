@@ -9,7 +9,7 @@ public class SpeechDialogWindow extends LinearLayout {
 
 	public SpeechDialogWindow(Context context) {
 		super(context);
-		LayoutInflater.from(context).inflate(R.layout.speech_dialog_window,
+		LayoutInflater.from(context).inflate(R.layout.speech_dialog_window_new,
 				this);
 	}
 

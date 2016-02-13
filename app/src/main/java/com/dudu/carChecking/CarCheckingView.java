@@ -5,7 +5,9 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -113,6 +115,8 @@ public class CarCheckingView extends SurfaceView implements SurfaceHolder.Callba
         }
 
         private void doAnimation(Canvas c) {
+
+            c.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
             c.drawBitmap(loadAnimationBitmap(), 0, 0, mPaint);
         }
 

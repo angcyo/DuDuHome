@@ -11,8 +11,8 @@
         android:layout_weight="80"></View>
 
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="210dp"
+        android:layout_height="92dp"
         android:background="@drawable/vehicle_lock_bg">
 
         <LinearLayout
@@ -24,8 +24,8 @@
 
             <ImageView
                 android:id="@+id/vehicle_unlock_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="140dp"
+                android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
                 android:layout_marginBottom="3dp"
                 android:layout_marginLeft="5dp"
@@ -35,23 +35,24 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginRight="@dimen/dp_15"
-                android:layout_weight="0.3"
                 android:gravity="center"
+                android:layout_weight="0.3"
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="20dp"
+                    android:layout_height="22dp"
                     android:layout_gravity="center_horizontal"
-                    android:src="@drawable/unlock_icon" />
+                    android:src="@drawable/unlock_icon"
+                    />
 
                 <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="@string/vehicle_locked"
-                    android:textSize="14sp" />
+                    android:singleLine="true"
+                    android:textSize="12sp" />
             </LinearLayout>
 
 
@@ -70,11 +71,11 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:layout_marginLeft="20dp">
+                android:layout_marginLeft="16dp">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="20dp"
+                    android:layout_height="22dp"
                     android:layout_gravity="center_horizontal"
                     android:src="@drawable/lock_icon" />
 
@@ -83,16 +84,16 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="@string/vehicle_locked"
-                    android:textSize="14sp" />
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <ImageView
                 android:id="@+id/vehicle_locked_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="140dp"
+                android:layout_height="match_parent"
                 android:layout_gravity="center_vertical|right"
                 android:layout_marginTop="3dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginBottom="3dp"
                 android:src="@drawable/vehicle_locked_img"
                 />
         </LinearLayout>

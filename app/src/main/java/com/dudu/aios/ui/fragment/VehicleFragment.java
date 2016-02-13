@@ -46,7 +46,7 @@ public class VehicleFragment extends BaseFragment implements
         vehicle_guard_View = LayoutInflater.from(getActivity()).inflate(R.layout.vehicle_guard_layout, null);
         view_Right.addView(vehicle_guard_View, rightParms);
 
-        vehicle_robbery_view = LayoutInflater.from(getActivity()).inflate(R.layout.robbery_layout, null);
+        vehicle_robbery_view = LayoutInflater.from(getActivity()).inflate(R.layout.robbery_mode_layout, null);
         view_Right.addView(vehicle_robbery_view, rightParms);
 
         backButton = (Button) preventView.findViewById(R.id.back_button);
@@ -65,6 +65,7 @@ public class VehicleFragment extends BaseFragment implements
 
     private void initData() {
 
+        guard();
         guard_unlock();
     }
 

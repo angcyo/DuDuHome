@@ -29,18 +29,18 @@
 
             <ImageView
                 android:id="@+id/vehicle_guard_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40dp"
+                android:layout_height="39dp"
                 android:src="@drawable/vehicle_guard_icon" />
 
             <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                 android:id="@+id/text_vehicle_guard_ch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:singleLine="true"
                 android:text="@string/vehicle_guard_ch"
-                android:textSize="15sp"
-                android:layout_marginTop="5dp"/>
+                android:textSize="13sp" />
 
             <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
                 android:id="@+id/text_vehicle_guard_en"
@@ -50,7 +50,7 @@
                 android:layout_weight="0.03"
                 android:singleLine="true"
                 android:text="@string/vehicle_guard_en"
-                android:textSize="14sp" />
+                android:textSize="12sp" />
 
         </LinearLayout>
 
@@ -67,8 +67,8 @@
 
             <ImageView
                 android:id="@+id/vehicle_robbery_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40dp"
+                android:layout_height="39dp"
                 android:src="@drawable/vehicle_robbery_icon" />
 
             <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
@@ -78,7 +78,7 @@
                 android:layout_marginTop="5dp"
                 android:singleLine="true"
                 android:text="@string/vehicle_robbery_ch"
-                android:textSize="15sp" />
+                android:textSize="13sp" />
 
             <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
                 android:id="@+id/text_vehicle_robbery_en"
@@ -87,24 +87,26 @@
                 android:layout_marginTop="3dp"
                 android:singleLine="true"
                 android:text="@string/vehicle_robbery_en"
-                android:textSize="14sp" />
+                android:textSize="12sp" />
         </LinearLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="0dip"
             android:layout_weight="80"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:layout_marginTop="10dp">
 
             <Button
                 android:id="@+id/back_button"
-                android:layout_width="32dp"
-                android:layout_height="26dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="10dp"
+                android:layout_width="24dp"
+                android:layout_height="16dp"
+                android:layout_alignParentBottom="true"
                 android:background="@drawable/button_back_selector" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
 
     </LinearLayout>

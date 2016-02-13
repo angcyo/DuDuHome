@@ -2,20 +2,25 @@ package com.dudu.aios.ui.fragment;
 
 
 import android.content.Intent;
+import android.media.Image;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dudu.aios.ui.fragment.base.BaseFragment;
 import com.dudu.aios.ui.map.GaodeMapFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
+import com.dudu.aios.ui.voice.VoiceFragment;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.CarCheckingActivity;
+import com.dudu.android.launcher.utils.FloatWindowUtils;
 import com.dudu.android.launcher.utils.WeatherUtils;
 import com.dudu.event.DeviceEvent;
 
@@ -34,6 +39,8 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
     private TextView mDateTextView, mWeatherView, mTemperatureView;
 
     private ImageView mWeatherImage;
+
+    private ImageButton voice_imageBtn;
 
     @Override
     public View getChildView() {
@@ -89,6 +96,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
         bluetoothPhone.setOnClickListener(this);
         flow.setOnClickListener(this);
         preventRob.setOnClickListener(this);
+        voice_imageBtn.setOnClickListener(this);
     }
 
     private void initFragmentView(View view) {
@@ -102,6 +110,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
         mTemperatureView = (TextView) view.findViewById(R.id.text_temperature);
         mWeatherView = (TextView) view.findViewById(R.id.text_weather);
         mWeatherImage = (ImageView) view.findViewById(R.id.weather_icon);
+        voice_imageBtn = (ImageButton) view.findViewById(R.id.voice_imageBtn);
 
     }
 
@@ -133,6 +142,10 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
 
             case R.id.prevent_rob:
                 getFragmentManager().beginTransaction().replace(R.id.container, new VehicleFragment()).commit();
+                break;
+
+            case R.id.voice_imageBtn:
+                getFragmentManager().beginTransaction().replace(R.id.container, new VoiceFragment()).commit();
                 break;
         }
     }

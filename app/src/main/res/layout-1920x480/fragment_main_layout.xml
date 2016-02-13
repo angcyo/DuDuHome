@@ -204,7 +204,8 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/menu_voice_ring" />
+                    android:src="@drawable/menu_voice_ring"
+                    android:id="@+id/voice_imageBtn"/>
 
             </RelativeLayout>
 
