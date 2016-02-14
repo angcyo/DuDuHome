@@ -152,6 +152,9 @@
     <string name="flow_password_set_english">CHANGE PASSWORD</string>
     <string name="wifi">热点</string>
     <string name="password">密码</string>
+    <string name="notice_searchKeyword">抱歉，您输入的关键字有误，请重新输入</string>
+
+    <string name="searching">正在搜索...</string>
 
     <string name="maintain_remind">保养提醒</string>
     <string name="fuel_oil_ratio">燃油比值</string>

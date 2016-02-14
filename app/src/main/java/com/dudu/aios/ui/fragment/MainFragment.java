@@ -2,7 +2,6 @@ package com.dudu.aios.ui.fragment;
 
 
 import android.content.Intent;
-import android.media.Image;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -10,17 +9,15 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dudu.aios.ui.fragment.base.BaseFragment;
-import com.dudu.aios.ui.map.GaodeMapFragment;
+import com.dudu.aios.ui.map.GaodeMapActivity;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.aios.ui.voice.VoiceFragment;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.CarCheckingActivity;
-import com.dudu.android.launcher.utils.FloatWindowUtils;
 import com.dudu.android.launcher.utils.WeatherUtils;
 import com.dudu.event.DeviceEvent;
 
@@ -129,7 +126,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
                 break;
 
             case R.id.navigation_button:
-                getFragmentManager().beginTransaction().replace(R.id.container, new GaodeMapFragment()).commit();
+                startActivity(new Intent(getActivity(), GaodeMapActivity.class));
                 break;
 
             case R.id.bluetooth_phone_button:

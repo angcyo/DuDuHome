@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     android:layout_width="296dp"
+    android:layout_height="208dp"
+    android:background="@drawable/map_dialog_bg">
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:gravity="center"
+      android:layout_marginTop="60dp">
+
+      <ProgressBar
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:background="@drawable/loading"/>
+      
+      <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/searching"
+          android:textColor="@color/white"
+          android:textSize="22sp"
+          android:layout_marginLeft="5dp"
+          android:id="@+id/map_dialog_text"/>
+
+  </LinearLayout>
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/map_dialog_cancle"
+        android:background="@drawable/map_dialog_cancel_btn"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/dp_20"
+        android:layout_centerHorizontal="true"
+        android:text="@string/cancel"
+        android:textSize="20sp"
+        android:textColor="@color/white"/>
+
+</RelativeLayout>

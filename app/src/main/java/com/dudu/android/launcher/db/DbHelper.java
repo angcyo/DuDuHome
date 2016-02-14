@@ -39,6 +39,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public final static String FLOW_COLUMN_TYPE = "type";
     public final static String FLOW_COLUMN_TIME = "time";
 
+
     private final static String CREATE_FLOW_TABLE_SQL = "create table if not exists "
             + FLOW_TABLE_NAME
             + " ("

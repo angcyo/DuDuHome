@@ -41,8 +41,8 @@
 
     <Button
         android:id="@+id/voiceBack"
-        android:layout_width="24dp"
-        android:layout_height="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="8dp"

@@ -39,6 +39,7 @@
     <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
     <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="android.permission.BATTERY_STATS" />
+
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
@@ -74,8 +75,7 @@
             android:name=".ui.activity.MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="landscape"
-            android:theme="@style/AppBaseTheme">
-        </activity>
+            android:theme="@style/AppBaseTheme"></activity>
         <activity
             android:name=".ui.activity.LocationMapActivity"
             android:screenOrientation="landscape"
@@ -131,23 +131,23 @@
 
         <activity
             android:name=".ui.activity.bluetooth.BtCallingActivity"
-            android:screenOrientation="landscape"
             android:launchMode="singleTop"
+            android:screenOrientation="landscape"
             android:theme="@style/AppBaseTheme"></activity>
         <activity
             android:name=".ui.activity.bluetooth.BtInCallActivity"
-            android:screenOrientation="landscape"
             android:launchMode="singleTop"
+            android:screenOrientation="landscape"
             android:theme="@style/AppBaseTheme"></activity>
         <activity
             android:name=".ui.activity.bluetooth.BtDialActivity"
-            android:screenOrientation="landscape"
             android:launchMode="singleTop"
+            android:screenOrientation="landscape"
             android:theme="@style/AppBaseTheme"></activity>
         <activity
             android:name=".ui.activity.bluetooth.BtOutCallActivity"
-            android:screenOrientation="landscape"
             android:launchMode="singleTop"
+            android:screenOrientation="landscape"
             android:theme="@style/AppBaseTheme"></activity>
         <activity
             android:name=".ui.activity.CarCheckingActivity"
@@ -156,6 +156,7 @@
 
         <activity
             android:name="com.dudu.aios.ui.activity.MainRecordActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -169,6 +170,8 @@
         <activity
             android:name="com.dudu.android.launcher.robbery.RobberyModeActivity"
             android:screenOrientation="landscape"></activity>
+
+        <activity android:name="com.dudu.aios.ui.map.GaodeMapActivity" />
 
         <service android:name=".service.BluetoothService" />
         <service android:name=".service.FloatBackButtonService" />
@@ -189,7 +192,7 @@
 
         <receiver
             android:name=".utils.AdminReceiver"
-            android:permission="android.permission.BIND_DEVICE_ADMIN" >
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
             <meta-data
                 android:name="android.app.device_admin"
                 android:resource="@xml/lock" />
@@ -206,7 +209,8 @@
                 <action android:name="android.intent.action.end" />
             </intent-filter>
         </receiver>
-        <receiver android:name="com.dudu.android.launcher.broadcast.MessagePushReceiver"
+        <receiver
+            android:name="com.dudu.android.launcher.broadcast.MessagePushReceiver"
             android:exported="false">
             <intent-filter>
                 <!-- 接收消息透传 -->

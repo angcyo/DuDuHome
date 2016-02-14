@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="mapItem"
+            type="com.dudu.aios.ui.map.MapListItemObservable" />
+        <import type="android.view.View" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:orientation="horizontal">
+
+            <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
+                android:id="@+id/number"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:gravity="center"
+                android:text="@{mapItem.number}"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:visibility="@{mapItem.showNumber ? View.VISIBLE : View.GONE}"/>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="@dimen/dp_15"
+                android:layout_toRightOf="@+id/number"
+                android:paddingLeft="@dimen/dp_10">
+
+                <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                    android:id="@+id/address_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/dp_15"
+                    android:layout_marginRight="86dp"
+                    android:singleLine="true"
+                    android:text="@{mapItem.addressName}"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+
+                <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                    android:id="@+id/map_distance"
+                    android:layout_width="86dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:layout_gravity="right"
+                    android:text="@{mapItem.distance}"
+                    android:textColor="@color/two_color"
+                    android:textSize="18sp" />
+
+            </RelativeLayout>
+
+            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                android:id="@+id/map_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="@dimen/dp_10"
+                android:layout_marginRight="@dimen/dp_20"
+                android:singleLine="true"
+                android:text="@{mapItem.address}"
+                android:textSize="16sp"
+                android:layout_toRightOf="@+id/number"/>
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/line"></View>
+
+
+    </LinearLayout>
+</layout>
