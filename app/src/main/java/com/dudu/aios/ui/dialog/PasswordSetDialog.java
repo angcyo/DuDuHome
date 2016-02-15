@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.dudu.aios.ui.utils.KeyboardUtil;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.LogUtils;
+import com.dudu.android.launcher.utils.WifiApAdmin;
 
 
 import java.lang.reflect.Method;
@@ -120,6 +121,7 @@ public class PasswordSetDialog extends Dialog implements View.OnClickListener {
             return;
         } else {
             dismiss();
+            WifiApAdmin.startWifiAp(act, name, password, null);
             Toast.makeText(act, "密码设置成功", Toast.LENGTH_SHORT).show();
             LogUtils.v("flow", "name:" + name + ";  password:" + password);
         }
