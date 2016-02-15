@@ -97,7 +97,7 @@ public class SearchProcess {
                 break;
 
         }
-        NavigationManager.getInstance(mContext).getLog().debug("开始搜索{}", searchType);
+        NavigationManager.getInstance(mContext).getLog().debug(" >>>>>>>>>>>>>>>>开始搜索{}, {}", searchType, keyword);
         Observable.timer(25, TimeUnit.SECONDS)
                 .subscribe(new Action1<Long>() {
                     @Override

@@ -1,4 +1,4 @@
-package com.dudu.aios.ui.fragment;
+package com.dudu.aios.ui.robbery;
 
 import android.view.LayoutInflater;
 import android.view.View;

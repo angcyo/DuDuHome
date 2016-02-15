@@ -27,4 +27,5 @@
     <color name="nearby_poi_activity_bg">#90000000</color>
 
     <color name="video_unchecked_textColor">#807f85</color>
+    <color name="color_grey">#949494</color>
 </resources>

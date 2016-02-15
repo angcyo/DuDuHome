@@ -284,7 +284,7 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
                 showAddressManual();
                 break;
             case STRATEGY:
-                showStrategyDialog(NavigationProxy.getInstance().getChoosePoiResult());
+//                showStrategyDialog(NavigationProxy.getInstance().getChoosePoiResult());
                 break;
         }
     }
@@ -306,8 +306,6 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         EventBus.getDefault().unregister(this);
         SemanticEngine.getProcessor().switchSemanticType(SceneType.HOME);
         navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
-        NavigationProxy.getInstance().setIsShowAddress(false);
-        NavigationProxy.getInstance().setIsManual(false);
         NavigationProxy.getInstance().disMissProgressDialog();
         NavigationProxy.getInstance().removeCallback();
         dissMissDialog();
@@ -342,14 +340,11 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         lp.alpha = 0.8f; // 透明度
         dialogWindow.setAttributes(lp);
         addressDialog.show();
-        addressDialog.setOnListClickListener(new RouteSearchPoiDialog.OnListItemClick() {
-            @Override
-            public void onListItemClick(int position) {
-                if (position >= 20)
-                    return;
-                addressDialog.dismiss();
-                NavigationProxy.getInstance().chooseAddress(position);
-            }
+        addressDialog.setOnListClickListener(position -> {
+            if (position >= 20)
+                return;
+            addressDialog.dismiss();
+//                NavigationProxy.getInstance().chooseAddress(position);
         });
     }
 

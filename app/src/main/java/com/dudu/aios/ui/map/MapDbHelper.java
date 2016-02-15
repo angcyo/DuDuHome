@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.dudu.aios.ui.map.observable.MapListItemObservable;
 import com.dudu.android.launcher.LauncherApplication;
 
 import java.text.SimpleDateFormat;
@@ -27,6 +28,9 @@ public class MapDbHelper extends SQLiteOpenHelper {
     public final static String NAVIGATION_COLUMN_PLACENAME = "navi_place_name";
     public final static String NAVIGATION_COLUMN_DISTANCE = "distance";
     public final static String NAVIGATION_COLUMN_SEARCH_TIME = "search_time";
+    public final static String NAVIGATION_COLUM_LAT = "lat";
+    public final static String NAVIGATION_COLUM_LON = "lon";
+
 
     private static final String CREATE_NAVIGATION_TABLE_SQL = "create table if not exists "
             + NAVIGATION_TABLE_NAME
@@ -37,6 +41,10 @@ public class MapDbHelper extends SQLiteOpenHelper {
             + " VARCHAR,"
             + NAVIGATION_COLUMN_ADDRESS
             + " VARCHAR,"
+            + NAVIGATION_COLUM_LAT
+            + "VARCHAR,"
+            + NAVIGATION_COLUM_LON
+            + "VARCHAR,"
             + NAVIGATION_COLUMN_DISTANCE
             + " VARCHAR)";
     private SQLiteDatabase db;
@@ -69,19 +77,19 @@ public class MapDbHelper extends SQLiteOpenHelper {
         db = getWritableDatabase();
         ArrayList<MapListItemObservable> historyList = new ArrayList<>();
         Cursor c = db.query(NAVIGATION_TABLE_NAME, null, null, null, null, null,
-                NAVIGATION_COLUMN_SEARCH_TIME + " desc");
+                NAVIGATION_COLUMN_ID + " desc");
         if (c != null) {
             while (c.moveToNext()) {
-                MapListItemObservable histiory = new MapListItemObservable();
                 String placeName = c.getString(c
                         .getColumnIndexOrThrow(NAVIGATION_COLUMN_PLACENAME));
                 String address = c.getString(c
                         .getColumnIndexOrThrow(NAVIGATION_COLUMN_PLACENAME));
                 String distance = c.getString(c
                         .getColumnIndexOrThrow(NAVIGATION_COLUMN_DISTANCE));
-                histiory.address.set(address);
-                histiory.addressName.set(placeName);
-                histiory.distance.set(distance);
+                double lat = Double.parseDouble(c.getString(c.getColumnIndexOrThrow(NAVIGATION_COLUM_LAT)));
+                double lon = Double.parseDouble(c.getString(c.getColumnIndexOrThrow(NAVIGATION_COLUM_LON)));
+
+                MapListItemObservable histiory = new MapListItemObservable(placeName, address, distance, null, lat, lon);
                 historyList.add(histiory);
             }
 
@@ -92,7 +100,7 @@ public class MapDbHelper extends SQLiteOpenHelper {
     }
 
 
-    public void saveHistory(MapListItemObservable mapListObservable){
+    public void saveHistory(MapListItemObservable mapListObservable) {
         db = getWritableDatabase();
         db.insertOrThrow(NAVIGATION_TABLE_NAME, null, getHistoryValues(mapListObservable));
     }
@@ -106,11 +114,13 @@ public class MapDbHelper extends SQLiteOpenHelper {
         history.put(NAVIGATION_COLUMN_PLACENAME, naviHistory.addressName.get());
         history.put(NAVIGATION_COLUMN_ADDRESS, naviHistory.address.get());
         history.put(NAVIGATION_COLUMN_DISTANCE, naviHistory.distance.get());
-        history.put(NAVIGATION_COLUMN_SEARCH_TIME,dateString);
+        history.put(NAVIGATION_COLUMN_SEARCH_TIME, dateString);
+        history.put(NAVIGATION_COLUM_LAT, naviHistory.lat.get());
+        history.put(NAVIGATION_COLUM_LON, naviHistory.lon.get());
         return history;
     }
 
-    public void deleteHistory(){
+    public void deleteHistory() {
 
 
     }

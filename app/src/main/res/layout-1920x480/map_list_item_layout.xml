@@ -5,20 +5,22 @@
 
         <variable
             name="mapItem"
-            type="com.dudu.aios.ui.map.MapListItemObservable" />
+            type="com.dudu.aios.ui.map.observable.MapListItemObservable" />
         <import type="android.view.View" />
     </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        >
 
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:background="@drawable/map_list_item_bg">
 
             <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
                 android:id="@+id/number"
@@ -57,7 +59,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_gravity="right"
                     android:text="@{mapItem.distance}"
-                    android:textColor="@color/two_color"
+                    android:textColor="@color/color_grey"
                     android:textSize="18sp" />
 
             </RelativeLayout>
@@ -72,7 +74,9 @@
                 android:singleLine="true"
                 android:text="@{mapItem.address}"
                 android:textSize="16sp"
-                android:layout_toRightOf="@+id/number"/>
+                android:layout_toRightOf="@+id/number"
+                android:paddingLeft="@dimen/dp_10"
+                android:textColor="@color/color_grey"/>
 
         </RelativeLayout>
 

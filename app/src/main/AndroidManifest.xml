@@ -171,7 +171,12 @@
             android:name="com.dudu.android.launcher.robbery.RobberyModeActivity"
             android:screenOrientation="landscape"></activity>
 
-        <activity android:name="com.dudu.aios.ui.map.GaodeMapActivity" />
+        <activity android:name="com.dudu.aios.ui.map.GaodeMapActivity"
+        android:screenOrientation="landscape" />
+
+        <activity android:name="com.dudu.aios.ui.map.NavigationActivity"
+            android:launchMode="singleInstance"
+            android:screenOrientation="landscape"></activity>
 
         <service android:name=".service.BluetoothService" />
         <service android:name=".service.FloatBackButtonService" />

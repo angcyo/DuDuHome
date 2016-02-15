@@ -172,4 +172,12 @@
     <string name="vehicle_suggest_check">建议检查</string>
     <string name="vehicle_suggest_maintain">建议维修</string>
     <string name="vehicle_device_health">设备健康</string>
+    <string name="openNavi_notice">您好，请说出您想去的地方或者关键字</string>
+    <string name="search_fail">抱歉,搜索失败，请稍后重试</string>
+    <string name="choose_strategy">选择以下方式</string>
+    <string name="search_result">找到以下结果</string>
+    <string name="routePlanning">路径规划中...</string>
+    <string name="plaseChoose_place">为您找到以下地址，请选择第几个</string>
+    <string name="plaseChoose_strategy">请选择路线优先策略</string>
+    <string name="choose_error">选择错误，请重新选择</string>
 </resources>

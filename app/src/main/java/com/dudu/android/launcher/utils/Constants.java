@@ -31,8 +31,8 @@ public class Constants {
 
 
 	public static final String WAKEUP_WORDS = "您好";
-	public static final String UNDERSTAND_EXIT = "嘟嘟累了，稍后与你再见";
-	public static final String UNDERSTAND_MISUNDERSTAND = "嘟嘟无法识别，请重说";
+	public static final String UNDERSTAND_EXIT = "伊娃累了，稍后与你再见";
+	public static final String UNDERSTAND_MISUNDERSTAND = "伊娃无法识别，请重说";
 	public static final String UNDERSTAND_NO_INPUT = "没有检测到语音输入";
     public static final String ALREADY_FIRST_PAGE = "已经是第一页";
     public static final String ALREADY_LAST_PAGE = "已经是最后一页";

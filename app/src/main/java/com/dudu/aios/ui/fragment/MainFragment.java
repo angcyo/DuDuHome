@@ -13,13 +13,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dudu.aios.ui.fragment.base.BaseFragment;
-import com.dudu.aios.ui.map.GaodeMapActivity;
+import com.dudu.aios.ui.robbery.VehicleFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.aios.ui.voice.VoiceFragment;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.CarCheckingActivity;
 import com.dudu.android.launcher.utils.WeatherUtils;
 import com.dudu.event.DeviceEvent;
+import com.dudu.map.NavigationProxy;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -126,7 +127,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
                 break;
 
             case R.id.navigation_button:
-                startActivity(new Intent(getActivity(), GaodeMapActivity.class));
+                NavigationProxy.getInstance().openNavi(NavigationProxy.OPEN_MANUAL);
                 break;
 
             case R.id.bluetooth_phone_button:

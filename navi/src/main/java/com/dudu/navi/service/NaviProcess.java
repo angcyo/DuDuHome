@@ -13,7 +13,6 @@ import com.amap.api.navi.model.AMapLaneInfo;
 import com.amap.api.navi.model.AMapNaviCross;
 import com.amap.api.navi.model.AMapNaviInfo;
 import com.amap.api.navi.model.AMapNaviLocation;
-import com.amap.api.navi.model.AMapNaviTrafficFacilityInfo;
 import com.amap.api.navi.model.NaviInfo;
 import com.amap.api.navi.model.NaviLatLng;
 import com.autonavi.tbt.TrafficFacilityInfo;
@@ -99,7 +98,7 @@ public class NaviProcess {
         try {
             AMapNavi.getInstance(mContext).stopNavi();
             AMapNavi.getInstance(mContext).destroy();
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
@@ -230,7 +229,7 @@ public class NaviProcess {
 
                 @Override
                 public void onCalculateRouteFailure(int arg0) {
-                    log.debug("[{}] 步行或者驾车路径规划失败 {}", step++,arg0);
+                    log.debug("[{}] 步行或者驾车路径规划失败 {}", step++, arg0);
                 }
 
                 @Override
@@ -266,11 +265,6 @@ public class NaviProcess {
                 }
 
                 @Override
-                public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo aMapNaviTrafficFacilityInfo) {
-                    log.debug("[{}] 当前方路况光柱信息有更新时", step++);
-                }
-
-                @Override
                 public void showCross(AMapNaviCross aMapNaviCross) {
 
                 }
@@ -290,10 +284,6 @@ public class NaviProcess {
 
                 }
 
-                @Override
-                public void onCalculateMultipleRoutesSuccess(int[] ints) {
-
-                }
             };
         }
         return mAmapNaviListener;

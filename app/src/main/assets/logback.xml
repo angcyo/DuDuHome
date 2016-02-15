@@ -172,31 +172,31 @@
         <appender-ref ref="FILE_INIT"/>
     </logger>
 
-    <logger name="ble" level="INFO">
+    <logger name="ble" level="DEBUG">
         <appender-ref ref="FILE_BLE"/>
     </logger>
 
-    <logger name="obd" level="INFO">
+    <logger name="obd" level="DEBUG">
         <appender-ref ref="FILE_OBD"/>
     </logger>
 
-    <logger name="network" level="INFO">
+    <logger name="network" level="DEBUG">
         <appender-ref ref="FILE_NET"/>
     </logger>
 
-    <logger name="lbs" level="INFO">
+    <logger name="lbs" level="DEBUG">
         <appender-ref ref="FILE_GPS"/>
     </logger>
 
-    <logger name="monitor" level="INFO">
+    <logger name="monitor" level="DEBUG">
         <appender-ref ref="FILE_MONITOR"/>
     </logger>
 
-    <logger name="storage" level="INFO">
+    <logger name="storage" level="DEBUG">
         <appender-ref ref="FILE_STORAGE"/>
     </logger>
 
-    <logger name="calculate" level="INFO">
+    <logger name="calculate" level="DEBUG">
         <appender-ref ref="FILE_CALCULATE"/>
     </logger>
 
@@ -204,11 +204,11 @@
         <appender-ref ref="FILE_VOICE"/>
     </logger>
 
-    <logger name="video" level="INFO">
+    <logger name="video" level="DEBUG">
         <appender-ref ref="FILE_VIDEO"/>
     </logger>
 
-    <logger name="cache.persist" level="INFO">
+    <logger name="cache.persist" level="DEBUG">
         <appender-ref ref="FILE"/>
     </logger>
 

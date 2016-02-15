@@ -356,7 +356,6 @@ public class NaviCustomActivity extends BaseNoTitlebarAcitivity implements
     @Override
     public void onPause() {
         mAmapAMapNaviView.onPause();
-        NavigationProxy.getInstance().setIsShowAddress(false);
         back_button.setVisibility(View.GONE);
         mHandler.removeCallbacks(buttonRunnable);
         super.onPause();

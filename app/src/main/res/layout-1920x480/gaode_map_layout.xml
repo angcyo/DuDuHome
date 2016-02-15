@@ -7,7 +7,7 @@
 
         <variable
             name="map"
-            type="com.dudu.aios.ui.map.MapObservable" />
+            type="com.dudu.aios.ui.map.observable.MapObservable" />
 
         <import type="android.view.View" />
 
@@ -27,16 +27,14 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="@dimen/dp_10"
-            android:layout_marginLeft="@dimen/dp_30"
-            android:layout_marginTop="@dimen/dp_15">
+            android:layout_marginLeft="@dimen/dp_30">
 
             <RelativeLayout
+                android:id="@+id/map_search_layout"
                 android:layout_width="430dp"
-                android:layout_height="match_parent"
-                android:visibility="@{map.showEdt ? View.VISIBLE : View.GONE}"
-                android:id="@+id/map_search_layout">
-
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                android:visibility="@{map.showEdt ? View.VISIBLE : View.GONE}">
 
                 <LinearLayout
                     android:layout_width="420dp"
@@ -50,10 +48,10 @@
                         android:layout_height="fill_parent"
                         android:layout_marginRight="3dp"
                         android:background="@null"
+                        android:gravity="center_vertical"
                         android:onClick="@{map.mapSearchEdt}"
                         android:paddingLeft="@dimen/dp_5"
-                        android:textColor="@color/black"
-                        android:gravity="center_vertical"/>
+                        android:textColor="@color/black" />
 
 
                     <ImageView
@@ -72,35 +70,31 @@
                     android:id="@+id/map_edt_search_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="41dp"
+                    android:layout_alignParentRight="true"
                     android:layout_marginLeft="@dimen/dp_5"
                     android:layout_marginTop="1dp"
                     android:background="@drawable/map_edt_search_btn_bg"
                     android:onClick="@{map.searchManual}"
-                    android:visibility="@{map.showEdt ? View.VISIBLE : View.GONE}"
-                    android:layout_alignParentRight="true"/>
+                    android:visibility="@{map.showEdt ? View.VISIBLE : View.GONE}" />
             </RelativeLayout>
 
             <LinearLayout
-                android:layout_width="397dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/map_search_layout"
+                android:layout_width="428dp"
+                android:layout_height="match_parent"
                 android:layout_marginLeft="2dp"
                 android:orientation="vertical"
+               android:layout_below="@+id/map_search_layout"
                 android:visibility="@{map.showList ? View.VISIBLE : View.GONE}">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="41dp"
-                    android:background="@drawable/lump"
-                    android:gravity="center"
-                    android:orientation="horizontal">
 
                     <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                         android:id="@+id/mapList_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/white" />
-                </LinearLayout>
+                        android:layout_width="match_parent"
+                        android:layout_height="41dp"
+                        android:textColor="@color/white"
+                        android:background="@drawable/lump"
+                        android:gravity="center"
+                        android:text="@{map.mapListTitle}"
+                        android:textSize="18sp"/>
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/map_ListView"

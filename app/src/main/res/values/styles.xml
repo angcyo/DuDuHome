@@ -61,11 +61,15 @@
     </style>
 
     <style name="RouteSearchPoiDialogStyle">
-        <item name="android:windowBackground">@color/two_color</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:windowFrame">@null</item>
+
+
     </style>
 
     <style name="WifiSettingDialogStyle">

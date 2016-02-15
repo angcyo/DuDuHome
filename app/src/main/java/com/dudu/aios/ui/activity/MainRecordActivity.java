@@ -19,7 +19,7 @@ import com.dudu.aios.ui.fragment.FlowFragment;
 import com.dudu.aios.ui.fragment.MainFragment;
 import com.dudu.aios.ui.fragment.PhotoFragment;
 import com.dudu.aios.ui.fragment.PhotoListFragment;
-import com.dudu.aios.ui.fragment.VehicleFragment;
+import com.dudu.aios.ui.robbery.VehicleFragment;
 import com.dudu.aios.ui.fragment.VideoFragment;
 import com.dudu.aios.ui.fragment.VideoListFragment;
 import com.dudu.aios.ui.fragment.base.VolBrightnessSetting;
