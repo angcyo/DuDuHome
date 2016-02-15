@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configs>
+    <is_test>1</is_test>
+    <config is_test="0">
+        <ip>http://127.0.0.1:8080/</ip>
+    </config>
+    <config is_test="1">
+        <ip>http://192.168.0.177:8080/</ip>
+    </config>
+</configs>

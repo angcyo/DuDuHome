@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.dudu.commonlib.repo.CommonResouce;
 import com.dudu.commonlib.repo.VersionManage;
+import com.dudu.commonlib.xml.ConfigReader;
 
 /**
  * Created by dengjun on 2016/1/21.
@@ -35,6 +36,11 @@ public class CommonLib {
     public void init(Context context){
         commonResouce.init(context);
         versionManage.init(context);
+        ConfigReader.getInstance().readDefaultConfig();
+    }
+
+    public void init(){
+        ConfigReader.getInstance().setIsTest(true);
     }
 
     public Context getContext(){
