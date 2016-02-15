@@ -14,7 +14,9 @@
     <color name="color_4c4a4a">#4c4a4a</color>
     <color name="black">#000000</color>
     <color name="red">#FF0000</color>
+    <color name="blue">#2edfff</color>
     <color name="color_6b">#BBBBBB</color>
+    <color name="transparent">#5a5858</color>
     <color name="white">#FFFFFFFF</color>
     <color name="color_242424">#242424</color>
     <color name="color_1b1919">#1b1919</color>

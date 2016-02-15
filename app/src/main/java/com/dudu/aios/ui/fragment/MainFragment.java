@@ -120,7 +120,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
 
             case R.id.vehicle_inspection:
                 startActivity(new Intent(getActivity(), CarCheckingActivity.class));
-                replaceFragment(FragmentConstants.FRAGMENT_VEHICLE_INSPECTION);
+                // replaceFragment(FragmentConstants.FRAGMENT_VEHICLE_INSPECTION);
 
                 break;
 

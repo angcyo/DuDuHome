@@ -153,4 +153,20 @@
     <string name="wifi">热点</string>
     <string name="password">密码</string>
 
+    <string name="maintain_remind">保养提醒</string>
+    <string name="fuel_oil_ratio">燃油比值</string>
+    <string name="battery_voltage">电瓶电压</string>
+    <string name="engine_chinese">发动机</string>
+    <string name="engine_english">ENGINE</string>
+    <string name="gearbox_chinese">变速箱</string>
+    <string name="gearbox_english">GEARBOX</string>
+    <string name="abs_chinese">防抱死</string>
+    <string name="abs_english">ABS</string>
+    <string name="wsb_chinese">胎压强</string>
+    <string name="wsb_english">WSB</string>
+    <string name="srs_chinese">安全气囊</string>
+    <string name="srs_english">SRS</string>
+    <string name="vehicle_suggest_check">建议检查</string>
+    <string name="vehicle_suggest_maintain">建议维修</string>
+    <string name="vehicle_device_health">设备健康</string>
 </resources>
