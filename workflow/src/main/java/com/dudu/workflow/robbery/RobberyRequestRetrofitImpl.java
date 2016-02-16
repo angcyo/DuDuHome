@@ -3,6 +3,7 @@ package com.dudu.workflow.robbery;
 import com.dudu.rest.common.Request;
 import com.dudu.rest.model.QueryRobberyResponse;
 import com.dudu.rest.model.RequestResponse;
+import com.dudu.workflow.CommonParams;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -20,7 +21,7 @@ public class RobberyRequestRetrofitImpl implements RobberyRequest{
     }
 
     @Override
-    public void getCarInsuranceAuthState(String cellphone) {
+    public void getCarInsuranceAuthState() {
 
     }
 
@@ -30,9 +31,9 @@ public class RobberyRequestRetrofitImpl implements RobberyRequest{
     }
 
     @Override
-    public void isCarRobbed(String cellphone, final CarRobberdCallback callback) {
+    public void isCarRobbed(final CarRobberdCallback callback) {
         Call<QueryRobberyResponse> call = Request.getInstance().getRobberyService()
-                .getRobberyState(cellphone);
+                .getRobberyState(CommonParams.getInstance().getUserName());
         call.enqueue(new Callback<QueryRobberyResponse>() {
             @Override
             public void onResponse(Call<QueryRobberyResponse> call, Response<QueryRobberyResponse> response) {
@@ -48,9 +49,9 @@ public class RobberyRequestRetrofitImpl implements RobberyRequest{
 
 
     @Override
-    public void settingAntiRobberyMode(String cellphone, int type, int on_off, final SwitchCallback callback) {
+    public void settingAntiRobberyMode(int type, int on_off, final SwitchCallback callback) {
         Call<RequestResponse> call = Request.getInstance().getRobberyService()
-                .robberySwitch(cellphone, type, on_off);
+                .robberySwitch(CommonParams.getInstance().getUserName(), type, on_off);
         call.enqueue(new Callback<RequestResponse>() {
             @Override
             public void onResponse(Call<RequestResponse> call, Response<RequestResponse> response) {
@@ -65,9 +66,9 @@ public class RobberyRequestRetrofitImpl implements RobberyRequest{
     }
 
     @Override
-    public void closeAntiRobberyMode(String cellphone, final CloseRobberyModeCallback callback) {
+    public void closeAntiRobberyMode(final CloseRobberyModeCallback callback) {
         Call<RequestResponse> call = Request.getInstance().getRobberyService()
-                .robberySwitch(cellphone, 0, 0);
+                .robberySwitch(CommonParams.getInstance().getUserName(), 0, 0);
         call.enqueue(new Callback<RequestResponse>() {
             @Override
             public void onResponse(Call<RequestResponse> call, Response<RequestResponse> response) {
@@ -82,9 +83,9 @@ public class RobberyRequestRetrofitImpl implements RobberyRequest{
     }
 
     @Override
-    public void getRobberyState(String cellphone, final RobberStateCallback callback) {
+    public void getRobberyState(final RobberStateCallback callback) {
         Call<QueryRobberyResponse> call = Request.getInstance().getRobberyService()
-                .getRobberyState(cellphone);
+                .getRobberyState(CommonParams.getInstance().getUserName());
         call.enqueue(new Callback<QueryRobberyResponse>() {
             @Override
             public void onResponse(Call<QueryRobberyResponse> call, Response<QueryRobberyResponse> response) {

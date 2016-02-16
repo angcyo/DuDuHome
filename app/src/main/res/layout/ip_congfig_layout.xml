@@ -10,6 +10,23 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:text="UserName:"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+        <EditText
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:id="@+id/edt_username"/>
+
         <RadioGroup
             android:id="@+id/ip_radioGroup"
             android:layout_width="fill_parent"
@@ -91,6 +108,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:id="@+id/edt_testPort"/>
+
 
 
         <LinearLayout

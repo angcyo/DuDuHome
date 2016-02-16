@@ -21,6 +21,7 @@ public class RobberyRequestTest {
     @Before
     public void setUp() {
         CommonLib.getInstance().init();
+        CommonParams.getInstance().init();
         RequestFactory.getInstance().init();
         Request.getInstance().init();
     }
@@ -30,7 +31,7 @@ public class RobberyRequestTest {
 
         final CountDownLatch signal = new CountDownLatch(1);
         RequestFactory.getInstance().getRobberyRequest()
-                .isCarRobbed("13800138000", new RobberyRequest.CarRobberdCallback() {
+                .isCarRobbed(new RobberyRequest.CarRobberdCallback() {
 
                     @Override
                     public void hasRobbed(boolean success) {
@@ -51,7 +52,7 @@ public class RobberyRequestTest {
 
         final CountDownLatch signal = new CountDownLatch(1);
         RequestFactory.getInstance().getRobberyRequest()
-                .settingAntiRobberyMode("13800138000", 0, 1, new RobberyRequest.SwitchCallback() {
+                .settingAntiRobberyMode( 0, 1, new RobberyRequest.SwitchCallback() {
                     @Override
                     public void switchSuccess(boolean success) {
                         signal.countDown();
@@ -72,7 +73,7 @@ public class RobberyRequestTest {
 
         final CountDownLatch signal = new CountDownLatch(1);
         RequestFactory.getInstance().getRobberyRequest()
-                .getRobberyState("13800138000", new RobberyRequest.RobberStateCallback() {
+                .getRobberyState( new RobberyRequest.RobberStateCallback() {
 
                     @Override
                     public void switchsState(boolean flashRateTimes, boolean emergencyCutoff, boolean stepOnTheGas) {
@@ -96,7 +97,7 @@ public class RobberyRequestTest {
 
         final CountDownLatch signal = new CountDownLatch(1);
         RequestFactory.getInstance().getRobberyRequest()
-                .closeAntiRobberyMode("13800138000", new RobberyRequest.CloseRobberyModeCallback() {
+                .closeAntiRobberyMode( new RobberyRequest.CloseRobberyModeCallback() {
 
                     @Override
                     public void closeSuccess(boolean success) {

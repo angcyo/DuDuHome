@@ -2,7 +2,6 @@ package com.dudu.android.launcher.ui.activity;
 
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,10 +9,12 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.dudu.android.launcher.R;
+import com.dudu.android.launcher.broadcast.ReceiverRegister;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.utils.IPConfig;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.network.NetworkManage;
+import com.dudu.workflow.CommonParams;
 
 import java.util.concurrent.TimeUnit;
 
@@ -32,6 +33,8 @@ public class IpConfigActivity extends BaseTitlebarActivity {
     private EditText editText_Testip;
 
     private EditText editText_Testport;
+
+    private EditText editText_UserName;
 
     private Button btn_save;
 
@@ -68,6 +71,8 @@ public class IpConfigActivity extends BaseTitlebarActivity {
 
         editText_Testport = (EditText) findViewById(R.id.edt_testPort);
 
+        editText_UserName = (EditText) findViewById(R.id.edt_username);
+
         btn_save = (Button) findViewById(R.id.btn_ip_save);
 
         btn_reset = (Button) findViewById(R.id.btn_ip_reset);
@@ -91,6 +96,7 @@ public class IpConfigActivity extends BaseTitlebarActivity {
         editText_Testip.setText(ipConfig.getTestServerIP());
         editText_port.setText(ipConfig.getServerPort() + "");
         editText_Testport.setText(ipConfig.getTestServerPort() + "");
+        editText_Testport.setText(CommonParams.getInstance().getUserName() + "");
     }
 
 
@@ -151,7 +157,9 @@ public class IpConfigActivity extends BaseTitlebarActivity {
         port = Integer.parseInt(editText_port.getText().toString());
         testIP = editText_Testip.getText().toString();
         testPort = Integer.parseInt(editText_Testport.getText().toString());
-
+        String userName = editText_UserName.getText().toString();
+        CommonParams.getInstance().setUserName(userName);
+        ReceiverRegister.registPushManager(userName);
         if (ipConfig.changeConfig(ip, testIP, port, testPort, isTest)) {
             ToastUtils.showToast("修改成功！");
             NetworkManage.getInstance().release();
