@@ -14,6 +14,6 @@ public class RequestResponse {
      * 50012	手机号格式错误
      */
     @SerializedName("resultCode")
-    private long resultCode;
+    public long resultCode;
 
 }

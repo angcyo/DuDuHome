@@ -1,4 +1,4 @@
-include ':agedmodel', ':agewifitest', ':agebluetest', ':calculation', ':storage', ':ext', ':commonlib', ':rest'
+include ':agedmodel', ':agewifitest', ':agebluetest', ':calculation', ':storage', ':ext', ':commonlib', ':rest', ':workflow'
 
 include ':app', ':libble', ':scf4a', ':navi', ':hideapi', ':monitor', ':network', ':bluetooth'
 
