@@ -60,7 +60,8 @@
                     android:layout_gravity="right"
                     android:text="@{mapItem.distance}"
                     android:textColor="@color/color_grey"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"
+                    android:gravity="center"/>
 
             </RelativeLayout>
 

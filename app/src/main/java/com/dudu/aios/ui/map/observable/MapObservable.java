@@ -262,6 +262,11 @@ public class MapObservable {
         if (chooseStrategyMethodSub != null) {
             return;
         }
+
+        showList.set(false);
+        showBottomButton.set(true);
+        showEdt.set(false);
+
         chooseStrategyMethodSub = Observable.just(position).subscribe(integer -> {
             if (position > routeStrategyAdapter.getDriveModeList().size()) {
                 VoiceManagerProxy.getInstance().stopUnderstanding();

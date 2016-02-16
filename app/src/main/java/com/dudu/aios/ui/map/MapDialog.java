@@ -37,7 +37,7 @@ public class MapDialog extends Dialog {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_dialog_layout);
         tv_msg = (TextView) findViewById(R.id.map_dialog_text);
-        if (TextUtils.isEmpty(message)) {
+        if (!TextUtils.isEmpty(message)) {
             tv_msg.setText(message);
         }
         cancelBtn = (Button) findViewById(R.id.map_dialog_cancle);

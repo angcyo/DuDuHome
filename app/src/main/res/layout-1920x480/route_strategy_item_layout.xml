@@ -29,7 +29,7 @@
                 android:textSize="20sp"
                 android:text="@{strategy.number}"/>
 
-            <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
+            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
             android:id="@+id/strategy"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

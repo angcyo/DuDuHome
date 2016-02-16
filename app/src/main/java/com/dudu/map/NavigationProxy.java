@@ -170,7 +170,6 @@ public class NavigationProxy {
     }
 
     private boolean openActivity(int openType) {
-        navigationManager.getLog().debug(">>>>>> {}", navigationManager.isNavigatining());
 
         if (navigationManager.isNavigatining()) {
             switch (navigationManager.getNavigationType()) {
@@ -182,7 +181,6 @@ public class NavigationProxy {
             }
             FloatWindowUtils.removeFloatWindow();
         } else {
-            navigationManager.getLog().debug(">>>>>> {}", isMapActivity());
 
             if (!isMapActivity()) {
                 navigationManager.getLog().debug("openActivity");
@@ -282,7 +280,7 @@ public class NavigationProxy {
         if (!isManual) {
             voiceManager.startSpeaking(msg, TTSType.TTS_DO_NOTHING, isShow);
         }
-        showProgressDialog(msg);
+        showProgressDialog(context.getString(R.string.searching));
         handler.postDelayed(() -> navigationManager.search(), 2000);
     }
 
@@ -408,8 +406,8 @@ public class NavigationProxy {
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
         lp.x = 10; // 新位置X坐标
         lp.y = 0; // 新位置Y坐标
-        lp.width = 296;
-        lp.height = 208;
+        lp.width = 306;
+        lp.height = 218;
         dialogWindow.setAttributes(lp);
     }
 
@@ -560,5 +558,10 @@ public class NavigationProxy {
         Utils.startThirdPartyApp(ActivitiesManager.getInstance().getTopActivity(), "com.autonavi.minimap");
     }
 
-    private View.OnClickListener cancel = v -> needNotify = false;
+    private View.OnClickListener cancel = v -> {
+
+        disMissProgressDialog();
+        needNotify = false;
+
+    };
 }

@@ -7,6 +7,7 @@ import android.view.KeyEvent;
 import com.amap.api.navi.AMapHudView;
 import com.amap.api.navi.AMapHudViewListener;
 import com.amap.api.navi.AMapNavi;
+import com.dudu.aios.ui.map.NavigationActivity;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.utils.NaviSettingUtil;
@@ -52,7 +53,7 @@ public class SimpleHudActivity extends BaseNoTitlebarAcitivity implements
         if (NavigationManager.getInstance(this).isNavigatining()) {
             switch (NavigationManager.getInstance(this).getNavigationType()) {
                 case NAVIGATION:
-                    mclass = NaviCustomActivity.class;
+                    mclass = NavigationActivity.class;
                     break;
                 case BACKNAVI:
                     mclass = NaviBackActivity.class;
