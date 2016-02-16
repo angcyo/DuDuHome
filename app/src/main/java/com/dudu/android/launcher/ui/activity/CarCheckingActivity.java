@@ -1,11 +1,13 @@
 package com.dudu.android.launcher.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.dudu.aios.ui.activity.VehicleAnimationActivity;
 import com.dudu.aios.ui.view.VehicleCheckResultView;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
@@ -61,6 +63,18 @@ public class CarCheckingActivity extends BaseNoTitlebarAcitivity implements View
     public void initListener() {
         buttonBack.setOnClickListener(this);
 
+        engineVehicleCheckResultView.setOnClickListener(this);
+        gearboxVehicleCheckResultView.setOnClickListener(this);
+        absVehicleCheckResultView.setOnClickListener(this);
+        wsbVehicleCheckResultView.setOnClickListener(this);
+        rsrVehicleCheckResultView.setOnClickListener(this);
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mAnimationView.stopAnim();
     }
 
     @Override
@@ -83,12 +97,39 @@ public class CarCheckingActivity extends BaseNoTitlebarAcitivity implements View
 
     @Override
     public void onClick(View v) {
+        Intent intent = new Intent(this, VehicleAnimationActivity.class);
         switch (v.getId()) {
             case R.id.button_back:
                 mAnimationView.stopAnim();
                 finish();
+                return;
+            case R.id.engine_vehicleCheckResult:
+                intent.putExtra("vehicle", "engine");
+                intent.putExtra("state", "red");
+                break;
+            case R.id.gearbox_vehicleCheckResult:
+                intent.putExtra("vehicle", "gearbox");
+                intent.putExtra("state", "blue");
+                break;
+            case R.id.abs_vehicleCheckResult:
+                intent.putExtra("vehicle", "abs");
+                intent.putExtra("state", "blue");
+                break;
+            case R.id.wsb_vehicleCheckResult:
+                intent.putExtra("vehicle", "wsb");
+                intent.putExtra("state", "red");
+                break;
+            case R.id.srs_vehicleCheckResult:
+                intent.putExtra("vehicle", "srs");
+                intent.putExtra("state", "red");
                 break;
         }
+        if (intent != null) {
+            mAnimationView.stopAnim();
+            startActivity(intent);
+
+        }
+
     }
 
     private void setVehicleCheckState(int grade, TextView textView, ImageView imageView) {

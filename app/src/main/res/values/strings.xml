@@ -109,6 +109,7 @@
 
     <string name="bluetooth_phone_dialing">正在拨号...</string>
 
+    <string name="vehicle_guard_mode_ch">防盗模式</string>
     <string name="vehicle_guard_ch">车辆防盗</string>
     <string name="vehicle_guard_en">THEFT DEVICE</string>
 
@@ -123,6 +124,9 @@
     <string name="vehicle_flash_rate_times_en">FLASH RATE 10 TIMES</string>
     <string name="vehicle_emergency_cutoff_en">EMERGENCY CUTOFF</string>
     <string name="vehicle_step_on_gas_en">STEP ON THE GAS</string>
+    <string name="password_unlock_ch">密码解锁</string>
+    <string name="password_unlock_en">PASSWORD UNLOCK</string>
+    <string name="gesture_unlock">手势解锁</string>
 
     <string name="vehicle_locked">LOCKED</string>
     <string name="vehicle_unlock">UNLOCK</string>

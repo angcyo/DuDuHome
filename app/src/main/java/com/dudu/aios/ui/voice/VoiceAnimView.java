@@ -12,6 +12,10 @@ import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.dudu.android.launcher.utils.FileUtils;
+
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -26,6 +30,8 @@ public abstract class VoiceAnimView extends SurfaceView implements SurfaceHolder
     private String picPath = "";
 
     private VoiceAnimThread voiceAnimThread;
+
+    private static final String PICTURE_DIR = "animation/voice/";
 
     public VoiceAnimView(Context context) {
         super(context);
@@ -138,24 +144,30 @@ public abstract class VoiceAnimView extends SurfaceView implements SurfaceHolder
 
         private void doAnimation(Canvas c) {
             c.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-            c.drawBitmap(loadAnimationBitmap(), 0, 0, mPaint);
+            if (loadAnimationBitmap() != null) {
+                c.drawBitmap(loadAnimationBitmap(), 0, 0, mPaint);
+            }
+
         }
 
         private Bitmap loadAnimationBitmap() {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inMutable = true;
 
-            AssetManager am = mContext.getAssets();
+            //AssetManager am = mContext.getAssets();
 
-            InputStream is;
-            try {
-                is = am.open(picPath + mFrameCounter + ".png");
-            } catch (IOException e) {
-
-                return null;
+            File file = new File(FileUtils.getStorageDir(), PICTURE_DIR + picPath + mFrameCounter + ".png");
+            if (file.exists()) {
+                InputStream is;
+                try {
+                    // is = am.open(picPath + mFrameCounter + ".png");
+                    is = new FileInputStream(file);
+                    return BitmapFactory.decodeStream(is);
+                } catch (IOException e) {
+                    return null;
+                }
             }
-
-            return BitmapFactory.decodeStream(is);
+            return null;
         }
     }
 }

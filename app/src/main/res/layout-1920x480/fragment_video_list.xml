@@ -67,7 +67,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="@string/postposition_video_chinese"
-                android:textColor="@color/video_unchecked_textColor"
+                android:textColor="@color/unchecked_textColor"
                 android:textSize="8sp" />
 
             <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
@@ -76,18 +76,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="@string/postposition_video_english"
-                android:textColor="@color/video_unchecked_textColor"
+                android:textColor="@color/unchecked_textColor"
                 android:textSize="7sp" />
 
         </LinearLayout>
 
         <ImageButton
             android:id="@+id/button_back"
-            android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/button_back_selector"
-            />
+            android:layout_marginTop="10dp"
+            android:background="@drawable/button_back_selector" />
 
     </LinearLayout>
 
@@ -135,7 +134,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/next_page_video_selector" />
-
 
 
 </LinearLayout>

@@ -200,7 +200,7 @@ public class InitManager {
                         logger.debug("[init][{}]启动OBD服务", log_step++);
                         com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext,
                                 "sys.gps", "start");
-                        startOBDService();
+                      startOBDService();
                         finished = true;
                     }
                 });
@@ -212,7 +212,7 @@ public class InitManager {
         startFloatButtonService();
 
         logger.debug("[init][{}]开启蓝牙电话服务", log_step++);
-//        startBluetoothService();
+        //startBluetoothService();
 
         logger.debug("[init][{}]打开用户激活状态检查", log_step++);
         startCheckUserService();

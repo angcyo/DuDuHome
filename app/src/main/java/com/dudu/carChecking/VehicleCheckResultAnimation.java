@@ -1,7 +1,6 @@
 package com.dudu.carChecking;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -20,21 +19,44 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * Created by Administrator on 2016/2/2.
- */
-public class CarCheckingView extends SurfaceView implements SurfaceHolder.Callback {
+public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceHolder.Callback {
 
     private static final String TAG = "CarCheckingView";
 
     private CarCheckingThread mThread;
 
-    public CarCheckingView(Context context) {
+    private String frameCount = "1";
+
+    private static final String PICTURE_PREFIX_ONE = "Warning_P2_";
+
+    private static final String PICTURE_PREFIX_TWO = "_";
+
+    private static final String PICTURE_PREFIX_THREE = "_scale_0";
+
+    private static final String PICTURE_DIR = "animation/vehicle/";
+
+    private String picturePath;
+
+    public VehicleCheckResultAnimation(Context context, String path, String state) {
         super(context);
+        String picturePrefix = "engine";
+        if (path.equals("gearbox")) {
+            picturePrefix = "Transsision";
+        } else if (path.equals("engine")) {
+            picturePrefix = "engine";
+        } else if (path.equals("abs")) {
+            picturePrefix = "abs";
+        } else if (path.equals("wsb")) {
+            picturePrefix = "tire";
+        } else if (path.equals("srs")) {
+            picturePrefix = "SRS";
+        }
+        picturePath = PICTURE_DIR + path + "/" + state + "/" + PICTURE_PREFIX_ONE + picturePrefix + PICTURE_PREFIX_TWO + state + PICTURE_PREFIX_THREE;
+        LogUtils.v("jjj", picturePath);
         initView(context);
     }
 
-    public CarCheckingView(Context context, AttributeSet attrs) {
+    public VehicleCheckResultAnimation(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView(context);
     }
@@ -42,12 +64,16 @@ public class CarCheckingView extends SurfaceView implements SurfaceHolder.Callba
     private void initView(Context context) {
         SurfaceHolder holder = getHolder();
         holder.addCallback(this);
+
+        mThread = new CarCheckingThread(context, holder);
+
         setFocusable(true);
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        startAnim();
+        mThread.setRunning(true);
+        mThread.start();
     }
 
     @Override
@@ -57,36 +83,18 @@ public class CarCheckingView extends SurfaceView implements SurfaceHolder.Callba
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        stopAnim();
-    }
-
-    public void startAnim() {
-        if (mThread == null) {
-            mThread = new CarCheckingThread(getContext(), getHolder());
-            mThread.setRunning(true);
-            mThread.start();
-        } else {
-            mThread.setRunning(true);
-        }
-    }
-
-    public void stopAnim() {
-        if (mThread != null) {
-            mThread.setRunning(false);
-            try {
-                mThread.join();
-            } catch (InterruptedException e) {
-                LogUtils.e("CarCheckingView", e.getMessage());
-            }
-            mThread = null;
+        mThread.setRunning(false);
+        try {
+            mThread.join();
+        } catch (InterruptedException e) {
+            LogUtils.e("CarCheckingView", e.getMessage());
         }
     }
 
     private class CarCheckingThread extends Thread {
 
-        private static final int MAXIMUM_FRAME_COUNT = 125;
+        private static final int MAXIMUM_FRAME_COUNT = 50;
 
-        private static final String PICTURE_PREFIX = "normal_p1_car";
 
         private Context mContext;
 
@@ -133,6 +141,7 @@ public class CarCheckingView extends SurfaceView implements SurfaceHolder.Callba
         private void doAnimation(Canvas c) {
 
             c.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+
             if (loadAnimationBitmap() != null) {
                 c.drawBitmap(loadAnimationBitmap(), 0, 0, mPaint);
             }
@@ -145,27 +154,39 @@ public class CarCheckingView extends SurfaceView implements SurfaceHolder.Callba
 
             // AssetManager am = mContext.getAssets();
 
+            if (mFrameCounter < 10) {
+                frameCount = "00" + mFrameCounter;
+            } else if (mFrameCounter < 100) {
+                frameCount = "0" + mFrameCounter;
+            }else {
+                frameCount=""+mFrameCounter;
+            }
+
+            LogUtils.v("vehicle", frameCount);
+
             InputStream is;
-            File file = new File(FileUtils.getStorageDir(), "animation/vehicle/car_checking/" + PICTURE_PREFIX + mFrameCounter + ".png");
+            File file = new File(FileUtils.getStorageDir(), picturePath + frameCount + ".png");
             // is = am.open("car_checking/" + PICTURE_PREFIX + mFrameCounter + ".png");
-            LogUtils.v("vehicle", FileUtils.getStorageDir().toString());
             if (file.exists()) {
                 try {
-                    LogUtils.v("vehicle", "存在");
                     is = new FileInputStream(file);
                     return BitmapFactory.decodeStream(is);
                 } catch (IOException e) {
                     LogUtils.e("CarCheckingView", e.getMessage());
                     return null;
                 }
-            } else {
-                LogUtils.v("vehicle", "不存在");
             }
-
             return null;
 
         }
     }
 
-
+    public void stopAnim(){
+        mThread.setRunning(false);
+        try {
+            mThread.join();
+        } catch (InterruptedException e) {
+            LogUtils.e("CarCheckingView", e.getMessage());
+        }
+    }
 }

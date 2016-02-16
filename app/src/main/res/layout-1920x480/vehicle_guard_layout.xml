@@ -8,11 +8,25 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0dip"
-        android:layout_weight="80"></View>
+        android:layout_weight="80" />
+
+    <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/vehicle_guard_mode_ch"
+        android:textSize="16sp" />
+
+    <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/vehicle_guard_en"
+        android:textSize="16sp" />
 
     <RelativeLayout
         android:layout_width="210dp"
         android:layout_height="92dp"
+        android:layout_marginTop="24dp"
         android:background="@drawable/vehicle_lock_bg">
 
         <LinearLayout
@@ -35,23 +49,22 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center"
                 android:layout_weight="0.3"
+                android:gravity="center"
                 android:orientation="vertical">
 
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="22dp"
                     android:layout_gravity="center_horizontal"
-                    android:src="@drawable/unlock_icon"
-                    />
+                    android:src="@drawable/unlock_icon" />
 
                 <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="@string/vehicle_locked"
                     android:singleLine="true"
+                    android:text="@string/vehicle_locked"
                     android:textSize="12sp" />
             </LinearLayout>
 
@@ -69,9 +82,9 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="16dp"
                 android:gravity="center"
-                android:orientation="vertical"
-                android:layout_marginLeft="16dp">
+                android:orientation="vertical">
 
                 <ImageView
                     android:layout_width="20dp"
@@ -92,10 +105,9 @@
                 android:layout_width="140dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical|right"
-                android:layout_marginTop="3dp"
                 android:layout_marginBottom="3dp"
-                android:src="@drawable/vehicle_locked_img"
-                />
+                android:layout_marginTop="3dp"
+                android:src="@drawable/vehicle_locked_img" />
         </LinearLayout>
 
     </RelativeLayout>
@@ -103,5 +115,5 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0dip"
-        android:layout_weight="80"></View>
+        android:layout_weight="80" />
 </LinearLayout>

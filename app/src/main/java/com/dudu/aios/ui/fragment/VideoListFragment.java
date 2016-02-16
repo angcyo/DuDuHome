@@ -95,8 +95,8 @@ public class VideoListFragment extends Fragment implements View.OnClickListener 
                 mPreVideoTextChinese.setTextColor(getResources().getColor(R.color.white));
                 mPreVideoTextEnglish.setTextColor(getResources().getColor(R.color.white));
                 mPostVideoButton.setBackgroundResource(R.drawable.postposition_video_unchecked);
-                mPostVideoTextChinese.setTextColor(getResources().getColor(R.color.video_unchecked_textColor));
-                mPostVideoTextEnglish.setTextColor(getResources().getColor(R.color.video_unchecked_textColor));
+                mPostVideoTextChinese.setTextColor(getResources().getColor(R.color.unchecked_textColor));
+                mPostVideoTextEnglish.setTextColor(getResources().getColor(R.color.unchecked_textColor));
                 break;
 
             case R.id.post_video_container:
@@ -104,8 +104,8 @@ public class VideoListFragment extends Fragment implements View.OnClickListener 
                 mPostVideoTextChinese.setTextColor(getResources().getColor(R.color.white));
                 mPostVideoTextEnglish.setTextColor(getResources().getColor(R.color.white));
                 mPreVideoButton.setBackgroundResource(R.drawable.prepositive_video_unchecked);
-                mPreVideoTextChinese.setTextColor(getResources().getColor(R.color.video_unchecked_textColor));
-                mPreVideoTextEnglish.setTextColor(getResources().getColor(R.color.video_unchecked_textColor));
+                mPreVideoTextChinese.setTextColor(getResources().getColor(R.color.unchecked_textColor));
+                mPreVideoTextEnglish.setTextColor(getResources().getColor(R.color.unchecked_textColor));
                 break;
 
             case R.id.button_back:

@@ -1,7 +1,9 @@
 package com.dudu.aios.ui.fragment;
 
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -18,9 +20,15 @@ import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.aios.ui.voice.VoiceFragment;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.CarCheckingActivity;
+import com.dudu.android.launcher.ui.activity.bluetooth.BtDialActivity;
 import com.dudu.android.launcher.utils.WeatherUtils;
+import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.event.DeviceEvent;
+import com.dudu.init.InitManager;
 import com.dudu.map.NavigationProxy;
+import com.dudu.navi.event.NaviEvent;
+import com.dudu.obd.ObdInit;
+import com.dudu.voice.VoiceManagerProxy;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -95,6 +103,17 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
         flow.setOnClickListener(this);
         preventRob.setOnClickListener(this);
         voice_imageBtn.setOnClickListener(this);
+        bluetoothPhone.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName("com.android.settings",
+                        "com.android.settings.Settings"));
+                startActivity(intent);
+                //显示返回的按钮
+                return true;
+            }
+        });
     }
 
     private void initFragmentView(View view) {
@@ -109,6 +128,13 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
         mWeatherView = (TextView) view.findViewById(R.id.text_weather);
         mWeatherImage = (ImageView) view.findViewById(R.id.weather_icon);
         voice_imageBtn = (ImageButton) view.findViewById(R.id.voice_imageBtn);
+        mWeatherImage.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                startFactory();
+                return true;
+            }
+        });
 
     }
 
@@ -131,6 +157,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
                 break;
 
             case R.id.bluetooth_phone_button:
+                startActivity(new Intent(getActivity(), BtDialActivity.class));
                 break;
 
             case R.id.flow_button:
@@ -188,4 +215,27 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
         updateWeatherInfo(weather.getWeather(), weather.getTemperature());
         initDate();
     }
+
+    private void startFactory() {
+
+        if (!InitManager.getInstance().isFinished()) {
+            return;
+        }
+
+        //关闭语音
+        VoiceManagerProxy.getInstance().stopUnderstanding();
+
+        //关闭Portal
+        com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(getActivity(), "persist.sys.nodog", "stop");
+
+        //关闭热点
+        WifiApAdmin.closeWifiAp(getActivity());
+
+        //stop bluetooth
+        ObdInit.uninitOBD(getActivity());
+
+        PackageManager packageManager = getActivity().getPackageManager();
+        startActivity(new Intent(packageManager.getLaunchIntentForPackage("com.qualcomm.factory")));
+    }
+
 }
