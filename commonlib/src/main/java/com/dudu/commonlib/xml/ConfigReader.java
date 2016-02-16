@@ -25,7 +25,7 @@ public class ConfigReader {
     private boolean mIsTest = false;
     private int mTestIndex = 0;
     private int mNormalIndex = 1;
-    private List<Config> mConfigList;
+    private List<Config> mConfigList = new ArrayList<>();
 
     public static ConfigReader getInstance(){
         if(mInstance==null){
@@ -47,7 +47,7 @@ public class ConfigReader {
         mIsTest = Integer.valueOf(isTest)==1;
 
         List configElementList = configs.getChildren("config");
-        mConfigList = new ArrayList<>();
+
         for (int i = 0; i < configElementList.size(); i++) {
             Element configElement = (Element) configElementList.get(i);
             Config config1 = new Config();
@@ -70,6 +70,13 @@ public class ConfigReader {
             }
             mConfigList.add(config1);
         }
+    }
+
+    public void initTestConfig() {
+        Config config = new Config();
+        config.setTest(true);
+        config.setServerAddress("http://192.168.0.177:8080/");
+        mConfigList.add(config);
     }
 
     public Config getConfig() {

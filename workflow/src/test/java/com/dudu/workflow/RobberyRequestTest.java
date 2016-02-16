@@ -1,7 +1,10 @@
 package com.dudu.workflow;
 
+import com.dudu.commonlib.CommonLib;
+import com.dudu.rest.common.Request;
 import com.dudu.workflow.robbery.RobberyRequest;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.concurrent.CountDownLatch;
@@ -14,6 +17,14 @@ import static org.junit.Assert.assertTrue;
  * Created by Administrator on 2016/2/16.
  */
 public class RobberyRequestTest {
+
+    @Before
+    public void setUp() {
+        CommonLib.getInstance().init();
+        RequestFactory.getInstance().init();
+        Request.getInstance().init();
+    }
+
     @Test
     public void test_isCarRobbed() throws InterruptedException {
 
@@ -69,6 +80,28 @@ public class RobberyRequestTest {
                         assertFalse(flashRateTimes);
                         assertTrue(emergencyCutoff);
                         assertFalse(stepOnTheGas);
+                    }
+
+                    @Override
+                    public void requestError(String error) {
+                        signal.countDown();
+                        assertNull(error);
+                    }
+                });
+        signal.await();
+    }
+
+    @Test
+    public void test_closeAntiRobberyMode() throws InterruptedException {
+
+        final CountDownLatch signal = new CountDownLatch(1);
+        RequestFactory.getInstance().getRobberyRequest()
+                .closeAntiRobberyMode("13800138000", new RobberyRequest.CloseRobberyModeCallback() {
+
+                    @Override
+                    public void closeSuccess(boolean success) {
+                        signal.countDown();
+                        assertTrue(success);
                     }
 
                     @Override
