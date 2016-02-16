@@ -85,6 +85,7 @@ public class CarCheckingActivity extends BaseNoTitlebarAcitivity implements View
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_back:
+                mAnimationView.stopAnim();
                 finish();
                 break;
         }

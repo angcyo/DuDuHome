@@ -66,6 +66,15 @@ public class CarCheckingView extends SurfaceView implements SurfaceHolder.Callba
         }
     }
 
+    public void stopAnim(){
+        mThread.setRunning(false);
+        try {
+            mThread.join();
+        } catch (InterruptedException e) {
+            LogUtils.e("CarCheckingView", e.getMessage());
+        }
+    }
+
     private class CarCheckingThread extends Thread {
 
         private static final int MAXIMUM_FRAME_COUNT = 125;
