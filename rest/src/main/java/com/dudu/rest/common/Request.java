@@ -1,5 +1,6 @@
 package com.dudu.rest.common;
 
+import com.dudu.rest.service.DrivingService;
 import com.dudu.rest.service.GuardService;
 import com.dudu.rest.service.RobberyService;
 
@@ -13,6 +14,7 @@ public class Request {
 
     private RobberyService mRobberyService;
     private GuardService mGuardService;
+    private DrivingService mDrivingService;
 
     public static Request getInstance() {
         return mInstance;
@@ -25,6 +27,7 @@ public class Request {
         mClient = new RetrofitClient();
         mRobberyService = mClient.getRetrofit().create(RobberyService.class);
         mGuardService = mClient.getRetrofit().create(GuardService.class);
+        mDrivingService = mClient.getRetrofit().create(DrivingService.class);
     }
 
     public RobberyService getRobberyService() {
@@ -33,6 +36,10 @@ public class Request {
 
     public GuardService getGuardService() {
         return mGuardService;
+    }
+
+    public DrivingService getDrivingService() {
+        return mDrivingService;
     }
 }
 

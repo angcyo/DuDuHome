@@ -62,7 +62,7 @@ public class LauncherApplication extends Application {
         // 开启logcat输出，方便debug，发布时请关闭
         XGPushConfig.enableDebug(this, true);
         Context context = getApplicationContext();
-        XGPushManager.registerPush(context, "18520339890", new XGIOperateCallback() {
+        XGPushManager.registerPush(context, "13800138000", new XGIOperateCallback() {
             @Override
             public void onSuccess(Object o, int i) {
                 logger.debug("注册成功");

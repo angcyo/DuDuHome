@@ -29,7 +29,7 @@ public class GuardRequestTest {
 
         final CountDownLatch signal = new CountDownLatch(1);
         RequestFactory.getInstance().getGuardRequest()
-                .lockCar("13800138000", new GuardRequest.LockStateCallBack() {
+                .lockCar("18520339890", new GuardRequest.LockStateCallBack() {
 
                     @Override
                     public void hasLocked(boolean locked) {
@@ -51,7 +51,7 @@ public class GuardRequestTest {
 
         final CountDownLatch signal = new CountDownLatch(1);
         RequestFactory.getInstance().getGuardRequest()
-                .unlockCar("13800138000", new GuardRequest.UnlockCallBack() {
+                .unlockCar("18520339890", new GuardRequest.UnlockCallBack() {
 
                     @Override
                     public void unlocked(boolean locked) {
@@ -73,7 +73,7 @@ public class GuardRequestTest {
 
         final CountDownLatch signal = new CountDownLatch(1);
         RequestFactory.getInstance().getGuardRequest()
-                .isAntiTheftOpened("13800138000", new GuardRequest.LockStateCallBack() {
+                .isAntiTheftOpened("18520339890", new GuardRequest.LockStateCallBack() {
 
                     @Override
                     public void hasLocked(boolean locked) {

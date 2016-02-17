@@ -9,6 +9,10 @@ if (project.hasProperty("dudu.properties")
 }
 
 android {
+    dexOptions {
+        incremental true
+        javaMaxHeapSize "4g"
+    }
     signingConfigs {
         release {
             keyAlias props['key.alias']
@@ -82,11 +86,8 @@ dependencies {
     androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
 
     compile 'com.android.support:multidex:1.0.1'
-    compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.github.tony19:logback-android-core:1.1.1-4'
     compile 'com.github.tony19:logback-android-classic:1.1.1-4'
-    compile 'org.slf4j:slf4j-api:1.7.12'
-    compile 'com.google.code.gson:gson:2.5'
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'io.reactivex:rxandroid:0.25.0'
     compile 'io.reactivex:rxandroid-framework:0.25.0'
@@ -107,4 +108,6 @@ dependencies {
     compile files('libs/Xg_sdk_v2.42_20160111_1539.jar')
     compile project(':network')
     compile project(':drivevideo')
+    compile 'com.google.code.gson:gson:2.6.1'
+    compile project(':workflow')
 }
