@@ -1,7 +1,7 @@
 package com.dudu.voice.semantic.chain.map;
 
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.FloatWindowUtils;
+import com.dudu.voice.FloatWindowUtils;
 import com.dudu.map.NavigationProxy;
 import com.dudu.navi.vauleObject.SearchType;
 import com.dudu.voice.VoiceManagerProxy;

@@ -9,5 +9,6 @@ public class FragmentConstants {
     public final static String FRAGMENT_PHOTO = "fragment_photo";
     public final static String FRAGMENT_VIDEO = "fragment_video";
     public final static String FRAGMENT_FLOW = "fragment_flow";
+    public final static String VOICE_FRAGMENT = "voice_fragment";
 
 }

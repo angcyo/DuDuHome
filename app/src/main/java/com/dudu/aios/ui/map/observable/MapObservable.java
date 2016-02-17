@@ -1,16 +1,19 @@
 package com.dudu.aios.ui.map.observable;
 
 import android.content.Context;
+import android.content.Intent;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 import android.text.TextUtils;
 import android.view.View;
 
+import com.dudu.aios.ui.activity.MainRecordActivity;
 import com.dudu.aios.ui.map.MapDbHelper;
 import com.dudu.aios.ui.map.adapter.MapListAdapter;
 import com.dudu.aios.ui.map.adapter.RouteStrategyAdapter;
 import com.dudu.aios.ui.map.event.ChooseEvent;
+import com.dudu.aios.ui.voice.VoiceEvent;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.databinding.GaodeMapLayoutBinding;
 import com.dudu.android.launcher.utils.ToastUtils;
@@ -171,7 +174,7 @@ public class MapObservable {
         chooseAddressSub = null;
         chooseStrategyMethodSub = null;
 
-        navigationManager.getLog().debug(">>>>>>>>>>>>>>>> MapResultShow");
+        navigationProxy.setShowList(true);
 
         switch (event) {
             case ADDRESS:
@@ -283,16 +286,6 @@ public class MapObservable {
     }
 
 
-    public void release() {
-        EventBus.getDefault().unregister(this);
-        SemanticEngine.getProcessor().switchSemanticType(SceneType.HOME);
-        navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
-        navigationProxy.setIsManual(false);
-        navigationProxy.disMissProgressDialog();
-        navigationProxy.removeCallback();
-    }
-
-
     private ArrayList<MapListItemObservable> getmapList() {
 
         ArrayList<MapListItemObservable> list = new ArrayList<>();
@@ -330,9 +323,22 @@ public class MapObservable {
     }
 
 
+    public void onEventMainThread(VoiceEvent event) {
+
+        switch (event) {
+            case THRICE_UNSTUDIED:
+                mapList.clear();
+                showList.set(false);
+                showBottomButton.set(true);
+                break;
+        }
+
+    }
+
     private void nextPage() {
 
     }
+
 
     private void previousPage() {
 
@@ -340,6 +346,16 @@ public class MapObservable {
 
     private void choosePage(int page) {
 
+    }
+
+    public void release() {
+        EventBus.getDefault().unregister(this);
+        SemanticEngine.getProcessor().switchSemanticType(SceneType.HOME);
+        navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
+        navigationProxy.setIsManual(false);
+        navigationProxy.disMissProgressDialog();
+        navigationProxy.removeCallback();
+        navigationProxy.setShowList(false);
     }
 
 

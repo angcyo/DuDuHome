@@ -2,12 +2,13 @@ package com.dudu.voice.semantic.engine;
 
 import android.text.TextUtils;
 
-import com.dudu.android.launcher.utils.FloatWindowUtils;
+import com.dudu.voice.FloatWindowUtils;
 import com.dudu.voice.VoiceManagerProxy;
 import com.dudu.voice.semantic.bean.SemanticBean;
 import com.dudu.voice.semantic.chain.DefaultChain;
 import com.dudu.voice.semantic.chain.SemanticChain;
 import com.dudu.voice.semantic.constant.SceneType;
+import com.dudu.voice.semantic.scene.FaultScene;
 import com.dudu.voice.semantic.scene.HomeScene;
 import com.dudu.voice.semantic.scene.MapChoiseScene;
 import com.dudu.voice.semantic.scene.NavigationScene;
@@ -42,6 +43,8 @@ public class SemanticEngine {
     private MapChoiseScene mMapChoiseState;
 
     private WhetherScene mCommonWhetherState;
+
+    private FaultScene mFaultScene;
 
     /**
      * 如果没有匹配到链对象，则使用默认链对象处理。
@@ -175,6 +178,10 @@ public class SemanticEngine {
                 log.debug("设置当前语义为是否...");
                 mSemanticState = mCommonWhetherState;
                 break;
+            case CAR_CHECKING:
+                log.debug("设置当前语义为车辆自检...");
+                mSemanticState = mFaultScene;
+                break;
 
         }
 
@@ -191,6 +198,8 @@ public class SemanticEngine {
         mSemanticState = mHomeState;
 
         mCommonWhetherState = new WhetherScene();
+
+        mFaultScene = new FaultScene();
     }
 
 }

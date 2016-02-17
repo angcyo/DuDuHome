@@ -1,8 +1,5 @@
 package com.dudu.aios.ui.fragment;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
@@ -15,7 +12,6 @@ import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.aios.ui.view.FlowCompletedView;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.SharedPreferencesUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 

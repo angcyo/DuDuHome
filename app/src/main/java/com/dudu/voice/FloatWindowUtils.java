@@ -1,14 +1,21 @@
-package com.dudu.android.launcher.utils;
+package com.dudu.voice;
 
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.widget.AdapterView.OnItemClickListener;
 
+import com.dudu.aios.ui.activity.MainRecordActivity;
+import com.dudu.aios.ui.voice.VoiceEvent;
+import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.model.WindowMessageEntity;
+import com.dudu.android.launcher.utils.ActivitiesManager;
+import com.dudu.android.launcher.utils.Constants;
 import com.dudu.voice.window.BlueWindowManager;
 import com.dudu.voice.window.FloatWindowManager;
 import com.dudu.voice.window.MessageType;
+
+import de.greenrobot.event.EventBus;
 
 public class FloatWindowUtils {
 
@@ -20,6 +27,7 @@ public class FloatWindowUtils {
     private static final int FLOAT_PREVIOUS_PAGE = 5;
     private static final int FLOAT_CHOOSE_PAGE = 6;
     private static final int FLOAT_VOLUME_CHANGED = 7;
+    private static final int FLOAT_SHOW_ANIM = 8;
 
     private static FloatWindowManager sManager;
 
@@ -35,6 +43,7 @@ public class FloatWindowUtils {
 
         @Override
         public void handleMessage(Message msg) {
+
             switch (msg.what) {
                 case FLOAT_SHOW_MESSAGE:
                     sManager.showMessage((WindowMessageEntity) msg.obj);
@@ -63,11 +72,21 @@ public class FloatWindowUtils {
                 case FLOAT_VOLUME_CHANGED:
                     sManager.onVolumeChanged(msg.arg1);
                     break;
+                case FLOAT_SHOW_ANIM:
+                    if (ActivitiesManager.getInstance().getTopActivity() instanceof MainRecordActivity) {
+                        EventBus.getDefault().post(VoiceEvent.SHOW_ANIM);
+                        ((BlueWindowManager) sManager).showAnimWindow();
+                    } else {
+                        sManager.showMessage(new WindowMessageEntity(Constants.WAKEUP_WORDS, MessageType.MESSAGE_INPUT));
+                    }
+                    break;
             }
         }
+
     }
 
     private static FloatWindowHandler sHandler = new FloatWindowHandler();
+
 
     public static void showMessage(String message, MessageType type) {
         sHandler.sendMessage(sHandler.obtainMessage(FLOAT_SHOW_MESSAGE,
@@ -100,6 +119,10 @@ public class FloatWindowUtils {
 
     public static void onVolumeChanged(int volume) {
         sHandler.sendMessage(sHandler.obtainMessage(FLOAT_VOLUME_CHANGED, volume, 0));
+    }
+
+    public static void showAnimWindow() {
+        sHandler.sendMessage(sHandler.obtainMessage(FLOAT_SHOW_ANIM));
     }
 
 }

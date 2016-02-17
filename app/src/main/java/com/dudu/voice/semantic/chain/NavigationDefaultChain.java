@@ -1,6 +1,8 @@
 package com.dudu.voice.semantic.chain;
 
 
+import android.text.TextUtils;
+
 import com.dudu.map.NavigationProxy;
 import com.dudu.navi.vauleObject.SearchType;
 import com.dudu.voice.semantic.bean.SemanticBean;
@@ -17,8 +19,10 @@ public class NavigationDefaultChain extends DefaultChain {
 
     @Override
     public boolean doSemantic(SemanticBean semantic) {
-        NavigationProxy.getInstance().searchControl(null, null,
-                semantic.getText(), SearchType.SEARCH_PLACE);
+        if (semantic != null && !TextUtils.isEmpty(semantic.getText())) {
+            NavigationProxy.getInstance().searchControl(null, null,
+                    semantic.getText(), SearchType.SEARCH_PLACE);
+        }
         return true;
     }
 

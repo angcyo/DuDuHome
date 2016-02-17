@@ -22,10 +22,10 @@ import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.SimpleHudActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.FloatWindowUtils;
+import com.dudu.map.NavigationProxy;
+import com.dudu.voice.FloatWindowUtils;
 import com.dudu.android.launcher.utils.NaviSettingUtil;
 import com.dudu.android.launcher.utils.TimeUtils;
-import com.dudu.map.NavigationProxy;
 import com.dudu.monitor.Monitor;
 import com.dudu.monitor.utils.LocationUtils;
 import com.dudu.navi.NavigationManager;
@@ -78,8 +78,6 @@ public class NavigationActivity extends Activity implements
         mAMapNavi = AMapNavi.getInstance(getApplicationContext());
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        ActivitiesManager.getInstance().addActivity(this);
 
         setContentView(R.layout.gaode_navigation_layout);
 
@@ -267,6 +265,9 @@ public class NavigationActivity extends Activity implements
     @Override
     public void onResume() {
         super.onResume();
+
+        ActivitiesManager.getInstance().addActivity(this);
+
         mAMapNavi.startNavi(AMapNavi.GPSNaviMode);
         mAmapAMapNaviView.onResume();
 
@@ -324,6 +325,7 @@ public class NavigationActivity extends Activity implements
         }
         EventBus.getDefault().unregister(this);
         ActivitiesManager.getInstance().closeTargetActivity(SimpleHudActivity.class);
+        ActivitiesManager.getInstance().removeActivity(this);
         super.onDestroy();
     }
 

@@ -48,6 +48,13 @@ $SPEECH_CLOSE = (关闭 | 关掉 | 退出);
 $SPEECH_CLOSE_CMD = ($SPEECH_CLOSE) ($SPEECH_NAME);
 $SPEECH_CMD =  ($SPEECH_CLOSE_CMD)/domain="cmd"/;
 
+$FAULT_NAME = (故障[码])/k="target",v="故障"/;
+$FAULT_CLEAR = (清除)/k="action"/;
+$FAULT_PLAY = (播报)/k="action"/;
+$FAULT_CLEAR_CMD = ($FAULT_CLEAR)($FAULT_NAME);
+$FAULT_PLAY_CMD = ($FAULT_NAME)($FAULT_PLAY);
+$FAULT_CMD = (($FAULT_CLEAR_CMD)|($FAULT_PLAY_CMD))/domain="cmd"/;
+
     $MESSAGE = ($BT_CMD) | ($VOLUME_CMD) | ($SELF_CHECKING_CMD) | ($VIDEO_CMD) | ($SPEECH_CMD);
 
 ( \<s\> ($MESSAGE) \<\/s\> )

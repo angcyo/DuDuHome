@@ -24,6 +24,9 @@ public class LauncherApplication extends Application {
 
     private Logger logger;
 
+
+    public static String lastFragment = "default";
+
     public static LauncherApplication getContext() {
         return mApplication;
     }

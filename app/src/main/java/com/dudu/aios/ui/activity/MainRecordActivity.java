@@ -18,21 +18,25 @@ import android.view.MotionEvent;
 import android.view.Window;
 import android.widget.FrameLayout;
 
+import com.dudu.aios.ui.fragment.RobberyFragment;
 import com.dudu.aios.ui.fragment.video.DrivingRecordFragment;
 import com.dudu.aios.ui.fragment.FlowFragment;
 import com.dudu.aios.ui.fragment.MainFragment;
 import com.dudu.aios.ui.fragment.PhotoFragment;
 import com.dudu.aios.ui.fragment.PhotoListFragment;
-import com.dudu.aios.ui.robbery.VehicleFragment;
 import com.dudu.aios.ui.fragment.VideoFragment;
 import com.dudu.aios.ui.fragment.VideoListFragment;
 import com.dudu.aios.ui.fragment.base.VolBrightnessSetting;
+import com.dudu.aios.ui.robbery.VehicleFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
+import com.dudu.aios.ui.voice.VoiceEvent;
+import com.dudu.aios.ui.voice.VoiceFragment;
+import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.broadcast.TFlashCardReceiver;
 import com.dudu.android.launcher.broadcast.WeatherAlarmReceiver;
+import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.AdminReceiver;
-import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.drivevideo.DriveVideo;
 import com.dudu.event.DeviceEvent;
 import com.dudu.init.InitManager;
@@ -63,7 +67,9 @@ public class MainRecordActivity extends Activity {
 
     private static final int MY_REQUEST_CODE = 9999;
 
-    public  VolBrightnessSetting volBrightnessSetting;
+    public VolBrightnessSetting volBrightnessSetting;
+
+    private Bundle bundle;
 
     private boolean isPreviewIng = false;
     private FrameLayout previewFrameLayout;
@@ -78,6 +84,7 @@ public class MainRecordActivity extends Activity {
         initData();
 
         initView();
+        this.bundle = savedInstanceState;
     }
 
     private void initData() {
@@ -153,7 +160,7 @@ public class MainRecordActivity extends Activity {
                 break;
 
             case FragmentConstants.FRAGMENT_VEHICLE_INSPECTION:
-                ft.replace(R.id.container, new VehicleFragment());
+                ft.replace(R.id.container, new RobberyFragment());
                 break;
 
             case FragmentConstants.FRAGMENT_DRIVING_RECORD:
@@ -179,9 +186,19 @@ public class MainRecordActivity extends Activity {
             case FragmentConstants.FRAGMENT_FLOW:
                 ft.replace(R.id.container, new FlowFragment());
                 break;
+            case FragmentConstants.VOICE_FRAGMENT:
+                ft.replace(R.id.container, new VoiceFragment());
+                break;
+            default:
+                ft.replace(R.id.container,new MainFragment());
+                break;
 
         }
         ft.commit();
+
+        if(!name.equals(FragmentConstants.VOICE_FRAGMENT)){
+            LauncherApplication.lastFragment = name;
+        }
     }
 
     private void setWeatherAlarm() {
@@ -208,7 +225,7 @@ public class MainRecordActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
 
-        log_init.debug("MainActivity 调用onDestroy释放资源...");
+        log_init.debug("MainRecordActivity 调用onDestroy释放资源...");
 
         InitManager.getInstance().unInit();
 
@@ -260,5 +277,14 @@ public class MainRecordActivity extends Activity {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return volBrightnessSetting.getOnTouchEventReturnFlag(event);
+    }
+
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivitiesManager.getInstance().addActivity(this);
+        replaceFragment(FragmentConstants.FRAGMENT_MAIN_PAGE);
     }
 }

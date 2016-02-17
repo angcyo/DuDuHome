@@ -3,12 +3,12 @@ package com.dudu.voice.semantic.chain;
 import android.app.Activity;
 import android.content.Intent;
 
-import com.dudu.android.launcher.ui.activity.MainActivity;
-import com.dudu.android.launcher.ui.activity.OBDCheckingActivity;
+import com.dudu.aios.ui.activity.MainRecordActivity;
+import com.dudu.android.launcher.ui.activity.CarCheckingActivity;
 import com.dudu.android.launcher.ui.activity.video.VideoActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.FloatWindowUtils;
+import com.dudu.voice.FloatWindowUtils;
 import com.dudu.map.NavigationProxy;
 import com.dudu.voice.semantic.bean.CmdBean;
 import com.dudu.voice.semantic.bean.SemanticBean;
@@ -101,9 +101,9 @@ public class CmdChain extends SemanticChain {
 
         Activity topActivity = ActivitiesManager.getInstance()
                 .getTopActivity();
-        if (topActivity != null && !(topActivity instanceof MainActivity)) {
+        if (topActivity != null && !(topActivity instanceof MainRecordActivity)) {
             Intent intent = new Intent(topActivity,
-                    MainActivity.class);
+                    MainRecordActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             topActivity.startActivity(intent);
         }
@@ -140,8 +140,8 @@ public class CmdChain extends SemanticChain {
             case Constants.QIDONG:
             case Constants.KAIQI:
                 FloatWindowUtils.removeFloatWindow();
-                Intent intent = new Intent(mContext, OBDCheckingActivity.class);
-//                Intent intent=new Intent(mContext,CarCheckActivity.class);
+//                Intent intent = new Intent(mContext, OBDCheckingActivity.class);
+                Intent intent=new Intent(mContext,CarCheckingActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivity(intent);
                 break;
@@ -150,7 +150,7 @@ public class CmdChain extends SemanticChain {
             case Constants.GUANDIAO:
                 FloatWindowUtils.removeFloatWindow();
 
-                ActivitiesManager.getInstance().closeTargetActivity(OBDCheckingActivity.class);
+                ActivitiesManager.getInstance().closeTargetActivity(CarCheckingActivity.class);
                 break;
             default:
                 return false;

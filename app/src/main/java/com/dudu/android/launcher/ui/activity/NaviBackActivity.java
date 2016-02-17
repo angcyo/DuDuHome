@@ -21,7 +21,7 @@ import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.FloatWindowUtils;
+import com.dudu.voice.FloatWindowUtils;
 
 import com.dudu.android.launcher.utils.NaviSettingUtil;
 import com.dudu.android.launcher.utils.ViewAnimation;

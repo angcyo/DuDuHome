@@ -5,7 +5,7 @@ import android.text.TextUtils;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.utils.CommonAddressUtil;
-import com.dudu.android.launcher.utils.FloatWindowUtils;
+import com.dudu.voice.FloatWindowUtils;
 import com.dudu.map.NavigationProxy;
 import com.dudu.navi.NavigationManager;
 import com.dudu.navi.entity.Navigation;

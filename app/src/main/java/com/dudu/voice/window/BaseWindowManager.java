@@ -1,6 +1,7 @@
 package com.dudu.voice.window;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -52,6 +53,8 @@ public abstract class BaseWindowManager implements FloatWindowManager {
 
 
     protected void removeFloatView() {
+
+
         if (!mShowFloatWindow) {
             return;
         }

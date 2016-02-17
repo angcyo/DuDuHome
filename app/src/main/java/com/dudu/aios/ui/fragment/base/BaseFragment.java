@@ -17,15 +17,20 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dudu.aios.ui.activity.MainRecordActivity;
+import com.dudu.aios.ui.utils.contants.FragmentConstants;
+import com.dudu.aios.ui.voice.VoiceEvent;
+import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
+import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.DialogUtils;
 import com.dudu.android.launcher.utils.NetworkUtils;
 import com.dudu.android.launcher.utils.StatusBarManager;
-
 import com.dudu.android.launcher.utils.WeatherUtils;
 import com.dudu.event.BleStateChange;
 import com.dudu.event.DeviceEvent;
+import com.dudu.map.NavigationProxy;
 import com.dudu.monitor.Monitor;
+import com.dudu.navi.NavigationManager;
 
 import java.util.Iterator;
 
@@ -77,7 +82,7 @@ public abstract class BaseFragment extends Fragment {
 
         MainRecordActivity activity = (MainRecordActivity) getActivity();
 
-        activity.volBrightnessSetting = new VolBrightnessSetting(activity,view);
+        activity.volBrightnessSetting = new VolBrightnessSetting(activity, view);
 
         return view;
     }
@@ -218,4 +223,19 @@ public abstract class BaseFragment extends Fragment {
         MainRecordActivity activity = (MainRecordActivity) getActivity();
         activity.replaceFragment(name);
     }
+
+    public void onEventMainThread(VoiceEvent event) {
+        switch (event) {
+            case SHOW_ANIM:
+                replaceFragment(FragmentConstants.VOICE_FRAGMENT);
+                break;
+            case DISMISS_WINDOW:
+                if (ActivitiesManager.getInstance().getTopActivity() instanceof MainRecordActivity) {
+                    replaceFragment(LauncherApplication.lastFragment);
+                }
+                break;
+        }
+
+    }
+
 }

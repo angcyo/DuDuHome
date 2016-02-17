@@ -16,9 +16,10 @@ import com.aispeech.export.listeners.AILocalGrammarListener;
 import com.aispeech.export.listeners.AILocalWakeupDnnListener;
 import com.aispeech.export.listeners.AITTSListener;
 import com.aispeech.speech.AIAuthEngine;
+import com.dudu.aios.ui.voice.VoiceEvent;
 import com.dudu.android.hideapi.SystemPropertiesProxy;
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.FloatWindowUtils;
+import com.dudu.voice.FloatWindowUtils;
 import com.dudu.voice.BaseVoiceManager;
 import com.dudu.voice.semantic.constant.TTSType;
 import com.dudu.voice.semantic.engine.SemanticEngine;
@@ -31,6 +32,8 @@ import org.json.JSONObject;
 import java.io.FileNotFoundException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by 赵圣琪 on 2015/10/27.
@@ -317,6 +320,9 @@ public class SpeechManagerImpl extends BaseVoiceManager {
 
     @Override
     public void onStop() {
+
+        clearMisUnderstandCount();
+
         stopUnderstanding();
 
         startWakeup();
@@ -518,20 +524,19 @@ public class SpeechManagerImpl extends BaseVoiceManager {
 
         @Override
         public void onCompletion(String utteranceId) {
-            log.debug("语音播放完毕...");
             mSpeaking = false;
             switch (mType) {
                 case TTS_DO_NOTHING:
+                    if (checkMisUnderstandCount()) {
+                        EventBus.getDefault().post(VoiceEvent.THRICE_UNSTUDIED);
+                        FloatWindowUtils.removeFloatWindow();
+                    }
                     speakQueueNext();
                     break;
                 case TTS_START_WAKEUP:
                     startWakeup();
                     break;
                 case TTS_START_UNDERSTANDING:
-                    if (checkMisUnderstandCount()) {
-                        FloatWindowUtils.removeFloatWindow();
-                        return;
-                    }
 
                     mTTSQueue.clear();
 

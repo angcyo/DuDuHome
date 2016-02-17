@@ -1,7 +1,6 @@
 package com.dudu.aios.ui.voice;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -32,14 +31,18 @@ public abstract class VoiceAnimView extends SurfaceView implements SurfaceHolder
     private VoiceAnimThread voiceAnimThread;
 
     private static final String PICTURE_DIR = "animation/voice/";
+    private Context context;
+
 
     public VoiceAnimView(Context context) {
         super(context);
+        this.context = context;
         initView(context);
     }
 
     public VoiceAnimView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.context = context;
         initView(context);
     }
 
@@ -55,26 +58,24 @@ public abstract class VoiceAnimView extends SurfaceView implements SurfaceHolder
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-
-        voiceAnimThread.setRunning(false);
-
-        try {
-            voiceAnimThread.join();
-        } catch (Exception e) {
-
-        }
+        stopAnim();
     }
 
     public void startAnim() {
-        voiceAnimThread.setRunning(true);
-        voiceAnimThread.start();
+
+        if (voiceAnimThread == null) {
+            voiceAnimThread = new VoiceAnimThread(context, getHolder());
+            voiceAnimThread.setRunning(true);
+            voiceAnimThread.start();
+        } else {
+            voiceAnimThread.setRunning(true);
+        }
     }
 
     private void initView(Context context) {
         SurfaceHolder holder = getHolder();
         holder.addCallback(this);
 
-        voiceAnimThread = new VoiceAnimThread(context, holder);
         picPath = getPicPath();
         maxPicCount = getMaxPicCount();
 
@@ -86,7 +87,10 @@ public abstract class VoiceAnimView extends SurfaceView implements SurfaceHolder
     protected abstract String getPicPath();
 
     public void stopAnim() {
-        voiceAnimThread.setRunning(false);
+        if (voiceAnimThread != null) {
+            voiceAnimThread.setRunning(false);
+            voiceAnimThread = null;
+        }
     }
 
     class VoiceAnimThread extends Thread {
@@ -94,7 +98,11 @@ public abstract class VoiceAnimView extends SurfaceView implements SurfaceHolder
 
         private Context mContext;
 
-        private boolean mRunning;
+        public boolean ismRunning() {
+            return mRunning;
+        }
+
+        private boolean mRunning = false;
 
         private SurfaceHolder mHolder;
 
@@ -167,7 +175,9 @@ public abstract class VoiceAnimView extends SurfaceView implements SurfaceHolder
                     return null;
                 }
             }
+
             return null;
+
         }
     }
 }

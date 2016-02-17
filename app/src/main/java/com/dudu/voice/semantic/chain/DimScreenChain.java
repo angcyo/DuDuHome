@@ -1,6 +1,6 @@
 package com.dudu.voice.semantic.chain;
 
-import com.dudu.android.launcher.utils.FloatWindowUtils;
+import com.dudu.voice.FloatWindowUtils;
 import com.dudu.event.DeviceEvent;
 import com.dudu.voice.semantic.bean.SemanticBean;
 import com.dudu.voice.semantic.constant.SemanticConstant;

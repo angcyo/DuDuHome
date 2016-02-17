@@ -5,7 +5,7 @@ import android.text.TextUtils;
 
 import com.dudu.android.launcher.ui.activity.bluetooth.BtOutCallActivity;
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.FloatWindowUtils;
+import com.dudu.voice.FloatWindowUtils;
 import com.dudu.voice.semantic.bean.PhoneBean;
 import com.dudu.voice.semantic.bean.SemanticBean;
 import com.dudu.voice.semantic.constant.SemanticConstant;

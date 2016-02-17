@@ -7,6 +7,10 @@ public enum  VoiceEvent {
 
     SHOW_MESSAGE,
 
-    DISMISS_WINDOW;
+    DISMISS_WINDOW,
+
+    SHOW_ANIM,
+
+    THRICE_UNSTUDIED
 
 }

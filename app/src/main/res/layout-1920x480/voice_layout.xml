@@ -1,51 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_marginTop="@dimen/dp_20">
 
-    <LinearLayout
-        android:id="@+id/voice_anim_layout"
+
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"/>
 
 
-        <com.dudu.aios.ui.voice.VoiceCircleAnimView
-            android:id="@+id/voice_circle"
-            android:layout_width="160dp"
-            android:layout_height="160dp"
-            android:layout_gravity="center"
-            android:background="@android:color/transparent" />
-
-        <com.dudu.aios.ui.voice.VoiceRippleAnimView
-            android:id="@+id/voice_ripple"
-            android:layout_width="1280dp"
-            android:layout_height="120dp"
-            android:layout_gravity="center"
-            android:layout_marginLeft="200dp"
-            android:layout_marginTop="-20dp"
-            android:background="@android:color/transparent" />
 
 
-        <ImageView
-            android:layout_width="256dp"
-            android:layout_height="36dp"
-            android:layout_marginBottom="40dp"
-            android:layout_marginTop="-20dp"
-            android:src="@drawable/whatcan" />
-
-    </LinearLayout>
-
-
-    <Button
-        android:id="@+id/voiceBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="8dp"
-        android:background="@drawable/button_back_selector" />
-
-</FrameLayout>
+</LinearLayout>

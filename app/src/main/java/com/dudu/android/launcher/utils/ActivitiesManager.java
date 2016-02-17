@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.content.Context;
+import android.util.Log;
 
 public class ActivitiesManager {
 	
@@ -46,6 +47,14 @@ public class ActivitiesManager {
 	public Activity getTopActivity() {
 		synchronized (ActivitiesManager.this) {
 			return (mActivities == null || mActivities.size() <= 0) ? null : mActivities.get(0);
+		}
+	}
+
+	public void setTopActivity(Activity activity){
+		synchronized (ActivitiesManager.this) {
+			if (mActivities!=null){
+				mActivities.add(0,activity);
+			}
 		}
 	}
 
@@ -186,6 +195,8 @@ public class ActivitiesManager {
 				.getSystemService(Context.ACTIVITY_SERVICE);
 		List<RunningTaskInfo> tasksInfo = manager.getRunningTasks(1);
 		if (tasksInfo.size() > 0) {
+
+			 Log.d("lxh"," top activity >>>>>>>>>>>>>>>>>>>>>>>>"+tasksInfo.get(0).topActivity.getClass().toString());
 			// 应用程序位于堆栈的顶层
 			if (packageName.equals(tasksInfo.get(0).topActivity
 					.getPackageName())) {

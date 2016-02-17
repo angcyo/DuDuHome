@@ -15,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dudu.aios.ui.fragment.base.BaseFragment;
-import com.dudu.aios.ui.robbery.VehicleFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.aios.ui.voice.VoiceFragment;
 import com.dudu.android.launcher.R;
@@ -26,8 +25,8 @@ import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.event.DeviceEvent;
 import com.dudu.init.InitManager;
 import com.dudu.map.NavigationProxy;
-import com.dudu.navi.event.NaviEvent;
 import com.dudu.obd.ObdInit;
+import com.dudu.voice.FloatWindowUtils;
 import com.dudu.voice.VoiceManagerProxy;
 
 import java.text.SimpleDateFormat;
@@ -47,6 +46,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
     private ImageView mWeatherImage;
 
     private ImageButton voice_imageBtn;
+
 
     @Override
     public View getChildView() {
@@ -106,6 +106,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
         bluetoothPhone.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName("com.android.settings",
                         "com.android.settings.Settings"));
@@ -114,6 +115,8 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
                 return true;
             }
         });
+
+
     }
 
     private void initFragmentView(View view) {
@@ -145,9 +148,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
             case R.id.vehicle_inspection:
                 startActivity(new Intent(getActivity(), CarCheckingActivity.class));
                 // replaceFragment(FragmentConstants.FRAGMENT_VEHICLE_INSPECTION);
-
                 break;
-
             case R.id.driving_record_button:
                 replaceFragment(FragmentConstants.FRAGMENT_DRIVING_RECORD);
                 break;
@@ -161,16 +162,17 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
                 break;
 
             case R.id.flow_button:
-//                replaceFragment(FragmentConstants.FRAGMENT_FLOW);
-                getFragmentManager().beginTransaction().replace(R.id.container, new FlowFragment()).commit();
+                replaceFragment(FragmentConstants.FRAGMENT_FLOW);
                 break;
-
             case R.id.prevent_rob:
-                getFragmentManager().beginTransaction().replace(R.id.container, new RobberyFragment()).commit();
+//                getFragmentManager().beginTransaction().replace(R.id.container, new RobberyFragment()).commit();
+                replaceFragment(FragmentConstants.FRAGMENT_VEHICLE_INSPECTION);
                 break;
 
             case R.id.voice_imageBtn:
                 getFragmentManager().beginTransaction().replace(R.id.container, new VoiceFragment()).commit();
+                FloatWindowUtils.showAnimWindow();
+                VoiceManagerProxy.getInstance().startVoiceService();
                 break;
         }
     }
@@ -215,6 +217,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
         updateWeatherInfo(weather.getWeather(), weather.getTemperature());
         initDate();
     }
+
 
     private void startFactory() {
 

@@ -1,6 +1,8 @@
 package com.dudu.voice.window;
 
+import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.BitmapDrawable;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -8,15 +10,19 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import com.dudu.aios.ui.activity.MainRecordActivity;
+import com.dudu.aios.ui.utils.ScreenUtil;
+import com.dudu.aios.ui.utils.blur.RxBlurEffective;
 import com.dudu.aios.ui.voice.VoiceCircleAnimView;
 import com.dudu.aios.ui.voice.VoiceEvent;
 import com.dudu.aios.ui.voice.VoiceRippleAnimView;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.model.WindowMessageEntity;
 import com.dudu.android.launcher.ui.adapter.MessageAdapter;
-import com.dudu.android.launcher.ui.adapter.RouteSearchAdapter;
-import com.dudu.android.launcher.ui.adapter.StrategyAdapter;
+import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
+import com.dudu.map.NavigationProxy;
+import com.dudu.voice.VoiceManagerProxy;
 import com.dudu.voice.semantic.constant.SceneType;
 import com.dudu.voice.semantic.engine.SemanticEngine;
 
@@ -33,21 +39,11 @@ import de.greenrobot.event.EventBus;
  */
 public class BlueWindowManager extends BaseWindowManager {
 
-    private static final int SINGLE_PAGE_COUNT = 4;
-
     private static final int MAX_PAGE_COUNT = 5;
 
     private boolean mMapChoosing = false;
 
-//    private RadioDialog mRadioDialog;
-
     private ListView mMessageListView;
-
-//    private ListView mMapListView;
-
-    private RouteSearchAdapter mRouteSearchAdapter;
-
-    private StrategyAdapter mStrategyAdapter;
 
     private MessageAdapter mMessageAdapter;
 
@@ -59,8 +55,24 @@ public class BlueWindowManager extends BaseWindowManager {
 
     private Button voiceBack;
 
+    private LinearLayout voice_animLayout;
+
+    private VoiceCircleAnimView voiceCircleAnimView;
+
+    private VoiceRippleAnimView voiceRippleAnimView;
+
+    private View message_layout;
+
+    private boolean isInit = false;
+
+
     @Override
     public void initWindow() {
+
+        if (isInit)
+            return;
+
+
         logger = LoggerFactory.getLogger("voice.float");
 
         mLayoutParams = new WindowManager.LayoutParams();
@@ -72,26 +84,35 @@ public class BlueWindowManager extends BaseWindowManager {
         mLayoutParams.height = mContext.getResources().getDisplayMetrics().heightPixels;
         mLayoutParams.x = 0;
         mLayoutParams.y = 0;
-//        mLayoutParams.alpha = 1.0f;
 
 
         voiceBack = (Button) mFloatWindowView.findViewById(R.id.voiceBack);
 
-        voiceBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removeFloatWindow();
-            }
+        voiceBack.setOnClickListener(v -> {
+            VoiceManagerProxy.getInstance().stopSpeaking();
+            removeFloatWindow();
         });
 
         mMessageData = new ArrayList<>();
         mMessageListView = (ListView) mFloatWindowView.findViewById(R.id.message_listView);
         mMessageAdapter = new MessageAdapter(mContext, mMessageData);
         mMessageListView.setAdapter(mMessageAdapter);
+        message_layout = mFloatWindowView.findViewById(R.id.message_layout);
 
-//        mMapListView = (ListView) mFloatWindowView.findViewById(R.id.map_ListView);
-        mRouteSearchAdapter = new RouteSearchAdapter(mContext, 1);
-        mStrategyAdapter = new StrategyAdapter(mContext);
+        initAnimView();
+
+        isInit = true;
+    }
+
+    private void initAnimView() {
+        voice_animLayout = (LinearLayout) mFloatWindowView.findViewById(R.id.voice_anim_layout);
+        voiceRippleAnimView = (VoiceRippleAnimView) mFloatWindowView.findViewById(R.id.voice_ripple);
+        voiceCircleAnimView = (VoiceCircleAnimView) mFloatWindowView.findViewById(R.id.voice_circle);
+
+        voiceRippleAnimView.setZOrderOnTop(true);
+        voiceRippleAnimView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+        voiceCircleAnimView.setZOrderOnTop(true);
+        voiceCircleAnimView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
     }
 
     @Override
@@ -101,20 +122,26 @@ public class BlueWindowManager extends BaseWindowManager {
 
     @Override
     public void showMessage(WindowMessageEntity message) {
-        if (mMapChoosing) {
+
+        if (NavigationProxy.getInstance().isShowList()) {
             return;
         }
 
         addFloatView();
 
+        stopAnimWindow();
+
+        blur(message_layout);
+
+        message_layout.setVisibility(View.VISIBLE);
+
         mMessageListView.setVisibility(View.VISIBLE);
-//        mMapListView.setVisibility(View.GONE);
 
         mMessageAdapter.addMessage(message);
 
         mMessageListView.smoothScrollToPosition(mMessageData.size() - 1);
 
-        EventBus.getDefault().post(VoiceEvent.SHOW_MESSAGE);
+
     }
 
     @Override
@@ -124,9 +151,7 @@ public class BlueWindowManager extends BaseWindowManager {
         mCurPageNum = 0;
 
         mMessageListView.setVisibility(View.GONE);
-//        mMapListView.setVisibility(View.VISIBLE);
 
-//        mMapListView.setAdapter(mStrategyAdapter);
     }
 
     @Override
@@ -136,17 +161,11 @@ public class BlueWindowManager extends BaseWindowManager {
         mCurPageNum = 0;
 
         mMessageListView.setVisibility(View.GONE);
-//        mMapListView.setVisibility(View.VISIBLE);
 
-        mRouteSearchAdapter.initPoiData(mContext);
-//        mMapListView.setAdapter(mRouteSearchAdapter);
     }
 
     @Override
     public void onVolumeChanged(int volume) {
-//        if (mShowFloatWindow && mRadioDialog != null) {
-//            mRadioDialog.setPressCounts(volume);
-//        }
     }
 
     @Override
@@ -158,7 +177,6 @@ public class BlueWindowManager extends BaseWindowManager {
 
         mCurPageNum++;
 
-//        mMapListView.setSelection(mCurPageNum * SINGLE_PAGE_COUNT);
     }
 
     @Override
@@ -170,7 +188,6 @@ public class BlueWindowManager extends BaseWindowManager {
 
         mCurPageNum--;
 
-//        mMapListView.setSelection(mCurPageNum * SINGLE_PAGE_COUNT);
     }
 
     @Override
@@ -182,11 +199,15 @@ public class BlueWindowManager extends BaseWindowManager {
 
         mCurPageNum = page - 1;
 
-//        mMapListView.setSelection(mCurPageNum * SINGLE_PAGE_COUNT);
     }
 
     @Override
     public void removeFloatWindow() {
+
+        isInit = false;
+
+        stopAnimWindow();
+
         SemanticEngine.getProcessor().switchSemanticType(SceneType.HOME);
 
         removeFloatView();
@@ -195,16 +216,56 @@ public class BlueWindowManager extends BaseWindowManager {
 
         mMessageData.clear();
 
-        EventBus.getDefault().post(VoiceEvent.SHOW_MESSAGE);
+        EventBus.getDefault().post(VoiceEvent.DISMISS_WINDOW);
+
 
     }
 
     @Override
     public void setItemClickListener(AdapterView.OnItemClickListener listener) {
-        if (listener != null) {
-//            mMapListView.setOnItemClickListener(listener);
+
+    }
+
+    public void showAnimWindow() {
+
+        stopAnimWindow();
+
+        addFloatView();
+
+        voice_animLayout.setVisibility(View.VISIBLE);
+
+        message_layout.setVisibility(View.GONE);
+
+//        voiceCircleAnimView.startAnim();
+//
+//        voiceRippleAnimView.startAnim();
+
+    }
+
+    public void stopAnimWindow() {
+        if (voice_animLayout != null) {
+            voice_animLayout.setVisibility(View.GONE);
+        }
+        if (voiceCircleAnimView != null && voiceRippleAnimView != null) {
+            voiceCircleAnimView.stopAnim();
+            voiceRippleAnimView.stopAnim();
         }
     }
 
+    private void blur(View view) {
 
+
+        if (ActivitiesManager.getInstance().getTopActivity() instanceof MainRecordActivity) {
+//            Bitmap blurBitmap = RxBlurEffective
+//                    .bestBlur(mContext, ScreenUtil.cacheCurrentScreen(ActivitiesManager.getInstance().getTopActivity()), 25, 0.2f)
+//                    .toBlocking()
+//                    .first();
+            view.setBackground(new BitmapDrawable(mContext.getResources(),  ScreenUtil.cacheCurrentScreen(ActivitiesManager.getInstance().getTopActivity())));
+        } else {
+            voice_animLayout.setVisibility(View.GONE);
+            view.setBackground(null);
+            view.setBackgroundResource(R.color.video_unchecked_textColor);
+            view.setAlpha(0.8f);
+        }
+    }
 }

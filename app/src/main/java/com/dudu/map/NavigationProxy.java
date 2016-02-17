@@ -24,7 +24,6 @@ import com.dudu.android.launcher.ui.activity.SimpleHudActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.CommonAddressUtil;
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.FloatWindowUtils;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.event.MapResultShow;
@@ -39,10 +38,13 @@ import com.dudu.navi.event.NaviEvent;
 import com.dudu.navi.vauleObject.NavigationType;
 import com.dudu.navi.vauleObject.OpenMode;
 import com.dudu.navi.vauleObject.SearchType;
+import com.dudu.voice.FloatWindowUtils;
 import com.dudu.voice.VoiceManagerProxy;
 import com.dudu.voice.semantic.constant.SceneType;
 import com.dudu.voice.semantic.constant.TTSType;
 import com.dudu.voice.semantic.engine.SemanticEngine;
+
+import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
@@ -92,6 +94,17 @@ public class NavigationProxy {
     }
 
     private long mLastClickTime = 0;
+
+    private boolean isShowList = false;
+
+    public void setShowList(boolean showList) {
+        isShowList = showList;
+    }
+
+    public boolean isShowList() {
+
+        return isShowList;
+    }
 
     private Runnable removeWindowRunnable = new Runnable() {
         @Override
@@ -183,13 +196,17 @@ public class NavigationProxy {
         } else {
 
             if (!isMapActivity()) {
+                FloatWindowUtils.removeFloatWindow();
                 navigationManager.getLog().debug("openActivity");
-                if (openType == OPEN_VOICE) {
-                    voiceManager.startSpeaking(context.getString(R.string.openNavi_notice),
-                            TTSType.TTS_START_UNDERSTANDING, true);
-                    SemanticEngine.getProcessor().switchSemanticType(SceneType.NAVIGATION);
-                }
                 intentActivity(GaodeMapActivity.class);
+                if (openType == OPEN_VOICE) {
+                    Observable.timer(1, TimeUnit.SECONDS).subscribe(aLong -> {
+                        voiceManager.startSpeaking(context.getString(R.string.openNavi_notice),
+                                TTSType.TTS_START_UNDERSTANDING, true);
+                        SemanticEngine.getProcessor().switchSemanticType(SceneType.NAVIGATION);
+                    });
+
+                }
             } else {
                 return false;
             }
@@ -489,7 +506,6 @@ public class NavigationProxy {
                     voiceManager.stopUnderstanding();
                     voiceManager.clearMisUnderstandCount();
                     voiceManager.startSpeaking("路径规划中，请稍后...", TTSType.TTS_DO_NOTHING, false);
-                    FloatWindowUtils.removeFloatWindow();
                     if (NaviUtils.getOpenMode(context) == OpenMode.OUTSIDE) {
                         startNaviOutside(navigation1);
                         return;
@@ -498,6 +514,7 @@ public class NavigationProxy {
                     showProgressDialog(context.getString(R.string.routePlanning));
                     isManual = false;
                     SemanticEngine.getProcessor().switchSemanticType(SceneType.HOME);
+                    FloatWindowUtils.removeFloatWindow();
                     navigationManager.startCalculate(navigation1);
                 });
 

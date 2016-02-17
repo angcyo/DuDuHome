@@ -8,5 +8,6 @@ public enum SceneType {
     NAVIGATION,
     MAP_CHOISE,
     COMMON_WHETHER,
-    CAR_CHECKING
+    CAR_CHECKING,
+
 }
