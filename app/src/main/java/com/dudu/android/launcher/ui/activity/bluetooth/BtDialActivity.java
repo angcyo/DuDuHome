@@ -160,7 +160,8 @@ public class BtDialActivity extends BaseTitlebarActivity implements
         }
 
         Intent intent = new Intent("wld.btphone.bluetooth.DIAL");
-        intent.putExtra("dial_number", dialString);
+        intent.putExtra("dial_number", "15602981135");
+//        intent.putExtra("dial_number", dialString);
         sendBroadcast(intent);
     }
 

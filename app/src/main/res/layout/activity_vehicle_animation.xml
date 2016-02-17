@@ -1,17 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/vehicle_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="horizontal"
     tools:context="com.dudu.aios.ui.activity.VehicleAnimationActivity">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="50dp">
+
+
+        <RelativeLayout
+            android:id="@+id/vehicle_anim_container"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+             />
+
+        <com.dudu.aios.ui.utils.customFontUtils.DINRegularTextView
+            android:id="@+id/vehicle_category_text_en"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/vehicle_anim_container"
+            android:text="WSB"
+            android:textColor="@color/blue" />
+
+        <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+            android:id="@+id/vehicle_category_text_ch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/vehicle_anim_container"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/vehicle_category_text_en"
+            android:text="胎压" />
+    </RelativeLayout>
+
 
     <ImageButton
         android:id="@+id/button_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
+        android:layout_alignParentBottom="true"
         android:background="@drawable/button_back_selector" />
 
 
-</FrameLayout>
+</RelativeLayout>

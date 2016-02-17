@@ -11,14 +11,12 @@ import com.dudu.aios.ui.activity.VehicleAnimationActivity;
 import com.dudu.aios.ui.view.VehicleCheckResultView;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
+import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.carChecking.CarCheckingView;
 
-/**
- * Created by Administrator on 2016/2/2.
- */
 public class CarCheckingActivity extends BaseNoTitlebarAcitivity implements View.OnClickListener {
 
-    private int[] icons = {R.drawable.vehicle_device_health, R.drawable.vehicle_suggest_check, R.drawable.vehicle_suggest_maintain};
+    private int[] icons = {R.drawable.vehicle_fine_bg, R.drawable.vehicle_problem_bg};
 
     private CarCheckingView mAnimationView;
 
@@ -63,11 +61,11 @@ public class CarCheckingActivity extends BaseNoTitlebarAcitivity implements View
     public void initListener() {
         buttonBack.setOnClickListener(this);
 
-        engineVehicleCheckResultView.setOnClickListener(this);
-        gearboxVehicleCheckResultView.setOnClickListener(this);
-        absVehicleCheckResultView.setOnClickListener(this);
-        wsbVehicleCheckResultView.setOnClickListener(this);
-        rsrVehicleCheckResultView.setOnClickListener(this);
+        iconEnginePrompt.setOnClickListener(this);
+        iconGearboxPrompt.setOnClickListener(this);
+        iconAbsPrompt.setOnClickListener(this);
+        iconWsbPrompt.setOnClickListener(this);
+        iconSrsPrompt.setOnClickListener(this);
 
     }
 
@@ -79,20 +77,16 @@ public class CarCheckingActivity extends BaseNoTitlebarAcitivity implements View
 
     @Override
     public void initDatas() {
-        engineVehicleCheckResultView.setProgress(100);
-        setVehicleCheckState(100, tvEnginePrompt, iconEnginePrompt);
 
-        gearboxVehicleCheckResultView.setProgress(20);
-        setVehicleCheckState(20, tvGearboxPrompt, iconGearboxPrompt);
+        setVehicleCheckState(100, engineVehicleCheckResultView, tvEnginePrompt, iconEnginePrompt);
 
-        absVehicleCheckResultView.setProgress(30);
-        setVehicleCheckState(30, tvAbsPrompt, iconAbsPrompt);
+        setVehicleCheckState(20, gearboxVehicleCheckResultView, tvGearboxPrompt, iconGearboxPrompt);
 
-        wsbVehicleCheckResultView.setProgress(60);
-        setVehicleCheckState(60, tvWsbPrompt, iconWsbPrompt);
+        setVehicleCheckState(30, absVehicleCheckResultView, tvAbsPrompt, iconAbsPrompt);
 
-        rsrVehicleCheckResultView.setProgress(90);
-        setVehicleCheckState(90, tvSrsPrompt, iconSrsPrompt);
+        setVehicleCheckState(60, wsbVehicleCheckResultView, tvWsbPrompt, iconWsbPrompt);
+
+        setVehicleCheckState(90, rsrVehicleCheckResultView, tvSrsPrompt, iconSrsPrompt);
     }
 
     @Override
@@ -103,23 +97,23 @@ public class CarCheckingActivity extends BaseNoTitlebarAcitivity implements View
                 mAnimationView.stopAnim();
                 finish();
                 return;
-            case R.id.engine_vehicleCheckResult:
+            case R.id.engine_prompt_icon:
                 intent.putExtra("vehicle", "engine");
                 intent.putExtra("state", "red");
                 break;
-            case R.id.gearbox_vehicleCheckResult:
+            case R.id.gearbox_prompt_icon:
                 intent.putExtra("vehicle", "gearbox");
-                intent.putExtra("state", "blue");
+                intent.putExtra("state", "red");
                 break;
-            case R.id.abs_vehicleCheckResult:
+            case R.id.abs_prompt_icon:
                 intent.putExtra("vehicle", "abs");
-                intent.putExtra("state", "blue");
+                intent.putExtra("state", "red");
                 break;
-            case R.id.wsb_vehicleCheckResult:
+            case R.id.wsb_prompt_icon:
                 intent.putExtra("vehicle", "wsb");
                 intent.putExtra("state", "red");
                 break;
-            case R.id.srs_vehicleCheckResult:
+            case R.id.srs_prompt_icon:
                 intent.putExtra("vehicle", "srs");
                 intent.putExtra("state", "red");
                 break;
@@ -132,16 +126,18 @@ public class CarCheckingActivity extends BaseNoTitlebarAcitivity implements View
 
     }
 
-    private void setVehicleCheckState(int grade, TextView textView, ImageView imageView) {
-        if (grade == 100) {
-            textView.setText(getString(R.string.vehicle_device_health));
+    private void setVehicleCheckState(int grade, VehicleCheckResultView vehicleCheckResultView, TextView textView, ImageView imageView) {
+        if (grade >= 50) {
+            vehicleCheckResultView.setProgress(grade, 0);
+            textView.setText(getString(R.string.device_fine));
             imageView.setImageResource(icons[0]);
-        } else if (grade >= 50) {
-            textView.setText(getString(R.string.vehicle_suggest_check));
-            imageView.setImageResource(icons[1]);
+            imageView.setEnabled(false);
+            LogUtils.v("vehicle", "false");
         } else {
-            textView.setText(getString(R.string.vehicle_suggest_maintain));
-            imageView.setImageResource(icons[2]);
+            vehicleCheckResultView.setProgress(grade, 1);
+            textView.setText(getString(R.string.check_details));
+            imageView.setImageResource(icons[1]);
+            imageView.setEnabled(true);
         }
     }
 }

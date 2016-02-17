@@ -127,6 +127,9 @@
     <string name="password_unlock_ch">密码解锁</string>
     <string name="password_unlock_en">PASSWORD UNLOCK</string>
     <string name="gesture_unlock">手势解锁</string>
+    <string name="change_password_ch">解锁密码设置</string>
+    <string name="change_password_en">CHANGE PASSWORD</string>
+    <string name="verification_code">验证码</string>
 
     <string name="vehicle_locked">LOCKED</string>
     <string name="vehicle_unlock">UNLOCK</string>
@@ -184,4 +187,7 @@
     <string name="plaseChoose_place">为您找到以下地址，请选择第几个</string>
     <string name="plaseChoose_strategy">请选择路线优先策略</string>
     <string name="choose_error">选择错误，请重新选择</string>
+    <string name="check_details">查看详情</string>
+    <string name="device_fine">设备良好</string>
+
 </resources>

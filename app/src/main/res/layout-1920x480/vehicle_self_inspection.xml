@@ -109,13 +109,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:layout_marginLeft="-30dp"
         android:layout_toRightOf="@+id/maintain_remind_container"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="60dp"
-            android:layout_marginLeft="40dp"
+            android:layout_height="55dp"
+            android:layout_marginLeft="80dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -140,7 +141,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/engine_chinese"
-                    android:textSize="18sp" />
+                    android:textSize="16sp" />
 
                 <com.dudu.aios.ui.utils.customFontUtils.DINRegularTextView
                     android:layout_width="wrap_content"
@@ -156,25 +157,28 @@
                 android:layout_height="20dp"
                 android:layout_marginLeft="10dp" />
 
-            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
-                android:id="@+id/engine_prompt_text"
+            <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/vehicle_device_health"
-                android:textSize="18sp" />
+                android:layout_marginLeft="10dp">
 
-            <ImageView
-                android:id="@+id/engine_prompt_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="3dp"
-                android:src="@drawable/vehicle_device_health" />
+                <ImageView
+                    android:id="@+id/engine_prompt_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                    android:id="@+id/engine_prompt_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp" />
+            </FrameLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="60dp"
-            android:layout_marginLeft="30dp"
+            android:layout_height="55dp"
+            android:layout_marginLeft="70dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -199,7 +203,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/gearbox_chinese"
-                    android:textSize="18sp" />
+                    android:textSize="16sp" />
 
                 <com.dudu.aios.ui.utils.customFontUtils.DINRegularTextView
                     android:layout_width="wrap_content"
@@ -215,25 +219,31 @@
                 android:layout_height="20dp"
                 android:layout_marginLeft="10dp" />
 
-            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
-                android:id="@+id/gearbox_prompt_text"
+            <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="3dp"
-                android:text="@string/vehicle_suggest_check"
-                android:textSize="18sp" />
+                android:layout_marginLeft="10dp">
 
-            <ImageView
-                android:id="@+id/gearbox_prompt_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/vehicle_suggest_check" />
+                <ImageView
+                    android:id="@+id/gearbox_prompt_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                    android:id="@+id/gearbox_prompt_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp" />
+
+            </FrameLayout>
+
+
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="60dp"
-            android:layout_marginLeft="20dp"
+            android:layout_height="55dp"
+            android:layout_marginLeft="60dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -258,7 +268,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/abs_chinese"
-                    android:textSize="18sp" />
+                    android:textSize="16sp" />
 
                 <com.dudu.aios.ui.utils.customFontUtils.DINRegularTextView
                     android:layout_width="wrap_content"
@@ -275,25 +285,28 @@
                 android:layout_height="20dp"
                 android:layout_marginLeft="10dp" />
 
-            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
-                android:id="@+id/abs_prompt_text"
+            <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/vehicle_device_health"
-                android:textSize="18sp" />
+                android:layout_marginLeft="10dp">
 
-            <ImageView
-                android:id="@+id/abs_prompt_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="3dp"
-                android:src="@drawable/vehicle_device_health" />
+                <ImageView
+                    android:id="@+id/abs_prompt_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                    android:id="@+id/abs_prompt_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp" />
+            </FrameLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="60dp"
-            android:layout_marginLeft="10dp"
+            android:layout_height="55dp"
+            android:layout_marginLeft="40dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -318,7 +331,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/wsb_chinese"
-                    android:textSize="18sp" />
+                    android:textSize="16sp" />
 
                 <com.dudu.aios.ui.utils.customFontUtils.DINRegularTextView
                     android:layout_width="wrap_content"
@@ -335,24 +348,27 @@
                 android:layout_height="20dp"
                 android:layout_marginLeft="10dp" />
 
-            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
-                android:id="@+id/wsb_prompt_text"
+            <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/vehicle_device_health"
-                android:textSize="18sp" />
+                android:layout_marginLeft="10dp">
 
-            <ImageView
-                android:id="@+id/wsb_prompt_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="3dp"
-                android:src="@drawable/vehicle_device_health" />
+                <ImageView
+                    android:id="@+id/wsb_prompt_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                    android:id="@+id/wsb_prompt_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp" />
+            </FrameLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="60dp"
+            android:layout_height="55dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -377,7 +393,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/srs_chinese"
-                    android:textSize="18sp" />
+                    android:textSize="16sp" />
 
                 <com.dudu.aios.ui.utils.customFontUtils.DINRegularTextView
                     android:layout_width="wrap_content"
@@ -392,20 +408,22 @@
                 android:layout_height="20dp"
                 android:layout_marginLeft="10dp" />
 
-
-            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
-                android:id="@+id/srs_prompt_text"
+            <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/vehicle_device_health"
-                android:textSize="18sp" />
+                android:layout_marginLeft="10dp">
 
-            <ImageView
-                android:id="@+id/srs_prompt_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="3dp"
-                android:src="@drawable/vehicle_device_health" />
+                <ImageView
+                    android:id="@+id/srs_prompt_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                    android:id="@+id/srs_prompt_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp" />
+            </FrameLayout>
         </LinearLayout>
 
     </LinearLayout>
@@ -425,7 +443,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/button_vehicle_replace"
         android:layout_marginLeft="-10dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="70dp"
         android:layout_toRightOf="@+id/vehicle_maintain_container"
         android:background="@drawable/button_vehicle_clear_selector" />
 

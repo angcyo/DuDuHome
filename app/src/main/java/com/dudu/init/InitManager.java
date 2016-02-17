@@ -216,7 +216,7 @@ public class InitManager {
         startFloatButtonService();
 
         logger.debug("[init][{}]开启蓝牙电话服务", log_step++);
-        //startBluetoothService();
+        startBluetoothService();
 
         logger.debug("[init][{}]打开用户激活状态检查", log_step++);
         startCheckUserService();
@@ -236,7 +236,7 @@ public class InitManager {
 
         //VideoManager.getInstance().init();
 
-        VoiceManagerProxy.getInstance().onInit();
+//        VoiceManagerProxy.getInstance().onInit();
     }
 
     public boolean isFinished() {

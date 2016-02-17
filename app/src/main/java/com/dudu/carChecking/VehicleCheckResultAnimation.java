@@ -158,8 +158,8 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
                 frameCount = "00" + mFrameCounter;
             } else if (mFrameCounter < 100) {
                 frameCount = "0" + mFrameCounter;
-            }else {
-                frameCount=""+mFrameCounter;
+            } else {
+                frameCount = "" + mFrameCounter;
             }
 
             LogUtils.v("vehicle", frameCount);
@@ -181,7 +181,7 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
         }
     }
 
-    public void stopAnim(){
+    public void stopAnim() {
         mThread.setRunning(false);
         try {
             mThread.join();

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
@@ -16,7 +17,7 @@ import com.dudu.carChecking.VehicleCheckResultAnimation;
 
 public class VehicleAnimationActivity extends BaseNoTitlebarAcitivity implements View.OnClickListener {
 
-    private FrameLayout container;
+    private RelativeLayout container;
 
     private ImageButton buttonBack;
 
@@ -29,7 +30,7 @@ public class VehicleAnimationActivity extends BaseNoTitlebarAcitivity implements
 
     @Override
     public void initView(Bundle savedInstanceState) {
-        container = (FrameLayout) findViewById(R.id.vehicle_container);
+        container = (RelativeLayout) findViewById(R.id.vehicle_anim_container);
         buttonBack = (ImageButton) findViewById(R.id.button_back);
     }
 

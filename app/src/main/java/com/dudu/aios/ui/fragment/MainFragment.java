@@ -166,7 +166,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
                 break;
 
             case R.id.prevent_rob:
-                getFragmentManager().beginTransaction().replace(R.id.container, new VehicleFragment()).commit();
+                getFragmentManager().beginTransaction().replace(R.id.container, new RobberyFragment()).commit();
                 break;
 
             case R.id.voice_imageBtn:
