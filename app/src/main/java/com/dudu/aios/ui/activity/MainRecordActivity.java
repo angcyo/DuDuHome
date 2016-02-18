@@ -14,22 +14,20 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.view.MotionEvent;
-import android.view.Window;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.FrameLayout;
 
-import com.dudu.aios.ui.fragment.RobberyFragment;
-import com.dudu.aios.ui.fragment.video.DrivingRecordFragment;
+import com.dudu.aios.ui.base.BaseActivity;
 import com.dudu.aios.ui.fragment.FlowFragment;
 import com.dudu.aios.ui.fragment.MainFragment;
 import com.dudu.aios.ui.fragment.PhotoFragment;
 import com.dudu.aios.ui.fragment.PhotoListFragment;
+import com.dudu.aios.ui.fragment.RobberyFragment;
 import com.dudu.aios.ui.fragment.VideoFragment;
 import com.dudu.aios.ui.fragment.VideoListFragment;
-import com.dudu.aios.ui.fragment.base.VolBrightnessSetting;
-import com.dudu.aios.ui.robbery.VehicleFragment;
+import com.dudu.aios.ui.fragment.video.DrivingRecordFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
-import com.dudu.aios.ui.voice.VoiceEvent;
 import com.dudu.aios.ui.voice.VoiceFragment;
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
@@ -48,7 +46,7 @@ import java.util.Calendar;
 
 import de.greenrobot.event.EventBus;
 
-public class MainRecordActivity extends Activity {
+public class MainRecordActivity extends BaseActivity {
     private static final int SET_PREVIEW = 0;
 
     private FragmentTransaction ft;
@@ -67,8 +65,6 @@ public class MainRecordActivity extends Activity {
 
     private static final int MY_REQUEST_CODE = 9999;
 
-    public VolBrightnessSetting volBrightnessSetting;
-
     private Bundle bundle;
 
     private boolean isPreviewIng = false;
@@ -79,12 +75,15 @@ public class MainRecordActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_record);
         initData();
 
         initView();
         this.bundle = savedInstanceState;
+    }
+
+    @Override
+    protected View getChildView() {
+        return LayoutInflater.from(this).inflate(R.layout.activity_record,null);
     }
 
     private void initData() {
@@ -274,17 +273,11 @@ public class MainRecordActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        return volBrightnessSetting.getOnTouchEventReturnFlag(event);
-    }
-
-
 
     @Override
     protected void onResume() {
         super.onResume();
-        ActivitiesManager.getInstance().addActivity(this);
         replaceFragment(FragmentConstants.FRAGMENT_MAIN_PAGE);
+        observableFactory.getCommonObservable().hasTitle.set(true);
     }
 }

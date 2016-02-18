@@ -46,7 +46,7 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
     }
 
     @Override
-    public View getChildView() {
+    public View getView() {
 
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_driving_record, null);
 

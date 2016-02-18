@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.dudu.aios.ui.base.TitleBarObservable" />
+
+        <import type="com.dudu.aios.ui.base.CommonObservable" />
+
+        <import type="android.view.View" />
+
+        <variable
+            name="title"
+            type="TitleBarObservable" />
+
+        <variable
+            name="common"
+            type="CommonObservable" />
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/base_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/common_title_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="@{common.hasTitle ? View.VISIBLE : View.GONE}">
+
+            <include
+                bind:title="@{title}"
+                layout="@layout/activity_custom_title_aio" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/main_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/common_title_layout" />
+    </RelativeLayout>
+
+</layout>

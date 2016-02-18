@@ -36,7 +36,7 @@ public class FlowFragment extends BaseFragment implements View.OnClickListener {
     private static final String DEFAULT_FLOW_VALUE = "1024000";
 
     @Override
-    public View getChildView() {
+    public View getView() {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_flow, null);
         initFragmentView(view);
         initClickListener();

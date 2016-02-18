@@ -35,7 +35,7 @@ public class VehicleFragment extends BaseFragment implements View.OnClickListene
 
 
     @Override
-    public View getChildView() {
+    public View getView() {
         preventView = LayoutInflater.from(getActivity()).inflate(R.layout.prevent_rob_layout, null);
         initView();
         initListener();

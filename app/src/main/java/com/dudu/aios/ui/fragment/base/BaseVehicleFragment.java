@@ -27,7 +27,7 @@ public abstract class BaseVehicleFragment extends BaseFragment implements View.O
 
     @Override
 
-    public View getChildView() {
+    public View getView() {
         view = LayoutInflater.from(getActivity()).inflate(R.layout.prevent_rob_layout, null);
         initVehicleView(view);
         initOnListener();

@@ -19,7 +19,7 @@ import de.greenrobot.event.EventBus;
 public class VoiceFragment extends BaseFragment {
 
     @Override
-    public View getChildView() {
+    public View getView() {
 
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.voice_layout, null);
 

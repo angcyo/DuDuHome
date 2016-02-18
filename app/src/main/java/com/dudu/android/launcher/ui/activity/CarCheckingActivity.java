@@ -2,19 +2,21 @@ package com.dudu.android.launcher.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dudu.aios.ui.activity.VehicleAnimationActivity;
+import com.dudu.aios.ui.base.BaseActivity;
 import com.dudu.aios.ui.view.VehicleCheckResultView;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.carChecking.CarCheckingView;
 
-public class CarCheckingActivity extends BaseNoTitlebarAcitivity implements View.OnClickListener {
+public class CarCheckingActivity extends BaseActivity implements View.OnClickListener {
 
     private int[] icons = {R.drawable.vehicle_fine_bg, R.drawable.vehicle_problem_bg};
 
@@ -29,12 +31,19 @@ public class CarCheckingActivity extends BaseNoTitlebarAcitivity implements View
     private ImageButton buttonBack;
 
     @Override
-    public int initContentView() {
-        return R.layout.activity_car_checking;
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        initView();
+
+        initListener();
+
+        initDatas();
+
+
     }
 
-    @Override
-    public void initView(Bundle savedInstanceState) {
+    public void initView() {
         mAnimationView = (CarCheckingView) findViewById(R.id.car_checking_view);
         engineVehicleCheckResultView = (VehicleCheckResultView) findViewById(R.id.engine_vehicleCheckResult);
         gearboxVehicleCheckResultView = (VehicleCheckResultView) findViewById(R.id.gearbox_vehicleCheckResult);
@@ -57,7 +66,6 @@ public class CarCheckingActivity extends BaseNoTitlebarAcitivity implements View
         buttonBack = (ImageButton) findViewById(R.id.button_back);
     }
 
-    @Override
     public void initListener() {
         buttonBack.setOnClickListener(this);
 
@@ -70,12 +78,16 @@ public class CarCheckingActivity extends BaseNoTitlebarAcitivity implements View
     }
 
     @Override
+    protected View getChildView() {
+        return LayoutInflater.from(this).inflate( R.layout.activity_car_checking,null);
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         mAnimationView.stopAnim();
     }
 
-    @Override
     public void initDatas() {
 
         setVehicleCheckState(100, engineVehicleCheckResultView, tvEnginePrompt, iconEnginePrompt);

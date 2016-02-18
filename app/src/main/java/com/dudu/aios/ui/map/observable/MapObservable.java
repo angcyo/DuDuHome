@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
+import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import com.dudu.aios.ui.activity.MainRecordActivity;
@@ -302,7 +304,10 @@ public class MapObservable {
 
     public void onEventMainThread(ChooseEvent event) {
 
-        switch (event.getChooseType()) {
+        LinearLayoutManager lm= (LinearLayoutManager) binding.mapListView.getLayoutManager();
+        Log.d("lxh"," findFirstVisibleItemPosition "+lm.findFirstVisibleItemPosition());
+
+            switch (event.getChooseType()) {
 
             case ChooseEvent.ADDRESS_NUMBER:
                 chooseAddress(mapList.get(event.getPosition() - 1).poiResult.get(), event.getPosition() - 1);

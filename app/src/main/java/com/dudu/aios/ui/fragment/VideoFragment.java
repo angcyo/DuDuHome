@@ -28,7 +28,7 @@ public class VideoFragment extends BaseFragment implements View.OnClickListener 
     private AnimationDrawable animationDrawable;
 
     @Override
-    public View getChildView() {
+    public View getView() {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_video, null);
         initFragmentView(view);
         initClickListener();

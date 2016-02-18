@@ -22,7 +22,7 @@ public class VideoPreviewFragment extends BaseFragment {
 
 
     @Override
-    public View getChildView() {
+    public View getView() {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_video_preview, null);
         return view;
     }

@@ -1,4 +1,4 @@
-package com.dudu.aios.ui.fragment.base;
+package com.dudu.aios.ui.base;
 
 import android.app.Activity;
 import android.content.Context;

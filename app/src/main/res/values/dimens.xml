@@ -56,4 +56,12 @@
     <dimen name="message_listView_marginLeft">200dp</dimen>
     <dimen name="map_ListView_marginLeft">200dp</dimen>
 
+
+    <dimen name="title_icon_bluetooth_marginLeft">15dp</dimen>
+    <dimen name="title_icon_video_signal_marginLeft">15dp</dimen>
+    <dimen name="title_icon_video_signal_marginRight">15dp</dimen>
+    <dimen name="title_text_gps_marginLeft">5dp</dimen>
+    <dimen name="title_text_gps_textSize">9sp</dimen>
+    <dimen name="title_signal_container_marginRight">15dp</dimen>
+
 </resources>

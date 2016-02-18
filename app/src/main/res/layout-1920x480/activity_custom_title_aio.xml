@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <import type="android.graphics.drawable.Drawable" />
+
+        <import type="com.dudu.aios.ui.base.TitleBarObservable" />
+
+        <import type="android.view.View" />
+
+        <variable
+            name="title"
+            type="TitleBarObservable" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/title_logo"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/bluetooth_img"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/gps_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@{title.gps ? @drawable/gps_signal_normal : @drawable/gps_signal_error}"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="@string/gps"
+                android:textColor="@color/white"
+                android:textSize="9sp" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_centerVertical="true"
+            android:id="@+id/bluetooth_img"
+            android:layout_toLeftOf="@+id/video_signal_image"
+            android:src="@{title.bluetooth ? @drawable/bluetooth_on : @drawable/bluetooth_off}" />
+
+        <ImageView
+            android:id="@+id/video_signal_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_toLeftOf="@+id/signal_container"
+            android:src="@{title.video ? @drawable/video_signal_recording : @drawable/video_signal_stop}" />
+
+        <LinearLayout
+            android:id="@+id/signal_container"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:layout_marginRight="18dp"
+            android:layout_alignParentRight="true">
+
+            <TextView
+                android:id="@+id/signal_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{title.single}"
+                android:textColor="@color/white"
+                android:textSize="9sp" />
+
+            <ImageView
+                android:id="@+id/signal_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:src="@{title.single_drawable}"
+                android:visibility="@{title.showSingle ? View.VISIBLE : View.GONE}"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+</layout>
