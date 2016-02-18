@@ -6,6 +6,7 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dudu.aios.ui.activity.MainRecordActivity;
+import com.dudu.aios.ui.fragment.video.adapter.VideoListViewAdapter;
+import com.dudu.aios.ui.fragment.video.view.CusomSwipeView;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.R;
 
@@ -29,9 +32,9 @@ import java.util.ArrayList;
 
 public class VideoListFragment extends Fragment implements View.OnClickListener {
 
-    private GridView mVideoGridView;
 
-    private LinearLayout mPreVideoContainer, mPostVideoContainer;
+    private CusomSwipeView videoListView;
+    private VideoListViewAdapter videoListViewAdapter;
 
     private LinearLayout emptyView;
 
@@ -39,7 +42,6 @@ public class VideoListFragment extends Fragment implements View.OnClickListener 
 
     private TextView mPreVideoTextChinese, mPostVideoTextChinese, mPreVideoTextEnglish, mPostVideoTextEnglish;
 
-    private VideoAdapter mAdapter;
 
     private ArrayList<VideoEntity> mVideoData;
 
@@ -61,36 +63,44 @@ public class VideoListFragment extends Fragment implements View.OnClickListener 
 
     private void initVideoData() {
         mVideoData = new ArrayList<>();
-        mAdapter = new VideoAdapter(getActivity(), mVideoData);
-        mVideoGridView.setAdapter(mAdapter);
+
+        videoListViewAdapter = new VideoListViewAdapter(this, null);
+        //设置布局管理器
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        videoListView.setLayoutManager(linearLayoutManager);
+        videoListView.setAdapter(videoListViewAdapter);
+
         new LoadVideoTask().execute();
     }
 
     private void initClickListener() {
-        mPreVideoContainer.setOnClickListener(this);
-        mPostVideoContainer.setOnClickListener(this);
+//        mPreVideoContainer.setOnClickListener(this);
+//        mPostVideoContainer.setOnClickListener(this);
         mBackButton.setOnClickListener(this);
     }
 
     private void initFragmentView(View view) {
-        mVideoGridView = (GridView) view.findViewById(R.id.videoGridView);
-        mPreVideoContainer = (LinearLayout) view.findViewById(R.id.pre_video_container);
+//        mVideoGridView = (GridView) view.findViewById(R.id.videoGridView);
+//        mPreVideoContainer = (LinearLayout) view.findViewById(R.id.pre_video_container);
         mPreVideoButton = (ImageButton) view.findViewById(R.id.button_pre_video);
         mPreVideoTextChinese = (TextView) view.findViewById(R.id.pre_video_text_chinese);
         mPreVideoTextEnglish = (TextView) view.findViewById(R.id.pre_video_text_english);
-        mPostVideoContainer = (LinearLayout) view.findViewById(R.id.post_video_container);
+//        mPostVideoContainer = (LinearLayout) view.findViewById(R.id.post_video_container);
         mPostVideoButton = (ImageButton) view.findViewById(R.id.button_post_video);
         mPostVideoTextChinese = (TextView) view.findViewById(R.id.post_video_text_chinese);
         mPostVideoTextEnglish = (TextView) view.findViewById(R.id.post_video_text_english);
         emptyView = (LinearLayout) view.findViewById(R.id.video_empty_container);
         mBackButton = (ImageButton) view.findViewById(R.id.button_back);
+
+        videoListView = (CusomSwipeView)view.findViewById(R.id.video_list_view);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
 
-            case R.id.pre_video_container:
+           /* case R.id.pre_video_container:
                 mPreVideoButton.setBackgroundResource(R.drawable.prepositive_video_checked);
                 mPreVideoTextChinese.setTextColor(getResources().getColor(R.color.white));
                 mPreVideoTextEnglish.setTextColor(getResources().getColor(R.color.white));
@@ -106,7 +116,7 @@ public class VideoListFragment extends Fragment implements View.OnClickListener 
                 mPreVideoButton.setBackgroundResource(R.drawable.prepositive_video_unchecked);
                 mPreVideoTextChinese.setTextColor(getResources().getColor(R.color.unchecked_textColor));
                 mPreVideoTextEnglish.setTextColor(getResources().getColor(R.color.unchecked_textColor));
-                break;
+                break;*/
 
             case R.id.button_back:
                 replaceFragment(FragmentConstants.FRAGMENT_DRIVING_RECORD);
@@ -226,8 +236,6 @@ public class VideoListFragment extends Fragment implements View.OnClickListener 
             TextView tvDate;
             CheckBox checkBox;
             ImageView imageUploading;
-
-
         }
     }
 
@@ -243,12 +251,11 @@ public class VideoListFragment extends Fragment implements View.OnClickListener 
         protected void onPostExecute(Void aVoid) {
             if (mVideoData != null) {
                 emptyView.setVisibility(View.GONE);
-                mVideoGridView.setVisibility(View.VISIBLE);
+
             } else {
                 emptyView.setVisibility(View.VISIBLE);
-                mVideoGridView.setVisibility(View.GONE);
+
             }
-            mAdapter.setData(mVideoData);
         }
     }
 

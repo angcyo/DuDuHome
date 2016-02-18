@@ -94,9 +94,7 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
     @Override
     public void onDestroy() {
         super.onDestroy();
-//       stopFrontPreview();
-
-        previewFrameLayout.removeView(cameraPreview);
+        startFrontPreview();
         DriveVideo.getInstance().getRearCameraDriveVideo().stopPreview();
     }
 
@@ -121,34 +119,18 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
         }
     }
 
-    private void initFrontPreview(){
-        if(DriveVideo.getInstance().getFrontCameraDriveVideo().getmCamera()  != null){
-            log.debug("初始化前置预览");
-//            cameraPreview = new CameraPreview(CommonLib.getInstance().getContext(), DriveVideo.getInstance().getFrontCameraDriveVideo().getmCamera());
-            cameraPreview = DriveVideo.getInstance().getFrontCameraDriveVideo().getCameraPreview();
-            previewFrameLayout.addView(cameraPreview);
-        }
-    }
 
     private void stopFrontPreview(){
-        if (DriveVideo.getInstance().getFrontCameraDriveVideo().getmCamera()  != null && cameraPreview != null){
+        if (DriveVideo.getInstance().getFrontCameraDriveVideo().getmCamera()  != null){
             log.debug("停止前置预览");
-//            cameraPreview.stopPreview();
-            cameraPreview.setVisibility(View.INVISIBLE);
-//            previewFrameLayout.removeView(cameraPreview);
+            DriveVideo.getInstance().getFrontCameraDriveVideo().getCameraPreview().stopPreview();
         }
     }
 
     private void startFrontPreview(){
         if (DriveVideo.getInstance().getFrontCameraDriveVideo().getmCamera() != null) {
-            if (cameraPreview == null){
-                initFrontPreview();
-            }
             log.debug("开启前置预览");
-//            previewFrameLayout.addView(cameraPreview);
-            cameraPreview.setVisibility(View.VISIBLE);
-//            cameraPreview.setSurfaceHolder();
-//            cameraPreview.startPreview();
+            DriveVideo.getInstance().getFrontCameraDriveVideo().getCameraPreview().startPreview();
         }
     }
 
@@ -156,7 +138,7 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
         if (isFrontCameraPreView){
             isFrontCameraPreView = false;
 
-            stopFrontPreview();
+//            stopFrontPreview();
 
 //            DriveVideo.getInstance().getRearCameraDriveVideo().setImageView(mRearCameraPreviewView);
 //            DriveVideo.getInstance().getRearCameraDriveVideo().startPreview();
@@ -166,7 +148,7 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
 //            mRearCameraPreviewView.setVisibility(View.INVISIBLE);
 //            DriveVideo.getInstance().getRearCameraDriveVideo().stopPreview();
 
-            startFrontPreview();
+//            startFrontPreview();
         }
     }
 }

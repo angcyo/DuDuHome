@@ -48,50 +48,25 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             mCamera.setPreviewDisplay(holder);
             mCamera.startPreview();
 
-            DriveVideo.getInstance().getFrontCameraDriveVideo().startRecord();
+//            DriveVideo.getInstance().getFrontCameraDriveVideo().startRecord();
         } catch (IOException e) {
             log.error("异常：", e);
         }
     }
 
     public void surfaceDestroyed(SurfaceHolder holder) {
-        // empty. Take care of releasing the Camera preview in your activity.
+
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
-        // If your preview can change or rotate, take care of those events here.
-        // Make sure to stop the preview before resizing or reformatting it.
-     /*   log.debug("surfaceChanged改变");
-        if (mHolder.getSurface() == null){
-            // preview surface does not exist
-            return;
-        }
-        log.debug("surfaceChanged改变----");
-        // stop preview before making changes
-        try {
-            mCamera.stopPreview();
-        } catch (Exception e){
-            log.error("异常：", e);
-        }
 
-        // set preview size and make any resize, rotate or
-        // reformatting changes here
-
-        // start preview with new settings
-        try {
-            mCamera.setPreviewDisplay(mHolder);
-            mCamera.startPreview();
-
-        } catch (Exception e){
-            log.error("异常：", e);
-        }*/
     }
 
 
 
     public void startPreview() {
         log.debug("前置开启预览");
-
+        setSurfaceHolder();
         mCamera.startPreview();
     }
 

@@ -1,4 +1,4 @@
-package com.dudu.drivevideo.db;
+package com.dudu.drivevideo.storage;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -14,12 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 public class DbHelper extends SQLiteOpenHelper {
 
@@ -81,19 +78,6 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS notes");
         onCreate(db);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -297,14 +281,11 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     private ContentValues getVideoValues(VideoEntity video) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
-                Locale.getDefault());
-        String dateString = format.format(new Date());
         ContentValues videos = new ContentValues();
         videos.put(VIDEO_COLUMN_NAME, video.getName());
         videos.put(VIDEO_COLUMN_PATH, video.getPath());
         videos.put(VIDEO_COLUMN_STATUS, video.getStatus());
-        videos.put(VIDEO_COLUMN_CREATE_TIME, dateString);
+        videos.put(VIDEO_COLUMN_CREATE_TIME, video.getCreateTime());
         videos.put(VIDEO_COLUMN_SIZE, video.getSize());
         return videos;
     }

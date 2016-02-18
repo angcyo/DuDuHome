@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="39dp">
 
     <FrameLayout
         android:id="@+id/video_frame_container"
-        android:layout_width="100dp"
-        android:layout_height="70dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="@drawable/video_frame">
 
         <ImageButton
@@ -21,8 +23,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:layout_marginRight="5dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginTop="12dp"
             android:background="@drawable/button_delete_video_selector" />
 
 
@@ -31,8 +33,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right|bottom"
-            android:layout_marginBottom="4dp"
-            android:layout_marginRight="5dp"
+            android:layout_marginBottom="9dp"
+            android:layout_marginRight="12dp"
             android:background="@drawable/upload_video_selector" />
 
         <LinearLayout
@@ -93,25 +95,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/video_frame_container"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <CheckBox
             android:id="@+id/video_check_box"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:button="@drawable/video_lock_check_box" />
 
         <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
             android:id="@+id/tv_video_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
+            android:layout_marginLeft="10dp"
             android:text="20160102/13:00-14:00"
-            android:textSize="8sp" />
-
+            android:textSize="11sp" />
     </LinearLayout>
 
+    <ImageView
+        android:layout_width="42dp"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/video_frame_container"/>
 
 </RelativeLayout>

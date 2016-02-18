@@ -27,11 +27,13 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
     private FrontVideoConfigParam frontVideoConfigParam;
     private String curVideoFileAbsolutePath;
 
+    private boolean isOpenedCamera = false;
+    private String openCameraLock = "openCameraLock";
     private Camera mCamera = null;
     private CameraPreview cameraPreview;
+
     private MediaRecorder mMediaRecorder;
-
-
+    private String redordingLock = "redordingLock";
     private boolean isRecording = false;
 
     private Logger log;
@@ -46,36 +48,40 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
         frontVideoConfigParam = new FrontVideoConfigParam();
     }
 
-    public boolean initCamera(){
-        log.debug("开始初始化camera...");
-        try {
-            mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
-            cameraPreview = new CameraPreview(CommonLib.getInstance().getContext(), mCamera);
-        } catch (Exception e) {
-            log.error("获取相机失败", e);
-            return false;
-        }
-        Camera.Parameters params = mCamera.getParameters();
-        params.setPreviewFormat(PixelFormat.YCbCr_420_SP);
+    public void initCamera(){
+        if (isOpenedCamera)
+            return ;
+        synchronized (openCameraLock) {
+            log.debug("开始初始化camera...");
+            try {
+                mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
+                cameraPreview = new CameraPreview(CommonLib.getInstance().getContext(), mCamera);
+            } catch (Exception e) {
+                log.error("获取相机失败", e);
+                return;
+            }
+            Camera.Parameters params = mCamera.getParameters();
+            params.setPreviewFormat(PixelFormat.YCbCr_420_SP);
 
 //        params.setPreviewSize(CommonLib.getInstance().getContext().getResources().getDisplayMetrics().widthPixels,
 //                CommonLib.getInstance().getContext().getResources().getDisplayMetrics().heightPixels);
-        params.setPreviewSize(1920, 480);
-        params.setPictureSize(1920, 480);
+            params.setPreviewSize(1920, 480);
+            params.setPictureSize(1920, 480);
 //        List<Camera.Size> sizeList =  params.getSupportedPictureSizes();
 //        sizeList =params.getSupportedVideoSizes();
 //        sizeList = params.getSupportedPreviewSizes();
 
 
-        mCamera.setParameters(params);
-        mCamera.setErrorCallback(new Camera.ErrorCallback() {
-            @Override
-            public void onError(int error, Camera camera) {
-                log.error("相机出错了： " + error);
-            }
-        });
-        log.debug("初始化camera成功...");
-        return true;
+            mCamera.setParameters(params);
+            mCamera.setErrorCallback(new Camera.ErrorCallback() {
+                @Override
+                public void onError(int error, Camera camera) {
+                    log.error("相机出错了： " + error);
+                }
+            });
+            log.debug("初始化camera成功...");
+            isOpenedCamera = true;
+        }
     }
 
     public void releaseCamera(){
@@ -84,6 +90,7 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
             mCamera.release();
             mCamera = null;
         }
+        isOpenedCamera = false;
     }
 
     private boolean prepareMediaRecorder() {
@@ -133,6 +140,7 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
     }
 
     public void releaseMediaRecorder(){
+        log.debug("释放mediaRecorder");
         if (mMediaRecorder != null) {
             mMediaRecorder.reset();   // clear recorder configuration
             mMediaRecorder.release(); // release the recorder object
@@ -142,47 +150,42 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
     }
 
 
-    public boolean startDriveVideo() {
-        log.debug("开始行车记录");
-        boolean returnFlag = false;
-        if (initCamera()){
-            returnFlag = startRecord();
-        }
-        return returnFlag;
-    }
-
     public void stopDrvieVideo(){
         log.debug("结束行车记录");
         releaseMediaRecorder();
         releaseCamera();
     }
 
-    public boolean startRecord(){
-        if (isRecording)
-            return true;
-        log.debug("开始录像");
-        boolean returnFlag = false;
-        if (prepareMediaRecorder()){
-            try {
+    public void startRecord(){
+        if (isRecording) {
+            log.info("录像正在运行");
+            return;
+        }
+        if (cameraPreview.getmHolder() == null){
+            log.info("SurfaceHolder未初始化");
+            return;
+        }
+        synchronized (redordingLock) {
+            log.debug("开始录像");
+            if (prepareMediaRecorder()){
                 mMediaRecorder.start();
                 isRecording = true;
-                returnFlag = true;
-            }catch (Exception e){
-                log.error("开始录像失败");
             }
-
-
         }
-        return returnFlag;
     }
 
     public void stopRecord(){
-        log.debug("结束录像");
-        if (mMediaRecorder != null){
-            mMediaRecorder.stop();
+        if (!isRecording)
+            return;
+        synchronized (redordingLock) {
+            log.debug("结束录像");
+            if (mMediaRecorder != null){
+                mMediaRecorder.stop();
+            }
+            releaseMediaRecorder();
+            isRecording = false;
         }
-        releaseMediaRecorder();
-        isRecording = false;
+        log.debug("结束录像成功");
     }
 
 
@@ -237,5 +240,14 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
 
     public CameraPreview getCameraPreview() {
         return cameraPreview;
+    }
+
+
+    public boolean isOpenedCamera() {
+        return isOpenedCamera;
+    }
+
+    public boolean isRecording() {
+        return isRecording;
     }
 }

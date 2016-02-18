@@ -1,8 +1,12 @@
 package com.dudu.drivevideo.service;
 
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
+import android.os.Message;
 
 import com.dudu.drivevideo.broadcast.TFlashCardReceiver;
+import com.dudu.drivevideo.storage.VideoFileManage;
 import com.dudu.drivevideo.utils.FileUtil;
 import com.dudu.drivevideo.video.FrontCameraDriveVideo;
 
@@ -22,14 +26,17 @@ import rx.functions.Action1;
  * Description :
  */
 public class FrontDriveVideoService {
+    private static final int INIT_CAMERA = 0;
+    private static final int START_RECORD = 1;
+
     private FrontCameraDriveVideo frontCameraDriveVideo;
     private TFlashCardReceiver tFlashCardReceiver;
 
     private ScheduledExecutorService driveVideoThreadPool = null;
     private Logger log;
 
-    private boolean isOpenedCamera = false;
-    private boolean isRecording = false;
+    private DriveVideoHandler driveVideoHandler;
+
 
     public FrontDriveVideoService() {
         log = LoggerFactory.getLogger("video.frontdrivevideo");
@@ -37,89 +44,82 @@ public class FrontDriveVideoService {
         frontCameraDriveVideo = new FrontCameraDriveVideo();
         tFlashCardReceiver = new TFlashCardReceiver();
 
+        driveVideoHandler = new DriveVideoHandler(/*handlerThread.getLooper()*/);
+
         initThreadPool();
     }
 
 
-    private Thread drvieVideoThread = new Thread(){
-        @Override
-        public void run() {
-            try {
-                log.debug("运行drvieVideoThread----");
-                if (isOpenedCamera && FileUtil.isTFlashCardExists()){
-                    restartRecord();
-                }
-            } catch (Exception e) {
-                log.error("异常：", e);
-            }
-        }
-    };
 
     private Thread guardThread = new Thread(){
         @Override
         public void run() {
-            Looper.prepare();
             try {
-                if (isOpenedCamera == false){
-                    if (frontCameraDriveVideo.initCamera()){
-                        isOpenedCamera = true;
-//                        startRecord();
-                    }else {
-                        frontCameraDriveVideo.releaseCamera();
-                    }
+                log.debug("运行守护线程");
+                if (frontCameraDriveVideo.isOpenedCamera()){
+                    restartRecord();
                 }else {
-                    if (isRecording == false){
-//                       startRecord();
-                    }
+                    log.debug("发送初始化摄像头消息");
+                    driveVideoHandler.sendEmptyMessage(INIT_CAMERA);
                 }
+
+                VideoFileManage.getInstance().guardTFCardSpace();
             } catch (Exception e) {
                 log.error("异常：", e);
                 frontCameraDriveVideo.stopDrvieVideo();
-                isOpenedCamera = false;
             }
-            Looper.loop();
         }
     };
 
-    private void startRecord(){
-        if(frontCameraDriveVideo.startRecord()){
-            isRecording = true;
-        }else {
-            frontCameraDriveVideo.releaseMediaRecorder();
+    private class DriveVideoHandler extends Handler {
+
+        public DriveVideoHandler(/*Looper looper*/) {
+            super(Looper.getMainLooper());
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case INIT_CAMERA:
+                    log.info("处理INIT_CAMERA消息");
+                    initCamera();
+                    break;
+                case START_RECORD:
+                    log.info("处理START_RECORD消息");
+                    frontCameraDriveVideo.startRecord();
+                    if (!frontCameraDriveVideo.isRecording()){
+                        driveVideoHandler.sendEmptyMessageDelayed(START_RECORD, 1*1000);
+                    }
+                    break;
+            }
         }
     }
 
+    private void initCamera(){
+        try {
+            frontCameraDriveVideo.initCamera();
+            if (frontCameraDriveVideo.isOpenedCamera()){
+              driveVideoHandler.sendEmptyMessage(START_RECORD);
+            }else {
+                frontCameraDriveVideo.releaseCamera();
+            }
+        } catch (Exception e) {
+            log.error("异常：", e);
+        }
+    }
 
     private void restartRecord(){
         log.debug("重启前置摄像头录像");
         frontCameraDriveVideo.stopRecord();
-//        frontCameraDriveVideo.stopDrvieVideo();
-
+        String videoFileAbPath = frontCameraDriveVideo.getCurVideoFileAbsolutePath();
         frontCameraDriveVideo.startRecord();
+        VideoFileManage.getInstance().saveVideoInfo(videoFileAbPath);
     }
 
     public void startDriveVideo(){
         log.debug("开启前置摄像头行车记录");
         tFlashCardReceiver.registReceiver();
-
-        driveVideoThreadPool.scheduleAtFixedRate(guardThread, 0, 10, TimeUnit.SECONDS);
-//        scheduleDrvieVideoThread(frontCameraDriveVideo.getFrontVideoConfigParam().getVideoInterval() / 1000);
-    }
-
-    private void scheduleDrvieVideoThread(int period){
-        driveVideoThreadPool.scheduleAtFixedRate(drvieVideoThread, period, period, TimeUnit.SECONDS);
-    }
-
-    private void tryInitCamera(){
-        Observable.timer(5, TimeUnit.SECONDS).subscribe(new Action1<Long>() {
-            @Override
-            public void call(Long aLong) {
-                if (!isOpenedCamera){
-                    log.info("再次尝试初始化摄像头");
-                    isOpenedCamera = frontCameraDriveVideo.initCamera();
-                }
-            }
-        });
+        driveVideoThreadPool.scheduleAtFixedRate(guardThread, 0, frontCameraDriveVideo.getFrontVideoConfigParam().getVideoInterval()/1000, TimeUnit.SECONDS);
     }
 
 
@@ -132,7 +132,7 @@ public class FrontDriveVideoService {
 
     public void initThreadPool(){
         if (driveVideoThreadPool == null){
-            driveVideoThreadPool = Executors.newScheduledThreadPool(2);
+            driveVideoThreadPool = Executors.newScheduledThreadPool(1);
         }
     }
 
