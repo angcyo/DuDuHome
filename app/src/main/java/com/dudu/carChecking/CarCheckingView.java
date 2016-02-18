@@ -29,14 +29,26 @@ public class CarCheckingView extends SurfaceView implements SurfaceHolder.Callba
 
     private CarCheckingThread mThread;
 
-    public CarCheckingView(Context context) {
+    private String category;
+
+    private int model;
+
+    private boolean isAppear = true;
+
+    public CarCheckingView(Context context, String category, int model) {
         super(context);
+        this.category = category;
+        this.model = model;
         initView(context);
     }
 
     public CarCheckingView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView(context);
+    }
+
+    public void setIsAppear(boolean isAppear) {
+        this.isAppear = isAppear;
     }
 
     private void initView(Context context) {
@@ -86,7 +98,13 @@ public class CarCheckingView extends SurfaceView implements SurfaceHolder.Callba
 
         private static final int MAXIMUM_FRAME_COUNT = 125;
 
-        private static final String PICTURE_PREFIX = "normal_p1_car";
+        private static final int MAXIMUM_FRAME_CYCLE_COUNT = 99;
+
+        private String picturePrefix = "NP1_0";
+
+        private String path = "appear";
+
+        private static final String VEHICLE_CATEGORY_DIR = "animation/vehicle/category/";
 
         private Context mContext;
 
@@ -111,30 +129,70 @@ public class CarCheckingView extends SurfaceView implements SurfaceHolder.Callba
 
         @Override
         public void run() {
-            while (mRunning && mFrameCounter < MAXIMUM_FRAME_COUNT) {
-                Canvas c = null;
-                try {
-                    synchronized (mHolder) {
-                        mFrameCounter++;
+            if (isAppear) {
+                doAppearAnimation();
+            }
 
-                        LogUtils.v("CarCheckingView", "当前播放帧数: " + mFrameCounter);
-                        c = mHolder.lockCanvas();
+            doCycleAnimation();
+        }
 
-                        doAnimation(c);
-                    }
-                } finally {
-                    if (c != null) {
-                        mHolder.unlockCanvasAndPost(c);
+        private void doCycleAnimation() {
+            mFrameCounter = 0;
+            picturePrefix = "NP2_0";
+            path = "cycle";
+            while (mRunning && mFrameCounter < MAXIMUM_FRAME_CYCLE_COUNT) {
+                mFrameCounter++;
+                if (mFrameCounter % model == 0) {
+                    Canvas c = null;
+                    try {
+                        synchronized (mHolder) {
+                            if (mFrameCounter == MAXIMUM_FRAME_CYCLE_COUNT) {
+                                mFrameCounter = 1;
+                            }
+                            LogUtils.v("CarCheckingView1", "当前播放帧数: " + mFrameCounter);
+                            c = mHolder.lockCanvas();
+
+                            doAnimation(c);
+                        }
+                    } finally {
+                        if (c != null) {
+                            mHolder.unlockCanvasAndPost(c);
+                        }
                     }
                 }
+
+
+            }
+        }
+
+        private void doAppearAnimation() {
+            while (mRunning && mFrameCounter < MAXIMUM_FRAME_COUNT) {
+                mFrameCounter++;
+                if (mFrameCounter % model != 0) {
+                    Canvas c = null;
+                    try {
+                        synchronized (mHolder) {
+                            LogUtils.v("CarCheckingView", "当前播放帧数: " + mFrameCounter);
+                            c = mHolder.lockCanvas();
+
+                            doAnimation(c);
+                        }
+                    } finally {
+                        if (c != null) {
+                            mHolder.unlockCanvasAndPost(c);
+                        }
+                    }
+                }
+
             }
         }
 
         private void doAnimation(Canvas c) {
 
             c.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-            if (loadAnimationBitmap() != null) {
-                c.drawBitmap(loadAnimationBitmap(), 0, 0, mPaint);
+            Bitmap bitmap = loadAnimationBitmap();
+            if (bitmap != null) {
+                c.drawBitmap(bitmap, 0, 0, mPaint);
             }
 
         }
@@ -144,24 +202,28 @@ public class CarCheckingView extends SurfaceView implements SurfaceHolder.Callba
             options.inMutable = true;
 
             // AssetManager am = mContext.getAssets();
+            String stCount;
+            if (mFrameCounter < 10) {
+                stCount = "00" + mFrameCounter;
+            } else if (mFrameCounter < 100) {
+                stCount = "0" + mFrameCounter;
+            } else {
+                stCount = "" + mFrameCounter;
+            }
 
             InputStream is;
-            File file = new File(FileUtils.getStorageDir(), "animation/vehicle/car_checking/" + PICTURE_PREFIX + mFrameCounter + ".png");
+            File file = new File(FileUtils.getStorageDir(), VEHICLE_CATEGORY_DIR + category + "/" + path + "/" + picturePrefix + stCount + ".png");
             // is = am.open("car_checking/" + PICTURE_PREFIX + mFrameCounter + ".png");
-            LogUtils.v("vehicle", FileUtils.getStorageDir().toString());
+            LogUtils.v("vehicle", "count:" + stCount);
             if (file.exists()) {
                 try {
-                    LogUtils.v("vehicle", "存在");
                     is = new FileInputStream(file);
                     return BitmapFactory.decodeStream(is);
                 } catch (IOException e) {
                     LogUtils.e("CarCheckingView", e.getMessage());
                     return null;
                 }
-            } else {
-                LogUtils.v("vehicle", "不存在");
             }
-
             return null;
 
         }

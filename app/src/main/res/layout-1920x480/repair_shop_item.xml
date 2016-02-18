@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+
+        <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+            android:id="@+id/repair_shop_name"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:maxWidth="150dp"
+            android:minWidth="30dp"
+            android:singleLine="true"
+            android:text="米其林驰加店"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:id="@+id/grade_container"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="2dp"
+            android:orientation="horizontal" />
+
+        <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+            android:id="@+id/repair_shop_distance"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="4dp"
+            android:singleLine="true"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="6dp">
+
+            <ImageButton
+                android:id="@+id/repair_shop_navigate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_to_navigate_selector" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/to_navigate"
+                android:textColor="@color/white"
+                android:textSize="10sp" />
+        </FrameLayout>
+
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:src="@drawable/vehicle_line_long" />
+
+
+</LinearLayout>

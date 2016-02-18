@@ -3,11 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.dudu.carChecking.CarCheckingView
-        android:id="@+id/car_checking_view"
+    <RelativeLayout
+        android:id="@+id/anim_container"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="-100dp" />
+        android:layout_height="wrap_content" />
 
     <include layout="@layout/vehicle_self_inspection" />
 </FrameLayout>

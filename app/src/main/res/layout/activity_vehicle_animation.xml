@@ -7,17 +7,16 @@
     tools:context="com.dudu.aios.ui.activity.VehicleAnimationActivity">
 
     <RelativeLayout
+        android:id="@+id/animation_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:layout_marginLeft="50dp">
-
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="34dp">
 
         <RelativeLayout
             android:id="@+id/vehicle_anim_container"
             android:layout_width="150dp"
-            android:layout_height="150dp"
-             />
+            android:layout_height="150dp" />
 
         <com.dudu.aios.ui.utils.customFontUtils.DINRegularTextView
             android:id="@+id/vehicle_category_text_en"
@@ -25,17 +24,109 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/vehicle_anim_container"
             android:text="WSB"
-            android:textColor="@color/blue" />
+            android:textColor="@color/blue"
+            android:textSize="32sp" />
 
         <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
             android:id="@+id/vehicle_category_text_ch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/vehicle_anim_container"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="18dp"
             android:layout_toRightOf="@+id/vehicle_category_text_en"
-            android:text="胎压" />
+            android:text="胎压"
+            android:textColor="@color/white"
+            android:textSize="25sp" />
     </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/vehicle_exception_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/animation_container">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/vehicle_exception_wire_frame" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/excalmatory_mark_icon" />
+
+                <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="6dp"
+                    android:text="@string/warning_en"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+
+            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:text="左前轮胎压异常"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="17dp"
+                android:text="左前轮胎压异常"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="80dp"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@+id/vehicle_exception_container"
+        android:orientation="vertical">
+
+        <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="@string/nearby_tire_shop"
+            android:textColor="@color/blue"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/vehicle_line_short" />
+
+        <ListView
+            android:id="@+id/repair_shop_listView"
+            android:layout_width="600dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="10dp" />
+
+    </LinearLayout>
 
 
     <ImageButton

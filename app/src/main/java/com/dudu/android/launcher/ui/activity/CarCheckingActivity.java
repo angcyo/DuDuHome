@@ -6,13 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dudu.aios.ui.activity.VehicleAnimationActivity;
 import com.dudu.aios.ui.base.BaseActivity;
 import com.dudu.aios.ui.view.VehicleCheckResultView;
 import com.dudu.android.launcher.R;
-import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.carChecking.CarCheckingView;
 
@@ -30,6 +30,8 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
 
     private ImageButton buttonBack;
 
+    private RelativeLayout animContainer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,8 +45,15 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
 
     }
 
+    @Override
+    protected View getChildView() {
+        return LayoutInflater.from(this).inflate(R.layout.activity_car_checking, null);
+    }
+
     public void initView() {
-        mAnimationView = (CarCheckingView) findViewById(R.id.car_checking_view);
+        animContainer = (RelativeLayout) findViewById(R.id.anim_container);
+        mAnimationView = new CarCheckingView(this, "mvp", 3);
+        animContainer.addView(mAnimationView);
         engineVehicleCheckResultView = (VehicleCheckResultView) findViewById(R.id.engine_vehicleCheckResult);
         gearboxVehicleCheckResultView = (VehicleCheckResultView) findViewById(R.id.gearbox_vehicleCheckResult);
         absVehicleCheckResultView = (VehicleCheckResultView) findViewById(R.id.abs_vehicleCheckResult);
@@ -78,11 +87,6 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
     }
 
     @Override
-    protected View getChildView() {
-        return LayoutInflater.from(this).inflate( R.layout.activity_car_checking,null);
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
         mAnimationView.stopAnim();
@@ -111,28 +115,23 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
                 return;
             case R.id.engine_prompt_icon:
                 intent.putExtra("vehicle", "engine");
-                intent.putExtra("state", "red");
                 break;
             case R.id.gearbox_prompt_icon:
                 intent.putExtra("vehicle", "gearbox");
-                intent.putExtra("state", "red");
                 break;
             case R.id.abs_prompt_icon:
                 intent.putExtra("vehicle", "abs");
-                intent.putExtra("state", "red");
                 break;
             case R.id.wsb_prompt_icon:
                 intent.putExtra("vehicle", "wsb");
-                intent.putExtra("state", "red");
                 break;
             case R.id.srs_prompt_icon:
                 intent.putExtra("vehicle", "srs");
-                intent.putExtra("state", "red");
                 break;
         }
         if (intent != null) {
             mAnimationView.stopAnim();
-            startActivity(intent);
+            startActivityForResult(intent, 2);// 请求码
 
         }
 
@@ -144,12 +143,22 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
             textView.setText(getString(R.string.device_fine));
             imageView.setImageResource(icons[0]);
             imageView.setEnabled(false);
-            LogUtils.v("vehicle", "false");
         } else {
             vehicleCheckResultView.setProgress(grade, 1);
             textView.setText(getString(R.string.check_details));
             imageView.setImageResource(icons[1]);
             imageView.setEnabled(true);
+        }
+    }
+
+    @Override
+    /**
+     * 当跳转的activity(被激活的activity)使用完毕,销毁的时候调用该方法
+     */
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2) {
+            mAnimationView.setIsAppear(false);
         }
     }
 }

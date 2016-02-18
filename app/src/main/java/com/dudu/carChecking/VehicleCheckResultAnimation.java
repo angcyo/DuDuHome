@@ -25,34 +25,11 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
 
     private CarCheckingThread mThread;
 
-    private String frameCount = "1";
+    private String category;
 
-    private static final String PICTURE_PREFIX_ONE = "Warning_P2_";
-
-    private static final String PICTURE_PREFIX_TWO = "_";
-
-    private static final String PICTURE_PREFIX_THREE = "_scale_0";
-
-    private static final String PICTURE_DIR = "animation/vehicle/";
-
-    private String picturePath;
-
-    public VehicleCheckResultAnimation(Context context, String path, String state) {
+    public VehicleCheckResultAnimation(Context context, String category) {
         super(context);
-        String picturePrefix = "engine";
-        if (path.equals("gearbox")) {
-            picturePrefix = "Transsision";
-        } else if (path.equals("engine")) {
-            picturePrefix = "engine";
-        } else if (path.equals("abs")) {
-            picturePrefix = "abs";
-        } else if (path.equals("wsb")) {
-            picturePrefix = "tire";
-        } else if (path.equals("srs")) {
-            picturePrefix = "SRS";
-        }
-        picturePath = PICTURE_DIR + path + "/" + state + "/" + PICTURE_PREFIX_ONE + picturePrefix + PICTURE_PREFIX_TWO + state + PICTURE_PREFIX_THREE;
-        LogUtils.v("jjj", picturePath);
+        this.category = category;
         initView(context);
     }
 
@@ -95,6 +72,7 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
 
         private static final int MAXIMUM_FRAME_COUNT = 50;
 
+        private static final int MAXIMUM_FRAME_CYCLE_COUNT = 148;
 
         private Context mContext;
 
@@ -105,6 +83,12 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
         private Paint mPaint;
 
         private int mFrameCounter = 0;
+
+        private static final String VEHICLE_MALFUNCTION = "animation/vehicle/malfunction/";
+
+        private String path = "appear";
+
+        private static final String PICTURE_FRAME_PREFIX = "Anim_00";
 
         public CarCheckingThread(Context context, SurfaceHolder holder) {
             mContext = context;
@@ -119,6 +103,14 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
 
         @Override
         public void run() {
+
+            doAppearAnimation();
+
+            doCycleAnimation();
+
+        }
+
+        private void doAppearAnimation() {
             while (mRunning && mFrameCounter < MAXIMUM_FRAME_COUNT) {
                 Canvas c = null;
                 try {
@@ -138,12 +130,38 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
             }
         }
 
+        private void doCycleAnimation() {
+            mFrameCounter = 0;
+            path = "cycle";
+            while (mRunning && mFrameCounter < MAXIMUM_FRAME_CYCLE_COUNT) {
+                Canvas c = null;
+                try {
+                    synchronized (mHolder) {
+                        mFrameCounter++;
+
+                        LogUtils.v("CarCheckingView", "当前播放帧数: " + mFrameCounter);
+                        c = mHolder.lockCanvas();
+
+                        doAnimation(c);
+                        if (mFrameCounter == MAXIMUM_FRAME_CYCLE_COUNT) {
+                            mFrameCounter = 1;
+                        }
+                    }
+                } finally {
+                    if (c != null) {
+                        mHolder.unlockCanvasAndPost(c);
+                    }
+                }
+            }
+        }
+
         private void doAnimation(Canvas c) {
 
             c.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
-            if (loadAnimationBitmap() != null) {
-                c.drawBitmap(loadAnimationBitmap(), 0, 0, mPaint);
+            Bitmap bitmap = loadAnimationBitmap();
+            if (bitmap != null) {
+                c.drawBitmap(bitmap, 0, 0, mPaint);
             }
 
         }
@@ -153,6 +171,7 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
             options.inMutable = true;
 
             // AssetManager am = mContext.getAssets();
+            String frameCount;
 
             if (mFrameCounter < 10) {
                 frameCount = "00" + mFrameCounter;
@@ -163,10 +182,10 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
             }
 
             LogUtils.v("vehicle", frameCount);
-
             InputStream is;
-            File file = new File(FileUtils.getStorageDir(), picturePath + frameCount + ".png");
+            File file = new File(FileUtils.getStorageDir(), VEHICLE_MALFUNCTION + category + "/" + path + "/" + PICTURE_FRAME_PREFIX + frameCount + ".png");
             // is = am.open("car_checking/" + PICTURE_PREFIX + mFrameCounter + ".png");
+            LogUtils.v("jj", VEHICLE_MALFUNCTION + category + "/" + path + "/" + PICTURE_FRAME_PREFIX + frameCount + ".png");
             if (file.exists()) {
                 try {
                     is = new FileInputStream(file);

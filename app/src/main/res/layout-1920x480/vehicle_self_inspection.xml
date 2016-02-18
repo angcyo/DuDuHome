@@ -8,7 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="35dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="5dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -433,7 +433,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:layout_toRightOf="@+id/vehicle_maintain_container"
         android:background="@drawable/button_vehicle_replace_selector" />
 

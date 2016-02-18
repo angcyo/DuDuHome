@@ -189,5 +189,9 @@
     <string name="choose_error">选择错误，请重新选择</string>
     <string name="check_details">查看详情</string>
     <string name="device_fine">设备良好</string>
+    <string name="warning_en">WARNING</string>
+    <string name="nearby_tire_shop">附近评价最高的轮胎保养品牌</string>
+    <string name="to_navigate">导航前往</string>
+    <string name="distance_ch">距离</string>
 
 </resources>
