@@ -50,17 +50,19 @@
                     android:singleLine="true"
                     android:text="@{mapItem.addressName}"
                     android:textColor="@color/black"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"
+                    android:ellipsize="marquee"
+                    android:focusableInTouchMode="true"/>
 
                 <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                     android:id="@+id/map_distance"
-                    android:layout_width="86dp"
+                    android:layout_width="90dp"
                     android:layout_height="match_parent"
                     android:layout_alignParentRight="true"
                     android:layout_gravity="right"
                     android:text="@{mapItem.distance}"
                     android:textColor="@color/color_grey"
-                    android:textSize="18sp"
+                    android:textSize="17sp"
                     android:gravity="center"/>
 
             </RelativeLayout>
@@ -74,10 +76,12 @@
                 android:layout_marginRight="@dimen/dp_20"
                 android:singleLine="true"
                 android:text="@{mapItem.address}"
-                android:textSize="16sp"
+                android:textSize="15sp"
                 android:layout_toRightOf="@+id/number"
                 android:paddingLeft="@dimen/dp_10"
-                android:textColor="@color/color_grey"/>
+                android:textColor="@color/color_grey"
+                android:ellipsize="marquee"
+                android:focusableInTouchMode="true"/>
 
         </RelativeLayout>
 

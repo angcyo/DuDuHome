@@ -1,13 +1,13 @@
 package com.dudu.aios.ui.map;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -27,6 +27,7 @@ import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.databinding.GaodeMapLayoutBinding;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.monitor.Monitor;
+import com.dudu.voice.VoiceManagerProxy;
 
 /**
  * Created by lxh on 16/2/11.
@@ -99,6 +100,11 @@ public class GaodeMapActivity extends Activity implements LocationSource {
         aMap.setMyLocationType(AMap.LOCATION_TYPE_LOCATE);
         aMap.moveCamera(CameraUpdateFactory.zoomTo(15));
 
+        aMap.setOnMapTouchListener(motionEvent -> {
+          mapObservable.displayList();
+
+        });
+
     }
 
     private void setLocationStyle() {
@@ -150,6 +156,10 @@ public class GaodeMapActivity extends Activity implements LocationSource {
             return false;
         });
 
+        binding.mapListView.setHasFixedSize(true);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        binding.mapListView.setLayoutManager(layoutManager);
     }
 
 

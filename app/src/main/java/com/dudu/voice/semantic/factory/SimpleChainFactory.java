@@ -7,6 +7,7 @@ import com.dudu.voice.semantic.chain.NavigationChain;
 import com.dudu.voice.semantic.chain.PhoneChain;
 import com.dudu.voice.semantic.chain.VideoPlayChain;
 import com.dudu.voice.semantic.chain.VolumeChain;
+import com.dudu.voice.semantic.chain.WeatherChain;
 import com.dudu.voice.semantic.chain.map.CommonAddressChain;
 import com.dudu.voice.semantic.chain.map.MapLocationChain;
 import com.dudu.voice.semantic.chain.map.MapNearbyChain;
@@ -94,6 +95,11 @@ public class SimpleChainFactory {
     public MapNearestChain getMapNearestChain() {
         MapNearestChain chain = new MapNearestChain();
         chain.addChildChain(chain);
+        return chain;
+    }
+
+    public WeatherChain getWeatherChain(){
+        WeatherChain chain = new WeatherChain();
         return chain;
     }
 

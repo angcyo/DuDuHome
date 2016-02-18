@@ -236,7 +236,7 @@ public class InitManager {
 
         //VideoManager.getInstance().init();
 
-//        VoiceManagerProxy.getInstance().onInit();
+        VoiceManagerProxy.getInstance().onInit();
     }
 
     public boolean isFinished() {

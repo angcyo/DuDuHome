@@ -23,6 +23,7 @@ import org.scf4a.Event;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -189,5 +190,86 @@ public class WeatherUtils {
         }
 
         return currentCity;
+    }
+
+
+    public static int daysBetween(Date start, Date end) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+
+        Calendar calStart = Calendar.getInstance();
+
+        calStart.setTime(start);
+
+        if (format.format(calStart.getTime()).equals(format.format(end))) {
+            return 0;
+        } else {
+            calStart.add(Calendar.DATE, 1);
+            if (format.format(calStart.getTime()).equals(format.format(end))) {
+                return 1;
+            } else {
+                calStart.add(Calendar.DATE, 1);
+                if (format.format(calStart.getTime()).equals(format.format(end))) {
+                    return 2;
+                } else {
+                    return 0;
+                }
+            }
+        }
+    }
+
+    /**
+     * @param province 需要处理的字符串
+     * @return 过滤一些末尾结束的文字(省)，避免查询不到结果
+     */
+    public static String getQueryProvince(String province) {
+
+        if (!TextUtils.isEmpty(province)) {
+            if (province.endsWith("省")) {
+                province = province.substring(0, province.length() - 1);
+            }
+        }
+
+        return province;
+    }
+
+    public static String getQueryCity(String city) {
+        String target;
+
+        if (!TextUtils.isEmpty(city)) {
+            if (city.length() > 2) {
+                if (city.endsWith("县")) {
+                    target = city.substring(0, city.length() - 1);
+                } else if (city.endsWith("市")) {
+                    target = city.substring(0, city.length() - 1);
+                } else {
+                    target = city;
+                }
+            } else {
+                target = city;
+            }
+        } else {
+            target = getQueryCity(LocationUtils.getInstance(
+                    LauncherApplication.getContext()).getCurrentCity());
+        }
+
+        return target;
+    }
+
+    /**
+     * @param timeStr 需要处理的字符串 eg:20150915
+     * @return 过滤一些末尾结束的文字(市，县)，避免查询不到结果
+     */
+    public static String getQueryTime(String timeStr) {
+        String target;
+
+        SimpleDateFormat targetFormat = new SimpleDateFormat("yyyyMMdd");
+
+        if (!TextUtils.isEmpty(timeStr)) {
+            target = timeStr;
+        } else {
+            target = targetFormat.format(new Date());
+        }
+
+        return target;
     }
 }

@@ -28,6 +28,8 @@ public abstract class BaseFragment extends Fragment {
     public void replaceFragment(String name) {
         MainRecordActivity activity = (MainRecordActivity) getActivity();
         activity.replaceFragment(name);
+        if (activity != null)
+            activity.replaceFragment(name);
     }
 
     public void onEventMainThread(VoiceEvent event) {

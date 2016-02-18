@@ -23,6 +23,7 @@ public class HomeScene extends SemanticScene {
         mChainMap.put(SemanticConstant.SERVICE_COMMONADDRESS,mChainFactory.getCommonAddressChain());
         mChainMap.put(SemanticConstant.SERVICE_LOCATION,mChainFactory.getMapLocationChain());
         mChainMap.put(SemanticConstant.SERVICE_NEAREST,mChainFactory.getMapNearestChain());
+        mChainMap.put(SemanticConstant.SERVICE_WEATHER, mChainFactory.getWeatherChain());
     }
 
     @Override

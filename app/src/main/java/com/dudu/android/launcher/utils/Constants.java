@@ -174,4 +174,6 @@ public class Constants {
 
 	public static final int ADDRESS_VIEW_COUNT = 4;
 
+	public static final String ERROR_GET_WEATHER = "抱歉，未能获取到天气信息";
+
 }

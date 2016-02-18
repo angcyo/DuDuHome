@@ -502,7 +502,6 @@ public class NavigationProxy {
         needNotify = true;
         naviSubscription = Observable.just(navigation)
                 .subscribe(navigation1 -> {
-                    navigationManager.getLog().debug("----startNavigation stopUnderstanding");
                     voiceManager.stopUnderstanding();
                     voiceManager.clearMisUnderstandCount();
                     voiceManager.startSpeaking("路径规划中，请稍后...", TTSType.TTS_DO_NOTHING, false);
