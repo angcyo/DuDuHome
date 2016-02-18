@@ -157,8 +157,7 @@ public class GaodeMapActivity extends Activity implements LocationSource {
         });
 
         binding.mapListView.setHasFixedSize(true);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        MyLinearLayoutManager layoutManager = new MyLinearLayoutManager(this);
         binding.mapListView.setLayoutManager(layoutManager);
     }
 

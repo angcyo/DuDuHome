@@ -163,9 +163,15 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
         log.debug("开始录像");
         boolean returnFlag = false;
         if (prepareMediaRecorder()){
-            mMediaRecorder.start();
-            isRecording = true;
-            returnFlag = true;
+            try {
+                mMediaRecorder.start();
+                isRecording = true;
+                returnFlag = true;
+            }catch (Exception e){
+                log.error("开始录像失败");
+            }
+
+
         }
         return returnFlag;
     }

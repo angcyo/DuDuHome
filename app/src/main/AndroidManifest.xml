@@ -149,11 +149,13 @@
         <activity
             android:name=".ui.activity.CarCheckingActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:theme="@style/AiosBaseTheme"/>
         <activity
             android:name="com.dudu.aios.ui.activity.MainRecordActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape"
+            android:theme="@style/AiosBaseTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -7,7 +7,7 @@
         android:id="@+id/voice_anim_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/dp_60"
+        android:layout_marginTop="@dimen/dp_70"
         android:gravity="center"
         android:orientation="vertical"
         android:visibility="gone"
@@ -60,7 +60,7 @@
             android:scrollbars="none"
             android:layout_marginLeft="50dp"
             android:layout_marginRight="50dp"
-            android:layout_marginTop="@dimen/dp_30"
+            android:layout_marginTop="@dimen/dp_70"
             android:layout_marginBottom="@dimen/dp_10"/>
     </LinearLayout>
 

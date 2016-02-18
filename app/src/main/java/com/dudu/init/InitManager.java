@@ -190,23 +190,17 @@ public class InitManager {
                     }
                 });*/
         rx.Observable.timer(10, TimeUnit.SECONDS)
-                .subscribe(new Action1<Long>() {
-                    @Override
-                    public void call(final Long aLong) {
-                        logger.debug("[init][{}]打开蓝牙", log_step++);
-                        openBlueTooth();
-                    }
+                .subscribe(aLong -> {
+                    logger.debug("[init][{}]打开蓝牙", log_step++);
+                    openBlueTooth();
                 });
         rx.Observable.timer(15, TimeUnit.SECONDS)
-                .subscribe(new Action1<Long>() {
-                    @Override
-                    public void call(final Long aLong) {
-                        logger.debug("[init][{}]启动OBD服务", log_step++);
-                        com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext,
-                                "sys.gps", "start");
-                      startOBDService();
-                        finished = true;
-                    }
+                .subscribe(aLong -> {
+                    logger.debug("[init][{}]启动OBD服务", log_step++);
+                    com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext,
+                            "sys.gps", "start");
+                  startOBDService();
+                    finished = true;
                 });
 
         logger.debug("[init][{}]启动监听服务", log_step++);
@@ -233,8 +227,6 @@ public class InitManager {
         screenOff();
 
         IPConfig.getInstance(mContext).init();
-
-        //VideoManager.getInstance().init();
 
         VoiceManagerProxy.getInstance().onInit();
     }

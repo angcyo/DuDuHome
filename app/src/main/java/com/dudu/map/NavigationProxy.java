@@ -485,6 +485,7 @@ public class NavigationProxy {
     }
 
     public void onChoosePage(int page) {
+        navigationManager.getLog().debug("----onChoosePage");
         EventBus.getDefault().post(new ChooseEvent(ChooseEvent.CHOOSEPAGE, page));
     }
 

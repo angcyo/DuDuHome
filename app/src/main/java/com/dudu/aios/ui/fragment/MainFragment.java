@@ -131,12 +131,9 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
         mWeatherView = (TextView) view.findViewById(R.id.text_weather);
         mWeatherImage = (ImageView) view.findViewById(R.id.weather_icon);
         voice_imageBtn = (ImageButton) view.findViewById(R.id.voice_imageBtn);
-        mWeatherImage.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                startFactory();
-                return true;
-            }
+        mWeatherImage.setOnLongClickListener(v -> {
+            startFactory();
+            return true;
         });
 
     }
@@ -171,7 +168,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
 
             case R.id.voice_imageBtn:
                 getFragmentManager().beginTransaction().replace(R.id.container, new VoiceFragment()).commit();
-                FloatWindowUtils.showAnimWindow();
+//                FloatWindowUtils.showAnimWindow();
                 VoiceManagerProxy.getInstance().startVoiceService();
                 break;
         }

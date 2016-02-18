@@ -204,13 +204,13 @@ public class BlueWindowManager extends BaseWindowManager {
     @Override
     public void removeFloatWindow() {
 
+        removeFloatView();
+
         isInit = false;
 
         stopAnimWindow();
 
         SemanticEngine.getProcessor().switchSemanticType(SceneType.HOME);
-
-        removeFloatView();
 
         mMapChoosing = false;
 
@@ -256,16 +256,15 @@ public class BlueWindowManager extends BaseWindowManager {
 
 
         if (ActivitiesManager.getInstance().getTopActivity() instanceof MainRecordActivity) {
-//            Bitmap blurBitmap = RxBlurEffective
-//                    .bestBlur(mContext, ScreenUtil.cacheCurrentScreen(ActivitiesManager.getInstance().getTopActivity()), 25, 0.2f)
-//                    .toBlocking()
-//                    .first();
-            view.setBackground(new BitmapDrawable(mContext.getResources(),  ScreenUtil.cacheCurrentScreen(ActivitiesManager.getInstance().getTopActivity())));
+            Bitmap blurBitmap = RxBlurEffective
+                    .bestBlur(mContext, ScreenUtil.cacheCurrentScreen(ActivitiesManager.getInstance().getTopActivity()), 25, 0.1f)
+                    .toBlocking()
+                    .first();
+            view.setBackground(new BitmapDrawable(mContext.getResources(), blurBitmap));
         } else {
             voice_animLayout.setVisibility(View.GONE);
             view.setBackground(null);
-            view.setBackgroundResource(R.color.video_unchecked_textColor);
-            view.setAlpha(0.8f);
+            view.setBackgroundResource(R.drawable.black_bg);
         }
     }
 }

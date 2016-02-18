@@ -4,16 +4,18 @@ import android.app.Activity;
 import android.content.Intent;
 
 import com.dudu.aios.ui.activity.MainRecordActivity;
+import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.ui.activity.CarCheckingActivity;
-import com.dudu.android.launcher.ui.activity.video.VideoActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.voice.FloatWindowUtils;
+import com.dudu.drivevideo.DriveVideo;
 import com.dudu.map.NavigationProxy;
+import com.dudu.voice.FloatWindowUtils;
 import com.dudu.voice.semantic.bean.CmdBean;
 import com.dudu.voice.semantic.bean.SemanticBean;
 import com.dudu.voice.semantic.constant.SceneType;
 import com.dudu.voice.semantic.constant.SemanticConstant;
+import com.dudu.voice.semantic.constant.TTSType;
 import com.dudu.voice.semantic.engine.SemanticEngine;
 
 /**
@@ -82,17 +84,31 @@ public class CmdChain extends SemanticChain {
             case Constants.OPEN:
             case Constants.QIDONG:
             case Constants.KAIQI:
-                Intent intent = new Intent();
-                intent.setClass(mContext, VideoActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                mContext.startActivity(intent);
+//                Intent intent = new Intent();
+//                intent.setClass(mContext, VideoActivity.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                mContext.startActivity(intent);
+
+                toMainRecord();
+                MainRecordActivity activity =(MainRecordActivity) ActivitiesManager.getInstance().getTopActivity();
+                activity.replaceFragment(FragmentConstants.FRAGMENT_DRIVING_RECORD);
                 break;
             case Constants.CLOSE:
             case Constants.EXIT:
             case Constants.GUANDIAO:
-                ActivitiesManager.getInstance().closeTargetActivity(
-                        VideoActivity.class);
+                toMainRecord();
+                DriveVideo.getInstance().stopDriveVideo();
+                mVoiceManager.startSpeaking("录像预览已关闭", TTSType.TTS_DO_NOTHING,false);
                 break;
+        }
+    }
+
+    private void toMainRecord(){
+        if (!(ActivitiesManager.getInstance().getTopActivity() instanceof MainRecordActivity)) {
+            Intent intent = new Intent();
+            intent.setClass(mContext, MainRecordActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mContext.startActivity(intent);
         }
     }
 
@@ -141,7 +157,7 @@ public class CmdChain extends SemanticChain {
             case Constants.KAIQI:
                 FloatWindowUtils.removeFloatWindow();
 //                Intent intent = new Intent(mContext, OBDCheckingActivity.class);
-                Intent intent=new Intent(mContext,CarCheckingActivity.class);
+                Intent intent = new Intent(mContext, CarCheckingActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivity(intent);
                 break;

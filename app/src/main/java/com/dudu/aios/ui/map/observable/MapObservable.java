@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.dudu.aios.ui.map.MapDbHelper;
+import com.dudu.aios.ui.map.MyLinearLayoutManager;
 import com.dudu.aios.ui.map.adapter.MapListAdapter;
 import com.dudu.aios.ui.map.adapter.RouteStrategyAdapter;
 import com.dudu.aios.ui.map.event.ChooseEvent;
@@ -32,6 +33,7 @@ import com.dudu.voice.semantic.constant.SceneType;
 import com.dudu.voice.semantic.constant.TTSType;
 import com.dudu.voice.semantic.engine.SemanticEngine;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
@@ -78,7 +80,6 @@ public class MapObservable {
 
     private boolean mapListViewMove;
 
-    private LinearLayoutManager layoutManager;
 
     private int mIndex = 0;
 
@@ -119,9 +120,6 @@ public class MapObservable {
         routeStrategyAdapter = new RouteStrategyAdapter((view, postion) -> {
             chooseDriveMode(postion);
         });
-
-
-        binding.mapListView.addOnScrollListener(new RecyclerViewListener());
 
     }
 
@@ -207,7 +205,6 @@ public class MapObservable {
 
 
     private void showAddress() {
-        navigationManager.getLog().debug(">>>>>>>>>>>>>>>> showAddress");
 
         navigationProxy.setChooseStep(1);
 
@@ -320,9 +317,10 @@ public class MapObservable {
 
     public void onEventMainThread(ChooseEvent event) {
 
-        LinearLayoutManager lm = (LinearLayoutManager) binding.mapListView.getLayoutManager();
-        Log.d("lxh", " findFirstVisibleItemPosition " + lm.findFirstVisibleItemPosition());
-        layoutManager = (LinearLayoutManager) binding.mapListView.getLayoutManager();
+        MyLinearLayoutManager lm = (MyLinearLayoutManager) binding.mapListView.getLayoutManager();
+        BigDecimal b = new BigDecimal(lm.findFirstVisibleItemPosition()/ADDRESS_VIEW_COUNT).setScale(0, BigDecimal.ROUND_HALF_UP);
+        pageIndex = b.intValue();
+        Log.d("lxh", " >>>>>>>>>>>>pageIndex " + pageIndex);
         switch (event.getChooseType()) {
 
             case ChooseEvent.ADDRESS_NUMBER:
@@ -332,13 +330,13 @@ public class MapObservable {
                 chooseDriveMode(event.getPosition() - 1);
                 break;
             case ChooseEvent.NEXTPAGE:
-                nextPage();
+                nextPage(lm);
                 break;
             case ChooseEvent.PREVIOUSPAGE:
-                previousPage();
+                previousPage(lm);
                 break;
             case ChooseEvent.CHOOSEPAGE:
-                choosePage(event.getPosition());
+                choosePage(event.getPosition(), lm);
         }
 
     }
@@ -356,36 +354,36 @@ public class MapObservable {
 
     }
 
-    private void nextPage() {
+    private void nextPage(LinearLayoutManager lm) {
         if (pageIndex >= 3
-                || layoutManager.findLastVisibleItemPosition() == mapList.size() - 1) {
+                || lm.findLastVisibleItemPosition() == mapList.size() - 1) {
             VoiceManagerProxy.getInstance().stopUnderstanding();
             VoiceManagerProxy.getInstance().startSpeaking("已经是最后一页", TTSType.TTS_START_UNDERSTANDING, false);
             return;
         }
         pageIndex++;
-        moveToPosition(pageIndex * ADDRESS_VIEW_COUNT);
+        binding.mapListView.scrollToPosition(pageIndex*ADDRESS_VIEW_COUNT);
     }
 
 
-    private void previousPage() {
+    private void previousPage(LinearLayoutManager lm) {
         if (pageIndex <= 0) {
             VoiceManagerProxy.getInstance().stopUnderstanding();
             VoiceManagerProxy.getInstance().startSpeaking("已经是第一页", TTSType.TTS_START_UNDERSTANDING, false);
             return;
         }
         pageIndex--;
-        moveToPosition(pageIndex * ADDRESS_VIEW_COUNT);
+        binding.mapListView.scrollToPosition(pageIndex*ADDRESS_VIEW_COUNT);
     }
 
-    private void choosePage(int page) {
+    private void choosePage(int page, LinearLayoutManager lm) {
         if (page > 4 || page < 1) {
             VoiceManagerProxy.getInstance().stopUnderstanding();
             VoiceManagerProxy.getInstance().startSpeaking("选择错误，请重新选择", TTSType.TTS_START_UNDERSTANDING, false);
             return;
         }
         pageIndex = page - 1;
-        moveToPosition(pageIndex * ADDRESS_VIEW_COUNT);
+       binding.mapListView.scrollToPosition(pageIndex*ADDRESS_VIEW_COUNT);
     }
 
     public void release() {
@@ -399,52 +397,7 @@ public class MapObservable {
     }
 
 
-    private void moveToPosition(int n) {
-        binding.mapListView.stopScroll();
-        mIndex = n;
-        int firstItem = layoutManager.findFirstVisibleItemPosition();
-        int lastItem = layoutManager.findLastVisibleItemPosition();
-        if (n <= firstItem) {
-            binding.mapListView.scrollToPosition(n);
-        } else if (n <= lastItem) {
-            int top = binding.mapListView.getChildAt(n - firstItem).getTop();
-            binding.mapListView.scrollBy(0, top);
-        } else {
-            binding.mapListView.scrollToPosition(n);
-            mapListViewMove = true;
-        }
 
-    }
-
-
-    class RecyclerViewListener extends RecyclerView.OnScrollListener {
-        @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-            if (mapListViewMove && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                mapListViewMove = false;
-                int n = mIndex - layoutManager.findFirstVisibleItemPosition();
-                if (0 <= n && n < binding.mapListView.getChildCount()) {
-                    int top = binding.mapListView.getChildAt(n).getTop();
-                    binding.mapListView.smoothScrollBy(0, top);
-                }
-
-            }
-        }
-
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-            if (mapListViewMove) {
-                mapListViewMove = false;
-                int n = mIndex - layoutManager.findFirstVisibleItemPosition();
-                if (0 <= n && n < binding.mapListView.getChildCount()) {
-                    int top = binding.mapListView.getChildAt(n).getTop();
-                    binding.mapListView.scrollBy(0, top);
-                }
-            }
-        }
-    }
 
     public void displayList() {
         showList.set(false);

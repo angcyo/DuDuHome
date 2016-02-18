@@ -18,7 +18,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="75dp"
             android:orientation="horizontal"
             android:background="@drawable/map_list_item_bg">
 
@@ -30,7 +30,7 @@
                 android:gravity="center"
                 android:text="@{mapItem.number}"
                 android:textColor="@color/black"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:visibility="@{mapItem.showNumber ? View.VISIBLE : View.GONE}"/>
 
 
@@ -50,7 +50,7 @@
                     android:singleLine="true"
                     android:text="@{mapItem.addressName}"
                     android:textColor="@color/black"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:ellipsize="marquee"
                     android:focusableInTouchMode="true"/>
 
@@ -62,7 +62,8 @@
                     android:layout_gravity="right"
                     android:text="@{mapItem.distance}"
                     android:textColor="@color/color_grey"
-                    android:textSize="17sp"
+                    android:textSize="16sp"
+                    android:singleLine="true"
                     android:gravity="center"/>
 
             </RelativeLayout>
