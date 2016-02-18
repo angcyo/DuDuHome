@@ -5,6 +5,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.dudu.android.launcher.LauncherApplication;
+import com.dudu.commonlib.utils.TestVerify;
 import com.tencent.android.tpush.XGIOperateCallback;
 import com.tencent.android.tpush.XGPushConfig;
 import com.tencent.android.tpush.XGPushManager;
@@ -16,6 +17,9 @@ public class ReceiverRegister {
     private static final String TAG ="ReceiverRegister";
 
     public static void registPushManager(String username) {
+        if(TestVerify.isEmpty(username)){
+            return;
+        }
         // 开启logcat输出，方便debug，发布时请关闭
         final Context context = LauncherApplication.getContext();
         XGPushConfig.enableDebug(context, true);

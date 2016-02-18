@@ -22,8 +22,9 @@ public class RobberyRequestTest {
     public void setUp() {
         CommonLib.getInstance().init();
         CommonParams.getInstance().init();
-        RequestFactory.getInstance().init();
         Request.getInstance().init();
+        RequestFactory.getInstance().init();
+        FlowFactory.getInstance().init();
     }
 
     @Test

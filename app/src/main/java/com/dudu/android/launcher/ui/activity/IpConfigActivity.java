@@ -96,7 +96,7 @@ public class IpConfigActivity extends BaseTitlebarActivity {
         editText_Testip.setText(ipConfig.getTestServerIP());
         editText_port.setText(ipConfig.getServerPort() + "");
         editText_Testport.setText(ipConfig.getTestServerPort() + "");
-        editText_Testport.setText(CommonParams.getInstance().getUserName() + "");
+        editText_UserName.setText(CommonParams.getInstance().getUserName() + "");
     }
 
 

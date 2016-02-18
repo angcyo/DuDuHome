@@ -6,11 +6,11 @@ import com.dudu.workflow.driving.DrivingFlow;
  * Created by Administrator on 2016/2/17.
  */
 public class FlowFactory {
-    private static RequestFactory mInstance = new RequestFactory();
+    private static FlowFactory mInstance = new FlowFactory();
 
     private DrivingFlow drivingFlow;
 
-    public static RequestFactory getInstance(){
+    public static FlowFactory getInstance(){
         return mInstance;
     }
 

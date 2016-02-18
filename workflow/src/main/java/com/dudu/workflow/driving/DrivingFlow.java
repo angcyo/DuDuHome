@@ -2,6 +2,7 @@ package com.dudu.workflow.driving;
 
 import com.dudu.commonlib.repo.ReceiverData;
 import com.dudu.commonlib.utils.RxBus;
+import com.dudu.rest.model.AccTestData;
 import com.dudu.workflow.RequestFactory;
 
 import org.slf4j.Logger;
@@ -17,7 +18,7 @@ public class DrivingFlow {
 
     private Logger logger = LoggerFactory.getLogger("DrivingFlow");
 
-    public void getReceiveDataFlow(){
+    public void getReceiveDataFlow() {
         RxBus.getInstance().asObservable()
                 .filter(new Func1<Object, Boolean>() {
                     @Override
@@ -28,19 +29,20 @@ public class DrivingFlow {
                 .map(new Func1<Object, ReceiverData>() {
                     @Override
                     public ReceiverData call(Object event) {
-                        return (ReceiverData)event;
+                        return (ReceiverData) event;
                     }
                 })
                 .subscribe(new Action1<ReceiverData>() {
                     @Override
                     public void call(ReceiverData data) {
+                        int type = data.getSwitchContent();
                         RequestFactory.getDrivingRequest()
-                                .pushAcceleratedTestData(getRamdomData(data.getSwitchContent()), new DrivingRequest.RequesetCallback() {
+                                .pushAcceleratedTestData(getAccTestData(getRamdomData(type), type), new DrivingRequest.RequesetCallback() {
                                     @Override
                                     public void requestSuccess(boolean success) {
-                                        if(success) {
+                                        if (success) {
                                             logger.debug("发送加速数据到服务端成功");
-                                        }else{
+                                        } else {
                                             logger.debug("发送加速数据到服务端成功");
 
                                         }
@@ -50,8 +52,16 @@ public class DrivingFlow {
                 });
     }
 
-    public double getRamdomData(int type){
-        switch (type){
+    public AccTestData getAccTestData(double value, int type) {
+        AccTestData accTestData = new AccTestData();
+        accTestData.setAccTotalTime(value);
+        accTestData.setAccType(type);
+        accTestData.setDateTime(System.currentTimeMillis());
+        return accTestData;
+    }
+
+    public double getRamdomData(int type) {
+        switch (type) {
             case 1:
                 return Math.random() * 10;
             case 2:

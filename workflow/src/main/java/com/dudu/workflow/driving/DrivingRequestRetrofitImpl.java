@@ -1,8 +1,11 @@
 package com.dudu.workflow.driving;
 
-import com.dudu.commonlib.utils.DataJsonTranslation;
+import com.dudu.commonlib.utils.Encrypt;
 import com.dudu.rest.common.Request;
+import com.dudu.rest.model.AccTestData;
 import com.dudu.rest.model.RequestResponse;
+import com.dudu.workflow.CommonParams;
+import com.google.gson.Gson;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -19,9 +22,18 @@ public class DrivingRequestRetrofitImpl implements DrivingRequest{
     }
 
     @Override
-    public void pushAcceleratedTestData(double time, final RequesetCallback callback) {
+    public void pushAcceleratedTestData(AccTestData time, final RequesetCallback callback) {
+        String json = new Gson().toJson(time);
+        System.out.println(json);
+        String postString;
+        try {
+            postString=Encrypt.AESEncrypt(json, Encrypt.vi);
+        }catch (Exception e){
+            postString = json;
+            System.out.println(e);
+        }
         Call<RequestResponse> call = Request.getInstance().getDrivingService()
-                .pushAcceleratedTestData("13800138000", DataJsonTranslation.objectToJson(time));
+                .pushAcceleratedTestData(CommonParams.getInstance().getUserName(), postString);
         call.enqueue(new Callback<RequestResponse>() {
             @Override
             public void onResponse(Call<RequestResponse> call, Response<RequestResponse> response) {
