@@ -19,6 +19,16 @@ public class OBDStream {
     }
 
     private Observable<String> obdRawData = null;
+    private Observable<String> obdRTString = null;
+    private Observable<String> obdTTString = null;
+    private Observable<String> obdErrorString = null;
+    private Observable<String> obdTSPMON = null;
+    private Observable<String> obdTSPMOFF = null;
+    private Observable<String[]> OBDRTData = null;
+    private Observable<String[]> OBDTTData = null;
+    private Observable<Double> engSpeedStream = null;
+    private Observable<Double> speedStream = null;
+
     private OBDStream() {
     }
 
@@ -41,6 +51,51 @@ public class OBDStream {
 
     public static void obdStreamClose() {
         SerialManager.getInstance().closeSerialPort();
+    }
+
+    public Observable<String> obdRTString() throws IOException {
+        if (obdRTString == null) obdRTString = obdRTString(obdRawData());
+        return obdRTString;
+    }
+
+    public Observable<String> obdTTString() throws IOException {
+        if (obdTTString == null) obdTTString = obdTTString(obdRawData());
+        return obdTTString;
+    }
+
+    public Observable<String> obdErrorString() throws IOException {
+        if (obdErrorString == null) obdErrorString = obdErrorString(obdRawData());
+        return obdErrorString;
+    }
+
+    public Observable<String> obdTSPMON() throws IOException {
+        if (obdTSPMON == null) obdTSPMON = obdTSPMON(obdRawData());
+        return obdTSPMON;
+    }
+
+    public Observable<String> obdTSPMOFF() throws IOException {
+        if (obdTSPMOFF == null) obdTSPMOFF = obdTSPMOFF(obdRawData());
+        return obdTSPMOFF;
+    }
+
+    public Observable<String[]> OBDRTData() throws IOException {
+        if (OBDRTData == null) OBDRTData = OBDRTData(obdRTString());
+        return OBDRTData;
+    }
+
+    public Observable<String[]> OBDTTData() throws IOException {
+        if (OBDTTData == null) OBDTTData = OBDTTData(obdTTString());
+        return OBDTTData;
+    }
+
+    public Observable<Double> engSpeedStream() throws IOException {
+        if (engSpeedStream == null) engSpeedStream = engSpeedStream(OBDRTData());
+        return engSpeedStream;
+    }
+
+    public Observable<Double> speedStream() throws IOException {
+        if (speedStream == null) speedStream = speedStream(OBDRTData());
+        return speedStream;
     }
 
     public static Observable<String> obdRTString(Observable<String> input) {
