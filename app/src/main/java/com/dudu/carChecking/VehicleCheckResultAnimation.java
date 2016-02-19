@@ -138,7 +138,6 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
             if (file.isDirectory()) {
                 maxCycleCount = file.listFiles().length;
             }
-            LogUtils.v("kkk", "max:" + maxCycleCount);
             while (mRunning && mFrameCounter < maxCycleCount) {
                 Canvas c = null;
                 try {
@@ -168,6 +167,8 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
             Bitmap bitmap = loadAnimationBitmap();
             if (bitmap != null) {
                 c.drawBitmap(bitmap, 0, 0, mPaint);
+            } else {
+
             }
 
         }

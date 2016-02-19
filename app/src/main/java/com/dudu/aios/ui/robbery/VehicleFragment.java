@@ -3,7 +3,6 @@ package com.dudu.aios.ui.robbery;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -150,7 +149,7 @@ public class VehicleFragment extends BaseFragment implements View.OnClickListene
 
         vehicle_robbery_view.setVisibility(View.GONE);
         vehicle_guard_View.setVisibility(View.VISIBLE);
-        ((ImageView) preventView.findViewById(R.id.vehicle_guard_icon)).setImageResource(R.drawable.vehicle_guard_selected);
+        ((ImageView) preventView.findViewById(R.id.vehicle_guard_icon)).setImageResource(R.drawable.vehicle_guard_clicked);
         ((TextView) preventView.findViewById(R.id.text_vehicle_guard_ch)).setTextColor(getResources().getColor(R.color.white));
         ((TextView) preventView.findViewById(R.id.text_vehicle_guard_en)).setTextColor(getResources().getColor(R.color.white));
         ((ImageView) preventView.findViewById(R.id.vehicle_robbery_icon)).setImageResource(R.drawable.vehicle_robbery_normal);
@@ -165,7 +164,7 @@ public class VehicleFragment extends BaseFragment implements View.OnClickListene
         ((ImageView) preventView.findViewById(R.id.vehicle_guard_icon)).setImageResource(R.drawable.vehicle_guard_normal);
         ((TextView) preventView.findViewById(R.id.text_vehicle_guard_ch)).setTextColor(getResources().getColor(R.color.unchecked_textColor));
         ((TextView) preventView.findViewById(R.id.text_vehicle_guard_en)).setTextColor(getResources().getColor(R.color.unchecked_textColor));
-        ((ImageView) preventView.findViewById(R.id.vehicle_robbery_icon)).setImageResource(R.drawable.vehicle_robbery_selected_icon);
+        ((ImageView) preventView.findViewById(R.id.vehicle_robbery_icon)).setImageResource(R.drawable.vehicle_robbery_clicked_icon);
         ((TextView) preventView.findViewById(R.id.text_vehicle_robbery_ch)).setTextColor(getResources().getColor(R.color.white));
         ((TextView) preventView.findViewById(R.id.text_vehicle_robbery_en)).setTextColor(getResources().getColor(R.color.white));
 

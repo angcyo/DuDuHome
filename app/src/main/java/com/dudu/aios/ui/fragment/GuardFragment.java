@@ -5,6 +5,7 @@ import android.view.View;
 
 import com.dudu.aios.ui.fragment.base.BaseVehicleFragment;
 import com.dudu.android.launcher.R;
+import com.dudu.android.launcher.utils.LogUtils;
 
 /**
  * Created by Administrator on 2016/2/17.
@@ -29,6 +30,7 @@ public class GuardFragment extends BaseVehicleFragment implements View.OnClickLi
     private void initView(View view) {
         guard_unlock_layout = view.findViewById(R.id.vehicle_unlock_layout);
         guard_locked_layout = view.findViewById(R.id.vehicle_locked_layout);
+        guard_lock();
     }
 
     @Override
@@ -36,6 +38,7 @@ public class GuardFragment extends BaseVehicleFragment implements View.OnClickLi
         switch (v.getId()) {
             case R.id.vehicle_unlock_layout:
                 guard_unlock();
+                getFragmentManager().beginTransaction().replace(R.id.container, new VehiclePasswordSetFragment()).commit();
                 break;
             case R.id.vehicle_locked_layout:
                 guard_lock();
@@ -44,12 +47,12 @@ public class GuardFragment extends BaseVehicleFragment implements View.OnClickLi
     }
 
     private void guard_unlock() {
-        guard_locked_layout.setVisibility(View.GONE);
-        guard_unlock_layout.setVisibility(View.VISIBLE);
+        guard_locked_layout.setVisibility(View.VISIBLE);
+        guard_unlock_layout.setVisibility(View.GONE);
     }
 
     private void guard_lock() {
-        guard_locked_layout.setVisibility(View.VISIBLE);
-        guard_unlock_layout.setVisibility(View.GONE);
-      }
+        guard_locked_layout.setVisibility(View.GONE);
+        guard_unlock_layout.setVisibility(View.VISIBLE);
+    }
 }

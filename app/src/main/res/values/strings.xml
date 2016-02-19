@@ -126,10 +126,16 @@
     <string name="vehicle_step_on_gas_en">STEP ON THE GAS</string>
     <string name="password_unlock_ch">密码解锁</string>
     <string name="password_unlock_en">PASSWORD UNLOCK</string>
-    <string name="gesture_unlock">手势解锁</string>
+    <string name="gesture_unlock_ch">手势解锁</string>
+    <string name="gesture_unlock_en">GESTURE UNLOCK</string>
     <string name="change_password_ch">解锁密码设置</string>
     <string name="change_password_en">CHANGE PASSWORD</string>
     <string name="verification_code">验证码</string>
+    <string name="send_ch">发送</string>
+    <string name="new_password">新密码</string>
+    <string name="unlock_passwordSet_ch">解锁密码设置</string>
+    <string name="draw_success">绘制成功</string>
+    <string name="draw_fault">绘制错误，请重试...</string>
 
     <string name="vehicle_locked">LOCKED</string>
     <string name="vehicle_unlock">UNLOCK</string>

@@ -26,7 +26,7 @@ import de.greenrobot.event.EventBus;
  * Created by dengjun on 2016/2/13.
  * Description :
  */
-public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,MediaRecorder.OnInfoListener{
+public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener, MediaRecorder.OnInfoListener {
     private FrontVideoConfigParam frontVideoConfigParam;
     private String curVideoFileAbsolutePath;
 
@@ -48,15 +48,15 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
         init();
     }
 
-    private void init(){
+    private void init() {
         frontVideoConfigParam = new FrontVideoConfigParam();
 
         pictureObtain = new PictureObtain();
     }
 
-    public void initCamera(){
+    public void initCamera() {
         if (isOpenedCamera)
-            return ;
+            return;
         synchronized (openCameraLock) {
             log.debug("开始初始化camera...");
             try {
@@ -73,9 +73,9 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
 //                CommonLib.getInstance().getContext().getResources().getDisplayMetrics().heightPixels);
             params.setPreviewSize(1920, 480);
             params.setPictureSize(frontVideoConfigParam.getWidth(), frontVideoConfigParam.getHeight());
-        List<Camera.Size> sizeList =  params.getSupportedPictureSizes();
-        sizeList =params.getSupportedVideoSizes();
-        sizeList = params.getSupportedPreviewSizes();
+            List<Camera.Size> sizeList = params.getSupportedPictureSizes();
+            sizeList = params.getSupportedVideoSizes();
+            sizeList = params.getSupportedPreviewSizes();
 
 
             mCamera.setParameters(params);
@@ -92,9 +92,9 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
         }
     }
 
-    public void releaseCamera(){
+    public void releaseCamera() {
         log.debug("释放前置摄像头");
-        if (mCamera != null){
+        if (mCamera != null) {
             mCamera.release();
             mCamera = null;
         }
@@ -103,7 +103,7 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
 
     private boolean prepareMediaRecorder() {
         log.debug("准备录像");
-        if (mMediaRecorder == null){
+        if (mMediaRecorder == null) {
             mMediaRecorder = new MediaRecorder();
         }
 
@@ -147,7 +147,7 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
         return true;
     }
 
-    public void releaseMediaRecorder(){
+    public void releaseMediaRecorder() {
         log.debug("释放mediaRecorder");
         if (mMediaRecorder != null) {
             mMediaRecorder.reset();   // clear recorder configuration
@@ -158,38 +158,40 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
     }
 
 
-    public void stopDrvieVideo(){
+    public void stopDrvieVideo() {
         log.debug("结束行车记录");
         releaseMediaRecorder();
         releaseCamera();
     }
 
-    public void startRecord(){
+    public void startRecord() {
         if (isRecording) {
             log.info("录像正在运行");
             return;
         }
-        if (cameraPreview.getmHolder() == null){
+        if (cameraPreview.getmHolder() == null) {
             log.info("SurfaceHolder未初始化");
             return;
         }
         synchronized (redordingLock) {
             log.debug("开始录像");
-            if (!isRecording){
-                if (prepareMediaRecorder()){
+
+            if (!isRecording) {
+                if (prepareMediaRecorder()) {
                     mMediaRecorder.start();
                     isRecording = true;
                 }
             }
         }
+
     }
 
-    public void stopRecord(){
+    public void stopRecord() {
         if (!isRecording)
             return;
         synchronized (redordingLock) {
             log.debug("结束录像");
-            if (mMediaRecorder != null){
+            if (mMediaRecorder != null) {
                 mMediaRecorder.stop();
             }
             releaseMediaRecorder();
@@ -197,7 +199,6 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
         }
         log.debug("结束录像成功");
     }
-
 
 
     public void setSurfaceHolder(SurfaceHolder surfaceHolder) {
@@ -214,7 +215,7 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
         mCamera.startPreview();
     }
 
-    public void stopPreview(){
+    public void stopPreview() {
         log.debug("前置关闭预览");
         mCamera.stopPreview();
     }
@@ -228,9 +229,9 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
         return frontVideoConfigParam;
     }
 
-    private String generateCurVideoName(){
+    private String generateCurVideoName() {
         return FileUtil.getTFlashCardDirFile("/dudu", FrontVideoConfigParam.VIDEO_STORAGE_PATH).getAbsolutePath()
-                + File.separator+ TimeUtils.format(TimeUtils.format5)+".mp4";
+                + File.separator + TimeUtils.format(TimeUtils.format5) + ".mp4";
     }
 
     @Override
@@ -261,8 +262,8 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
         return isRecording;
     }
 
-    public void takePicture(){
-        if (mCamera != null){
+    public void takePicture() {
+        if (mCamera != null) {
             mCamera.takePicture(null, null, pictureObtain);
         }
     }

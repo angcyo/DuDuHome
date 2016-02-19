@@ -22,6 +22,8 @@ import java.io.InputStream;
  */
 public class VoiceRippleAnimView extends VoiceAnimView {
 
+    public static final String VOICE_RIPPLE_PATH = "voice_ripple/d02_voice_";
+
 
     public VoiceRippleAnimView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -34,6 +36,6 @@ public class VoiceRippleAnimView extends VoiceAnimView {
 
     @Override
     protected String getPicPath() {
-        return "voice_ripple/d02_voice_";
+        return VOICE_RIPPLE_PATH;
     }
 }

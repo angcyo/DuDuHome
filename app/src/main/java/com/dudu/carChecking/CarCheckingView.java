@@ -12,6 +12,8 @@ import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.dudu.aios.ui.voice.VoiceCircleAnimView;
+import com.dudu.aios.ui.voice.VoiceRippleAnimView;
 import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.LogUtils;
 
@@ -193,8 +195,24 @@ public class CarCheckingView extends SurfaceView implements SurfaceHolder.Callba
             Bitmap bitmap = loadAnimationBitmap();
             if (bitmap != null) {
                 c.drawBitmap(bitmap, 0, 0, mPaint);
+            } else {
+                Bitmap b = loadStaticBitmap();
+                if (b != null) {
+                    c.drawBitmap(b, 0, 0, mPaint);
+                }
             }
 
+        }
+
+        private Bitmap loadStaticBitmap() {
+            AssetManager am = mContext.getAssets();
+            InputStream is;
+            try {
+                is = am.open("animation/" + category + "_NP1.png");
+            } catch (IOException e) {
+                return null;
+            }
+            return BitmapFactory.decodeStream(is);
         }
 
         private Bitmap loadAnimationBitmap() {

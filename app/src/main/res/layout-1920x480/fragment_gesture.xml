@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:zhy="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <com.dudu.aios.ui.view.GestureLockViewGroup
+        android:id="@+id/id_gestureLockViewGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="200dp"
+        android:gravity="center_vertical"
+        zhy:count="3"
+        zhy:tryTimes="5" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="80dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/gesture_unlock_ch"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:text="@string/gesture_unlock_en"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+        <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+            android:id="@+id/text_draw_prompt"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="4dp"
+            android:gravity="center_vertical" />
+
+        <Button
+            android:id="@+id/button_passwordSet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/button_vehicle_unlock_selector"
+            android:text="@string/unlock_passwordSet_ch"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

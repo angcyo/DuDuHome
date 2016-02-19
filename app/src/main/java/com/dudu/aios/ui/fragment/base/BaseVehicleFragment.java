@@ -9,12 +9,15 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.dudu.aios.ui.fragment.GuardFragment;
+import com.dudu.aios.ui.fragment.MainFragment;
+import com.dudu.aios.ui.fragment.RobberyFragment;
 import com.dudu.android.launcher.R;
 
 /**
- * Created by Administrator on 2016/2/16.
+ * Created by Administrator on 2016/2/16.back_button
  */
-public abstract class BaseVehicleFragment extends BaseFragment implements View.OnClickListener {
+public abstract class BaseVehicleFragment extends BaseFragment {
 
     private RelativeLayout childVehicleViewContainer;
 
@@ -36,11 +39,13 @@ public abstract class BaseVehicleFragment extends BaseFragment implements View.O
 
     private void initOnListener() {
 
-        vehicle_guard_btn.setOnClickListener(this);
+        MyListener listener = new MyListener();
 
-        vehicle_robbery_btn.setOnClickListener(this);
+        vehicle_guard_btn.setOnClickListener(listener);
 
-        buttonBack.setOnClickListener(this);
+        vehicle_robbery_btn.setOnClickListener(listener);
+
+        buttonBack.setOnClickListener(listener);
 
     }
 
@@ -56,42 +61,52 @@ public abstract class BaseVehicleFragment extends BaseFragment implements View.O
 
         vehicle_robbery_btn = (LinearLayout) view.findViewById(R.id.vehicle_robbery_btn);
 
-        buttonBack = (ImageButton) view.findViewById(R.id.back_button);
+        buttonBack = (ImageButton) view.findViewById(R.id.vehicle_back_button);
 
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.vehicle_guard_btn:
-                guard();
-                break;
-            case R.id.vehicle_robbery_btn:
-                robbery();
-                break;
-            case R.id.button_back:
-                // getFragmentManager().beginTransaction().replace(R.id.container, ).commit();
-                break;
-        }
     }
 
     private void robbery() {
-        ((ImageView) view.findViewById(R.id.vehicle_guard_icon)).setImageResource(R.drawable.vehicle_guard_selected);
-        ((TextView) view.findViewById(R.id.text_vehicle_guard_ch)).setTextColor(getResources().getColor(R.color.white));
-        ((TextView) view.findViewById(R.id.text_vehicle_guard_en)).setTextColor(getResources().getColor(R.color.white));
-        ((ImageView) view.findViewById(R.id.vehicle_robbery_icon)).setImageResource(R.drawable.vehicle_robbery_normal);
-        ((TextView) view.findViewById(R.id.text_vehicle_robbery_ch)).setTextColor(getResources().getColor(R.color.unchecked_textColor));
-        ((TextView) view.findViewById(R.id.text_vehicle_robbery_en)).setTextColor(getResources().getColor(R.color.unchecked_textColor));
-    }
-
-    private void guard() {
         ((ImageView) view.findViewById(R.id.vehicle_guard_icon)).setImageResource(R.drawable.vehicle_guard_normal);
         ((TextView) view.findViewById(R.id.text_vehicle_guard_ch)).setTextColor(getResources().getColor(R.color.unchecked_textColor));
         ((TextView) view.findViewById(R.id.text_vehicle_guard_en)).setTextColor(getResources().getColor(R.color.unchecked_textColor));
-        ((ImageView) view.findViewById(R.id.vehicle_robbery_icon)).setImageResource(R.drawable.vehicle_robbery_selected_icon);
+
+        ((ImageView) view.findViewById(R.id.vehicle_robbery_icon)).setImageResource(R.drawable.vehicle_robbery_clicked_icon);
         ((TextView) view.findViewById(R.id.text_vehicle_robbery_ch)).setTextColor(getResources().getColor(R.color.white));
         ((TextView) view.findViewById(R.id.text_vehicle_robbery_en)).setTextColor(getResources().getColor(R.color.white));
+
+        getFragmentManager().beginTransaction().replace(R.id.container, new RobberyFragment()).commit();
+
+    }
+
+    private void guard() {
+        ((ImageView) view.findViewById(R.id.vehicle_guard_icon)).setImageResource(R.drawable.vehicle_guard_clicked);
+        ((TextView) view.findViewById(R.id.text_vehicle_guard_ch)).setTextColor(getResources().getColor(R.color.white));
+        ((TextView) view.findViewById(R.id.text_vehicle_guard_en)).setTextColor(getResources().getColor(R.color.white));
+
+        ((ImageView) view.findViewById(R.id.vehicle_robbery_icon)).setImageResource(R.drawable.vehicle_robbery_normal);
+        ((TextView) view.findViewById(R.id.text_vehicle_robbery_ch)).setTextColor(getResources().getColor(R.color.unchecked_textColor));
+        ((TextView) view.findViewById(R.id.text_vehicle_robbery_en)).setTextColor(getResources().getColor(R.color.unchecked_textColor));
+
+        getFragmentManager().beginTransaction().replace(R.id.container, new GuardFragment()).commit();
     }
 
     public abstract View getVehicleChildView();
+
+    private class MyListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.vehicle_guard_btn:
+                    guard();
+                    break;
+                case R.id.vehicle_robbery_btn:
+                    robbery();
+                    break;
+                case R.id.vehicle_back_button:
+                    getFragmentManager().beginTransaction().replace(R.id.container, new MainFragment()).commit();
+                    break;
+            }
+        }
+    }
 }

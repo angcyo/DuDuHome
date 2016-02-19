@@ -14,6 +14,7 @@
     <color name="color_4c4a4a">#4c4a4a</color>
     <color name="black">#000000</color>
     <color name="red">#FF0000</color>
+    <color name="red_mistake">#e40020</color>
     <color name="blue">#2edfff</color>
     <color name="color_6b">#BBBBBB</color>
     <color name="transparent">#5a5858</color>

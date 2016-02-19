@@ -1,6 +1,7 @@
 package com.dudu.aios.ui.voice;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -13,6 +14,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.dudu.android.launcher.utils.FileUtils;
+import com.dudu.android.launcher.utils.LogUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -90,7 +92,7 @@ public abstract class VoiceAnimView extends SurfaceView implements SurfaceHolder
 
     public void stopAnim() {
         if (voiceAnimThread != null) {
-            Log.d("lxh","-------voice anim stop");
+            Log.d("lxh", "-------voice anim stop");
             voiceAnimThread.setRunning(false);
             voiceAnimThread = null;
         }
@@ -148,7 +150,7 @@ public abstract class VoiceAnimView extends SurfaceView implements SurfaceHolder
                     if (c != null) {
                         try {
                             mHolder.unlockCanvasAndPost(c);
-                        }catch (Exception e){
+                        } catch (Exception e) {
 
                         }
 
@@ -160,9 +162,32 @@ public abstract class VoiceAnimView extends SurfaceView implements SurfaceHolder
 
         private void doAnimation(Canvas c) {
             c.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-            if (loadAnimationBitmap() != null) {
-                c.drawBitmap(loadAnimationBitmap(), 0, 0, mPaint);
+            Bitmap bitmap = loadAnimationBitmap();
+            if (bitmap != null) {
+                c.drawBitmap(bitmap, 0, 0, mPaint);
+            } else {
+                Bitmap b = loadStaticBitmap();
+                if (b != null) {
+                    c.drawBitmap(b, 0, 0, mPaint);
+                }
             }
+        }
+
+        private Bitmap loadStaticBitmap() {
+            AssetManager am = mContext.getAssets();
+            InputStream is;
+            String path = "";
+            if (picPath.equals(VoiceRippleAnimView.VOICE_RIPPLE_PATH)) {
+                path = "d02_voice_1";
+            } else if (picPath.equals(VoiceCircleAnimView.VOICE_CIRCLE_PATH)) {
+                path = "voice_circle_1";
+            }
+            try {
+                is = am.open("animation/" + path + ".png");
+            } catch (IOException e) {
+                return null;
+            }
+            return BitmapFactory.decodeStream(is);
         }
 
         private Bitmap loadAnimationBitmap() {

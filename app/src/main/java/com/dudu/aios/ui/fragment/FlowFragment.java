@@ -6,7 +6,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.dudu.aios.ui.dialog.PasswordSetDialog;
+import com.dudu.aios.ui.dialog.FlowPasswordSetDialog;
 import com.dudu.aios.ui.fragment.base.BaseFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.aios.ui.view.FlowCompletedView;
@@ -131,7 +131,7 @@ public class FlowFragment extends BaseFragment implements View.OnClickListener {
     }
 
     private void showPasswordSetDialog() {
-        PasswordSetDialog dialog = new PasswordSetDialog(getActivity());
+        FlowPasswordSetDialog dialog = new FlowPasswordSetDialog(getActivity());
         dialog.show();
     }
 }
