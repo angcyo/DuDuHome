@@ -63,10 +63,11 @@ public class LauncherApplication extends Application {
         NetworkUtils.writePortalConfig(this);
 
         CommonLib.getInstance().init();
+        FlowFactory.getInstance().init();
         CommonParams.getInstance().init();
         Request.getInstance().init();
         RequestFactory.getInstance().init();
-        FlowFactory.getInstance().init();
+
         ReceiverRegister.registPushManager(CommonParams.getInstance().getUserName());
     }
 

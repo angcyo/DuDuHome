@@ -1,19 +1,54 @@
 package com.dudu.workflow.user;
 
-import com.dudu.commonlib.xml.SharedPreferencesUtils;
+import com.dudu.persistence.user.User;
+import com.dudu.persistence.user.UserDataService;
+import com.dudu.workflow.common.CommonParams;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import rx.Observable;
+import rx.functions.Action1;
+import rx.functions.Func1;
 
 /**
  * Created by Administrator on 2016/2/16.
  */
 public class UserFlow {
 
-    private static final String USERNAME_KEY = "username_key";
+    private static final String TAG = "UserFlow";
 
-    public static void saveUserName(String userName){
-        SharedPreferencesUtils.setParam(USERNAME_KEY,userName);
+    private Logger logger = LoggerFactory.getLogger(TAG);
+
+    private UserDataService userDataService;
+
+    public UserFlow(UserDataService userDataService){
+        this.userDataService = userDataService;
     }
 
-    public static String getUserName(){
-        return SharedPreferencesUtils.getParam(USERNAME_KEY,"").toString();
+    public void saveUserName(String userName){
+        User user = CommonParams.getInstance().getUser();
+        user.setUserName(userName);
+        userDataService.saveUser(user)
+                .subscribe(new Action1<User>() {
+                    @Override
+                    public void call(User user) {
+                        logger.debug(user.getUserName()+"保存成功");
+                    }
+                });
+    }
+
+    public Observable<String> getUserName(){
+        return userDataService.findUser()
+                .map(new Func1<User, String>() {
+                    @Override
+                    public String call(User user) {
+                        return user.getUserName();
+                    }
+                });
+    }
+
+    public Observable<User> getUserInfo(){
+        return userDataService.findUser();
     }
 }

@@ -1,8 +1,8 @@
 package com.dudu.workflow.common;
 
-import com.dudu.commonlib.utils.TestVerify;
-import com.dudu.workflow.user.UserFlow;
-import com.dudu.workflow.user.UserInfo;
+import com.dudu.persistence.user.User;
+
+import rx.functions.Action1;
 
 /**
  * Created by Administrator on 2016/2/16.
@@ -11,23 +11,33 @@ public class CommonParams {
 
     private static CommonParams mInstance = new CommonParams();
 
-    private UserInfo userInfo = new UserInfo();
+    private User user = new User();
 
     public static CommonParams getInstance() {
         return mInstance;
     }
 
     public void init() {
-        userInfo.setUserName(UserFlow.getUserName());
+        FlowFactory.getUserDataFlow().getUserInfo()
+                .subscribe(new Action1<User>() {
+                    @Override
+                    public void call(User user) {
+                        CommonParams.this.user.setId(user.getId());
+                        CommonParams.this.user.setUserName(user.getUserName());
+                    }
+                });
+    }
+
+    public User getUser() {
+        if(user == null){
+            user = new User();
+            user.setId(1);
+        }
+        return user;
     }
 
     public String getUserName() {
-        return TestVerify.isEmpty(userInfo.getUserName()) ? "13800138000" : userInfo.getUserName();
-    }
-
-    public void setUserName(String userName) {
-        userInfo.setUserName(userName);
-        UserFlow.saveUserName(userName);
+        return user.getUserName();
     }
 }
 
