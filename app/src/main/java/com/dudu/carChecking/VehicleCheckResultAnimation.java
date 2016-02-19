@@ -72,7 +72,7 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
 
         private static final int MAXIMUM_FRAME_COUNT = 50;
 
-        private static final int MAXIMUM_FRAME_CYCLE_COUNT = 148;
+        private int maxCycleCount = 148;
 
         private Context mContext;
 
@@ -89,6 +89,7 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
         private String path = "appear";
 
         private static final String PICTURE_FRAME_PREFIX = "Anim_00";
+
 
         public CarCheckingThread(Context context, SurfaceHolder holder) {
             mContext = context;
@@ -133,7 +134,12 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
         private void doCycleAnimation() {
             mFrameCounter = 0;
             path = "cycle";
-            while (mRunning && mFrameCounter < MAXIMUM_FRAME_CYCLE_COUNT) {
+            File file = new File(FileUtils.getStorageDir(), VEHICLE_MALFUNCTION + category + "/" + path);
+            if (file.isDirectory()) {
+                maxCycleCount = file.listFiles().length;
+            }
+            LogUtils.v("kkk", "max:" + maxCycleCount);
+            while (mRunning && mFrameCounter < maxCycleCount) {
                 Canvas c = null;
                 try {
                     synchronized (mHolder) {
@@ -143,8 +149,8 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
                         c = mHolder.lockCanvas();
 
                         doAnimation(c);
-                        if (mFrameCounter == MAXIMUM_FRAME_CYCLE_COUNT) {
-                            mFrameCounter = 1;
+                        if (mFrameCounter == maxCycleCount) {
+                            mFrameCounter = 0;
                         }
                     }
                 } finally {
