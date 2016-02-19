@@ -2,7 +2,6 @@ package com.dudu.workflow;
 
 import com.dudu.commonlib.CommonLib;
 import com.dudu.rest.common.Request;
-import com.dudu.workflow.common.CommonParams;
 import com.dudu.workflow.common.FlowFactory;
 import com.dudu.workflow.common.RequestFactory;
 import com.dudu.workflow.robbery.RobberyRequest;
@@ -24,7 +23,8 @@ public class RobberyRequestTest {
     @Before
     public void setUp() {
         CommonLib.getInstance().init();
-        CommonParams.getInstance().init();
+//        FlowFactory.getInstance().init();
+//        CommonParams.getInstance().init();
         Request.getInstance().init();
         RequestFactory.getInstance().init();
         FlowFactory.getInstance().init();
@@ -56,7 +56,7 @@ public class RobberyRequestTest {
 
         final CountDownLatch signal = new CountDownLatch(1);
         RequestFactory.getInstance().getRobberyRequest()
-                .settingAntiRobberyMode( 0, 1, new RobberyRequest.SwitchCallback() {
+                .settingAntiRobberyMode(0, 1, new RobberyRequest.SwitchCallback() {
                     @Override
                     public void switchSuccess(boolean success) {
                         signal.countDown();

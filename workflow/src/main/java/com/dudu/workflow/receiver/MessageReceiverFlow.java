@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MessageReceiverFlow {
 
-    public static final String LogTag = "TPushReceiver";
+    public static final String LogTag = "MessageReceiverFlow";
 
     public Logger logger;
 

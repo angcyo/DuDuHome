@@ -60,28 +60,28 @@ public class RobberyFragment extends BaseVehicleFragment implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.headlight_vehicle_robbery_off:
-                checkHeadLightSwitch(false);
-                requestCheckSwitch(HEADLIGHT,false);
-                break;
-            case R.id.headlight_vehicle_robbery_on:
                 checkHeadLightSwitch(true);
                 requestCheckSwitch(HEADLIGHT,true);
                 break;
+            case R.id.headlight_vehicle_robbery_on:
+                checkHeadLightSwitch(true);
+                requestCheckSwitch(HEADLIGHT,false);
+                break;
             case R.id.park_vehicle_robbery_off:
                 checkParkSwitch(false);
-                requestCheckSwitch(PARK,false);
+                requestCheckSwitch(PARK,true);
                 break;
             case R.id.park_vehicle_robbery_on:
                 checkParkSwitch(true);
-                requestCheckSwitch(PARK,true);
+                requestCheckSwitch(PARK,false);
                 break;
             case R.id.gun_vehicle_robbery_off:
                 checkGunSwitch(false);
-                requestCheckSwitch(GUN,false);
+                requestCheckSwitch(GUN,true);
                 break;
             case R.id.gun_vehicle_robbery_on:
                 checkGunSwitch(true);
-                requestCheckSwitch(GUN,true);
+                requestCheckSwitch(GUN,false);
                 break;
         }
     }
@@ -101,19 +101,19 @@ public class RobberyFragment extends BaseVehicleFragment implements View.OnClick
                 });
     }
 
-    private void checkHeadLightSwitch(boolean opened){
-        headlight_off_img.setVisibility(opened?View.VISIBLE:View.GONE);
-        headlight_on_img.setVisibility(opened?View.GONE:View.VISIBLE);
+    private void checkHeadLightSwitch(boolean on_off){
+        headlight_on_img.setVisibility(on_off?View.VISIBLE:View.GONE);
+        headlight_off_img.setVisibility(on_off?View.GONE:View.VISIBLE);
     }
 
-    private void checkParkSwitch(boolean opened){
-        park_off_img.setVisibility(opened?View.VISIBLE:View.GONE);
-        park_on_img.setVisibility(opened?View.GONE:View.VISIBLE);
+    private void checkParkSwitch(boolean on_off){
+        park_on_img.setVisibility(on_off?View.VISIBLE:View.GONE);
+        park_off_img.setVisibility(on_off?View.GONE:View.VISIBLE);
     }
 
-    private void checkGunSwitch(boolean opened){
-        gun_off_img.setVisibility(opened?View.VISIBLE:View.GONE);
-        gun_on_img.setVisibility(opened?View.GONE:View.VISIBLE);
+    private void checkGunSwitch(boolean on_off){
+        gun_on_img.setVisibility(on_off?View.VISIBLE:View.GONE);
+        gun_off_img.setVisibility(on_off?View.GONE:View.VISIBLE);
     }
 
     public void changeSwitchFlow(){
