@@ -2,6 +2,7 @@ package com.dudu.voice.semantic.chain;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 
 import com.dudu.aios.ui.activity.MainRecordActivity;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
@@ -37,6 +38,7 @@ public class CmdChain extends SemanticChain {
     private boolean handleCmd(CmdBean bean) {
         String action = bean.getAction();
         String target = bean.getTarget();
+
 
         if (target == null) {
 

@@ -1,5 +1,7 @@
 package com.dudu.voice.semantic.parser;
 
+import android.util.Log;
+
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.voice.semantic.bean.CmdBean;
 import com.dudu.voice.semantic.bean.SemanticBean;
@@ -47,9 +49,11 @@ public class CarControlParser {
                     }
 
                     if (text.contains(Constants.NAVIGATION) || text.contains(SemanticConstant.DOMAIN_MAP)
-                            ||text.contains(Constants.WIFI)) {
-                        bean.setAction(param.optString(SemanticConstant.ACTION_CN));
+                            || text.contains(Constants.WIFI)) {
+
                         bean.setTarget(param.optString(SemanticConstant.OBJECT_CN));
+                        bean.setAction(param.optString(SemanticConstant.ACTION_CN));
+                        return bean;
 
                     }
 
@@ -63,7 +67,6 @@ public class CarControlParser {
                         bean.setTarget(Constants.EXIT);
                         return bean;
                     }
-
 
 
                     bean.setAction(param.optString(SemanticConstant.ACTION));

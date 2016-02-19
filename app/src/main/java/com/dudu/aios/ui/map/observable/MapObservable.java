@@ -17,6 +17,7 @@ import com.dudu.aios.ui.map.event.ChooseEvent;
 import com.dudu.aios.ui.voice.VoiceEvent;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.databinding.GaodeMapLayoutBinding;
+import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.event.MapResultShow;
 import com.dudu.map.NavigationProxy;
@@ -32,7 +33,6 @@ import com.dudu.voice.semantic.constant.SceneType;
 import com.dudu.voice.semantic.constant.TTSType;
 import com.dudu.voice.semantic.engine.SemanticEngine;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
@@ -199,10 +199,6 @@ public class MapObservable {
 
     private void showAddress() {
 
-
-        MyLinearLayoutManager layoutManager = new MyLinearLayoutManager(binding.getRoot().getContext());
-        binding.mapListView.setLayoutManager(layoutManager);
-
         if (navigationProxy.isManual()) {
             mapListTitle.set("共找到" + navigationManager.getPoiResultList().size() + "个结果");
         } else {
@@ -231,7 +227,6 @@ public class MapObservable {
 
     private void showStrategy() {
 
-
         if (!navigationProxy.isManual()) {
 
             VoiceManagerProxy.getInstance().stopUnderstanding();
@@ -253,6 +248,7 @@ public class MapObservable {
     public void chooseAddress(PoiResultInfo result, int position) {
         if (chooseAddressSub != null)
             return;
+        Log.d("lxh", "------------chooseAddress ");
         chooseAddressSub = Observable.just(result).subscribe(poiResultInfo -> {
 
             if (position > mapList.size() && !navigationProxy.isManual()) {
@@ -316,9 +312,8 @@ public class MapObservable {
 
         switch (event) {
             case THRICE_UNSTUDIED:
-                mapList.clear();
-                showList.set(false);
-                showBottomButton.set(true);
+
+                displayList();
                 break;
         }
 
@@ -327,9 +322,7 @@ public class MapObservable {
     public void onEventMainThread(ChooseEvent event) {
 
         MyLinearLayoutManager lm = (MyLinearLayoutManager) binding.mapListView.getLayoutManager();
-        BigDecimal b = new BigDecimal(lm.findFirstVisibleItemPosition() / MapObservable.ADDRESS_VIEW_COUNT).setScale(0, BigDecimal.ROUND_HALF_UP);
-        pageIndex = b.intValue();
-        Log.d("lxh", " >>>>>>>>>>>>pageIndex " + pageIndex);
+        pageIndex = (int) Math.floor(lm.findFirstVisibleItemPosition() / Constants.ADDRESS_VIEW_COUNT);
         switch (event.getChooseType()) {
 
             case ChooseEvent.ADDRESS_NUMBER:
@@ -342,7 +335,7 @@ public class MapObservable {
                 nextPage(lm);
                 break;
             case ChooseEvent.PREVIOUSPAGE:
-                previousPage();
+                previousPage(lm);
                 break;
             case ChooseEvent.CHOOSEPAGE:
                 choosePage(event.getPosition());
@@ -352,47 +345,43 @@ public class MapObservable {
 
 
     private void nextPage(LinearLayoutManager lm) {
-        if (pageIndex >= 3
-                || lm.findLastVisibleItemPosition() == mapList.size() - 1) {
+        if (lm.findLastVisibleItemPosition() == mapList.size() - 1) {
             VoiceManagerProxy.getInstance().stopUnderstanding();
             VoiceManagerProxy.getInstance().startSpeaking("已经是最后一页", TTSType.TTS_START_UNDERSTANDING, false);
             return;
         }
 
         pageIndex++;
-        binding.mapListView.smoothScrollToPosition(pageIndex * MapObservable.ADDRESS_VIEW_COUNT);
+        binding.mapListView.scrollToPosition(pageIndex * MapObservable.ADDRESS_VIEW_COUNT + 3);
     }
 
 
-    private void previousPage() {
+    private void previousPage(LinearLayoutManager lm) {
         if (pageIndex <= 0) {
             VoiceManagerProxy.getInstance().stopUnderstanding();
             VoiceManagerProxy.getInstance().startSpeaking("已经是第一页", TTSType.TTS_START_UNDERSTANDING, false);
             return;
         }
         pageIndex--;
-        binding.mapListView.smoothScrollToPosition(pageIndex * MapObservable.ADDRESS_VIEW_COUNT);
+        binding.mapListView.scrollToPosition(pageIndex * MapObservable.ADDRESS_VIEW_COUNT - 3);
     }
 
     private void choosePage(int page) {
-        if (page > 4 || page < 1) {
+        if (page > 5 || page < 1) {
             VoiceManagerProxy.getInstance().stopUnderstanding();
             VoiceManagerProxy.getInstance().startSpeaking("选择错误，请重新选择", TTSType.TTS_START_UNDERSTANDING, false);
             return;
         }
         pageIndex = page - 1;
-        binding.mapListView.smoothScrollToPosition(pageIndex * MapObservable.ADDRESS_VIEW_COUNT);
+        int page_i = pageIndex * MapObservable.ADDRESS_VIEW_COUNT;
+        binding.mapListView.scrollToPosition(
+                page == 1 ? page_i : page_i + 3);
     }
 
 
     public void release() {
         EventBus.getDefault().unregister(this);
-        SemanticEngine.getProcessor().switchSemanticType(SceneType.HOME);
-        navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
-        navigationProxy.setIsManual(false);
-        navigationProxy.disMissProgressDialog();
-        navigationProxy.removeCallback();
-        navigationProxy.setShowList(false);
+        displayList();
     }
 
 
@@ -401,9 +390,18 @@ public class MapObservable {
         showBottomButton.set(true);
         navigationProxy.setShowList(false);
         navigationProxy.setIsManual(false);
+        navigationProxy.setIsManual(false);
+        navigationProxy.disMissProgressDialog();
+        navigationProxy.removeCallback();
+        navigationProxy.setShowList(false);
+
+        mapList.clear();
+
+        navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
+
+        SemanticEngine.getProcessor().switchSemanticType(SceneType.HOME);
 
         VoiceManagerProxy.getInstance().onStop();
-
     }
 
 

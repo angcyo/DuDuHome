@@ -29,7 +29,7 @@ public class ChooseEvent {
     }
 
 
-    public ChooseEvent(int position, int chooseType) {
+    public ChooseEvent(int chooseType,int position) {
         this.position = position;
         this.chooseType = chooseType;
     }

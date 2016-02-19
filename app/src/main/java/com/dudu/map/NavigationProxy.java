@@ -183,10 +183,11 @@ public class NavigationProxy {
     }
 
     private boolean openActivity(int openType) {
-
+        
         if (navigationManager.isNavigatining()) {
             switch (navigationManager.getNavigationType()) {
                 case NAVIGATION:
+                    navigationManager.getLog().debug("openNavi");
                     intentActivity(NavigationActivity.class);
                     break;
                 case BACKNAVI:
@@ -194,10 +195,8 @@ public class NavigationProxy {
             }
             FloatWindowUtils.removeFloatWindow();
         } else {
-
             if (!isMapActivity()) {
                 FloatWindowUtils.removeFloatWindow();
-                navigationManager.getLog().debug("openActivity");
                 intentActivity(GaodeMapActivity.class);
                 if (openType == OPEN_VOICE) {
                     Observable.timer(1, TimeUnit.SECONDS).subscribe(aLong -> {
@@ -224,6 +223,7 @@ public class NavigationProxy {
     }
 
     public void existNavi() {
+        navigationManager.getLog().debug("----------existNavi");
         navigationManager.existNavigation();
         ActivitiesManager.getInstance().closeTargetActivity(
                 NavigationActivity.class);
@@ -490,8 +490,11 @@ public class NavigationProxy {
 
     public void onChooseNumber(int position) {
         if (chooseStep == 1) {
+            navigationManager.getLog().debug("--------onChooseNumber ADDRESS_NUMBER");
             EventBus.getDefault().post(new ChooseEvent(ChooseEvent.ADDRESS_NUMBER, position));
         } else if (chooseStep == 2) {
+            navigationManager.getLog().debug("--------onChooseNumber STRATEGY_NUMBER");
+
             EventBus.getDefault().post(new ChooseEvent(ChooseEvent.STRATEGY_NUMBER, position));
         }
     }

@@ -290,7 +290,7 @@ public class BlueWindowManager extends BaseWindowManager {
         canvas.drawBitmap(drawingCache, 0, 0, paint);
 
         Bitmap blurBitmap_back = RxBlurEffective
-                .bestBlur(mContext, currentBitmap, 25, 0.1f)
+                .bestBlur(mContext, currentBitmap, 20, 0.1f)
                 .toBlocking()
                 .first();
 
@@ -353,7 +353,7 @@ public class BlueWindowManager extends BaseWindowManager {
 
         } else {
             voice_animLayout.setVisibility(View.GONE);
-            view.setBackground(null);
+            voice_animLayout_blur.setVisibility(View.GONE);
             view.setBackgroundResource(R.drawable.black_bg);
         }
     }

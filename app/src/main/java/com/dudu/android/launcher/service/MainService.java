@@ -63,7 +63,7 @@ public class MainService extends Service {
 
         initNetWork();
 
-        ObdInit.initOBD(this);
+//        ObdInit.initOBD(this);
 
         monitor = Monitor.getInstance(this);
         monitor.startWork();

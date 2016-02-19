@@ -3,6 +3,8 @@ package com.dudu.aios.ui.map;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.system.ErrnoException;
+import android.util.Log;
 
 /**
  * Created by lxh on 2016/2/18.
@@ -13,9 +15,12 @@ public class MyLinearLayoutManager extends LinearLayoutManager{
         super(context, LinearLayoutManager.VERTICAL, false);
     }
 
-    @Override public void smoothScrollToPosition(RecyclerView recyclerView,
+    @Override
+    public void smoothScrollToPosition(RecyclerView recyclerView,
                                                  final RecyclerView.State state, final int position) {
 
+
+        Log.d("lxh","-------smoothScrollToPosition");
         int fcvip = findFirstCompletelyVisibleItemPosition();
         int lcvip = findLastCompletelyVisibleItemPosition();
 
@@ -23,6 +28,7 @@ public class MyLinearLayoutManager extends LinearLayoutManager{
 
             float fcviY = findViewByPosition(fcvip).getY();
             float lcviY = findViewByPosition(lcvip).getY();
+
 
             recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
@@ -33,8 +39,12 @@ public class MyLinearLayoutManager extends LinearLayoutManager{
                     if (currentState == RecyclerView.SCROLL_STATE_SETTLING
                             && newState == RecyclerView.SCROLL_STATE_IDLE) {
 
-                        // recursive scrolling
-                        smoothScrollToPosition(recyclerView, state, position);
+                        try {
+
+                            smoothScrollToPosition(recyclerView, state, position);
+                        }catch (Exception e){
+
+                        }
                     }
 
                     currentState = newState;
@@ -47,7 +57,7 @@ public class MyLinearLayoutManager extends LinearLayoutManager{
 
                     if ((dy < 0 && fcvip == position) || (dy > 0 && lcvip == position)) {
                         // stop scrolling
-                        recyclerView.addOnScrollListener(null);
+//                        recyclerView.addOnScrollListener(null);
                     }
                 }
             });
@@ -62,12 +72,16 @@ public class MyLinearLayoutManager extends LinearLayoutManager{
                 recyclerView.smoothScrollBy(0, (int) (lcviY - fcviY));
             }
         } else {
-            // scrolling to visible position
 
             float fromY = findViewByPosition(fcvip).getY();
             float targetY = findViewByPosition(position).getY();
 
             recyclerView.smoothScrollBy(0, (int) (targetY - fromY));
         }
+    }
+
+    @Override
+    public void onScrollStateChanged(int state) {
+        super.onScrollStateChanged(state);
     }
 }

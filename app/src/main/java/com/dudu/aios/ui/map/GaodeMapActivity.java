@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -86,9 +87,6 @@ public class GaodeMapActivity extends Activity implements LocationSource {
 
         binding.gaodeMapView.onCreate(savedInstanceState);
 
-        binding.mapListView.setHasFixedSize(true);
-        binding.mapListView.setLayoutManager(new LinearLayoutManager(this));
-
         mHandler = new Handler();
 
         initMap();
@@ -167,6 +165,9 @@ public class GaodeMapActivity extends Activity implements LocationSource {
         });
 
         binding.mapListView.setHasFixedSize(true);
+        MyLinearLayoutManager layoutManager = new MyLinearLayoutManager(this);
+        binding.mapListView.setLayoutManager(layoutManager);
+        binding.mapListView.setItemAnimator(new DefaultItemAnimator());
 
     }
 

@@ -28,6 +28,9 @@ import com.dudu.map.NavigationProxy;
 import com.dudu.obd.ObdInit;
 import com.dudu.voice.FloatWindowUtils;
 import com.dudu.voice.VoiceManagerProxy;
+import com.dudu.weather.WeatherFlow;
+import com.dudu.weather.WeatherInfo;
+import com.dudu.weather.WeatherStream;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -35,6 +38,8 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.functions.Action1;
 
 
 public class MainFragment extends BaseFragment implements View.OnClickListener {
@@ -68,6 +73,8 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
         EventBus.getDefault().register(getActivity());
 
         initDate();
+
+        getWeather();
     }
 
     private void initDate() {
@@ -95,6 +102,19 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
         mDateTextView.setText(dateFormat.format(new Date()) + " " + mWay);
     }
 
+    private void getWeather(){
+        weatherSubscriber(WeatherFlow.getInstance().requestWeather());
+        WeatherStream.getInstance().startService();
+
+    }
+
+    private void weatherSubscriber(Observable<WeatherInfo> observable) {
+        observable.subscribe(weatherInfo -> {
+            updateWeatherInfo(weatherInfo.getWeather(), weatherInfo.getTemperature());
+            initDate();
+        });
+    }
+
     private void initOnClickListener() {
         vehicleInspection.setOnClickListener(this);
         drivingRecord.setOnClickListener(this);
@@ -103,29 +123,23 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
         flow.setOnClickListener(this);
         preventRob.setOnClickListener(this);
         voice_imageBtn.setOnClickListener(this);
-        bluetoothPhone.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
+        bluetoothPhone.setOnLongClickListener(v -> {
 
-                Intent intent = new Intent();
-                intent.setComponent(new ComponentName("com.android.settings",
-                        "com.android.settings.Settings"));
-                startActivity(intent);
-                //显示返回的按钮
-                return true;
-            }
+            Intent intent = new Intent();
+            intent.setComponent(new ComponentName("com.android.settings",
+                    "com.android.settings.Settings"));
+            startActivity(intent);
+            //显示返回的按钮
+            return true;
         });
         mWeatherImage.setOnLongClickListener(v -> {
             startFactory();
             return true;
         });
 
-        flow.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                new IPConfigDialog().showDialog(getActivity());
-                return true;
-            }
+        flow.setOnLongClickListener(v -> {
+            new IPConfigDialog().showDialog(getActivity());
+            return true;
         });
 
 
@@ -215,11 +229,6 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(getActivity());
-    }
-
-    public void onEventMainThread(DeviceEvent.Weather weather) {
-        updateWeatherInfo(weather.getWeather(), weather.getTemperature());
-        initDate();
     }
 
 
