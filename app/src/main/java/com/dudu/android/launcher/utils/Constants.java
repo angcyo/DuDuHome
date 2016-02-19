@@ -10,6 +10,7 @@ public class Constants {
 	public static final String LUXIANG = "录像";
     public static final String SELF_CHECKING = "自检";
     public static final String MAP = "地图";
+	public static final String WIFI = "WIFI";
 
 	public static final String EXIT = "退出";
 	public static final String OPEN = "打开";

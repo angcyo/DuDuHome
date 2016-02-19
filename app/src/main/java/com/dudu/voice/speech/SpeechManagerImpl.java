@@ -529,7 +529,7 @@ public class SpeechManagerImpl extends BaseVoiceManager {
                 case TTS_DO_NOTHING:
                     if (checkMisUnderstandCount()) {
                         EventBus.getDefault().post(VoiceEvent.THRICE_UNSTUDIED);
-                        FloatWindowUtils.removeFloatWindow();
+                        FloatWindowUtils.removeWithBlur();
                     }
                     speakQueueNext();
                     break;

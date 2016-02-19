@@ -174,7 +174,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
                 break;
 
             case R.id.voice_imageBtn:
-                getFragmentManager().beginTransaction().replace(R.id.container, new VoiceFragment()).commit();
+//                getFragmentManager().beginTransaction().replace(R.id.container, new VoiceFragment()).commit();
 //                FloatWindowUtils.showAnimWindow();
                 VoiceManagerProxy.getInstance().startVoiceService();
                 break;

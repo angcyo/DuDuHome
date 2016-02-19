@@ -3,6 +3,7 @@ package com.dudu.voice;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.dudu.aios.ui.activity.MainRecordActivity;
@@ -73,12 +74,6 @@ public class FloatWindowUtils {
                     sManager.onVolumeChanged(msg.arg1);
                     break;
                 case FLOAT_SHOW_ANIM:
-                    if (ActivitiesManager.getInstance().getTopActivity() instanceof MainRecordActivity) {
-                        EventBus.getDefault().post(VoiceEvent.SHOW_ANIM);
-                        ((BlueWindowManager) sManager).showAnimWindow();
-                    } else {
-                        sManager.showMessage(new WindowMessageEntity(Constants.WAKEUP_WORDS, MessageType.MESSAGE_INPUT));
-                    }
                     break;
             }
         }
@@ -122,7 +117,28 @@ public class FloatWindowUtils {
     }
 
     public static void showAnimWindow() {
-        sHandler.sendMessage(sHandler.obtainMessage(FLOAT_SHOW_ANIM));
+
+        if (ActivitiesManager.getInstance().getTopActivity() instanceof MainRecordActivity) {
+            Log.d("voice","-----voice FLOAT_SHOW_ANIM MainRecordActivity" );
+            sHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    EventBus.getDefault().post(VoiceEvent.SHOW_ANIM);
+                    ((BlueWindowManager) sManager).showAnimWindow();
+                }
+            },500);
+
+        } else {
+            Log.d("voice","-----voice FLOAT_SHOW_ANIM otherActivity" );
+            sManager.showMessage(new WindowMessageEntity(Constants.WAKEUP_WORDS, MessageType.MESSAGE_INPUT));
+        }
+
+    }
+
+    public static void removeWithBlur(){
+
+        ((BlueWindowManager)sManager).removeWithBlur();
+
     }
 
 }

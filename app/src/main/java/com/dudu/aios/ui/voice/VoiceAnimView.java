@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -37,18 +38,17 @@ public abstract class VoiceAnimView extends SurfaceView implements SurfaceHolder
     public VoiceAnimView(Context context) {
         super(context);
         this.context = context;
-        initView(context);
+        initView();
     }
 
     public VoiceAnimView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
-        initView(context);
+        initView();
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        startAnim();
     }
 
     @Override
@@ -72,7 +72,9 @@ public abstract class VoiceAnimView extends SurfaceView implements SurfaceHolder
         }
     }
 
-    private void initView(Context context) {
+    private void initView(
+
+    ) {
         SurfaceHolder holder = getHolder();
         holder.addCallback(this);
 
@@ -88,6 +90,7 @@ public abstract class VoiceAnimView extends SurfaceView implements SurfaceHolder
 
     public void stopAnim() {
         if (voiceAnimThread != null) {
+            Log.d("lxh","-------voice anim stop");
             voiceAnimThread.setRunning(false);
             voiceAnimThread = null;
         }
@@ -143,7 +146,12 @@ public abstract class VoiceAnimView extends SurfaceView implements SurfaceHolder
                     e.printStackTrace();
                 } finally {
                     if (c != null) {
-                        mHolder.unlockCanvasAndPost(c);
+                        try {
+                            mHolder.unlockCanvasAndPost(c);
+                        }catch (Exception e){
+
+                        }
+
                     }
                 }
             }
@@ -155,7 +163,6 @@ public abstract class VoiceAnimView extends SurfaceView implements SurfaceHolder
             if (loadAnimationBitmap() != null) {
                 c.drawBitmap(loadAnimationBitmap(), 0, 0, mPaint);
             }
-
         }
 
         private Bitmap loadAnimationBitmap() {
@@ -179,5 +186,6 @@ public abstract class VoiceAnimView extends SurfaceView implements SurfaceHolder
             return null;
 
         }
+
     }
 }

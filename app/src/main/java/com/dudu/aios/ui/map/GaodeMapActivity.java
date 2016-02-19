@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
@@ -21,6 +23,7 @@ import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.MyLocationStyle;
+import com.dudu.aios.ui.map.event.ChooseEvent;
 import com.dudu.aios.ui.map.observable.MapObservable;
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
@@ -28,6 +31,11 @@ import com.dudu.android.launcher.databinding.GaodeMapLayoutBinding;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.monitor.Monitor;
 import com.dudu.voice.VoiceManagerProxy;
+import com.dudu.voice.semantic.constant.TTSType;
+
+import java.math.BigDecimal;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by lxh on 16/2/11.
@@ -45,6 +53,7 @@ public class GaodeMapActivity extends Activity implements LocationSource {
     private Handler mHandler;
 
     private AMapLocation amapLocation;
+
 
     private Runnable getLocatinRunable = new Runnable() {
         @Override
@@ -85,6 +94,7 @@ public class GaodeMapActivity extends Activity implements LocationSource {
         initMap();
 
         initView();
+
     }
 
     private void initMap() {
@@ -157,8 +167,7 @@ public class GaodeMapActivity extends Activity implements LocationSource {
         });
 
         binding.mapListView.setHasFixedSize(true);
-        MyLinearLayoutManager layoutManager = new MyLinearLayoutManager(this);
-        binding.mapListView.setLayoutManager(layoutManager);
+
     }
 
 
@@ -185,6 +194,7 @@ public class GaodeMapActivity extends Activity implements LocationSource {
             mHandler.removeCallbacks(getLocatinRunable);
         }
         mapObservable.release();
+
     }
 
     @Override
@@ -209,6 +219,7 @@ public class GaodeMapActivity extends Activity implements LocationSource {
     public void deactivate() {
 
     }
+
 
 
 }

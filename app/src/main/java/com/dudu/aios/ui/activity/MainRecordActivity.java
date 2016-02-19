@@ -280,4 +280,6 @@ public class MainRecordActivity extends BaseActivity {
         replaceFragment(FragmentConstants.FRAGMENT_MAIN_PAGE);
         observableFactory.getCommonObservable().hasTitle.set(true);
     }
+
+
 }

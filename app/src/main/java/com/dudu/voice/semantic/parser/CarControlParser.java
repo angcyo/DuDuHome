@@ -46,11 +46,13 @@ public class CarControlParser {
                         return bean;
                     }
 
-                    if (text.contains(Constants.NAVIGATION) || text.contains(SemanticConstant.DOMAIN_MAP)) {
+                    if (text.contains(Constants.NAVIGATION) || text.contains(SemanticConstant.DOMAIN_MAP)
+                            ||text.contains(Constants.WIFI)) {
                         bean.setAction(param.optString(SemanticConstant.ACTION_CN));
                         bean.setTarget(param.optString(SemanticConstant.OBJECT_CN));
-                        return bean;
+
                     }
+
 
                     if (text.contains(Constants.BACK)) {
                         bean.setTarget(Constants.BACK);

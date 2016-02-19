@@ -5,7 +5,6 @@ import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -58,7 +57,7 @@ public class MapObservable {
 
     private Context mContext;
 
-    private ArrayList<MapListItemObservable> mapList;
+    public ArrayList<MapListItemObservable> mapList;
 
     private MapListAdapter mapListAdapter;
 
@@ -77,12 +76,6 @@ public class MapObservable {
     private MapListItemObservable itemObservable;
 
     private int pageIndex;
-
-    private boolean mapListViewMove;
-
-
-    private int mIndex = 0;
-
 
     public MapObservable(GaodeMapLayoutBinding binding) {
 
@@ -206,7 +199,9 @@ public class MapObservable {
 
     private void showAddress() {
 
-        navigationProxy.setChooseStep(1);
+
+        MyLinearLayoutManager layoutManager = new MyLinearLayoutManager(binding.getRoot().getContext());
+        binding.mapListView.setLayoutManager(layoutManager);
 
         if (navigationProxy.isManual()) {
             mapListTitle.set("共找到" + navigationManager.getPoiResultList().size() + "个结果");
@@ -223,18 +218,19 @@ public class MapObservable {
         mapList.clear();
         mapList = getmapList();
         mapListAdapter = new MapListAdapter(mapList, (view, position) -> {
-            if (position > mapList.size())
+            if (position > mapList.size()) {
                 return;
+            }
             chooseAddress(mapList.get(position).poiResult.get(), position);
         });
         binding.mapListView.setAdapter(mapListAdapter);
         showList.set(true);
+        navigationProxy.setChooseStep(1);
     }
 
 
     private void showStrategy() {
 
-        navigationProxy.setChooseStep(2);
 
         if (!navigationProxy.isManual()) {
 
@@ -249,11 +245,12 @@ public class MapObservable {
         mapListAdapter = null;
         binding.mapListView.setAdapter(routeStrategyAdapter);
 
+        navigationProxy.setChooseStep(2);
 
     }
 
 
-    private void chooseAddress(PoiResultInfo result, int position) {
+    public void chooseAddress(PoiResultInfo result, int position) {
         if (chooseAddressSub != null)
             return;
         chooseAddressSub = Observable.just(result).subscribe(poiResultInfo -> {
@@ -273,7 +270,7 @@ public class MapObservable {
     }
 
 
-    private void chooseDriveMode(int position) {
+    public void chooseDriveMode(int position) {
         if (navigationManager.getPoiResultList().isEmpty())
             return;
 
@@ -315,10 +312,22 @@ public class MapObservable {
     }
 
 
+    public void onEventMainThread(VoiceEvent event) {
+
+        switch (event) {
+            case THRICE_UNSTUDIED:
+                mapList.clear();
+                showList.set(false);
+                showBottomButton.set(true);
+                break;
+        }
+
+    }
+
     public void onEventMainThread(ChooseEvent event) {
 
         MyLinearLayoutManager lm = (MyLinearLayoutManager) binding.mapListView.getLayoutManager();
-        BigDecimal b = new BigDecimal(lm.findFirstVisibleItemPosition()/ADDRESS_VIEW_COUNT).setScale(0, BigDecimal.ROUND_HALF_UP);
+        BigDecimal b = new BigDecimal(lm.findFirstVisibleItemPosition() / MapObservable.ADDRESS_VIEW_COUNT).setScale(0, BigDecimal.ROUND_HALF_UP);
         pageIndex = b.intValue();
         Log.d("lxh", " >>>>>>>>>>>>pageIndex " + pageIndex);
         switch (event.getChooseType()) {
@@ -333,26 +342,14 @@ public class MapObservable {
                 nextPage(lm);
                 break;
             case ChooseEvent.PREVIOUSPAGE:
-                previousPage(lm);
+                previousPage();
                 break;
             case ChooseEvent.CHOOSEPAGE:
-                choosePage(event.getPosition(), lm);
+                choosePage(event.getPosition());
         }
 
     }
 
-
-    public void onEventMainThread(VoiceEvent event) {
-
-        switch (event) {
-            case THRICE_UNSTUDIED:
-                mapList.clear();
-                showList.set(false);
-                showBottomButton.set(true);
-                break;
-        }
-
-    }
 
     private void nextPage(LinearLayoutManager lm) {
         if (pageIndex >= 3
@@ -361,30 +358,32 @@ public class MapObservable {
             VoiceManagerProxy.getInstance().startSpeaking("已经是最后一页", TTSType.TTS_START_UNDERSTANDING, false);
             return;
         }
+
         pageIndex++;
-        binding.mapListView.scrollToPosition(pageIndex*ADDRESS_VIEW_COUNT);
+        binding.mapListView.smoothScrollToPosition(pageIndex * MapObservable.ADDRESS_VIEW_COUNT);
     }
 
 
-    private void previousPage(LinearLayoutManager lm) {
+    private void previousPage() {
         if (pageIndex <= 0) {
             VoiceManagerProxy.getInstance().stopUnderstanding();
             VoiceManagerProxy.getInstance().startSpeaking("已经是第一页", TTSType.TTS_START_UNDERSTANDING, false);
             return;
         }
         pageIndex--;
-        binding.mapListView.scrollToPosition(pageIndex*ADDRESS_VIEW_COUNT);
+        binding.mapListView.smoothScrollToPosition(pageIndex * MapObservable.ADDRESS_VIEW_COUNT);
     }
 
-    private void choosePage(int page, LinearLayoutManager lm) {
+    private void choosePage(int page) {
         if (page > 4 || page < 1) {
             VoiceManagerProxy.getInstance().stopUnderstanding();
             VoiceManagerProxy.getInstance().startSpeaking("选择错误，请重新选择", TTSType.TTS_START_UNDERSTANDING, false);
             return;
         }
         pageIndex = page - 1;
-       binding.mapListView.scrollToPosition(pageIndex*ADDRESS_VIEW_COUNT);
+        binding.mapListView.smoothScrollToPosition(pageIndex * MapObservable.ADDRESS_VIEW_COUNT);
     }
+
 
     public void release() {
         EventBus.getDefault().unregister(this);
@@ -397,15 +396,15 @@ public class MapObservable {
     }
 
 
-
-
     public void displayList() {
         showList.set(false);
         showBottomButton.set(true);
-        VoiceManagerProxy.getInstance().stopSpeaking();
         navigationProxy.setShowList(false);
         navigationProxy.setIsManual(false);
 
+        VoiceManagerProxy.getInstance().onStop();
+
     }
+
 
 }

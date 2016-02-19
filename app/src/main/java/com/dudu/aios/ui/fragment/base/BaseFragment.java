@@ -3,6 +3,7 @@ package com.dudu.aios.ui.fragment.base;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +38,7 @@ public abstract class BaseFragment extends Fragment {
                 replaceFragment(FragmentConstants.VOICE_FRAGMENT);
                 break;
             case DISMISS_WINDOW:
+                Log.d("lxh", "voice  DISMISS_WINDOW BaseFragment");
                 if (ActivitiesManager.getInstance().getTopActivity() instanceof MainRecordActivity) {
                     replaceFragment(LauncherApplication.lastFragment);
                 }

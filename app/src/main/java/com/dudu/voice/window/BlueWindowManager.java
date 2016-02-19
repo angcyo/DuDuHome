@@ -1,17 +1,21 @@
 package com.dudu.voice.window;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.dudu.aios.ui.activity.MainRecordActivity;
-import com.dudu.aios.ui.utils.ScreenUtil;
 import com.dudu.aios.ui.utils.blur.RxBlurEffective;
 import com.dudu.aios.ui.voice.VoiceCircleAnimView;
 import com.dudu.aios.ui.voice.VoiceEvent;
@@ -31,8 +35,12 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+
+import static com.dudu.aios.ui.voice.VoiceEvent.SHOW_ANIM;
 
 /**
  * Created by 赵圣琪 on 2016/1/4.
@@ -57,9 +65,13 @@ public class BlueWindowManager extends BaseWindowManager {
 
     private LinearLayout voice_animLayout;
 
+    private LinearLayout voice_animLayout_blur;
+
     private VoiceCircleAnimView voiceCircleAnimView;
 
     private VoiceRippleAnimView voiceRippleAnimView;
+
+    private ImageView blur_Circle, blur_Ripple;
 
     private View message_layout;
 
@@ -71,7 +83,6 @@ public class BlueWindowManager extends BaseWindowManager {
 
         if (isInit)
             return;
-
 
         logger = LoggerFactory.getLogger("voice.float");
 
@@ -113,7 +124,13 @@ public class BlueWindowManager extends BaseWindowManager {
         voiceRippleAnimView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
         voiceCircleAnimView.setZOrderOnTop(true);
         voiceCircleAnimView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+
+        voice_animLayout_blur = (LinearLayout) mFloatWindowView.findViewById(R.id.voice_anim_blur_layout);
+        blur_Circle = (ImageView) mFloatWindowView.findViewById(R.id.voice_circle_blur);
+        blur_Ripple = (ImageView) mFloatWindowView.findViewById(R.id.voice_ripple_blur);
+
     }
+
 
     @Override
     public int getFloatWindowLayout() {
@@ -126,6 +143,7 @@ public class BlueWindowManager extends BaseWindowManager {
         if (NavigationProxy.getInstance().isShowList()) {
             return;
         }
+
 
         addFloatView();
 
@@ -204,6 +222,9 @@ public class BlueWindowManager extends BaseWindowManager {
     @Override
     public void removeFloatWindow() {
 
+        logger.debug("-------voice removeFloatWindow");
+        EventBus.getDefault().post(VoiceEvent.DISMISS_WINDOW);
+
         removeFloatView();
 
         isInit = false;
@@ -216,7 +237,6 @@ public class BlueWindowManager extends BaseWindowManager {
 
         mMessageData.clear();
 
-        EventBus.getDefault().post(VoiceEvent.DISMISS_WINDOW);
 
 
     }
@@ -228,39 +248,109 @@ public class BlueWindowManager extends BaseWindowManager {
 
     public void showAnimWindow() {
 
+
         stopAnimWindow();
 
         addFloatView();
 
-        voice_animLayout.setVisibility(View.VISIBLE);
+        visibleAnimView();
 
         message_layout.setVisibility(View.GONE);
 
-//        voiceCircleAnimView.startAnim();
-//
-//        voiceRippleAnimView.startAnim();
+        voice_animLayout.setBackgroundColor(Color.TRANSPARENT);
+
+        voiceCircleAnimView.startAnim();
+
+        voiceRippleAnimView.startAnim();
+
 
     }
 
     public void stopAnimWindow() {
-        if (voice_animLayout != null) {
-            voice_animLayout.setVisibility(View.GONE);
-        }
-        if (voiceCircleAnimView != null && voiceRippleAnimView != null) {
-            voiceCircleAnimView.stopAnim();
-            voiceRippleAnimView.stopAnim();
-        }
+
+        voiceCircleAnimView.stopAnim();
+        voiceRippleAnimView.stopAnim();
+
+        voice_animLayout.setVisibility(View.GONE);
+        voiceCircleAnimView.setVisibility(View.GONE);
+        voiceRippleAnimView.setVisibility(View.GONE);
+
+    }
+
+
+    public void removeWithBlur() {
+        Bitmap currentBitmap;
+        message_layout.setDrawingCacheEnabled(true);
+        Bitmap drawingCache = message_layout.getDrawingCache();
+        currentBitmap = Bitmap.createBitmap(drawingCache.getWidth(), drawingCache.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(currentBitmap);
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setFlags(Paint.FILTER_BITMAP_FLAG);
+        canvas.drawBitmap(drawingCache, 0, 0, paint);
+
+        Bitmap blurBitmap_back = RxBlurEffective
+                .bestBlur(mContext, currentBitmap, 25, 0.1f)
+                .toBlocking()
+                .first();
+
+        visibleAnimView();
+        voice_animLayout.setBackground(new BitmapDrawable(mContext.getResources(), blurBitmap_back));
+
+        message_layout.setVisibility(View.GONE);
+        mMessageListView.setVisibility(View.GONE);
+
+        voiceCircleAnimView.startAnim();
+        voiceRippleAnimView.startAnim();
+
+        Observable.timer(2, TimeUnit.SECONDS).subscribe(aLong -> {
+
+            try {
+
+                removeFloatWindow();
+            }catch (Exception e){
+
+            }
+        });
+
+    }
+
+    private void visibleAnimView() {
+        voice_animLayout_blur.setVisibility(View.GONE);
+        blur_Circle.setVisibility(View.GONE);
+        blur_Circle.setVisibility(View.GONE);
+
+        voice_animLayout.setVisibility(View.VISIBLE);
+        voiceRippleAnimView.setVisibility(View.VISIBLE);
+        voiceCircleAnimView.setVisibility(View.VISIBLE);
     }
 
     private void blur(View view) {
 
 
         if (ActivitiesManager.getInstance().getTopActivity() instanceof MainRecordActivity) {
-            Bitmap blurBitmap = RxBlurEffective
-                    .bestBlur(mContext, ScreenUtil.cacheCurrentScreen(ActivitiesManager.getInstance().getTopActivity()), 25, 0.1f)
+            EventBus.getDefault().post(SHOW_ANIM);
+
+
+            voice_animLayout_blur.setVisibility(View.VISIBLE);
+
+            Bitmap blurBitmap1 = RxBlurEffective
+                    .bestBlur(mContext, BitmapFactory.decodeResource(mContext.getResources(), R.drawable.voice_circle_1), 3, 0)
                     .toBlocking()
                     .first();
-            view.setBackground(new BitmapDrawable(mContext.getResources(), blurBitmap));
+
+            Bitmap blurBitmap2 = RxBlurEffective
+                    .bestBlur(mContext, BitmapFactory.decodeResource(mContext.getResources(), R.drawable.d02_voice_1), 3, 0)
+                    .toBlocking()
+                    .first();
+
+
+            blur_Ripple.setVisibility(View.VISIBLE);
+            blur_Circle.setVisibility(View.VISIBLE);
+
+            blur_Circle.setImageDrawable(new BitmapDrawable(mContext.getResources(), blurBitmap1));
+            blur_Ripple.setImageDrawable(new BitmapDrawable(mContext.getResources(), blurBitmap2));
+
         } else {
             voice_animLayout.setVisibility(View.GONE);
             view.setBackground(null);

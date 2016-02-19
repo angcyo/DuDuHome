@@ -8,6 +8,7 @@ import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.ui.activity.CarCheckingActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
+import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.drivevideo.DriveVideo;
 import com.dudu.map.NavigationProxy;
 import com.dudu.voice.FloatWindowUtils;
@@ -44,6 +45,9 @@ public class CmdChain extends SemanticChain {
                 return handleNavigationCmd(action);
             } else if (target.contains(SemanticConstant.RECORD_CN)) {
                 handleVideoCmd(action);
+                return true;
+            } else if (target.equals(Constants.WIFI)) {
+                handleWifi(action);
                 return true;
             } else if (target.contains(Constants.SPEECH)) {
                 handleExitCmd();
@@ -90,7 +94,7 @@ public class CmdChain extends SemanticChain {
 //                mContext.startActivity(intent);
 
                 toMainRecord();
-                MainRecordActivity activity =(MainRecordActivity) ActivitiesManager.getInstance().getTopActivity();
+                MainRecordActivity activity = (MainRecordActivity) ActivitiesManager.getInstance().getTopActivity();
                 activity.replaceFragment(FragmentConstants.FRAGMENT_DRIVING_RECORD);
                 break;
             case Constants.CLOSE:
@@ -98,12 +102,12 @@ public class CmdChain extends SemanticChain {
             case Constants.GUANDIAO:
                 toMainRecord();
                 DriveVideo.getInstance().stopDriveVideo();
-                mVoiceManager.startSpeaking("录像预览已关闭", TTSType.TTS_DO_NOTHING,false);
+                mVoiceManager.startSpeaking("录像预览已关闭", TTSType.TTS_DO_NOTHING, false);
                 break;
         }
     }
 
-    private void toMainRecord(){
+    private void toMainRecord() {
         if (!(ActivitiesManager.getInstance().getTopActivity() instanceof MainRecordActivity)) {
             Intent intent = new Intent();
             intent.setClass(mContext, MainRecordActivity.class);
@@ -173,6 +177,19 @@ public class CmdChain extends SemanticChain {
         }
 
         return true;
+    }
+
+    private void handleWifi(String option) {
+        switch (option) {
+            case Constants.OPEN:
+                WifiApAdmin.startWifiAp(mContext);
+                mVoiceManager.startSpeaking("Wifi热点已打开", TTSType.TTS_START_UNDERSTANDING, true);
+                break;
+            case Constants.CLOSE:
+                WifiApAdmin.startWifiAp(mContext);
+                mVoiceManager.startSpeaking("Wifi热点已关闭", TTSType.TTS_START_UNDERSTANDING, true);
+                break;
+        }
     }
 
 }

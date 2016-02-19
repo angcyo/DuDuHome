@@ -485,14 +485,13 @@ public class NavigationProxy {
     }
 
     public void onChoosePage(int page) {
-        navigationManager.getLog().debug("----onChoosePage");
         EventBus.getDefault().post(new ChooseEvent(ChooseEvent.CHOOSEPAGE, page));
     }
 
     public void onChooseNumber(int position) {
         if (chooseStep == 1) {
             EventBus.getDefault().post(new ChooseEvent(ChooseEvent.ADDRESS_NUMBER, position));
-        } else {
+        } else if (chooseStep == 2) {
             EventBus.getDefault().post(new ChooseEvent(ChooseEvent.STRATEGY_NUMBER, position));
         }
     }
@@ -579,6 +578,8 @@ public class NavigationProxy {
 
         disMissProgressDialog();
         needNotify = false;
+        voiceManager.stopSpeaking();
+        voiceManager.stopUnderstanding();
 
     };
 }

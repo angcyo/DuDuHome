@@ -46,9 +46,10 @@ public abstract class BaseVoiceManager implements VoiceManager {
 
         clearMisUnderstandCount();
 
+        startSpeaking(Constants.WAKEUP_WORDS, TTSType.TTS_START_UNDERSTANDING, false);
+
         FloatWindowUtils.showAnimWindow();
 
-        startSpeaking(Constants.WAKEUP_WORDS, TTSType.TTS_START_UNDERSTANDING, false);
 
     }
 
