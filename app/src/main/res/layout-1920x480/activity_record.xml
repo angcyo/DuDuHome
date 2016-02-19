@@ -6,12 +6,12 @@
     tools:context="com.dudu.aios.ui.activity.MainRecordActivity"
     >
 
-    <FrameLayout
+<!--    <FrameLayout
         android:id="@+id/preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </FrameLayout>
+    </FrameLayout>-->
    <!-- <SurfaceView
         android:id="@+id/surfaceView"
         android:layout_width="wrap_content"
@@ -21,7 +21,6 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@drawable/black_bg"/>
+        android:orientation="vertical"/>
 
 </RelativeLayout>

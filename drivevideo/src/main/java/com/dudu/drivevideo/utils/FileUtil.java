@@ -2,6 +2,9 @@ package com.dudu.drivevideo.utils;
 
 import android.os.Environment;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -13,6 +16,8 @@ import java.util.List;
  * Description :
  */
 public class FileUtil {
+    private static Logger log = LoggerFactory.getLogger("video.drivevideo");
+
     private static String T_FLASH_PATH = "/storage/sdcard1";
     private static final int BUFF_SIZE = 1024 * 1024; // 1M Byte
 
@@ -20,7 +25,8 @@ public class FileUtil {
     public static File getTFlashCardDirFile(String parentDirName, String dirName){
         File dirFile = new File(getStorageDir(parentDirName), dirName);
         if (!dirFile.exists()){
-            dirFile.mkdirs();
+            boolean mkFlag = dirFile.mkdirs();
+            log.debug("getTFlashCardDirFile创建文件夹：{}", mkFlag);
         }
         return dirFile;
     }
@@ -29,7 +35,8 @@ public class FileUtil {
     public static File getStorageDir(String dirString) {
         File dir  = new File(T_FLASH_PATH, dirString);
         if (!dir.exists()) {
-            dir.mkdirs();
+            boolean mkFlag = dir.mkdirs();
+            log.debug("getStorageDir创建文件夹：{}",mkFlag);
         }
         return dir;
     }
