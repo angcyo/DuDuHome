@@ -18,7 +18,6 @@ import com.dudu.aios.ui.voice.VoiceEvent;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.databinding.GaodeMapLayoutBinding;
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.event.MapResultShow;
 import com.dudu.map.NavigationProxy;
 import com.dudu.navi.NavigationManager;
@@ -145,7 +144,7 @@ public class MapObservable {
         if (TextUtils.isEmpty(binding.mapSearchEdt.getText().toString()))
             return;
         if (containsEmoji(binding.mapSearchEdt.getText().toString())) {
-            ToastUtils.showToast(mContext.getString(R.string.notice_searchKeyword));
+            VoiceManagerProxy.getInstance().startSpeaking(mContext.getString(R.string.notice_searchKeyword));
             return;
         }
 

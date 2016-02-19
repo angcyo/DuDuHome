@@ -24,7 +24,6 @@ import com.dudu.android.launcher.ui.activity.SimpleHudActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.CommonAddressUtil;
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.event.MapResultShow;
 import com.dudu.monitor.Monitor;
@@ -281,12 +280,9 @@ public class NavigationProxy {
         if (Monitor.getInstance(context).getCurrentLocation() == null) {
             navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
             msg = "暂未获取到您的当前位置，不能搜索，请稍后再试";
-            if (isManual) {
-                ToastUtils.showToast(msg);
-            } else {
-                voiceManager.startSpeaking(msg, TTSType.TTS_DO_NOTHING, true);
-                removeWindow();
-            }
+            voiceManager.startSpeaking(msg, TTSType.TTS_DO_NOTHING, true);
+            removeWindow();
+
             return;
         }
         if (Constants.CURRENT_POI.equals(navigationManager.getKeyword())) {
@@ -318,9 +314,6 @@ public class NavigationProxy {
         if (event == NaviEvent.SearchResult.SUCCESS) {
             handlerPoiResult();
         } else {
-            if (isManual) {
-                ToastUtils.showToast(context.getString(R.string.search_fail));
-            }
             navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
         }
         disMissProgressDialog();
