@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertTrue;
 
@@ -33,7 +34,7 @@ public class DrivingRequestTest {
     private int index = 20;
 
     @Test
-    public void test_pushManyTimes() throws InterruptedException {
+    public void test_pushAcceleratedTestDataManyTimes() throws InterruptedException {
         for(int i=0;i<10;i++){
             test_pushAcceleratedTestData();
         }
@@ -58,11 +59,35 @@ public class DrivingRequestTest {
     }
 
     @Test
+    public void test_pushDrivingHabitsDataManyTimes() throws InterruptedException {
+        final CountDownLatch signal = new CountDownLatch(1);
+        for(int i=0;i<20;i++){
+            test_pushDrivingHabitsData();
+            signal.await(20, TimeUnit.SECONDS);
+        }
+    }
+
+    @Test
     public void test_pushDrivingHabitsData() throws InterruptedException {
         index++;
         final CountDownLatch signal = new CountDownLatch(1);
         DrivingHabitsData data = new DrivingHabitsData();
-        data.setDriverType(DrivingHabitsData.JIJIAKE);
+        String value;
+        switch (index%3){
+            case 1:
+                value = DrivingHabitsData.JIJIAKE;
+                break;
+            case 2:
+                value = DrivingHabitsData.JIXINGXIA;
+                break;
+            case 3:
+                value = DrivingHabitsData.LECIZHE;
+                break;
+            default:
+                value = DrivingHabitsData.LECIZHE;
+                break;
+        }
+        data.setDriverType(value);
         data.setTime(TimeUtils.format(TimeUtils.format7));
         data.setDate(TimeUtils.format(TimeUtils.format8));
         RequestFactory.getDrivingRequest().pushDrivingHabitsData(data, new DrivingRequest.RequesetCallback() {
