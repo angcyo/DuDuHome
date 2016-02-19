@@ -10,9 +10,9 @@ import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.NetworkUtils;
 import com.dudu.commonlib.CommonLib;
 import com.dudu.rest.common.Request;
-import com.dudu.workflow.CommonParams;
-import com.dudu.workflow.FlowFactory;
-import com.dudu.workflow.RequestFactory;
+import com.dudu.workflow.common.CommonParams;
+import com.dudu.workflow.common.FlowFactory;
+import com.dudu.workflow.common.RequestFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

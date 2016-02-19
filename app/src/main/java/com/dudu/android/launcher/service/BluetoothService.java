@@ -64,7 +64,7 @@ public class BluetoothService extends Service {
         }
 
         Intent intent = new Intent("wld.btphone.bluetooth.ProfileService");
-        bindService(intent, mPbapServiceConnection, BIND_AUTO_CREATE);
+//        bindService(intent, mPbapServiceConnection, BIND_AUTO_CREATE);
     }
 
     @Override

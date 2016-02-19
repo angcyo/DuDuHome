@@ -2,6 +2,9 @@ package com.dudu.workflow;
 
 import com.dudu.commonlib.CommonLib;
 import com.dudu.rest.common.Request;
+import com.dudu.workflow.common.CommonParams;
+import com.dudu.workflow.common.FlowFactory;
+import com.dudu.workflow.common.RequestFactory;
 import com.dudu.workflow.robbery.RobberyRequest;
 
 import org.junit.Before;

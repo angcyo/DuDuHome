@@ -3,7 +3,7 @@ package com.dudu.workflow.robbery;
 import com.dudu.rest.common.Request;
 import com.dudu.rest.model.QueryRobberyResponse;
 import com.dudu.rest.model.RequestResponse;
-import com.dudu.workflow.CommonParams;
+import com.dudu.workflow.common.CommonParams;
 
 import retrofit2.Call;
 import retrofit2.Callback;

@@ -1,4 +1,4 @@
-package com.dudu.workflow;
+package com.dudu.workflow.common;
 
 import com.dudu.workflow.driving.DrivingFlow;
 

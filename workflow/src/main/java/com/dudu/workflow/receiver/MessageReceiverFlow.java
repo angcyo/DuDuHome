@@ -117,16 +117,16 @@ public class MessageReceiverFlow {
     /**
      * 消息透传
      *
-     * @param message
+     * @param title
+     * @param content
      * @param customContent
      */
-    public void textMessage(String message,String customContent) {
-        logger.debug(message);
+    public void textMessage(String title, String content,String customContent) {
+        logger.debug("收到消息: title: "+title+"; content: "+content+"; customContent: "+customContent);
 
-        ReceiverData data = DataJsonTranslation.getDataFromReceiver(message);
+        ReceiverData data = DataJsonTranslation.getDataFromReceiver(new ReceiverData(title,content,customContent));
         RxBus.getInstance().send(data);
 
-        String text = "收到消息:" + message.toString();
         if (customContent != null && customContent.length() != 0) {
             try {
                 JSONObject obj = new JSONObject(customContent);
@@ -139,8 +139,6 @@ public class MessageReceiverFlow {
                 e.printStackTrace();
             }
         }
-        // APP自主处理消息的过程...
-        logger.debug(text);
 
     }
 }

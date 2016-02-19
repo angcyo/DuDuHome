@@ -6,6 +6,10 @@ import android.widget.ImageView;
 
 import com.dudu.aios.ui.fragment.base.BaseVehicleFragment;
 import com.dudu.android.launcher.R;
+import com.dudu.commonlib.repo.ReceiverData;
+import com.dudu.workflow.robbery.RobberyFlow;
+
+import rx.functions.Action1;
 
 public class RobberyFragment extends BaseVehicleFragment implements View.OnClickListener {
 
@@ -18,6 +22,7 @@ public class RobberyFragment extends BaseVehicleFragment implements View.OnClick
         view = LayoutInflater.from(getActivity()).inflate(R.layout.robbery_mode_layout, null);
         initView();
         initListener();
+        changeSwitchFlow();
         return view;
     }
 
@@ -68,5 +73,32 @@ public class RobberyFragment extends BaseVehicleFragment implements View.OnClick
                 gun_off_img.setVisibility(View.VISIBLE);
                 break;
         }
+    }
+
+    private void checkHeadLightSwitch(boolean opened){
+        headlight_off_img.setVisibility(opened?View.GONE:View.VISIBLE);
+        headlight_on_img.setVisibility(opened?View.VISIBLE:View.GONE);
+    }
+
+    private void checkParkSwitch(boolean opened){
+        park_off_img.setVisibility(opened?View.GONE:View.VISIBLE);
+        park_on_img.setVisibility(opened?View.VISIBLE:View.GONE);
+    }
+
+    private void checkGasSwitch(boolean opened){
+        gun_off_img.setVisibility(opened?View.GONE:View.VISIBLE);
+        gun_on_img.setVisibility(opened?View.VISIBLE:View.GONE);
+    }
+
+    public void changeSwitchFlow(){
+        RobberyFlow.getInstance().getRobberyFlow()
+                .subscribe(new Action1<ReceiverData>() {
+                    @Override
+                    public void call(ReceiverData receiverData) {
+                        checkHeadLightSwitch(receiverData.getSwitch1Value().equals("1"));
+                        checkParkSwitch(receiverData.getSwitch2Value().equals("1"));
+                        checkGasSwitch(receiverData.getSwitch3Value().equals("1"));
+                    }
+                });
     }
 }

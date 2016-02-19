@@ -20,7 +20,7 @@ public class RetrofitClient {
         String baseUrl = ConfigReader.getInstance().getConfig().getServerAddress();
         retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
-                .addConverterFactory(new ChunkingConverterFactory())
+//                .addConverterFactory(new ChunkingConverterFactory())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }

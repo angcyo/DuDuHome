@@ -14,7 +14,7 @@ import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.utils.IPConfig;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.network.NetworkManage;
-import com.dudu.workflow.CommonParams;
+import com.dudu.workflow.common.CommonParams;
 
 import java.util.concurrent.TimeUnit;
 

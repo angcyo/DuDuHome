@@ -75,7 +75,7 @@ public class ConfigReader {
     public void initTestConfig() {
         Config config = new Config();
         config.setTest(true);
-        config.setServerAddress("http://192.168.0.177:8080/");
+        config.setServerAddress("http://119.29.132.60/");
         mConfigList.add(config);
     }
 

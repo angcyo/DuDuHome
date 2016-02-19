@@ -5,31 +5,31 @@ package com.dudu.rest.model;
  */
 public class AccTestData {
 
-    private double accTotalTime;
-    private long dateTime;
-    private int accType;
+    private String accTotalTime;
+    private String dateTime;
+    private String accType;
 
-    public double getAccTotalTime() {
+    public String getAccTotalTime() {
         return accTotalTime;
     }
 
-    public void setAccTotalTime(double accTotalTime) {
+    public void setAccTotalTime(String accTotalTime) {
         this.accTotalTime = accTotalTime;
     }
 
-    public long getDateTime() {
+    public String getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(long dateTime) {
+    public void setDateTime(String dateTime) {
         this.dateTime = dateTime;
     }
 
-    public int getAccType() {
+    public String getAccType() {
         return accType;
     }
 
-    public void setAccType(int type) {
+    public void setAccType(String type) {
         this.accType = type;
     }
 }

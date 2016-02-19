@@ -62,7 +62,7 @@ public class MessagePushReceiver extends XGPushBaseReceiver {
     @Override
     public void onTextMessage(Context context, XGPushTextMessage message) {
         if(message!=null) {
-            MessageReceiverFlow.getInstance().textMessage(message.toString(), message.getCustomContent());
+            MessageReceiverFlow.getInstance().textMessage(message.getTitle(), message.getContent(), message.getCustomContent());
         }
     }
 

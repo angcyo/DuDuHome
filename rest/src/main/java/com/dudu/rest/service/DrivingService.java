@@ -13,4 +13,7 @@ public interface DrivingService {
 
     @GET("/external/mirror/acceleratedTest/{cellphone}/{json}")
     public Call<RequestResponse> pushAcceleratedTestData(@Path("cellphone") String cellphone, @Path("json")String json);
+
+    @GET("/external/mirror/drivingHabits/{cellphone}/{json}")
+    public Call<RequestResponse> pushDrivingHabits(@Path("cellphone") String cellphone, @Path("json")String json);
 }

@@ -1,9 +1,9 @@
 package com.dudu.workflow.driving;
 
 import com.dudu.commonlib.repo.ReceiverData;
-import com.dudu.commonlib.utils.RxBus;
 import com.dudu.rest.model.AccTestData;
-import com.dudu.workflow.RequestFactory;
+import com.dudu.workflow.common.ObservableFactory;
+import com.dudu.workflow.common.RequestFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,25 +19,25 @@ public class DrivingFlow {
     private Logger logger = LoggerFactory.getLogger("DrivingFlow");
 
     public void getReceiveDataFlow() {
-        RxBus.getInstance().asObservable()
-                .filter(new Func1<Object, Boolean>() {
+        ObservableFactory.getReceiverObservable()
+                .filter(new Func1<ReceiverData,Boolean>() {
                     @Override
-                    public Boolean call(Object event) {
-                        return event instanceof ReceiverData;
+                    public Boolean call(ReceiverData data) {
+                        return data.getTitle().equals(ReceiverData.ACCELERATEDTESTSTART_VALUE);
                     }
                 })
-                .map(new Func1<Object, ReceiverData>() {
+                .map(new Func1<ReceiverData, AccTestData>() {
                     @Override
-                    public ReceiverData call(Object event) {
-                        return (ReceiverData) event;
+                    public AccTestData call(ReceiverData receiverData) {
+                        String type = receiverData.getContent();
+                        return getAccTestData(getRamdomData(type), type);
                     }
                 })
-                .subscribe(new Action1<ReceiverData>() {
+                .subscribe(new Action1<AccTestData>() {
                     @Override
-                    public void call(ReceiverData data) {
-                        int type = data.getSwitchContent();
+                    public void call(AccTestData data) {
                         RequestFactory.getDrivingRequest()
-                                .pushAcceleratedTestData(getAccTestData(getRamdomData(type), type), new DrivingRequest.RequesetCallback() {
+                                .pushAcceleratedTestData(data, new DrivingRequest.RequesetCallback() {
                                     @Override
                                     public void requestSuccess(boolean success) {
                                         if (success) {
@@ -52,23 +52,23 @@ public class DrivingFlow {
                 });
     }
 
-    public AccTestData getAccTestData(double value, int type) {
+    public AccTestData getAccTestData(String value, String type) {
         AccTestData accTestData = new AccTestData();
         accTestData.setAccTotalTime(value);
         accTestData.setAccType(type);
-        accTestData.setDateTime(System.currentTimeMillis());
+        accTestData.setDateTime(System.currentTimeMillis()+"");
         return accTestData;
     }
 
-    public double getRamdomData(int type) {
+    public String getRamdomData(String type) {
         switch (type) {
-            case 1:
-                return Math.random() * 10;
-            case 2:
-                return Math.random() * 10;
-            case 3:
-                return Math.random() * 10;
+            case "1":
+                return String.valueOf(Math.random() * 10);
+            case "2":
+                return String.valueOf(Math.random() * 10);
+            case "3":
+                return String.valueOf(Math.random() * 10);
         }
-        return 0;
+        return "0";
     }
 }

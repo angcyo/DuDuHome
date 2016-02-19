@@ -1,13 +1,13 @@
 package com.dudu.android.launcher.utils;
 
+import android.text.TextUtils;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
-
-import android.text.TextUtils;
 
 public class TimeUtils {
 	/** 格式定义 yyyy-MM-dd */
@@ -20,7 +20,8 @@ public class TimeUtils {
 	public static String format3 = "yyyy-MM-ddHH:mm:ss";
 	public static String format5 = "yyyy-MM-dd HHmmss";
 	public static String format6 = "HH";
-    
+	public static String format7 = "HH:mm";
+
 	/**
 	 * 获得当前时间的格式化输出
 	 * 
