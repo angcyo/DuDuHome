@@ -33,10 +33,10 @@ public class SpeedTest {
     public void startTestSpeed() {
         Log.d("SerialPort", "startTestSpeed call start");
         try {
-            Subscription sub1 = OBDStream.getInstance().engSpeedStream()
+            Subscription sub1 = OBDStream.getInstance().testSpeedStream()
                     .subscribeOn(Schedulers.newThread())
                     .subscribe(aDouble -> {
-                        Log.d("SerialPort", "eng speed: " + aDouble);
+                        Log.d("SerialPort", "test speed: " + aDouble);
                     });
             Subscription sub2 = OBDStream.getInstance().speedStream()
                     .subscribeOn(Schedulers.newThread())

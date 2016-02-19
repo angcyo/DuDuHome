@@ -5,6 +5,8 @@ import com.dudu.android.libserial.SerialManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 import android_serialport_api.SerialPort;
 import rx.Observable;
@@ -18,6 +20,7 @@ public class OBDStream {
         return ourInstance;
     }
 
+    private OutputStream outputStream;
     private Observable<String> obdRawData = null;
     private Observable<String> obdRTString = null;
     private Observable<String> obdTTString = null;
@@ -25,6 +28,7 @@ public class OBDStream {
     private Observable<String> obdTSPMON = null;
     private Observable<String> obdTSPMOFF = null;
     private Observable<String[]> OBDRTData = null;
+    private Observable<Double> testSpeedStream = null;
     private Observable<String[]> OBDTTData = null;
     private Observable<Double> engSpeedStream = null;
     private Observable<Double> speedStream = null;
@@ -44,6 +48,7 @@ public class OBDStream {
         if (obdRawData == null) {
             SerialPort serialPort = SerialManager.getInstance().getSerialPort("/dev/ttyHS5");
             InputStream inputStream = serialPort.getInputStream();
+            outputStream = serialPort.getOutputStream();
             obdRawData = CreateObservable.from(new InputStreamReader(inputStream));
         }
         return obdRawData;
@@ -51,6 +56,11 @@ public class OBDStream {
 
     public static void obdStreamClose() {
         SerialManager.getInstance().closeSerialPort();
+    }
+
+    public void exec(String cmd) throws IOException {
+        String send = cmd + "\r\n";
+        outputStream.write(send.getBytes(StandardCharsets.US_ASCII));
     }
 
     public Observable<String> obdRTString() throws IOException {
@@ -81,6 +91,11 @@ public class OBDStream {
     public Observable<String[]> OBDRTData() throws IOException {
         if (OBDRTData == null) OBDRTData = OBDRTData(obdRTString());
         return OBDRTData;
+    }
+
+    public Observable<Double> testSpeedStream() throws IOException {
+        if (testSpeedStream == null) testSpeedStream = testSpeedStream(obdRTString());
+        return testSpeedStream;
     }
 
     public Observable<String[]> OBDTTData() throws IOException {
@@ -126,7 +141,15 @@ public class OBDStream {
     public static Observable<String[]> OBDRTData(Observable<String> input) {
         return input
                 .map(s -> s.split(","))
-                .filter(strings -> strings.length >= 15);
+                .filter(strings -> strings.length == 16);
+    }
+
+    public static Observable<Double> testSpeedStream(Observable<String> input) {
+        return input
+                .map(s -> s.split(","))
+                .filter(strings -> strings.length == 11)
+                .map(strings -> strings[4])
+                .map(s -> (double) Float.parseFloat(s));
     }
 
     public static Observable<String[]> OBDTTData(Observable<String> input) {
