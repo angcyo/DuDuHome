@@ -10,11 +10,11 @@ public class FrontVideoConfigParam {
     public static final String VIDEO_STORAGE_PATH = "/frontVideo";
 
     /* 默认录像间隔*/
-    public static final int DEFAULT_VIDEO_INTERVAL = 2*60*1000;
+    public static final int DEFAULT_VIDEO_INTERVAL = 30*1000;
 
     public static final   int DEFAULT_VIDEOBITRATE = 2 * 1024 * 1024;//2M
-    public static  final  int DEFAULT_WIDTH = 800;
-    public static  final  int DEFAULT_HEIGHT = 600;
+    public static  final  int DEFAULT_WIDTH = 1920;
+    public static  final  int DEFAULT_HEIGHT = 480;
     public static  final  int DEFAULT_RATE= 30;
     public static  final  int DEFAULT_QUALITY= CamcorderProfile.QUALITY_HIGH;
 

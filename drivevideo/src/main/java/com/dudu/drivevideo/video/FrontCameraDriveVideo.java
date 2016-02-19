@@ -8,6 +8,7 @@ import android.view.SurfaceHolder;
 
 import com.dudu.commonlib.CommonLib;
 import com.dudu.drivevideo.config.FrontVideoConfigParam;
+import com.dudu.drivevideo.event.FrontCameraReadyPreview;
 import com.dudu.drivevideo.utils.FileUtil;
 import com.dudu.drivevideo.utils.TimeUtils;
 
@@ -17,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 
 /**
@@ -66,10 +69,10 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
 //        params.setPreviewSize(CommonLib.getInstance().getContext().getResources().getDisplayMetrics().widthPixels,
 //                CommonLib.getInstance().getContext().getResources().getDisplayMetrics().heightPixels);
             params.setPreviewSize(1920, 480);
-            params.setPictureSize(1920, 480);
-//        List<Camera.Size> sizeList =  params.getSupportedPictureSizes();
-//        sizeList =params.getSupportedVideoSizes();
-//        sizeList = params.getSupportedPreviewSizes();
+            params.setPictureSize(frontVideoConfigParam.getWidth(), frontVideoConfigParam.getHeight());
+        List<Camera.Size> sizeList =  params.getSupportedPictureSizes();
+        sizeList =params.getSupportedVideoSizes();
+        sizeList = params.getSupportedPreviewSizes();
 
 
             mCamera.setParameters(params);
@@ -81,6 +84,8 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
             });
             log.debug("初始化camera成功...");
             isOpenedCamera = true;
+
+            EventBus.getDefault().post(new FrontCameraReadyPreview());
         }
     }
 
@@ -124,7 +129,7 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
         mMediaRecorder.setOutputFile(curVideoFileAbsolutePath);
 
         mMediaRecorder.setVideoFrameRate(frontVideoConfigParam.getRate());
-        mMediaRecorder.setVideoSize(1920, 480);
+        mMediaRecorder.setVideoSize(frontVideoConfigParam.getWidth(), frontVideoConfigParam.getHeight());
 
         mMediaRecorder.setPreviewDisplay(cameraPreview.getmHolder().getSurface());
 
@@ -167,9 +172,11 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
         }
         synchronized (redordingLock) {
             log.debug("开始录像");
-            if (prepareMediaRecorder()){
-                mMediaRecorder.start();
-                isRecording = true;
+            if (!isRecording){
+                if (prepareMediaRecorder()){
+                    mMediaRecorder.start();
+                    isRecording = true;
+                }
             }
         }
     }
@@ -230,7 +237,7 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
 
     @Override
     public void onInfo(MediaRecorder mr, int what, int extra) {
-
+        log.info("MediaRecorder onInfo   what = {} extra = {}", what, extra);
     }
 
 

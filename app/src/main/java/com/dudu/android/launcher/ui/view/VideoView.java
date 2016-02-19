@@ -20,7 +20,7 @@ import android.widget.MediaController.MediaPlayerControl;
 
 public class VideoView extends SurfaceView implements MediaPlayerControl {
 
-	private static final String TAG = "VideoView";
+	private static final String TAG = "videoui";
 
 	private Context mContext;
 

@@ -40,26 +40,29 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     public void surfaceCreated(SurfaceHolder holder) {
+        log.debug("surfaceCreated创建");
         // The Surface has been created, now tell the camera where to draw the preview.
+  /*      if (mHolder != null)
+            return;*/
         mHolder = holder;
         try {
-            log.debug("surfaceCreated创建");
+            log.debug("surfaceCreated 开启预览");
             mCamera.stopPreview();
             mCamera.setPreviewDisplay(holder);
             mCamera.startPreview();
 
-//            DriveVideo.getInstance().getFrontCameraDriveVideo().startRecord();
+            DriveVideo.getInstance().getFrontCameraDriveVideo().startRecord();
         } catch (IOException e) {
             log.error("异常：", e);
         }
     }
 
     public void surfaceDestroyed(SurfaceHolder holder) {
-
+        log.debug("surfaceDestroyed销毁");
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
-
+        log.debug("surfaceChanged改变  format = {}  w = {}  h=  {}", format, w, h);
     }
 
 

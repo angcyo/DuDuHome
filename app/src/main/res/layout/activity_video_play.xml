@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
 
-    <SurfaceView
-        android:id="@+id/surfaceView"
+    <!--<com.dudu.android.launcher.ui.view.VideoView
+        android:id="@+id/video_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" />-->
 
 
     <LinearLayout
+        android:id="@+id/control_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
+        android:layout_alignParentBottom="true"
         android:background="@drawable/video_action_bg"
         android:gravity="center_vertical"
         android:orientation="horizontal">
@@ -134,4 +135,4 @@
     </LinearLayout>
 
 
-</FrameLayout>
+</RelativeLayout>

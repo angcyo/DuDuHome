@@ -24,6 +24,7 @@ public abstract class BaseActivity extends Activity {
 
     protected  VolBrightnessSetting volBrightnessSetting;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +39,7 @@ public abstract class BaseActivity extends Activity {
 
         baseBinding.setTitle(observableFactory.getTitleObservable());
 
-        baseBinding.setCommon(observableFactory.getCommonObservable());
+        baseBinding.setCommon(observableFactory.getCommonObservable(baseBinding));
 
         mHandler = new Handler();
 
@@ -72,4 +73,6 @@ public abstract class BaseActivity extends Activity {
     public boolean onTouchEvent(MotionEvent event) {
         return volBrightnessSetting.getOnTouchEventReturnFlag(event);
     }
+
+
 }

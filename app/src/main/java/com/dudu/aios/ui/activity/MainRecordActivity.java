@@ -67,17 +67,13 @@ public class MainRecordActivity extends BaseActivity {
 
     private Bundle bundle;
 
-    private boolean isPreviewIng = false;
-    private FrameLayout previewFrameLayout;
-    private MainHandler mainHandler = new MainHandler();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initData();
 
-        initView();
+//        initView();
         this.bundle = savedInstanceState;
     }
 
@@ -110,37 +106,6 @@ public class MainRecordActivity extends BaseActivity {
         componentName = new ComponentName(this, AdminReceiver.class);
     }
 
-    private void initView(){
-        previewFrameLayout = (FrameLayout)findViewById(R.id.preview);
-
-        mainHandler.sendEmptyMessageDelayed(MainRecordActivity.SET_PREVIEW, 5 * 1000);
-    }
-
-
-    private class MainHandler extends Handler {
-        public MainHandler() {
-            super(Looper.getMainLooper());
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case SET_PREVIEW:
-                    initFrontPreview();
-                    break;
-            }
-        }
-    }
-
-
-    private void initFrontPreview(){
-        if(DriveVideo.getInstance().getFrontCameraDriveVideo().getmCamera()  != null){
-            log_init.debug("初始化前置预览");
-            previewFrameLayout.addView(DriveVideo.getInstance().getFrontCameraDriveVideo().getCameraPreview());
-        }else {
-            mainHandler.sendEmptyMessageDelayed(MainRecordActivity.SET_PREVIEW, 5*1000);
-        }
-    }
 
     private void initFragment() {
         fm = this.getFragmentManager();
@@ -278,7 +243,7 @@ public class MainRecordActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         replaceFragment(FragmentConstants.FRAGMENT_MAIN_PAGE);
-        observableFactory.getCommonObservable().hasTitle.set(true);
+        observableFactory.getCommonObservable(baseBinding).hasTitle.set(true);
     }
 
 

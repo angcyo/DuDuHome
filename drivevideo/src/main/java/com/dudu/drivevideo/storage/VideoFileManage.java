@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.LinkedList;
 
 /**
  * Created by dengjun on 2016/2/18.
@@ -40,12 +41,15 @@ public class VideoFileManage {
     }
 
     private void saveVideoInfoToDb(final String videoFileAbPath){
+        if (videoFileAbPath == null)
+            return;
         File videoFile = new File(videoFileAbPath);
-        float sise = Float.parseFloat(FileUtil.fileByte2Mb(videoFile.length()));
-        if (sise < 250){
+        float sise = Float.parseFloat(FileUtil.fileByte2Kb(videoFile.length()));
+       /* if (sise < 250){
             log.info("250Kb以下的文件不保存");
             videoFile.delete();
-        }
+            return;
+        }*/
 
         VideoEntity videoEntity = new VideoEntity();
         videoEntity.setCreateTime(videoFile.getName());
@@ -64,5 +68,13 @@ public class VideoFileManage {
 
             FileUtil.clearLostDirFolder();
         }
+    }
+
+    public LinkedList<VideoEntity> getVideoList(){
+        return dbHelper.getAllVideos();
+    }
+
+    public DbHelper getDbHelper(){
+        return dbHelper;
     }
 }

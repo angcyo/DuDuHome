@@ -2,6 +2,9 @@ package com.dudu.aios.ui.fragment.video.adapter;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,11 +17,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dudu.aios.ui.activity.MainRecordActivity;
+import com.dudu.aios.ui.activity.VideoPlayActivity;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.R;
+import com.dudu.android.launcher.utils.Constants;
 import com.dudu.drivevideo.model.VideoEntity;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by dengjun on 2016/2/18.
@@ -75,8 +82,14 @@ public class VideoListViewAdapter extends RecyclerView.Adapter<VideoListViewAdap
         videoInfoItemViewHolder.btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                replaceFragment(FragmentConstants.FRAGMENT_VIDEO);
+//                replaceFragment(FragmentConstants.FRAGMENT_VIDEO);
                 //跳到播放的界面
+
+                File file = new File("/storage/sdcard1/dudu/frontVideo/");
+                File[] files = file.listFiles();
+                VideoEntity videoEntity = new VideoEntity();
+                videoEntity.setFile(files[0]);
+                startVideoPlayActivity(videoEntity, 0);
             }
         });
 
@@ -107,9 +120,19 @@ public class VideoListViewAdapter extends RecyclerView.Adapter<VideoListViewAdap
         ImageView imageUploading;
     }
 
-    private void replaceFragment(String name) {
+    private void replaceFragment(String name/*, String fileAbPath*/) {
+//        Bundle bundle = new Bundle();
+//        bundle.putString("VideoFilePath", fileAbPath);
+
         MainRecordActivity activity = (MainRecordActivity) fragment.getActivity();
         activity.replaceFragment(name);
+    }
+
+    private void startVideoPlayActivity(VideoEntity videoEntity, int position){
+        Intent intent = new Intent(fragment.getActivity(), VideoPlayActivity.class);
+        intent.setData(Uri.fromFile(videoEntity.getFile()));
+        intent.putExtra(Constants.EXTRA_VIDEO_POSITION, position);
+        mContext.startActivity(intent);
     }
 
 }

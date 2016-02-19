@@ -161,6 +161,52 @@ public class DbHelper extends SQLiteOpenHelper {
         return videos;
     }
 
+    public List<VideoEntity> getAllVideosList() {
+        mLogger.debug("getAllVideos: ");
+        db = getWritableDatabase();
+        List<VideoEntity> videos = new ArrayList<>();
+        Cursor c = db.query(VIDEO_TABLE_NAME, null, null, null, null, null,
+                VIDEO_COLUMN_CREATE_TIME + " desc");
+        if (c != null) {
+            while (c.moveToNext()) {
+                VideoEntity video = new VideoEntity();
+                String name = c.getString(c
+                        .getColumnIndexOrThrow(VIDEO_COLUMN_NAME));
+                int status = c.getInt(c
+                        .getColumnIndexOrThrow(VIDEO_COLUMN_STATUS));
+                String path = c.getString(c
+                        .getColumnIndexOrThrow(VIDEO_COLUMN_PATH));
+                String size = c.getString(c
+                        .getColumnIndexOrThrow(VIDEO_COLUMN_SIZE));
+                String createTime = c.getString(c
+                        .getColumnIndexOrThrow(VIDEO_COLUMN_CREATE_TIME));
+
+                video.setName(name);
+                video.setStatus(status);
+                File file = new File(path, name);
+                if (file.exists()) {
+                    video.setFile(file);
+                } else {
+                    if (!TextUtils.isEmpty(name) /*&& FileUtils.isTFlashCardExists()*/) {
+                        mLogger.debug("getAllVideos: "+name+" doesn't exist");
+                        deleteVideo(name);
+                    }
+                    continue;
+                }
+
+                video.setFile(file);
+                video.setPath(path);
+                video.setSize(size);
+                video.setCreateTime(createTime);
+                videos.add(video);
+            }
+
+            c.close();
+        }
+
+        return videos;
+    }
+
     public List<VideoEntity> getVideos(int first, int max) {
         db = getWritableDatabase();
         List<VideoEntity> videos = new ArrayList<VideoEntity>();

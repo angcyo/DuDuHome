@@ -24,10 +24,11 @@ import com.dudu.aios.ui.fragment.video.view.CusomSwipeView;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.R;
 
-import com.dudu.android.launcher.db.DbHelper;
-import com.dudu.android.launcher.model.VideoEntity;
+import com.dudu.drivevideo.model.VideoEntity;
+import com.dudu.drivevideo.storage.VideoFileManage;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class VideoListFragment extends Fragment implements View.OnClickListener {
@@ -45,7 +46,6 @@ public class VideoListFragment extends Fragment implements View.OnClickListener 
 
     private ArrayList<VideoEntity> mVideoData;
 
-    private DbHelper mDbHelper;
 
     private int mPerPageItemNum = 6;
 
@@ -63,8 +63,9 @@ public class VideoListFragment extends Fragment implements View.OnClickListener 
 
     private void initVideoData() {
         mVideoData = new ArrayList<>();
+        loadVideos();
 
-        videoListViewAdapter = new VideoListViewAdapter(this, null);
+        videoListViewAdapter = new VideoListViewAdapter(this, mVideoData);
         //设置布局管理器
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -100,23 +101,7 @@ public class VideoListFragment extends Fragment implements View.OnClickListener 
     public void onClick(View v) {
         switch (v.getId()) {
 
-           /* case R.id.pre_video_container:
-                mPreVideoButton.setBackgroundResource(R.drawable.prepositive_video_checked);
-                mPreVideoTextChinese.setTextColor(getResources().getColor(R.color.white));
-                mPreVideoTextEnglish.setTextColor(getResources().getColor(R.color.white));
-                mPostVideoButton.setBackgroundResource(R.drawable.postposition_video_unchecked);
-                mPostVideoTextChinese.setTextColor(getResources().getColor(R.color.unchecked_textColor));
-                mPostVideoTextEnglish.setTextColor(getResources().getColor(R.color.unchecked_textColor));
-                break;
 
-            case R.id.post_video_container:
-                mPostVideoButton.setBackgroundResource(R.drawable.postposition_video_checked);
-                mPostVideoTextChinese.setTextColor(getResources().getColor(R.color.white));
-                mPostVideoTextEnglish.setTextColor(getResources().getColor(R.color.white));
-                mPreVideoButton.setBackgroundResource(R.drawable.prepositive_video_unchecked);
-                mPreVideoTextChinese.setTextColor(getResources().getColor(R.color.unchecked_textColor));
-                mPreVideoTextEnglish.setTextColor(getResources().getColor(R.color.unchecked_textColor));
-                break;*/
 
             case R.id.button_back:
                 replaceFragment(FragmentConstants.FRAGMENT_DRIVING_RECORD);
@@ -130,114 +115,7 @@ public class VideoListFragment extends Fragment implements View.OnClickListener 
     }
 
 
-    private class VideoAdapter extends BaseAdapter {
 
-        private LayoutInflater inflater;
-
-        private Context context;
-
-        private ArrayList<VideoEntity> data;
-
-
-        private AnimationDrawable animationDrawable;
-
-        public VideoAdapter(Context context, ArrayList<VideoEntity> data) {
-            this.context = context;
-            this.data = data;
-            inflater = LayoutInflater.from(context);
-
-        }
-
-        public void setData(ArrayList<VideoEntity> data) {
-            this.data = (ArrayList<VideoEntity>) data.clone();
-        }
-
-        @Override
-        public int getCount() {
-            return data.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return data.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            final ViewHolder holder;
-            if (convertView == null) {
-                convertView = inflater.inflate(R.layout.video_grid_item, parent, false);
-                holder = new ViewHolder();
-                holder.btnPlay = (ImageButton) convertView.findViewById(R.id.button_play_video);
-                holder.btnDelete = (ImageButton) convertView.findViewById(R.id.button_delete_video);
-                holder.btnUpload = (ImageButton) convertView.findViewById(R.id.button_upload_video);
-                holder.btnCancel = (ImageButton) convertView.findViewById(R.id.button_cancel_upload);
-                holder.uploading = (LinearLayout) convertView.findViewById(R.id.uploading_video_container);
-                holder.upLoadSuccessful = (LinearLayout) convertView.findViewById(R.id.upload_successful_video_container);
-                holder.tvDate = (TextView) convertView.findViewById(R.id.tv_video_date);
-                holder.checkBox = (CheckBox) convertView.findViewById(R.id.video_check_box);
-                holder.imageUploading = (ImageView) convertView.findViewById(R.id.image_uploading);
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-            final VideoEntity entity = data.get(position);
-            holder.tvDate.setText(entity.getCreateTime());
-            holder.btnPlay.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    replaceFragment(FragmentConstants.FRAGMENT_VIDEO);
-                    //跳到播放的界面
-                }
-            });
-            holder.btnUpload.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    holder.uploading.setVisibility(View.VISIBLE);
-                    holder.btnUpload.setVisibility(View.GONE);
-                    holder.imageUploading.setImageResource(R.drawable.uplaod_video_arrows);
-                    animationDrawable = (AnimationDrawable) holder.imageUploading.getDrawable();
-                    animationDrawable.start();
-                }
-            });
-            holder.btnCancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    holder.uploading.setVisibility(View.GONE);
-                    holder.btnUpload.setVisibility(View.VISIBLE);
-                    if (animationDrawable != null) {
-                        animationDrawable.stop();
-                    }
-                }
-            });
-
-            holder.btnDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                }
-            });
-
-            return convertView;
-        }
-
-        class ViewHolder {
-            ImageButton btnPlay;
-            ImageButton btnDelete;
-            ImageButton btnUpload;
-            ImageButton btnCancel;
-            LinearLayout uploading;
-            LinearLayout upLoadSuccessful;
-            TextView tvDate;
-            CheckBox checkBox;
-            ImageView imageUploading;
-        }
-    }
 
     private class LoadVideoTask extends AsyncTask<Void, Void, Void> {
 
@@ -265,17 +143,11 @@ public class VideoListFragment extends Fragment implements View.OnClickListener 
         if (videos != null && !videos.isEmpty()) {
             mVideoData.addAll(videos);
         }*/
-        mVideoData = getVideoData();
 
-    }
-
-    public ArrayList<VideoEntity> getVideoData() {
-        ArrayList<VideoEntity> list = new ArrayList();
-        for (int i = 0; i < 4; i++) {
-            VideoEntity entity = new VideoEntity();
-            entity.setCreateTime("20170106/13:00-14:0" + i);
-            list.add(entity);
+        List<VideoEntity> videos = VideoFileManage.getInstance().getDbHelper().getAllVideosList();
+        if (videos != null && !videos.isEmpty()) {
+            mVideoData.addAll(videos);
         }
-        return list;
     }
+
 }

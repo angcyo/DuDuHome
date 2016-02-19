@@ -85,6 +85,12 @@ public class FileUtil {
         return df.format(mbSize);
     }
 
+    public static String fileByte2Kb(double size) {
+        double mbSize = size / 1024;
+        DecimalFormat df = new DecimalFormat("#.##");
+        return df.format(mbSize);
+    }
+
     public static double getTFlashCardSpace() {
         File tfCard = new File(T_FLASH_PATH);
         return tfCard.getTotalSpace()*0.8;

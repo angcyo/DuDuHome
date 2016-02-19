@@ -94,7 +94,7 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
     @Override
     public void onDestroy() {
         super.onDestroy();
-        startFrontPreview();
+
         DriveVideo.getInstance().getRearCameraDriveVideo().stopPreview();
     }
 

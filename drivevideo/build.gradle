@@ -35,4 +35,5 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.12'
     compile 'io.reactivex:rxjava:1.0.12'
     compile project(':commonlib')
+    compile 'de.greenrobot:eventbus:2.4.0'
 }
