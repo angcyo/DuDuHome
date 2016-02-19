@@ -34,6 +34,7 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
     private String openCameraLock = "openCameraLock";
     private Camera mCamera = null;
     private CameraPreview cameraPreview;
+    private PictureObtain pictureObtain;
 
     private MediaRecorder mMediaRecorder;
     private String redordingLock = "redordingLock";
@@ -49,6 +50,8 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
 
     private void init(){
         frontVideoConfigParam = new FrontVideoConfigParam();
+
+        pictureObtain = new PictureObtain();
     }
 
     public void initCamera(){
@@ -256,5 +259,11 @@ public class FrontCameraDriveVideo implements MediaRecorder.OnErrorListener ,Med
 
     public boolean isRecording() {
         return isRecording;
+    }
+
+    public void takePicture(){
+        if (mCamera != null){
+            mCamera.takePicture(null, null, pictureObtain);
+        }
     }
 }

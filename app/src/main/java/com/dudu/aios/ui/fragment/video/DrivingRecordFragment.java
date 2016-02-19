@@ -105,6 +105,7 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
                 replaceFragment(FragmentConstants.FRAGMENT_VIDEO_LIST);
                 break;
             case R.id.take_photo:
+                DriveVideo.getInstance().getFrontCameraDriveVideo().takePicture();
                 break;
             case R.id.switch_video:
                 log.debug("切换显示");
