@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -31,6 +32,8 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
     private ImageButton buttonBack;
 
     private RelativeLayout animContainer;
+
+    private LinearLayout engineContainer, gearboxContainer, absContainer, wsbContainer, srsContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,17 +75,23 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
         iconWsbPrompt = (ImageView) findViewById(R.id.wsb_prompt_icon);
         iconSrsPrompt = (ImageView) findViewById(R.id.srs_prompt_icon);
 
+        engineContainer = (LinearLayout) findViewById(R.id.engine_container);
+        gearboxContainer = (LinearLayout) findViewById(R.id.gearbox_container);
+        absContainer = (LinearLayout) findViewById(R.id.abs_container);
+        wsbContainer = (LinearLayout) findViewById(R.id.wsb_container);
+        srsContainer = (LinearLayout) findViewById(R.id.srs_container);
+
         buttonBack = (ImageButton) findViewById(R.id.button_back);
     }
 
     public void initListener() {
         buttonBack.setOnClickListener(this);
 
-        iconEnginePrompt.setOnClickListener(this);
-        iconGearboxPrompt.setOnClickListener(this);
-        iconAbsPrompt.setOnClickListener(this);
-        iconWsbPrompt.setOnClickListener(this);
-        iconSrsPrompt.setOnClickListener(this);
+        engineContainer.setOnClickListener(this);
+        gearboxContainer.setOnClickListener(this);
+        absContainer.setOnClickListener(this);
+        wsbContainer.setOnClickListener(this);
+        srsContainer.setOnClickListener(this);
 
     }
 
@@ -94,15 +103,15 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
 
     public void initDatas() {
 
-        setVehicleCheckState(100, engineVehicleCheckResultView, tvEnginePrompt, iconEnginePrompt);
+        setVehicleCheckState(100, engineVehicleCheckResultView, tvEnginePrompt, iconEnginePrompt, engineContainer);
 
-        setVehicleCheckState(20, gearboxVehicleCheckResultView, tvGearboxPrompt, iconGearboxPrompt);
+        setVehicleCheckState(20, gearboxVehicleCheckResultView, tvGearboxPrompt, iconGearboxPrompt, gearboxContainer);
 
-        setVehicleCheckState(30, absVehicleCheckResultView, tvAbsPrompt, iconAbsPrompt);
+        setVehicleCheckState(30, absVehicleCheckResultView, tvAbsPrompt, iconAbsPrompt, absContainer);
 
-        setVehicleCheckState(60, wsbVehicleCheckResultView, tvWsbPrompt, iconWsbPrompt);
+        setVehicleCheckState(60, wsbVehicleCheckResultView, tvWsbPrompt, iconWsbPrompt, wsbContainer);
 
-        setVehicleCheckState(90, rsrVehicleCheckResultView, tvSrsPrompt, iconSrsPrompt);
+        setVehicleCheckState(90, rsrVehicleCheckResultView, tvSrsPrompt, iconSrsPrompt, srsContainer);
     }
 
     @Override
@@ -113,41 +122,40 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
                 mAnimationView.stopAnim();
                 finish();
                 return;
-            case R.id.engine_prompt_icon:
+            case R.id.engine_container:
                 intent.putExtra("vehicle", "engine");
                 break;
-            case R.id.gearbox_prompt_icon:
+            case R.id.gearbox_container:
                 intent.putExtra("vehicle", "gearbox");
                 break;
-            case R.id.abs_prompt_icon:
+            case R.id.abs_container:
                 intent.putExtra("vehicle", "abs");
                 break;
-            case R.id.wsb_prompt_icon:
+            case R.id.wsb_container:
                 intent.putExtra("vehicle", "wsb");
                 break;
-            case R.id.srs_prompt_icon:
+            case R.id.srs_container:
                 intent.putExtra("vehicle", "srs");
                 break;
         }
         if (intent != null) {
             mAnimationView.stopAnim();
             startActivityForResult(intent, 2);// 请求码
-
         }
 
     }
 
-    private void setVehicleCheckState(int grade, VehicleCheckResultView vehicleCheckResultView, TextView textView, ImageView imageView) {
+    private void setVehicleCheckState(int grade, VehicleCheckResultView vehicleCheckResultView, TextView textView, ImageView imageView, View view) {
         if (grade >= 50) {
             vehicleCheckResultView.setProgress(grade, 0);
             textView.setText(getString(R.string.device_fine));
             imageView.setImageResource(icons[0]);
-            imageView.setEnabled(false);
+            view.setEnabled(false);
         } else {
             vehicleCheckResultView.setProgress(grade, 1);
             textView.setText(getString(R.string.check_details));
             imageView.setImageResource(icons[1]);
-            imageView.setEnabled(true);
+            view.setEnabled(true);
         }
     }
 

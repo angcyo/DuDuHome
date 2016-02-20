@@ -15,28 +15,38 @@
 
         <RelativeLayout
             android:id="@+id/vehicle_anim_container"
-            android:layout_width="150dp"
-            android:layout_height="150dp" />
+            android:layout_width="160dp"
+            android:layout_height="160dp" />
 
-        <com.dudu.aios.ui.utils.customFontUtils.DINRegularTextView
-            android:id="@+id/vehicle_category_text_en"
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/vehicle_anim_container"
-            android:text="WSB"
-            android:textColor="@color/blue"
-            android:textSize="32sp" />
+            android:orientation="horizontal">
 
-        <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
-            android:id="@+id/vehicle_category_text_ch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/vehicle_anim_container"
-            android:layout_marginLeft="18dp"
-            android:layout_toRightOf="@+id/vehicle_category_text_en"
-            android:text="胎压"
-            android:textColor="@color/white"
-            android:textSize="25sp" />
+            <com.dudu.aios.ui.utils.customFontUtils.DINRegularTextView
+                android:id="@+id/vehicle_category_text_en"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="WSB"
+                android:textColor="@color/blue"
+                android:textSize="32sp" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                android:id="@+id/vehicle_category_text_ch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="18dp"
+                android:text="胎压"
+                android:textColor="@color/white"
+                android:textSize="25sp" />
+
+        </LinearLayout>
+
+
     </RelativeLayout>
 
     <FrameLayout

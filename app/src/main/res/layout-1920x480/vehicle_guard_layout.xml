@@ -11,12 +11,14 @@
         android:layout_weight="80" />
 
     <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+        android:id="@+id/text_title_ch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/vehicle_guard_mode_ch"
         android:textSize="16sp" />
 
     <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+        android:id="@+id/text_title_en"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"

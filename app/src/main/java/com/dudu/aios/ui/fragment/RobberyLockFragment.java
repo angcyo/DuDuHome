@@ -6,12 +6,9 @@ import android.widget.TextView;
 
 import com.dudu.aios.ui.fragment.base.BaseVehicleFragment;
 import com.dudu.android.launcher.R;
-import com.dudu.android.launcher.utils.LogUtils;
 
-/**
- * Created by Administrator on 2016/2/17.
- */
-public class GuardFragment extends BaseVehicleFragment implements View.OnClickListener {
+
+public class RobberyLockFragment extends BaseVehicleFragment implements View.OnClickListener {
 
     private View guard_unlock_layout, guard_locked_layout;
 
@@ -34,9 +31,9 @@ public class GuardFragment extends BaseVehicleFragment implements View.OnClickLi
         guard_unlock_layout = view.findViewById(R.id.vehicle_unlock_layout);
         guard_locked_layout = view.findViewById(R.id.vehicle_locked_layout);
         tvTitleCh = (TextView) view.findViewById(R.id.text_title_ch);
-        tvTitleCh.setText(getResources().getString(R.string.vehicle_guard_ch));
+        tvTitleCh.setText(getResources().getString(R.string.vehicle_robbery_ch));
         tvTitleEn = (TextView) view.findViewById(R.id.text_title_en);
-        tvTitleEn.setText(getResources().getString(R.string.vehicle_guard_en));
+        tvTitleEn.setText(getResources().getString(R.string.vehicle_robbery_en));
         lock();
     }
 

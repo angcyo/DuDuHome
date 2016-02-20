@@ -144,17 +144,19 @@ public class CarCheckingView extends SurfaceView implements SurfaceHolder.Callba
             path = "cycle";
             while (mRunning && mFrameCounter < MAXIMUM_FRAME_CYCLE_COUNT) {
                 mFrameCounter++;
-                if (mFrameCounter % model == 0) {
+                if (mFrameCounter % model != 0 || mFrameCounter == MAXIMUM_FRAME_CYCLE_COUNT) {
                     Canvas c = null;
                     try {
                         synchronized (mHolder) {
-                            if (mFrameCounter == MAXIMUM_FRAME_CYCLE_COUNT) {
-                                mFrameCounter = 1;
-                            }
+
                             LogUtils.v("CarCheckingView1", "当前播放帧数: " + mFrameCounter);
                             c = mHolder.lockCanvas();
 
                             doAnimation(c);
+
+                            if (mFrameCounter == MAXIMUM_FRAME_CYCLE_COUNT) {
+                                mFrameCounter = 0;
+                            }
                         }
                     } finally {
                         if (c != null) {
@@ -170,6 +172,7 @@ public class CarCheckingView extends SurfaceView implements SurfaceHolder.Callba
         private void doAppearAnimation() {
             while (mRunning && mFrameCounter < MAXIMUM_FRAME_COUNT) {
                 mFrameCounter++;
+                LogUtils.v("lll", "当前播放帧数: " + mFrameCounter);
                 if (mFrameCounter % model != 0) {
                     Canvas c = null;
                     try {
@@ -207,6 +210,7 @@ public class CarCheckingView extends SurfaceView implements SurfaceHolder.Callba
         private Bitmap loadStaticBitmap() {
             AssetManager am = mContext.getAssets();
             InputStream is;
+            LogUtils.v("vehicle", "静态的");
             try {
                 is = am.open("animation/" + category + "_NP1.png");
             } catch (IOException e) {

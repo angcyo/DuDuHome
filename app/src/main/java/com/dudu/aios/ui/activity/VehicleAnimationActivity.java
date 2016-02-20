@@ -1,17 +1,14 @@
 package com.dudu.aios.ui.activity;
 
-
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,10 +18,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dudu.aios.ui.base.BaseActivity;
+import com.dudu.aios.ui.utils.StringUtil;
+import com.dudu.aios.ui.vehicle.SearchAddress;
 import com.dudu.aios.ui.vehicle.Vehicle;
 import com.dudu.android.launcher.R;
+import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.cache.AsyncTask;
 import com.dudu.carChecking.VehicleCheckResultAnimation;
+import com.dudu.navi.service.SearchProcess;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,8 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
 
     private ArrayList<com.dudu.aios.ui.vehicle.Vehicle> vehicleData;
 
+    private TextView tvCategoryCh, tvCategoryEn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,11 +54,17 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
         initData();
     }
 
+    @Override
+    protected View getChildView() {
+        return LayoutInflater.from(this).inflate(R.layout.activity_vehicle_animation, null);
+    }
 
     private void initView() {
         container = (RelativeLayout) findViewById(R.id.vehicle_anim_container);
         buttonBack = (ImageButton) findViewById(R.id.button_back);
         repairShopList = (ListView) findViewById(R.id.repair_shop_listView);
+        tvCategoryCh = (TextView) findViewById(R.id.vehicle_category_text_ch);
+        tvCategoryEn = (TextView) findViewById(R.id.vehicle_category_text_en);
     }
 
 
@@ -64,21 +73,54 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
 
     }
 
-
     private void initData() {
         Intent intent = getIntent();
         if (intent != null) {
-            String category = intent.getStringExtra("vehicle");
-            vehicleCheckResultAnimation = new VehicleCheckResultAnimation(this, category);
-            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            container.addView(vehicleCheckResultAnimation, params);
+            initViewData(intent);
         }
+        initListData();
+    }
+
+    private void initViewData(Intent intent) {
+        String category = intent.getStringExtra("vehicle");
+        LogUtils.v("vehicle", "需要检查的车辆部件:" + category);
+        vehicleCheckResultAnimation = new VehicleCheckResultAnimation(this, category);
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        container.addView(vehicleCheckResultAnimation, params);
+        tvCategoryCh.setText(getCategoryCh(category));
+        tvCategoryEn.setText(StringUtil.changeUpper(category));
+    }
+
+    private void initListData() {
         vehicleData = new ArrayList<>();
         adapter = new VehicleAdapter(this, vehicleData);
         repairShopList.setAdapter(adapter);
         new LoadVehicleTask().execute();
     }
 
+    private String getCategoryCh(String category) {
+        String categoryCh = "";
+        switch (category) {
+            case "engine":
+                categoryCh = "发动机";
+                break;
+            case "gearbox":
+                categoryCh = "变速箱";
+                tvCategoryEn.setTextSize(24);
+                break;
+            case "abs":
+                categoryCh = "防抱死";
+                break;
+            case "wsb":
+                categoryCh = "胎压";
+                break;
+            case "srs":
+                categoryCh = "气囊";
+                break;
+        }
+
+        return categoryCh;
+    }
 
     @Override
     public void onClick(View v) {
@@ -92,12 +134,6 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
         }
 
     }
-
-    @Override
-    protected View getChildView() {
-        return LayoutInflater.from(this).inflate(R.layout.activity_vehicle_animation, null);
-    }
-
 
     private class LoadVehicleTask extends AsyncTask<Void, Void, Void> {
         @Override
@@ -113,6 +149,8 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
     }
 
     private void loadVehicles() {
+        SearchAddress address = new SearchAddress(this);
+        address.search("汽车修理店");
         List<Vehicle> list = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             Vehicle vehicle = new Vehicle();

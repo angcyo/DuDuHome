@@ -114,6 +114,7 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/engine_container"
             android:layout_width="wrap_content"
             android:layout_height="55dp"
             android:layout_marginLeft="80dp"
@@ -176,6 +177,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/gearbox_container"
             android:layout_width="wrap_content"
             android:layout_height="55dp"
             android:layout_marginLeft="70dp"
@@ -241,6 +243,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/abs_container"
             android:layout_width="wrap_content"
             android:layout_height="55dp"
             android:layout_marginLeft="60dp"
@@ -304,6 +307,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/wsb_container"
             android:layout_width="wrap_content"
             android:layout_height="55dp"
             android:layout_marginLeft="40dp"
@@ -367,6 +371,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/srs_container"
             android:layout_width="wrap_content"
             android:layout_height="55dp"
             android:gravity="center_vertical"

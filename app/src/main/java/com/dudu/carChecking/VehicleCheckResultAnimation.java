@@ -1,6 +1,7 @@
 package com.dudu.carChecking;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -138,7 +139,7 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
             if (file.isDirectory()) {
                 maxCycleCount = file.listFiles().length;
             }
-            while (mRunning && mFrameCounter < maxCycleCount) {
+            while (mRunning && mFrameCounter < maxCycleCount - 1) {
                 Canvas c = null;
                 try {
                     synchronized (mHolder) {
@@ -148,7 +149,7 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
                         c = mHolder.lockCanvas();
 
                         doAnimation(c);
-                        if (mFrameCounter == maxCycleCount) {
+                        if (mFrameCounter == maxCycleCount - 1) {
                             mFrameCounter = 0;
                         }
                     }
@@ -169,8 +170,25 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
                 c.drawBitmap(bitmap, 0, 0, mPaint);
             } else {
 
+                Bitmap b = loadStaticBitmap();
+                if (b != null) {
+                    c.drawBitmap(b, 0, 0, mPaint);
+
+                }
             }
 
+        }
+
+        private Bitmap loadStaticBitmap() {
+            AssetManager am = mContext.getAssets();
+            InputStream is;
+            LogUtils.v("vehicle", "静态的");
+            try {
+                is = am.open("animation/" + category + "_NP1.png");
+            } catch (IOException e) {
+                return null;
+            }
+            return BitmapFactory.decodeStream(is);
         }
 
         private Bitmap loadAnimationBitmap() {
