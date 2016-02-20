@@ -20,7 +20,7 @@ public class OBDStream {
         return ourInstance;
     }
 
-    private OutputStream outputStream;
+    private OutputStream outputStream = null;
     private Observable<String> obdRawData = null;
     private Observable<String> obdRTString = null;
     private Observable<String> obdTTString = null;
@@ -44,14 +44,16 @@ public class OBDStream {
     }
 
     public Observable<String> obdRawData() throws IOException {
+        return obdRawData;
+    }
 
+    public void init() throws IOException {
         if (obdRawData == null) {
             SerialPort serialPort = SerialManager.getInstance().getSerialPort("/dev/ttyHS5");
             InputStream inputStream = serialPort.getInputStream();
             outputStream = serialPort.getOutputStream();
             obdRawData = CreateObservable.from(new InputStreamReader(inputStream));
         }
-        return obdRawData;
     }
 
     public static void obdStreamClose() {

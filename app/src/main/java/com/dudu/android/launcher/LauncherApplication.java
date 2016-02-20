@@ -13,9 +13,12 @@ import com.dudu.rest.common.Request;
 import com.dudu.workflow.common.CommonParams;
 import com.dudu.workflow.common.FlowFactory;
 import com.dudu.workflow.common.RequestFactory;
+import com.dudu.workflow.obd.OBDStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 public class LauncherApplication extends Application {
 
@@ -64,6 +67,11 @@ public class LauncherApplication extends Application {
 
         CommonLib.getInstance().init();
         FlowFactory.getInstance().init();
+        try {
+            OBDStream.getInstance().init();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         CommonParams.getInstance().init();
         Request.getInstance().init();
         RequestFactory.getInstance().init();

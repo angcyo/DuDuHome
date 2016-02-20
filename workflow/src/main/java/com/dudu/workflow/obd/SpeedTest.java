@@ -26,7 +26,6 @@ public class SpeedTest {
         for (Subscription sub : subArr) {
             if (!sub.isUnsubscribed()) sub.unsubscribe();
         }
-//        OBDStream.obdStreamClose();
         subArr.clear();
     }
 

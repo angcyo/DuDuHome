@@ -9,6 +9,12 @@ public class AccTestData {
     private String dateTime;
     private String accType;
 
+    public AccTestData(final String accType, final String accTotalTime, final String dateTime) {
+        this.accTotalTime = accTotalTime;
+        this.dateTime = dateTime;
+        this.accType = accType;
+    }
+
     public String getAccTotalTime() {
         return accTotalTime;
     }

@@ -1,15 +1,20 @@
 package com.dudu.workflow.driving;
 
+import android.util.Log;
+
 import com.dudu.commonlib.repo.ReceiverData;
 import com.dudu.rest.model.AccTestData;
 import com.dudu.workflow.common.ObservableFactory;
 import com.dudu.workflow.common.RequestFactory;
+import com.dudu.workflow.obd.OBDStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+
+import rx.Observable;
 import rx.functions.Action1;
-import rx.functions.Func1;
 
 /**
  * Created by Administrator on 2016/2/17.
@@ -19,56 +24,53 @@ public class DrivingFlow {
     private Logger logger = LoggerFactory.getLogger("DrivingFlow");
 
     public void getReceiveDataFlow() {
-        ObservableFactory.getReceiverObservable()
-                .filter(new Func1<ReceiverData,Boolean>() {
-                    @Override
-                    public Boolean call(ReceiverData data) {
-                        return data.getTitle().equals(ReceiverData.ACCELERATEDTESTSTART_VALUE);
+        Observable<String> type = ObservableFactory.getReceiverObservable()
+                .filter(data -> data.getTitle().equals(ReceiverData.ACCELERATEDTESTSTART_VALUE))
+                .map(ReceiverData::getContent)
+                .doOnNext(s -> {
+                    try {
+                        OBDStream.getInstance().exec("ATTSPMON");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return;
                     }
-                })
-                .map(new Func1<ReceiverData, AccTestData>() {
-                    @Override
-                    public AccTestData call(ReceiverData receiverData) {
-                        String type = receiverData.getContent();
-                        return getAccTestData(getRamdomData(type), type);
-                    }
-                })
-                .subscribe(new Action1<AccTestData>() {
-                    @Override
-                    public void call(AccTestData data) {
-                        RequestFactory.getDrivingRequest()
-                                .pushAcceleratedTestData(data, new DrivingRequest.RequesetCallback() {
-                                    @Override
-                                    public void requestSuccess(boolean success) {
-                                        if (success) {
-                                            logger.debug("发送加速数据到服务端成功");
-                                        } else {
-                                            logger.debug("发送加速数据到服务端成功");
+                });
 
-                                        }
+        Observable<String> speed_time = type
+                .flatMap(max_speed -> {
+                    try {
+                        return OBDStream.getInstance().testSpeedStream()
+                                .takeUntil(aDouble -> aDouble > Integer.parseInt(max_speed) * 100)
+                                .count()
+                                .map(integer -> integer * 0.2)
+                                .doOnNext(aDouble -> {
+                                    try {
+                                        OBDStream.getInstance().exec("ATTSPMOFF");
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
                                     }
                                 });
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
+
+                    return null;
+                })
+                .map(Object::toString);
+
+        Observable.combineLatest(type, speed_time, (type1, speed_time1) -> new AccTestData(type1, speed_time1, String.valueOf(System.currentTimeMillis())))
+                .doOnNext(accTestData -> Log.d("test speed result", accTestData.toString()))
+                .subscribe(data -> {
+                    RequestFactory.getDrivingRequest()
+                            .pushAcceleratedTestData(data, success -> {
+                                if (success) {
+                                    logger.debug("发送加速数据到服务端成功");
+                                } else {
+                                    logger.debug("发送加速数据到服务端成功");
+
+                                }
+                            });
                 });
     }
 
-    public AccTestData getAccTestData(String value, String type) {
-        AccTestData accTestData = new AccTestData();
-        accTestData.setAccTotalTime(value);
-        accTestData.setAccType(type);
-        accTestData.setDateTime(System.currentTimeMillis()+"");
-        return accTestData;
-    }
-
-    public String getRamdomData(String type) {
-        switch (type) {
-            case "1":
-                return String.valueOf(Math.random() * 10);
-            case "2":
-                return String.valueOf(Math.random() * 10);
-            case "3":
-                return String.valueOf(Math.random() * 10);
-        }
-        return "0";
-    }
 }
