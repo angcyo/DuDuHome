@@ -5,6 +5,7 @@ import android.content.Intent;
 
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amap.api.maps.AMapUtils;
+import com.amap.api.maps.model.LatLng;
+import com.amap.api.services.poisearch.PoiResult;
 import com.dudu.aios.ui.base.BaseActivity;
 import com.dudu.aios.ui.utils.StringUtil;
 import com.dudu.aios.ui.vehicle.SearchAddress;
@@ -25,6 +29,9 @@ import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.cache.AsyncTask;
 import com.dudu.carChecking.VehicleCheckResultAnimation;
+import com.dudu.monitor.Monitor;
+import com.dudu.navi.entity.PoiResultInfo;
+import com.dudu.navi.repo.ResourceManager;
 import com.dudu.navi.service.SearchProcess;
 
 import java.util.ArrayList;
@@ -151,6 +158,12 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
     private void loadVehicles() {
         SearchAddress address = new SearchAddress(this);
         address.search("汽车修理店");
+        address.setOnGestureLockViewListener(new SearchAddress.OnObtainAddressListener() {
+            @Override
+            public void onAddress(PoiResult poiResult) {
+
+            }
+        });
         List<Vehicle> list = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             Vehicle vehicle = new Vehicle();
@@ -241,6 +254,15 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
             LinearLayout gradeContainer;
             ImageButton btNavigate;
         }
+    }
+
+    private void setPoiList() {
+        LatLng startPoints_gaode = null;
+        if (Monitor.getInstance(this).getCurrentLocation() != null) {
+            startPoints_gaode = new LatLng(Monitor.getInstance(this).getCurrentLocation().getLatitude(),
+                    Monitor.getInstance(this).getCurrentLocation().getLongitude());
+        }
+
     }
 
 

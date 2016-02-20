@@ -1,6 +1,7 @@
 package com.dudu.aios.ui.fragment;
 
 import android.app.ActionBar;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
@@ -13,7 +14,9 @@ import android.widget.Toast;
 
 import com.dudu.aios.ui.dialog.VehiclePasswordSetDialog;
 import com.dudu.aios.ui.fragment.base.BaseVehicleFragment;
+import com.dudu.aios.ui.robbery.RobberyConstant;
 import com.dudu.android.launcher.R;
+import com.dudu.android.launcher.utils.LogUtils;
 
 /**
  * Created by Administrator on 2016/2/16.
@@ -44,6 +47,15 @@ public class VehiclePasswordSetFragment extends BaseVehicleFragment implements V
 
     private void initData() {
         stePassword(0);
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            String category = bundle.getString(RobberyConstant.CATEGORY_CONSTANT);
+            if (category.equals(RobberyConstant.GUARD_CONSTANT)) {
+                //防盗
+            } else if (category.equals(RobberyConstant.ROBBERY_CONSTANT)) {
+                //防劫
+            }
+        }
     }
 
     private void initView(View view) {

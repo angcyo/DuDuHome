@@ -50,6 +50,15 @@ public class SearchAddress {
         this.context = context;
     }
 
+    /**
+     * 设置回调接口
+     *
+     * @param listener
+     */
+    public void setOnGestureLockViewListener(OnObtainAddressListener listener) {
+        this.onObtainAddressListener = listener;
+    }
+
     public void search(String keyword) {
         cur_location = Monitor.getInstance(context).getCurrentLocation();
         Log.v("kkk", "cityCode:" + cityCode);
@@ -86,17 +95,18 @@ public class SearchAddress {
                     poiItems = poiResult.getPois();
                     // 取得第一页的poiitem数据，页数从数字0开始
                     if (poiItems != null && poiItems.size() > 0) {
+                        if (onObtainAddressListener != null) {
+                            onObtainAddressListener.onAddress(poiResult);
+                        }
                         setPoiList();
                     }
                 }
             }
-
-
         }
-
     };
-    interface OnObtainAddressListener{
-        
+
+    public interface OnObtainAddressListener {
+        void onAddress(PoiResult poiResult);
     }
 
 
@@ -129,6 +139,5 @@ public class SearchAddress {
 
         }
     }
-
 
 }

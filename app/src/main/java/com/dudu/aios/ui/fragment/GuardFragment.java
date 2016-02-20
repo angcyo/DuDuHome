@@ -1,10 +1,12 @@
 package com.dudu.aios.ui.fragment;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
 import com.dudu.aios.ui.fragment.base.BaseVehicleFragment;
+import com.dudu.aios.ui.robbery.RobberyConstant;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.LogUtils;
 
@@ -45,13 +47,23 @@ public class GuardFragment extends BaseVehicleFragment implements View.OnClickLi
         switch (v.getId()) {
             case R.id.vehicle_unlock_layout:
                 unlock();
-                getFragmentManager().beginTransaction().replace(R.id.container, new VehiclePasswordSetFragment()).commit();
+                VehiclePasswordSetFragment vehiclePasswordSetFragment = new VehiclePasswordSetFragment();
+                transferParameters();
                 break;
             case R.id.vehicle_locked_layout:
                 lock();
                 break;
         }
     }
+
+    private void transferParameters() {
+        VehiclePasswordSetFragment vehiclePasswordSetFragment = new VehiclePasswordSetFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(RobberyConstant.CATEGORY_CONSTANT, RobberyConstant.GUARD_CONSTANT);
+        vehiclePasswordSetFragment.setArguments(bundle);
+        getFragmentManager().beginTransaction().replace(R.id.container, vehiclePasswordSetFragment).commit();
+    }
+
 
     private void unlock() {
         guard_locked_layout.setVisibility(View.VISIBLE);
