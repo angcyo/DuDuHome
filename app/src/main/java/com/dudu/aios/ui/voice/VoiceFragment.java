@@ -31,5 +31,4 @@ public class VoiceFragment extends BaseFragment {
         super.onDestroy();
     }
 
-
 }

@@ -21,10 +21,12 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
 
         return getView();
     }
+
 
     public void replaceFragment(String name) {
         MainRecordActivity activity = (MainRecordActivity) getActivity();
@@ -38,7 +40,7 @@ public abstract class BaseFragment extends Fragment {
                 replaceFragment(FragmentConstants.VOICE_FRAGMENT);
                 break;
             case DISMISS_WINDOW:
-                Log.d("lxh", "voice  DISMISS_WINDOW BaseFragment");
+                Log.d("lxh", "voice  DISMISS_WINDOW BaseFragment  " + LauncherApplication.lastFragment);
                 if (ActivitiesManager.getInstance().getTopActivity() instanceof MainRecordActivity) {
                     replaceFragment(LauncherApplication.lastFragment);
                 }

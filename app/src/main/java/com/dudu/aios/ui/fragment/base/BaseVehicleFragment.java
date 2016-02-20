@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.dudu.aios.ui.fragment.GuardFragment;
 import com.dudu.aios.ui.fragment.MainFragment;
 import com.dudu.aios.ui.fragment.RobberyFragment;
+import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.R;
 
 /**
@@ -23,7 +24,7 @@ public abstract class BaseVehicleFragment extends BaseFragment {
 
     private LinearLayout vehicle_guard_btn, vehicle_robbery_btn;
 
-    private View view;
+    protected View view;
 
     private ImageButton buttonBack;
 
@@ -104,7 +105,7 @@ public abstract class BaseVehicleFragment extends BaseFragment {
                     robbery();
                     break;
                 case R.id.vehicle_back_button:
-                    getFragmentManager().beginTransaction().replace(R.id.container, new MainFragment()).commit();
+                    replaceFragment(FragmentConstants.FRAGMENT_MAIN_PAGE);
                     break;
             }
         }

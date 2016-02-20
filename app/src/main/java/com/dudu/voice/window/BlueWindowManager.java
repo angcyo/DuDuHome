@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.dudu.aios.ui.activity.MainRecordActivity;
+import com.dudu.aios.ui.base.VolBrightnessSetting;
 import com.dudu.aios.ui.utils.blur.RxBlurEffective;
 import com.dudu.aios.ui.voice.VoiceCircleAnimView;
 import com.dudu.aios.ui.voice.VoiceEvent;
@@ -49,7 +50,6 @@ public class BlueWindowManager extends BaseWindowManager {
 
     private static final int MAX_PAGE_COUNT = 5;
 
-    private boolean mMapChoosing = false;
 
     private ListView mMessageListView;
 
@@ -77,6 +77,7 @@ public class BlueWindowManager extends BaseWindowManager {
 
     private boolean isInit = false;
 
+    private VolBrightnessSetting volBrightnessSetting;
 
     @Override
     public void initWindow() {
@@ -85,6 +86,7 @@ public class BlueWindowManager extends BaseWindowManager {
             return;
 
         logger = LoggerFactory.getLogger("voice.float");
+
 
         mLayoutParams = new WindowManager.LayoutParams();
         mLayoutParams.type = WindowManager.LayoutParams.TYPE_PHONE;
@@ -111,6 +113,8 @@ public class BlueWindowManager extends BaseWindowManager {
         message_layout = mFloatWindowView.findViewById(R.id.message_layout);
 
         initAnimView();
+
+        volBrightnessSetting = new VolBrightnessSetting(ActivitiesManager.getInstance().getTopActivity(), mFloatWindowView);
 
         isInit = true;
     }
@@ -164,7 +168,6 @@ public class BlueWindowManager extends BaseWindowManager {
 
     @Override
     public void showStrategy() {
-        mMapChoosing = true;
 
         mCurPageNum = 0;
 
@@ -174,7 +177,6 @@ public class BlueWindowManager extends BaseWindowManager {
 
     @Override
     public void showAddress() {
-        mMapChoosing = true;
 
         mCurPageNum = 0;
 
@@ -233,10 +235,8 @@ public class BlueWindowManager extends BaseWindowManager {
 
         SemanticEngine.getProcessor().switchSemanticType(SceneType.HOME);
 
-        mMapChoosing = false;
 
         mMessageData.clear();
-
 
 
     }
@@ -308,7 +308,7 @@ public class BlueWindowManager extends BaseWindowManager {
             try {
 
                 removeFloatWindow();
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
         });

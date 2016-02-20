@@ -17,9 +17,14 @@ public class FZLFontTextView extends TextView {
     }
 
     private void init(Context context) {
-        AssetManager assetManager = context.getAssets();
-        Typeface font = Typeface.createFromAsset(assetManager, "FZLTXHK.TTF");
-        setTypeface(font);
+        try {
+
+            AssetManager assetManager = context.getAssets();
+            Typeface font = Typeface.createFromAsset(assetManager, "FZLTXHK.TTF");
+            setTypeface(font);
+        }catch (Exception e){
+
+        }
     }
 
     public FZLFontTextView(Context context, AttributeSet attrs) {

@@ -11,12 +11,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
 
 import com.dudu.aios.ui.base.BaseActivity;
 import com.dudu.aios.ui.fragment.FlowFragment;
@@ -33,9 +29,7 @@ import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.broadcast.TFlashCardReceiver;
 import com.dudu.android.launcher.broadcast.WeatherAlarmReceiver;
-import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.AdminReceiver;
-import com.dudu.drivevideo.DriveVideo;
 import com.dudu.event.DeviceEvent;
 import com.dudu.init.InitManager;
 
@@ -65,21 +59,37 @@ public class MainRecordActivity extends BaseActivity {
 
     private static final int MY_REQUEST_CODE = 9999;
 
-    private Bundle bundle;
+    private MainFragment mainFragment;
 
+    private RobberyFragment robberyFragment;
+
+    private DrivingRecordFragment drivingRecordFragment;
+
+    private PhotoFragment photoFragment;
+
+    private PhotoListFragment photoListFragment;
+
+    private VideoFragment videoFragment;
+
+    private FlowFragment flowFragment;
+
+    private VoiceFragment voiceFragment;
+
+    private VideoListFragment videoListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        initFragment(savedInstanceState);
+
         initData();
 
-//        initView();
-        this.bundle = savedInstanceState;
     }
 
     @Override
     protected View getChildView() {
-        return LayoutInflater.from(this).inflate(R.layout.activity_record,null);
+        return LayoutInflater.from(this).inflate(R.layout.activity_record, null);
     }
 
     private void initData() {
@@ -90,8 +100,6 @@ public class MainRecordActivity extends BaseActivity {
         EventBus.getDefault().unregister(this);
 
         EventBus.getDefault().register(this);
-
-        initFragment();
 
         InitManager.getInstance().init();
 
@@ -107,7 +115,19 @@ public class MainRecordActivity extends BaseActivity {
     }
 
 
-    private void initFragment() {
+    private void initFragment(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            mainFragment = new MainFragment();
+            robberyFragment = new RobberyFragment();
+            drivingRecordFragment = new DrivingRecordFragment();
+            photoFragment = new PhotoFragment();
+            photoListFragment = new PhotoListFragment();
+            videoFragment = new VideoFragment();
+            voiceFragment = new VoiceFragment();
+            flowFragment = new FlowFragment();
+            videoListFragment = new VideoListFragment();
+        }
+
         fm = this.getFragmentManager();
         ft = fm.beginTransaction();
         ft.replace(R.id.container, new MainFragment());
@@ -120,47 +140,49 @@ public class MainRecordActivity extends BaseActivity {
 
         switch (name) {
             case FragmentConstants.FRAGMENT_MAIN_PAGE:
-                ft.replace(R.id.container, new MainFragment());
+
+                ft.replace(R.id.container, mainFragment);
+
                 break;
 
             case FragmentConstants.FRAGMENT_VEHICLE_INSPECTION:
-                ft.replace(R.id.container, new RobberyFragment());
+                ft.replace(R.id.container, robberyFragment);
                 break;
 
             case FragmentConstants.FRAGMENT_DRIVING_RECORD:
-                ft.replace(R.id.container, new DrivingRecordFragment());
+                ft.replace(R.id.container, drivingRecordFragment);
                 break;
 
             case FragmentConstants.FRAGMENT_VIDEO_LIST:
-                ft.replace(R.id.container, new VideoListFragment());
+                ft.replace(R.id.container, videoListFragment);
                 break;
 
             case FragmentConstants.FRAGMENT_VIDEO:
-                ft.replace(R.id.container, new VideoFragment());
+                ft.replace(R.id.container, videoFragment);
                 break;
 
             case FragmentConstants.FRAGMENT_PHOTO_LIST:
-                ft.replace(R.id.container, new PhotoListFragment());
+                ft.replace(R.id.container, photoListFragment);
                 break;
 
             case FragmentConstants.FRAGMENT_PHOTO:
-                ft.replace(R.id.container, new PhotoFragment());
+                ft.replace(R.id.container, photoFragment);
                 break;
 
             case FragmentConstants.FRAGMENT_FLOW:
-                ft.replace(R.id.container, new FlowFragment());
+                ft.replace(R.id.container, flowFragment);
                 break;
             case FragmentConstants.VOICE_FRAGMENT:
-                ft.replace(R.id.container, new VoiceFragment());
+                ft.replace(R.id.container, voiceFragment);
                 break;
             default:
-                ft.replace(R.id.container,new MainFragment());
+                ft.replace(R.id.container, mainFragment);
                 break;
 
         }
         ft.commit();
 
-        if(!name.equals(FragmentConstants.VOICE_FRAGMENT)){
+        if (!name.equals(FragmentConstants.VOICE_FRAGMENT)) {
             LauncherApplication.lastFragment = name;
         }
     }

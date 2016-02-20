@@ -167,11 +167,13 @@
             android:screenOrientation="landscape" />
         <activity
             android:name="com.dudu.aios.ui.map.GaodeMapActivity"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:theme="@style/AiosBaseTheme"/>
         <activity
             android:name="com.dudu.aios.ui.map.NavigationActivity"
             android:launchMode="singleInstance"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:theme="@style/AiosBaseTheme"/>
         <activity android:name="com.dudu.aios.ui.activity.VehicleAnimationActivity" />
         <activity android:name="com.dudu.aios.ui.activity.VideoPlayActivity"
                   android:launchMode="singleTop"

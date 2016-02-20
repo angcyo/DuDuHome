@@ -97,7 +97,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
                 android:background="@android:color/transparent"
-                android:src="@drawable/menu_vehicle_inspection" />
+                android:src="@drawable/menu_vehicle_inspection"
+                android:id="@+id/vehicle_inspection_icon"/>
 
             <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                 android:layout_width="wrap_content"
@@ -129,7 +130,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
                 android:background="@android:color/transparent"
-                android:src="@drawable/menu_driving_record" />
+                android:src="@drawable/menu_driving_record"
+                android:id="@+id/driving_record_icon"/>
 
             <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                 android:layout_width="wrap_content"
@@ -162,7 +164,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
                 android:background="@android:color/transparent"
-                android:src="@drawable/menu_navigation" />
+                android:src="@drawable/menu_navigation"
+                android:id="@+id/navigation_icon"/>
 
             <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                 android:layout_width="wrap_content"
@@ -170,7 +173,8 @@
                 android:layout_marginTop="3dp"
                 android:text="@string/navigation_chinese"
                 android:textColor="@android:color/white"
-                android:textSize="11sp" />
+                android:textSize="11sp"
+               />
 
             <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
                 android:layout_width="wrap_content"
@@ -222,7 +226,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
                 android:background="@android:color/transparent"
-                android:src="@drawable/menu_bluetooth_phone" />
+                android:src="@drawable/menu_bluetooth_phone"
+                android:id="@+id/bluetooth_phone_icon"/>
 
             <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                 android:layout_width="wrap_content"
@@ -254,7 +259,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
                 android:background="@android:color/transparent"
-                android:src="@drawable/menu_flow" />
+                android:src="@drawable/menu_flow"
+                android:id="@+id/flow_icon"/>
 
             <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                 android:layout_width="wrap_content"
@@ -262,7 +268,8 @@
                 android:layout_marginTop="3dp"
                 android:text="@string/flow_chinese"
                 android:textColor="@android:color/white"
-                android:textSize="11sp" />
+                android:textSize="11sp"
+                />
 
             <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
                 android:layout_width="wrap_content"
@@ -272,7 +279,6 @@
                 android:text="@string/flow_english"
                 android:textColor="@android:color/white"
                 android:textSize="9sp" />
-
 
         </LinearLayout>
 
@@ -286,7 +292,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
                 android:background="@android:color/transparent"
-                android:src="@drawable/menu_prevent_rob" />
+                android:src="@drawable/menu_prevent_rob"
+                android:id="@+id/prevent_rob_icon"/>
 
             <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                 android:layout_width="wrap_content"

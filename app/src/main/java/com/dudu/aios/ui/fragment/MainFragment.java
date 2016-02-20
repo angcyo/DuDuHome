@@ -3,10 +3,12 @@ package com.dudu.aios.ui.fragment;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,18 +17,15 @@ import android.widget.Toast;
 
 import com.dudu.aios.ui.fragment.base.BaseFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
-import com.dudu.aios.ui.voice.VoiceFragment;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.CarCheckingActivity;
 import com.dudu.android.launcher.ui.activity.bluetooth.BtDialActivity;
 import com.dudu.android.launcher.ui.dialog.IPConfigDialog;
 import com.dudu.android.launcher.utils.WeatherUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
-import com.dudu.event.DeviceEvent;
 import com.dudu.init.InitManager;
 import com.dudu.map.NavigationProxy;
 import com.dudu.obd.ObdInit;
-import com.dudu.voice.FloatWindowUtils;
 import com.dudu.voice.VoiceManagerProxy;
 import com.dudu.weather.WeatherFlow;
 import com.dudu.weather.WeatherInfo;
@@ -39,7 +38,6 @@ import java.util.TimeZone;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
-import rx.functions.Action1;
 
 
 public class MainFragment extends BaseFragment implements View.OnClickListener {
@@ -52,14 +50,14 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
 
     private ImageButton voice_imageBtn;
 
-
     @Override
     public View getView() {
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_main_layout, null);
+
+        View view =  LayoutInflater.from(getActivity()).inflate(R.layout.fragment_main_layout, null);
 
         initFragmentView(view);
 
-        initOnClickListener();
+        initOnClickListener(view);
 
         initData();
 
@@ -67,10 +65,6 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
     }
 
     private void initData() {
-
-        EventBus.getDefault().unregister(getActivity());
-
-        EventBus.getDefault().register(getActivity());
 
         initDate();
 
@@ -102,7 +96,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
         mDateTextView.setText(dateFormat.format(new Date()) + " " + mWay);
     }
 
-    private void getWeather(){
+    private void getWeather() {
         weatherSubscriber(WeatherFlow.getInstance().requestWeather());
         WeatherStream.getInstance().startService();
 
@@ -115,7 +109,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
         });
     }
 
-    private void initOnClickListener() {
+    private void initOnClickListener(View view) {
         vehicleInspection.setOnClickListener(this);
         drivingRecord.setOnClickListener(this);
         navigation.setOnClickListener(this);
@@ -142,6 +136,13 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
             return true;
         });
 
+        view.findViewById(R.id.vehicle_inspection_icon).setOnClickListener(this);
+        view.findViewById(R.id.driving_record_icon).setOnClickListener(this);
+        view.findViewById(R.id.navigation_icon).setOnClickListener(this);
+        view.findViewById(R.id.bluetooth_phone_icon).setOnClickListener(this);
+        view.findViewById(R.id.flow_icon).setOnClickListener(this);
+        view.findViewById(R.id.prevent_rob_icon).setOnClickListener(this);
+
 
     }
 
@@ -164,40 +165,41 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
         switch (v.getId()) {
 
             case R.id.vehicle_inspection:
+            case R.id.vehicle_inspection_icon:
                 startActivity(new Intent(getActivity(), CarCheckingActivity.class));
-                // replaceFragment(FragmentConstants.FRAGMENT_VEHICLE_INSPECTION);
                 break;
             case R.id.driving_record_button:
+            case R.id.driving_record_icon:
                 replaceFragment(FragmentConstants.FRAGMENT_DRIVING_RECORD);
                 break;
 
             case R.id.navigation_button:
+            case R.id.navigation_icon:
                 NavigationProxy.getInstance().openNavi(NavigationProxy.OPEN_MANUAL);
                 break;
 
             case R.id.bluetooth_phone_button:
+            case R.id.bluetooth_phone_icon:
                 startActivity(new Intent(getActivity(), BtDialActivity.class));
                 break;
 
             case R.id.flow_button:
+            case R.id.flow_icon:
                 replaceFragment(FragmentConstants.FRAGMENT_FLOW);
                 break;
             case R.id.prevent_rob:
-//                getFragmentManager().beginTransaction().replace(R.id.container, new RobberyFragment()).commit();
+            case R.id.prevent_rob_icon:
                 replaceFragment(FragmentConstants.FRAGMENT_VEHICLE_INSPECTION);
                 break;
 
             case R.id.voice_imageBtn:
-//                getFragmentManager().beginTransaction().replace(R.id.container, new VoiceFragment()).commit();
-//                FloatWindowUtils.showAnimWindow();
                 VoiceManagerProxy.getInstance().startVoiceService();
                 break;
         }
     }
 
     private void updateWeatherInfo(String weather, String temperature) {
-      /*  LinearLayout ll_weatherInfo = (LinearLayout) findViewById(R.id.ll_weather_info);
-        RelativeLayout.LayoutParams lps = (RelativeLayout.LayoutParams) ll_weatherInfo.getLayoutParams();*/
+
         if (!TextUtils.isEmpty(weather) && !TextUtils.isEmpty(temperature)) {
             if (weather.contains("-")) {
                 weather = weather
@@ -206,18 +208,13 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
 
             mTemperatureView.setText(temperature
                     + getString(R.string.temperature_degree));
-          /*  if (weather.length() == 1) {
-                lps.removeRule(RelativeLayout.CENTER_HORIZONTAL);
-            } else {
-                lps.addRule(RelativeLayout.CENTER_HORIZONTAL);
-            }*/
+
             mWeatherView.setText(weather);
             mWeatherImage.setImageResource(WeatherUtils
                     .getWeatherIcon(WeatherUtils.getWeatherType(weather)));
         } else {
             Toast.makeText(getActivity(), R.string.get_weather_info_failed,
                     Toast.LENGTH_SHORT).show();
-            //lps.addRule(RelativeLayout.CENTER_HORIZONTAL);
             mWeatherView.setGravity(Gravity.CENTER);
             mWeatherView.setText(R.string.unkown_weather_info);
             mTemperatureView.setText("");
