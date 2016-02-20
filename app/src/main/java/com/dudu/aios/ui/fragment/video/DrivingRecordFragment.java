@@ -1,5 +1,6 @@
 package com.dudu.aios.ui.fragment.video;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,10 +9,13 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.dudu.aios.ui.activity.MainRecordActivity;
+import com.dudu.aios.ui.activity.video.PhotoListActivity;
 import com.dudu.aios.ui.fragment.base.BaseFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.R;
 import com.dudu.commonlib.CommonLib;
+import com.dudu.commonlib.utils.uiutils.ToastUtils;
 import com.dudu.drivevideo.DriveVideo;
 import com.dudu.drivevideo.video.CameraPreview;
 
@@ -33,10 +37,14 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
 
     private Logger log;
 
+    private MainRecordActivity mainRecordActivity;
+
     public DrivingRecordFragment() {
         log = LoggerFactory.getLogger("video.drivevideo");
+    }
 
-
+    public void setMainRecordActivity(MainRecordActivity mainRecordActivity) {
+        this.mainRecordActivity = mainRecordActivity;
     }
 
     @Override
@@ -57,14 +65,6 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
         return view;
     }
 
-    private void initClickListener() {
-        mSwitchVideoButton.setOnClickListener(this);
-        mCheckVideoButton.setOnClickListener(this);
-        mCheckPhotoButton.setOnClickListener(this);
-        mTakePhotoButton.setOnClickListener(this);
-        mBackButton.setOnClickListener(this);
-    }
-
     private void initFragmentView(View view) {
         mCheckVideoButton = (ImageButton) view.findViewById(R.id.check_video);
         mSwitchVideoButton = (ImageButton) view.findViewById(R.id.switch_video);
@@ -72,23 +72,46 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
         mTakePhotoButton = (ImageButton) view.findViewById(R.id.take_photo);
         mBackButton = (ImageButton) view.findViewById(R.id.button_back);
 
-//        mRearCameraPreviewView = (ImageView)view.findViewById(R.id.rear_camera_preview);
-//        mRearCameraPreviewView.setVisibility(View.INVISIBLE);
-
         previewFrameLayout = (FrameLayout)view.findViewById(R.id.camera_preview);
 
-//        initFrontPreview();
+        mRearCameraPreviewView = (ImageView)view.findViewById(R.id.rear_camera_preview);
     }
+
+    private void initClickListener() {
+        mSwitchVideoButton.setOnClickListener(this);
+        mCheckVideoButton.setOnClickListener(this);
+        mCheckPhotoButton.setOnClickListener(this);
+        mTakePhotoButton.setOnClickListener(this);
+        mBackButton.setOnClickListener(this);
+
+        mTakePhotoButton.setOnLongClickListener(v1 -> {
+            stopRearCamera();
+            return true;
+        });
+        mSwitchVideoButton.setOnLongClickListener(v -> {
+            startRearCamera();
+            return true;
+        });
+    }
+
+    private void startRearCamera(){
+        ToastUtils.showToastLong("后门开启后置摄像头");
+        DriveVideo.getInstance().getRearCameraVideoService().setIsUsbVideoEnabled(true);
+        DriveVideo.getInstance().getRearCameraVideoService().startDriveVideo();
+    }
+
+    private void stopRearCamera(){
+        ToastUtils.showToastLong("后门关闭后置摄像头");
+        DriveVideo.getInstance().getRearCameraVideoService().setIsUsbVideoEnabled(false);
+        DriveVideo.getInstance().getRearCameraVideoService().stopDriveVideo();
+    }
+
+
 
     @Override
     public void onResume() {
         super.onResume();
 
-
-//        cameraPreview.setSurfaceHolder();
-//        cameraPreview.startPreview();
-//        DriveVideo.getInstance().getFrontCameraDriveVideo().startPreview();
-//        DriveVideo.getInstance().getRearCameraDriveVideo().setImageView(mRearCameraPreviewView);
     }
 
     @Override
@@ -112,7 +135,8 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
                 changePreview();
                 break;
             case R.id.check_photo:
-                replaceFragment(FragmentConstants.FRAGMENT_PHOTO_LIST);
+//                replaceFragment(FragmentConstants.FRAGMENT_PHOTO_LIST);
+                mainRecordActivity.startActivity(new Intent(mainRecordActivity, PhotoListActivity.class));
                 break;
             case R.id.button_back:
                 replaceFragment(FragmentConstants.FRAGMENT_MAIN_PAGE);
@@ -135,21 +159,26 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
         }
     }
 
+    private void stopRearPreview(){
+        DriveVideo.getInstance().getRearCameraDriveVideo().stopPreview();
+        mainRecordActivity.findViewById(R.id.rear_camera_preview).setVisibility(View.INVISIBLE);
+    }
+
+    private void startRearPreview(){
+//        mRearCameraPreviewView = findViewById(R.id.rear_camera_preview);
+        mRearCameraPreviewView.setVisibility(View.VISIBLE);
+//        mRearCameraPreviewView.bringToFront();
+        DriveVideo.getInstance().getRearCameraDriveVideo().setImageView(mRearCameraPreviewView);
+        DriveVideo.getInstance().getRearCameraDriveVideo().startPreview();
+    }
+
     private void changePreview(){
         if (isFrontCameraPreView){
             isFrontCameraPreView = false;
-
-//            stopFrontPreview();
-
-//            DriveVideo.getInstance().getRearCameraDriveVideo().setImageView(mRearCameraPreviewView);
-//            DriveVideo.getInstance().getRearCameraDriveVideo().startPreview();
-//            mRearCameraPreviewView.setVisibility(View.VISIBLE);
+            startRearPreview();
         }else {
             isFrontCameraPreView = true;
-//            mRearCameraPreviewView.setVisibility(View.INVISIBLE);
-//            DriveVideo.getInstance().getRearCameraDriveVideo().stopPreview();
-
-//            startFrontPreview();
+            startRearPreview();
         }
     }
 }

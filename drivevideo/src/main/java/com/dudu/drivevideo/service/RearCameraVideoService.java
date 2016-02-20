@@ -7,6 +7,7 @@ import com.dudu.commonlib.CommonLib;
 import com.dudu.drivevideo.config.RearVideoConfigParam;
 import com.dudu.drivevideo.config.VideoConfigParam;
 import com.dudu.drivevideo.utils.FileUtil;
+import com.dudu.drivevideo.utils.UsbControl;
 import com.dudu.drivevideo.video.RearCameraDriveVideo;
 
 
@@ -31,6 +32,8 @@ public class RearCameraVideoService {
     private boolean isRecordingVideo = false;
     private boolean isCanStartRecording = true;
 
+    private boolean isUsbVideoEnabled = false;
+
 
     private ScheduledExecutorService driveVideoThreadPool = null;
     private Logger log;
@@ -41,13 +44,14 @@ public class RearCameraVideoService {
         rearCameraDriveVideo = new RearCameraDriveVideo(videoConfigParam.getRearVideoConfigParam());
 
         initThreadPool();
-        log = LoggerFactory.getLogger("video.drivevideo");
+        log = LoggerFactory.getLogger("video.reardrivevideo");
     }
 
     private Thread initDriveVideoThread = new Thread(){
         @Override
         public void run() {
             try {
+                log.info("设置usb setToHost：{}", UsbControl.setToHost());
                 FileUtil.getTFlashCardDirFile("/dudu",RearVideoConfigParam.VIDEO_STORAGE_PATH);
                 log.info("运行initDriveVideoThread");
                 if (initDriveVideo()){
@@ -61,6 +65,7 @@ public class RearCameraVideoService {
             } catch (Exception e) {
                 log.error("异常", e);
                 releaseAndReStartVideo();
+//                log.info("设置usb setToClient：{}", UsbControl.setToClient());
             }
         }
     };
@@ -71,7 +76,9 @@ public class RearCameraVideoService {
         if (videoFileNameList.size() > 0){
             for (String fileName: videoFileNameList){
 //                log.debug("filename : {}", fileName);
-                if (!("".equals(fileName) || (fileName.length() <= 5)|| "video32".equals(fileName) || "video33".equals(fileName) || "video0".equals(fileName))){
+                if (!("".equals(fileName) || (fileName.length() <= 5)|| "video32".equals(fileName)
+                        || "video33".equals(fileName) || "video0".equals(fileName) || "video1".equals(fileName))){
+
                     int deviceId = Integer.parseInt(fileName.trim().substring(5));
                     log.debug("当前设备名：{}, 设备ID：{}", fileName, deviceId);
                     if (rearCameraDriveVideo.initCamera("/dev/"+fileName) >= 0){
@@ -198,7 +205,11 @@ public class RearCameraVideoService {
     }
 
     public void startDriveVideo(){
-        log.info("开启startDriveVideo");
+        if (!isUsbVideoEnabled){
+            log.info("USB摄像头未使能");
+            return;
+        }
+        log.info("开启startDriveVideo UsbControl.setToHost() {}", UsbControl.setToHost());
         if (!isDriveVideoIng){
             startRecordingVideo();
         }
@@ -211,7 +222,7 @@ public class RearCameraVideoService {
     }
 
     public void stopDriveVideo(){
-        log.info("停止stopDriveVideo");
+        log.info("停止stopDriveVideo UsbControl.setToClient() {}", UsbControl.setToClient());
         stopRecordingVideo();
     }
 
@@ -236,9 +247,16 @@ public class RearCameraVideoService {
     }
 
 
+    public boolean isUsbVideoEnabled() {
+        return isUsbVideoEnabled;
+    }
 
+    public void setIsUsbVideoEnabled(boolean isUsbVideoEnabled) {
+        this.isUsbVideoEnabled = isUsbVideoEnabled;
+    }
 
     public RearCameraDriveVideo getRearCameraDriveVideo() {
         return rearCameraDriveVideo;
     }
+
 }

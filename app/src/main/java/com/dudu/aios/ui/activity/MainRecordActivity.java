@@ -150,6 +150,8 @@ public class MainRecordActivity extends BaseActivity {
                 break;
 
             case FragmentConstants.FRAGMENT_DRIVING_RECORD:
+                DrivingRecordFragment drivingRecordFragment = new DrivingRecordFragment();
+                drivingRecordFragment.setMainRecordActivity(this);
                 ft.replace(R.id.container, drivingRecordFragment);
                 break;
 

@@ -41,7 +41,7 @@ public class RearCameraDriveVideo {
     public RearCameraDriveVideo(RearVideoConfigParam rearVideoConfigParam) {
         this.rearVideoConfigParam = rearVideoConfigParam;
 
-        log = LoggerFactory.getLogger("video.drivevideo");
+        log = LoggerFactory.getLogger("video.reardrivevideo");
     }
 
     /* 初始化摄像头*/

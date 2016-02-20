@@ -1,55 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal">
+    tools:context="com.dudu.aios.ui.activity.video.PhotoListActivity">
+
+    <TextView
+        android:id="@+id/tv_select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="13dp"
+        android:text="@string/action_choice"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/button_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="4dp"
+        android:background="@drawable/button_back_selector"
+        android:onClick="onButtonBack"/>
 
     <RelativeLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="8dp">
-
-        <TextView
-            android:id="@+id/tv_select"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="4dp"
-            android:text="@string/action_choice"
-            android:textColor="@android:color/white"
-            android:textSize="9sp"
-            android:visibility="gone" />
-
-        <ImageButton
-            android:id="@+id/button_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="4dp"
-            android:background="@drawable/button_back_selector" />
-    </RelativeLayout>
-
-    <FrameLayout
-        android:layout_width="560dp"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="4dp"
-        android:layout_marginTop="4dp">
+        android:layout_toRightOf="@+id/button_back"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="75dp"
+        android:layout_marginTop="9dp"
+        android:layout_marginBottom="9dp">
 
         <GridView
             android:id="@+id/photo_gridView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:horizontalSpacing="3dp"
+            android:horizontalSpacing="7dp"
             android:numColumns="5"
-            android:verticalSpacing="3dp"
+            android:layout_marginTop="9dp"
+            android:verticalSpacing="6dp"
             android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/photo_empty_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="8dp"
-            android:gravity="center"
+            android:layout_marginTop="80dp"
+            android:gravity="center_horizontal"
             android:orientation="vertical">
 
             <ImageView
@@ -60,17 +62,19 @@
             <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="7dp"
                 android:text="@string/photo_empty_chinese" />
 
             <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="5dp"
                 android:text="@string/photo_empty_english" />
 
         </LinearLayout>
-    </FrameLayout>
+    </RelativeLayout>
+
+
 
     <RelativeLayout
         android:id="@+id/delete_upload_container"
@@ -78,12 +82,15 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="4dp"
         android:layout_marginLeft="4dp"
+        android:layout_alignParentRight="true"
         android:visibility="gone">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="8dp">
 
             <ImageButton
                 android:id="@+id/button_photo_delete"
@@ -95,14 +102,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
+                android:layout_gravity="center_vertical"
                 android:text="@string/action_delete"
-                android:textSize="9sp" />
+                android:textSize="18sp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:layout_marginBottom="12dp"
+            android:layout_marginRight="8dp"
             android:orientation="horizontal">
 
             <ImageButton
@@ -116,9 +126,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
                 android:text="@string/action_upload"
-                android:textSize="9sp" />
+                android:layout_gravity="center_vertical"
+                android:textSize="18sp" />
 
         </LinearLayout>
-
     </RelativeLayout>
 </RelativeLayout>

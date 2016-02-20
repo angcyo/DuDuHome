@@ -187,7 +187,6 @@ public class VideoPlayActivity extends BaseActivity  implements View.OnClickList
     @Override
     protected void onResume() {
         super.onResume();
-        observableFactory.getCommonObservable(baseBinding).hasTitle.set(false);
     }
 
     @Override

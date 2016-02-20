@@ -35,12 +35,12 @@ public class DriveVideo {
     }
 
     public void startDriveVideo(){
-//        rearCameraVideoService.startDriveVideo();
+        rearCameraVideoService.startDriveVideo();
         frontDriveVideoService.startDriveVideo();
     }
 
     public void stopDriveVideo(){
-//        rearCameraVideoService.stopDriveVideo();
+        rearCameraVideoService.stopDriveVideo();
         frontDriveVideoService.stopDriveVideo();
     }
 
@@ -51,6 +51,10 @@ public class DriveVideo {
 
     public RearCameraDriveVideo getRearCameraDriveVideo(){
         return rearCameraVideoService.getRearCameraDriveVideo();
+    }
+
+    public RearCameraVideoService getRearCameraVideoService() {
+        return rearCameraVideoService;
     }
 
     public FrontCameraDriveVideo getFrontCameraDriveVideo(){
