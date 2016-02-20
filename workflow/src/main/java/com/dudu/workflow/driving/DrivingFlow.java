@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 import rx.Observable;
-import rx.functions.Action1;
 
 /**
  * Created by Administrator on 2016/2/17.
@@ -23,7 +22,7 @@ public class DrivingFlow {
 
     private Logger logger = LoggerFactory.getLogger("DrivingFlow");
 
-    public void getReceiveDataFlow() {
+    public void testAccSpeedFlow() {
         Observable<String> type = ObservableFactory.getReceiverObservable()
                 .filter(data -> data.getTitle().equals(ReceiverData.ACCELERATEDTESTSTART_VALUE))
                 .map(ReceiverData::getContent)

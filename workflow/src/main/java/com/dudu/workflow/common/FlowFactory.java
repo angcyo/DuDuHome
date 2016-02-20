@@ -13,13 +13,13 @@ public class FlowFactory {
 
     private DrivingFlow drivingFlow;
 
-    public static FlowFactory getInstance(){
+    public static FlowFactory getInstance() {
         return mInstance;
     }
 
-    public void init(){
+    public void init() {
         drivingFlow = new DrivingFlow();
-        drivingFlow.getReceiveDataFlow();
+        drivingFlow.testAccSpeedFlow();
         userFlow = new UserFlow(new RealmUserDataService());
     }
 

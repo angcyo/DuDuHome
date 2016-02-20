@@ -33,8 +33,8 @@ android {
         applicationId "com.dudu.android.launcher"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 1301
-        versionName "T-1.3.1-didi-demo-pod"
+        versionCode 2003
+        versionName "T-2.0.3-didi-pod-demo"
         multiDexEnabled true
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

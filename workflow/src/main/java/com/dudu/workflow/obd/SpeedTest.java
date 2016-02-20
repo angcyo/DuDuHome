@@ -5,6 +5,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import rx.Subscription;
 import rx.schedulers.Schedulers;
@@ -22,11 +23,30 @@ public class SpeedTest {
         subArr = new ArrayList<>();
     }
 
-    public void stopTestSpeed() {
+    public void stopTest() {
         for (Subscription sub : subArr) {
             if (!sub.isUnsubscribed()) sub.unsubscribe();
         }
         subArr.clear();
+    }
+
+    public void startTestGUN3() {
+        Log.d("SerialPort", "startTestGUN3 call start");
+        try {
+            Subscription sub1 = OBDStream.getInstance().engSpeedStream()
+                    .map(aDouble -> aDouble > 3000)
+                    .distinctUntilChanged()
+                    .take(5)
+                    .timeout(60, TimeUnit.SECONDS)
+                    .subscribeOn(Schedulers.newThread())
+                    .subscribe(aBoolean -> Log.d("SerialPort", "test startTestGUN3 changed ")
+                            , throwable -> Log.d("SerialPort", "test startTestGUN3 timeout ")
+                            , () -> Log.d("SerialPort", "test startTestGUN3 got it "));
+            subArr.add(sub1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.d("SerialPort", "startTestGUN3 call end");
     }
 
     public void startTestSpeed() {
