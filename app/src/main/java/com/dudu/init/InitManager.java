@@ -10,23 +10,19 @@ import android.os.HandlerThread;
 
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.service.BluetoothService;
-import com.dudu.android.launcher.service.CheckUserService;
 import com.dudu.android.launcher.service.FloatBackButtonService;
 import com.dudu.android.launcher.service.MainService;
 import com.dudu.android.launcher.service.MonitorService;
 import com.dudu.android.launcher.utils.AgedUtils;
 import com.dudu.android.launcher.utils.CarStatusUtils;
-import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.IPConfig;
-import com.dudu.android.launcher.utils.SharedPreferencesUtils;
 import com.dudu.android.launcher.utils.StatusBarManager;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.drivevideo.DriveVideo;
 import com.dudu.event.DeviceEvent;
 import com.dudu.navi.NavigationManager;
-import com.dudu.video.VideoManager;
 import com.dudu.voice.VoiceManagerProxy;
 
 import org.slf4j.Logger;
@@ -106,10 +102,10 @@ public class InitManager {
      * 开启用户激活状态检查服务
      */
     private void startCheckUserService() {
-        if (!SharedPreferencesUtils.getBooleanValue(mContext, Constants.KEY_USER_IS_ACTIVE, false)) {
-            CheckUserService service = CheckUserService.getInstance(mContext);
-            service.startService();
-        }
+//        if (!SharedPreferencesUtils.getBooleanValue(mContext, Constants.KEY_USER_IS_ACTIVE, false)) {
+//            CheckUserService service = CheckUserService.getInstance(mContext);
+//            service.startService();
+//        }
     }
 
     /**

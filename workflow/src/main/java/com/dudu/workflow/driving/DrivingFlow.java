@@ -3,10 +3,9 @@ package com.dudu.workflow.driving;
 import android.util.Log;
 
 import com.dudu.commonlib.repo.ReceiverData;
-import com.dudu.rest.model.AccTestData;
-import com.dudu.workflow.common.ObservableFactory;
 import com.dudu.workflow.common.RequestFactory;
 import com.dudu.workflow.obd.OBDStream;
+import com.dudu.workflow.switchmessage.AccTestData;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +21,8 @@ public class DrivingFlow {
 
     private Logger logger = LoggerFactory.getLogger("DrivingFlow");
 
-    public void testAccSpeedFlow() {
-        Observable<String> type = ObservableFactory.getReceiverObservable()
+    public void testAccSpeedFlow(Observable<ReceiverData> observable) {
+        Observable<String> type = observable
                 .filter(data -> data.getTitle().equals(ReceiverData.ACCELERATEDTESTSTART_VALUE))
                 .map(ReceiverData::getContent)
                 .doOnNext(s -> {
@@ -71,5 +70,4 @@ public class DrivingFlow {
                             });
                 });
     }
-
 }

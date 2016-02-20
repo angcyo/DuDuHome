@@ -3,6 +3,7 @@ package com.dudu.workflow.guard;
 import com.dudu.rest.common.Request;
 import com.dudu.rest.model.GuardStateResponse;
 import com.dudu.rest.model.RequestResponse;
+import com.dudu.workflow.common.CommonParams;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -20,9 +21,9 @@ public class GuardRequestRetrofitImpl implements GuardRequest {
     }
 
     @Override
-    public void isAntiTheftOpened(String cellphone, final LockStateCallBack callBack) {
+    public void isAntiTheftOpened(final LockStateCallBack callBack) {
         Call<GuardStateResponse> call = Request.getInstance().getGuardService()
-                .getGuardState(cellphone);
+                .getGuardState(CommonParams.getInstance().getUserName());
         call.enqueue(new Callback<GuardStateResponse>() {
             @Override
             public void onResponse(Call<GuardStateResponse> call, Response<GuardStateResponse> response) {
@@ -37,9 +38,9 @@ public class GuardRequestRetrofitImpl implements GuardRequest {
     }
 
     @Override
-    public void lockCar(String cellphone, final LockStateCallBack callBack) {
+    public void lockCar(final LockStateCallBack callBack) {
         Call<RequestResponse> call = Request.getInstance().getGuardService()
-                .guardSwitch(cellphone,1);
+                .guardSwitch(CommonParams.getInstance().getUserName(),1);
         call.enqueue(new Callback<RequestResponse>() {
             @Override
             public void onResponse(Call<RequestResponse> call, Response<RequestResponse> response) {
@@ -54,9 +55,9 @@ public class GuardRequestRetrofitImpl implements GuardRequest {
     }
 
     @Override
-    public void unlockCar(String cellphone, final UnlockCallBack callBack) {
+    public void unlockCar(final UnlockCallBack callBack) {
         Call<RequestResponse> call = Request.getInstance().getGuardService()
-                .guardSwitch(cellphone,0);
+                .guardSwitch(CommonParams.getInstance().getUserName(),0);
         call.enqueue(new Callback<RequestResponse>() {
             @Override
             public void onResponse(Call<RequestResponse> call, Response<RequestResponse> response) {

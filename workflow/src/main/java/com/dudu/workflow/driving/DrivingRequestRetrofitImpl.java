@@ -2,10 +2,10 @@ package com.dudu.workflow.driving;
 
 import com.dudu.commonlib.utils.Encrypt;
 import com.dudu.rest.common.Request;
-import com.dudu.rest.model.AccTestData;
 import com.dudu.rest.model.DrivingHabitsData;
 import com.dudu.rest.model.RequestResponse;
 import com.dudu.workflow.common.CommonParams;
+import com.dudu.workflow.switchmessage.AccTestData;
 import com.google.gson.Gson;
 
 import retrofit2.Call;
@@ -35,7 +35,8 @@ public class DrivingRequestRetrofitImpl implements DrivingRequest{
             System.out.println(e);
         }
         Call<RequestResponse> call = Request.getInstance().getDrivingService()
-                .pushAcceleratedTestData(CommonParams.getInstance().getUserName(), postString);
+                .pushAcceleratedTestData(CommonParams.getInstance().getUserName()
+                        , postString);
         call.enqueue(new Callback<RequestResponse>() {
             @Override
             public void onResponse(Call<RequestResponse> call, Response<RequestResponse> response) {

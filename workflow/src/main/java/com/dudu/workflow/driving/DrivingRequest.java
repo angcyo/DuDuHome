@@ -1,7 +1,7 @@
 package com.dudu.workflow.driving;
 
-import com.dudu.rest.model.AccTestData;
 import com.dudu.rest.model.DrivingHabitsData;
+import com.dudu.workflow.switchmessage.AccTestData;
 
 /**
  * 驾车相关请求

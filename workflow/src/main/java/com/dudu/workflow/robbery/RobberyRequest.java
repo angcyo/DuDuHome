@@ -4,6 +4,7 @@ package com.dudu.workflow.robbery;
  * Created by Administrator on 2016/2/16.
  */
 public interface RobberyRequest {
+
     public void getCarInsuranceAuthState();
     public void requestCarInsuranceAuth();
     public void isCarRobbed(CarRobberdCallback callback);
@@ -12,7 +13,7 @@ public interface RobberyRequest {
     public void closeAntiRobberyMode(CloseRobberyModeCallback callback);
 
     public interface CarRobberdCallback{
-        void hasRobbed(boolean success);
+        void hasRobbed(boolean robbed);
         void requestError(String error);
     }
 

@@ -1,7 +1,7 @@
-package com.dudu.rest.model;
+package com.dudu.workflow.switchmessage;
 
 /**
- * Created by Administrator on 2016/2/18.
+ * Created by Administrator on 2016/2/20.
  */
 public class AccTestData {
 

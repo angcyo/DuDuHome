@@ -2,7 +2,7 @@ package com.dudu.workflow;
 
 import com.dudu.commonlib.CommonLib;
 import com.dudu.rest.common.Request;
-import com.dudu.workflow.common.FlowFactory;
+import com.dudu.workflow.common.DataFlowFactory;
 import com.dudu.workflow.common.RequestFactory;
 import com.dudu.workflow.guard.GuardRequest;
 
@@ -24,7 +24,7 @@ public class GuardRequestTest {
         CommonLib.getInstance().init();
         Request.getInstance().init();
         RequestFactory.getInstance().init();
-        FlowFactory.getInstance().init();
+        DataFlowFactory.getInstance().init();
     }
 
     @Test
@@ -32,7 +32,7 @@ public class GuardRequestTest {
 
         final CountDownLatch signal = new CountDownLatch(1);
         RequestFactory.getInstance().getGuardRequest()
-                .lockCar("123456", new GuardRequest.LockStateCallBack() {
+                .lockCar(new GuardRequest.LockStateCallBack() {
 
                     @Override
                     public void hasLocked(boolean locked) {
@@ -54,7 +54,7 @@ public class GuardRequestTest {
 
         final CountDownLatch signal = new CountDownLatch(1);
         RequestFactory.getInstance().getGuardRequest()
-                .unlockCar("123456", new GuardRequest.UnlockCallBack() {
+                .unlockCar(new GuardRequest.UnlockCallBack() {
 
                     @Override
                     public void unlocked(boolean locked) {
@@ -76,7 +76,7 @@ public class GuardRequestTest {
 
         final CountDownLatch signal = new CountDownLatch(1);
         RequestFactory.getInstance().getGuardRequest()
-                .isAntiTheftOpened("123456", new GuardRequest.LockStateCallBack() {
+                .isAntiTheftOpened(new GuardRequest.LockStateCallBack() {
 
                     @Override
                     public void hasLocked(boolean locked) {

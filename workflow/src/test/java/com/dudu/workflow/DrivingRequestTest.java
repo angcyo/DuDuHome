@@ -3,11 +3,11 @@ package com.dudu.workflow;
 import com.dudu.commonlib.CommonLib;
 import com.dudu.commonlib.utils.TimeUtils;
 import com.dudu.rest.common.Request;
-import com.dudu.rest.model.AccTestData;
 import com.dudu.rest.model.DrivingHabitsData;
-import com.dudu.workflow.common.FlowFactory;
+import com.dudu.workflow.common.DataFlowFactory;
 import com.dudu.workflow.common.RequestFactory;
 import com.dudu.workflow.driving.DrivingRequest;
+import com.dudu.workflow.switchmessage.AccTestData;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -28,14 +28,14 @@ public class DrivingRequestTest {
 //        CommonParams.getInstance().init();
         Request.getInstance().init();
         RequestFactory.getInstance().init();
-        FlowFactory.getInstance().init();
+        DataFlowFactory.getInstance().init();
     }
 
     private int index = 20;
 
     @Test
     public void test_pushAcceleratedTestDataManyTimes() throws InterruptedException {
-        for(int i=0;i<10;i++){
+        for (int i = 0; i < 10; i++) {
             test_pushAcceleratedTestData();
         }
     }
@@ -44,10 +44,7 @@ public class DrivingRequestTest {
     public void test_pushAcceleratedTestData() throws InterruptedException {
         index++;
         final CountDownLatch signal = new CountDownLatch(1);
-        AccTestData data = new AccTestData();
-        data.setAccType("1");
-        data.setAccTotalTime(index+".02");
-        data.setDateTime(System.currentTimeMillis()+"");
+        AccTestData data = new AccTestData("1", index + ".02", System.currentTimeMillis() + "");
         RequestFactory.getDrivingRequest().pushAcceleratedTestData(data, new DrivingRequest.RequesetCallback() {
             @Override
             public void requestSuccess(boolean success) {
@@ -61,7 +58,7 @@ public class DrivingRequestTest {
     @Test
     public void test_pushDrivingHabitsDataManyTimes() throws InterruptedException {
         final CountDownLatch signal = new CountDownLatch(1);
-        for(int i=0;i<20;i++){
+        for (int i = 0; i < 20; i++) {
             test_pushDrivingHabitsData();
             signal.await(20, TimeUnit.SECONDS);
         }
@@ -73,7 +70,7 @@ public class DrivingRequestTest {
         final CountDownLatch signal = new CountDownLatch(1);
         DrivingHabitsData data = new DrivingHabitsData();
         String value;
-        switch (index%3){
+        switch (index % 3) {
             case 1:
                 value = DrivingHabitsData.JIJIAKE;
                 break;

@@ -15,7 +15,7 @@ import com.dudu.android.launcher.utils.IPConfig;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.network.NetworkManage;
 import com.dudu.workflow.common.CommonParams;
-import com.dudu.workflow.common.FlowFactory;
+import com.dudu.workflow.common.DataFlowFactory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -160,7 +160,7 @@ public class IpConfigActivity extends BaseTitlebarActivity {
         testPort = Integer.parseInt(editText_Testport.getText().toString());
         String userName = editText_UserName.getText().toString();
 
-        FlowFactory.getUserDataFlow().saveUserName(userName);
+        DataFlowFactory.getUserDataFlow().saveUserName(userName);
         ReceiverRegister.registPushManager(userName);
         if (ipConfig.changeConfig(ip, testIP, port, testPort, isTest)) {
             ToastUtils.showToast("修改成功！");

@@ -11,7 +11,8 @@ import com.dudu.android.launcher.utils.NetworkUtils;
 import com.dudu.commonlib.CommonLib;
 import com.dudu.rest.common.Request;
 import com.dudu.workflow.common.CommonParams;
-import com.dudu.workflow.common.FlowFactory;
+import com.dudu.workflow.common.DataFlowFactory;
+import com.dudu.workflow.common.ObservableFactory;
 import com.dudu.workflow.common.RequestFactory;
 import com.dudu.workflow.obd.OBDStream;
 
@@ -66,13 +67,14 @@ public class LauncherApplication extends Application {
         NetworkUtils.writePortalConfig(this);
 
         CommonLib.getInstance().init();
-        FlowFactory.getInstance().init();
+        DataFlowFactory.getInstance().init();
         try {
             OBDStream.getInstance().init();
         } catch (IOException e) {
             e.printStackTrace();
         }
         CommonParams.getInstance().init();
+        ObservableFactory.init();
         Request.getInstance().init();
         RequestFactory.getInstance().init();
 

@@ -8,6 +8,11 @@ import android.widget.TextView;
 import com.dudu.aios.ui.fragment.base.BaseVehicleFragment;
 import com.dudu.aios.ui.robbery.RobberyConstant;
 import com.dudu.android.launcher.R;
+import com.dudu.workflow.common.DataFlowFactory;
+import com.dudu.workflow.common.ObservableFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class RobberyLockFragment extends BaseVehicleFragment implements View.OnClickListener {
@@ -16,11 +21,14 @@ public class RobberyLockFragment extends BaseVehicleFragment implements View.OnC
 
     private TextView tvTitleCh, tvTitleEn;
 
+    private Logger logger = LoggerFactory.getLogger("RobberyLockFragment");
+
     @Override
     public View getVehicleChildView() {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.vehicle_guard_layout, null);
         initView(view);
         initListener();
+        syncAppRobberyFlow();
         return view;
     }
 
@@ -69,5 +77,15 @@ public class RobberyLockFragment extends BaseVehicleFragment implements View.OnC
     private void lock() {
         guard_locked_layout.setVisibility(View.GONE);
         guard_unlock_layout.setVisibility(View.VISIBLE);
+    }
+
+    public void syncAppRobberyFlow() {
+        ObservableFactory.syncAppRobberyFlow()
+                .subscribe(receiverData -> {
+                    if (!receiverData.getSwitch0Value().equals("1")) {
+                        DataFlowFactory.getSwitchDataFlow().saveRobberyState(true);
+                        getFragmentManager().beginTransaction().replace(R.id.container, new RobberyFragment()).commit();
+                    }
+                });
     }
 }

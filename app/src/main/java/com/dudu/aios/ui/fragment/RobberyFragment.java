@@ -6,8 +6,11 @@ import android.widget.ImageView;
 
 import com.dudu.aios.ui.fragment.base.BaseVehicleFragment;
 import com.dudu.android.launcher.R;
+import com.dudu.android.launcher.utils.ToastUtils;
+import com.dudu.workflow.common.CommonParams;
+import com.dudu.workflow.common.DataFlowFactory;
+import com.dudu.workflow.common.ObservableFactory;
 import com.dudu.workflow.common.RequestFactory;
-import com.dudu.workflow.robbery.RobberyFlow;
 import com.dudu.workflow.robbery.RobberyRequest;
 
 import org.slf4j.Logger;
@@ -19,11 +22,6 @@ import java.util.concurrent.TimeoutException;
 import rx.Subscription;
 
 public class RobberyFragment extends BaseVehicleFragment implements View.OnClickListener {
-
-    private static final int ROBERED = 0;
-    private static final int HEADLIGHT = 1;
-    private static final int PARK = 2;
-    private static final int GUN = 3;
 
     private View view;
 
@@ -64,27 +62,27 @@ public class RobberyFragment extends BaseVehicleFragment implements View.OnClick
         switch (v.getId()) {
             case R.id.headlight_vehicle_robbery_off:
                 checkHeadLightSwitch(true);
-                requestCheckSwitch(HEADLIGHT, true);
+                requestCheckSwitch(CommonParams.HEADLIGHT, true);
                 break;
             case R.id.headlight_vehicle_robbery_on:
-                checkHeadLightSwitch(true);
-                requestCheckSwitch(HEADLIGHT, false);
+                checkHeadLightSwitch(false);
+                requestCheckSwitch(CommonParams.HEADLIGHT, false);
                 break;
             case R.id.park_vehicle_robbery_off:
-                checkParkSwitch(false);
-                requestCheckSwitch(PARK, true);
+                checkParkSwitch(true);
+                requestCheckSwitch(CommonParams.PARK, true);
                 break;
             case R.id.park_vehicle_robbery_on:
-                checkParkSwitch(true);
-                requestCheckSwitch(PARK, false);
+                checkParkSwitch(false);
+                requestCheckSwitch(CommonParams.PARK, false);
                 break;
             case R.id.gun_vehicle_robbery_off:
-                checkGunSwitch(false);
-                requestCheckSwitch(GUN, true);
+                checkGunSwitch(true);
+                requestCheckSwitch(CommonParams.GUN, true);
                 break;
             case R.id.gun_vehicle_robbery_on:
-                checkGunSwitch(true);
-                requestCheckSwitch(GUN, false);
+                checkGunSwitch(false);
+                requestCheckSwitch(CommonParams.GUN, false);
                 break;
         }
     }
@@ -95,11 +93,30 @@ public class RobberyFragment extends BaseVehicleFragment implements View.OnClick
                     @Override
                     public void switchSuccess(boolean success) {
                         logger.debug("打开开关" + type + (success ? "成功" : "失败"));
+                        if (!success) {
+                            DataFlowFactory.getSwitchDataFlow()
+                                    .saveRobberySwitch(type, !on_off);
+                            switch (type) {
+                                case CommonParams.HEADLIGHT:
+                                    checkHeadLightSwitch(!on_off);
+                                    break;
+
+                                case CommonParams.PARK:
+                                    checkParkSwitch(!on_off);
+                                    break;
+
+                                case CommonParams.GUN:
+                                    checkGunSwitch(!on_off);
+                                    break;
+                            }
+                        }
                     }
 
                     @Override
                     public void requestError(String error) {
-                        logger.debug("打开开关" + type + "失败" + error.toString());
+                        DataFlowFactory.getSwitchDataFlow()
+                                .saveRobberySwitch(type, !on_off);
+                        logger.debug("打开开关" + type + "失败" + error);
                     }
                 });
     }
@@ -107,6 +124,7 @@ public class RobberyFragment extends BaseVehicleFragment implements View.OnClick
     private void checkHeadLightSwitch(boolean on_off) {
         headlight_on_img.setVisibility(on_off ? View.VISIBLE : View.GONE);
         headlight_off_img.setVisibility(on_off ? View.GONE : View.VISIBLE);
+
     }
 
     private void checkParkSwitch(boolean on_off) {
@@ -118,7 +136,7 @@ public class RobberyFragment extends BaseVehicleFragment implements View.OnClick
         Subscription sub1 = null;
         if (on_off) {
             try {
-                sub1 = RobberyFlow.getInstance().gun3Toggle()
+                sub1 = ObservableFactory.gun3Toggle()
                         .subscribe(aBoolean -> {
                                 }
                                 , throwable -> {
@@ -144,11 +162,58 @@ public class RobberyFragment extends BaseVehicleFragment implements View.OnClick
     }
 
     public void syncAppRobberyFlow() {
-        RobberyFlow.getInstance().syncAppRobberyFlow()
+        DataFlowFactory.getSwitchDataFlow()
+                .getRobberyState()
+                .subscribe(robbed -> {
+                    if (robbed) {
+                        getFragmentManager().beginTransaction().replace(R.id.container, new RobberyLockFragment()).commit();
+                    }
+                });
+        DataFlowFactory.getSwitchDataFlow()
+                .getRobberySwitches()
+                .subscribe(robberySwitches -> {
+                    checkHeadLightSwitch(robberySwitches.isHeadlight());
+                    checkParkSwitch(robberySwitches.isPark());
+                    checkGunSwitch(robberySwitches.isGun());
+                });
+
+        ObservableFactory.syncAppRobberyFlow()
                 .subscribe(receiverData -> {
                     checkHeadLightSwitch(receiverData.getSwitch1Value().equals("1"));
                     checkParkSwitch(receiverData.getSwitch2Value().equals("1"));
                     checkGunSwitch(receiverData.getSwitch3Value().equals("1"));
+                    if (receiverData.getSwitch0Value().equals("1")) {
+                        DataFlowFactory.getSwitchDataFlow().saveRobberyState(true);
+                        getFragmentManager().beginTransaction().replace(R.id.container, new RobberyLockFragment()).commit();
+                    }
+                });
+        RequestFactory.getRobberyRequest()
+                .isCarRobbed(new RobberyRequest.CarRobberdCallback() {
+                    @Override
+                    public void hasRobbed(boolean robbed) {
+                        if (robbed) {
+                            ToastUtils.showToast("打开防劫控制中心");
+                        }
+                    }
+
+                    @Override
+                    public void requestError(String error) {
+                        logger.error(error);
+                    }
+                });
+        RequestFactory.getRobberyRequest()
+                .getRobberyState(new RobberyRequest.RobberStateCallback() {
+                    @Override
+                    public void switchsState(boolean flashRateTimes, boolean emergencyCutoff, boolean stepOnTheGas) {
+                        checkHeadLightSwitch(flashRateTimes);
+                        checkParkSwitch(emergencyCutoff);
+                        checkGunSwitch(stepOnTheGas);
+                    }
+
+                    @Override
+                    public void requestError(String error) {
+                        logger.equals(error);
+                    }
                 });
     }
 }

@@ -4,9 +4,9 @@ package com.dudu.workflow.guard;
  * Created by Administrator on 2016/2/16.
  */
 public interface GuardRequest {
-    public void isAntiTheftOpened(String cellphone, LockStateCallBack callBack);
-    public void lockCar(String cellphone, final LockStateCallBack callBack);
-    public void unlockCar(String cellphone, final UnlockCallBack callBack);
+    public void isAntiTheftOpened(LockStateCallBack callBack);
+    public void lockCar(final LockStateCallBack callBack);
+    public void unlockCar(final UnlockCallBack callBack);
 
     public interface LockStateCallBack{
         public void hasLocked(boolean locked);
