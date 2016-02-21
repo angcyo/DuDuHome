@@ -2,14 +2,14 @@ package com.dudu.voice.semantic.chain;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.util.Log;
 
 import com.dudu.aios.ui.activity.MainRecordActivity;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
-import com.dudu.android.launcher.ui.activity.CarCheckingActivity;
+import com.dudu.aios.ui.activity.CarCheckingActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.WifiApAdmin;
+import com.dudu.carChecking.CarCheckingProxy;
 import com.dudu.drivevideo.DriveVideo;
 import com.dudu.map.NavigationProxy;
 import com.dudu.voice.FloatWindowUtils;
@@ -162,10 +162,8 @@ public class CmdChain extends SemanticChain {
             case Constants.QIDONG:
             case Constants.KAIQI:
                 FloatWindowUtils.removeFloatWindow();
-//                Intent intent = new Intent(mContext, OBDCheckingActivity.class);
-                Intent intent = new Intent(mContext, CarCheckingActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                mContext.startActivity(intent);
+
+                CarCheckingProxy.getInstance().startCarChecking();
                 break;
             case Constants.CLOSE:
             case Constants.EXIT:

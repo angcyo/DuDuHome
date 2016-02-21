@@ -145,7 +145,7 @@
             android:screenOrientation="landscape"
             android:theme="@style/AppBaseTheme" />
         <activity
-            android:name=".ui.activity.CarCheckingActivity"
+            android:name="com.dudu.aios.ui.activity.CarCheckingActivity"
             android:launchMode="singleTop"
             android:screenOrientation="landscape"
             android:theme="@style/AiosBaseTheme" />

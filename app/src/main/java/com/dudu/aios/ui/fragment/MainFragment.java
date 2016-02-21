@@ -3,12 +3,10 @@ package com.dudu.aios.ui.fragment;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -18,11 +16,13 @@ import android.widget.Toast;
 import com.dudu.aios.ui.fragment.base.BaseFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.R;
-import com.dudu.android.launcher.ui.activity.CarCheckingActivity;
+import com.dudu.aios.ui.activity.CarCheckingActivity;
 import com.dudu.android.launcher.ui.activity.bluetooth.BtDialActivity;
 import com.dudu.android.launcher.ui.dialog.IPConfigDialog;
 import com.dudu.android.launcher.utils.WeatherUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
+import com.dudu.carChecking.CarCheckType;
+import com.dudu.carChecking.CarCheckingProxy;
 import com.dudu.init.InitManager;
 import com.dudu.map.NavigationProxy;
 import com.dudu.obd.ObdInit;
@@ -166,7 +166,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
 
             case R.id.vehicle_inspection:
             case R.id.vehicle_inspection_icon:
-                startActivity(new Intent(getActivity(), CarCheckingActivity.class));
+                CarCheckingProxy.getInstance().startCarChecking();
                 break;
             case R.id.driving_record_button:
             case R.id.driving_record_icon:

@@ -1,4 +1,4 @@
-package com.dudu.android.launcher.ui.activity;
+package com.dudu.aios.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +15,13 @@ import com.dudu.aios.ui.base.BaseActivity;
 import com.dudu.aios.ui.view.VehicleCheckResultView;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.LogUtils;
+import com.dudu.carChecking.CarCheckingProxy;
 import com.dudu.carChecking.CarCheckingView;
+
+import java.util.concurrent.TimeUnit;
+
+import rx.Observable;
+import rx.functions.Action1;
 
 public class CarCheckingActivity extends BaseActivity implements View.OnClickListener {
 
@@ -45,7 +51,9 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
 
         initDatas();
 
-
+        Observable.timer(1, TimeUnit.SECONDS).subscribe(aLong -> {
+            CarCheckingProxy.getInstance().startCarChecking();
+        });
     }
 
     @Override
@@ -168,5 +176,11 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
         if (requestCode == 2) {
             mAnimationView.setIsAppear(false);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CarCheckingProxy.getInstance().stopCarChecking();
     }
 }
