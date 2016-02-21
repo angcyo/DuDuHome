@@ -120,21 +120,18 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
                 .lockCar(new GuardRequest.LockStateCallBack() {
                     @Override
                     public void hasLocked(boolean locked) {
-                        DataFlowFactory.getSwitchDataFlow()
-                                .saveGuardSwitch(locked);
-                        if (locked) {
-                            lock();
-                            stopAnim = true;
+                        if(!locked){
+                            lockGuard();
+							stopAnim = true;
                         }
                     }
 
 
                     @Override
                     public void requestError(String error) {
-                        DataFlowFactory.getSwitchDataFlow()
-                                .saveGuardSwitch(false);
                         logger.error(error);
                         stopAnim = true;
+                        lockGuard();
                     }
                 });
     }

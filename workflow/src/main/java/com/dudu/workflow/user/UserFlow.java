@@ -48,6 +48,16 @@ public class UserFlow {
                 });
     }
 
+    public Observable<String> getPassword(){
+        return userDataService.findUser()
+                .map(new Func1<User, String>() {
+                    @Override
+                    public String call(User user) {
+                        return user.getPassword();
+                    }
+                });
+    }
+
     public Observable<User> getUserInfo(){
         return userDataService.findUser();
     }

@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.dudu.android.launcher.R;
-import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.workflow.common.CommonParams;
 import com.dudu.workflow.common.DataFlowFactory;
 import com.dudu.workflow.common.ObservableFactory;
@@ -36,11 +35,9 @@ public class RobberyFragment extends Fragment implements View.OnClickListener {
         view = LayoutInflater.from(getActivity()).inflate(R.layout.robbery_mode_layout, container, false);
         initView();
         initListener();
-
         syncAppRobberyFlow();
         return view;
     }
-
 
 
     private void initView() {
@@ -93,34 +90,20 @@ public class RobberyFragment extends Fragment implements View.OnClickListener {
     }
 
     public void requestCheckSwitch(int type, boolean on_off) {
+        DataFlowFactory.getSwitchDataFlow().saveRobberySwitch(type, on_off);
         RequestFactory.getRobberyRequest()
                 .settingAntiRobberyMode(type, on_off ? 1 : 0, new RobberyRequest.SwitchCallback() {
                     @Override
                     public void switchSuccess(boolean success) {
                         logger.debug("打开开关" + type + (success ? "成功" : "失败"));
                         if (!success) {
-                            DataFlowFactory.getSwitchDataFlow()
-                                    .saveRobberySwitch(type, !on_off);
-                            switch (type) {
-                                case CommonParams.HEADLIGHT:
-                                    checkHeadLightSwitch(!on_off);
-                                    break;
-
-                                case CommonParams.PARK:
-                                    checkParkSwitch(!on_off);
-                                    break;
-
-                                case CommonParams.GUN:
-                                    checkGunSwitch(!on_off);
-                                    break;
-                            }
+                            requestCheckSwitch(type, on_off);
                         }
                     }
 
                     @Override
                     public void requestError(String error) {
-                        DataFlowFactory.getSwitchDataFlow()
-                                .saveRobberySwitch(type, !on_off);
+                        requestCheckSwitch(type, on_off);
                         logger.debug("打开开关" + type + "失败" + error);
                     }
                 });
@@ -137,6 +120,8 @@ public class RobberyFragment extends Fragment implements View.OnClickListener {
     }
 
     private void checkGunSwitch(boolean on_off) {
+        gun_on_img.setVisibility(on_off ? View.VISIBLE : View.GONE);
+        gun_off_img.setVisibility(on_off ? View.GONE : View.VISIBLE);
         Subscription sub1 = null;
         if (on_off) {
             try {
@@ -151,18 +136,15 @@ public class RobberyFragment extends Fragment implements View.OnClickListener {
                                 }
                                 , () -> {
                                     logger.debug("Gun toggle robbery, sync to app");
-                                    requestCheckSwitch(0, true);
+                                    requestCheckSwitch(CommonParams.ROBBERYSTATE, true);
                                 });
             } catch (IOException e) {
                 logger.error("gun3Toggle exception", e);
-                //TODO show error
                 return;
             }
         } else {
             if (sub1 != null && sub1.isUnsubscribed()) sub1.unsubscribe();
         }
-        gun_on_img.setVisibility(on_off ? View.VISIBLE : View.GONE);
-        gun_off_img.setVisibility(on_off ? View.GONE : View.VISIBLE);
     }
 
     public void syncAppRobberyFlow() {
@@ -170,7 +152,7 @@ public class RobberyFragment extends Fragment implements View.OnClickListener {
                 .getRobberyState()
                 .subscribe(robbed -> {
                     if (robbed) {
-                        getFragmentManager().beginTransaction().replace(R.id.container, new RobberyLockFragment()).commit();
+                        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyLockFragment()).commit();
                     }
                 });
         DataFlowFactory.getSwitchDataFlow()
@@ -188,7 +170,7 @@ public class RobberyFragment extends Fragment implements View.OnClickListener {
                     checkGunSwitch(receiverData.getSwitch3Value().equals("1"));
                     if (receiverData.getSwitch0Value().equals("1")) {
                         DataFlowFactory.getSwitchDataFlow().saveRobberyState(true);
-                        getFragmentManager().beginTransaction().replace(R.id.container, new RobberyLockFragment()).commit();
+                        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyLockFragment()).commit();
                     }
                 });
         RequestFactory.getRobberyRequest()
@@ -196,7 +178,8 @@ public class RobberyFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void hasRobbed(boolean robbed) {
                         if (robbed) {
-                            ToastUtils.showToast("打开防劫控制中心");
+                            DataFlowFactory.getSwitchDataFlow().saveRobberyState(true);
+                            getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyLockFragment()).commit();
                         }
                     }
 

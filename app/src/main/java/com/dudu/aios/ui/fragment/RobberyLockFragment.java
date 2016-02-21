@@ -11,6 +11,8 @@ import com.dudu.aios.ui.robbery.RobberyConstant;
 import com.dudu.android.launcher.R;
 import com.dudu.workflow.common.DataFlowFactory;
 import com.dudu.workflow.common.ObservableFactory;
+import com.dudu.workflow.common.RequestFactory;
+import com.dudu.workflow.robbery.RobberyRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,9 +42,13 @@ public class RobberyLockFragment extends Fragment implements View.OnClickListene
         if (bundle != null) {
             String pass = bundle.getString("pass");
             if (pass.equals("1")) {
+                requestCheckToUnlock();
+                return;
             }
         }
+
     }
+
 
     private void initListener() {
         guard_locked_layout.setOnClickListener(this);
@@ -62,10 +68,10 @@ public class RobberyLockFragment extends Fragment implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.vehicle_unlock_layout:
-                lock();
+//                lock();
                 break;
             case R.id.vehicle_locked_layout:
-                unlock();
+                showUnlockedView();
                 transferParameters();
                 break;
         }
@@ -79,18 +85,46 @@ public class RobberyLockFragment extends Fragment implements View.OnClickListene
         getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, vehiclePasswordSetFragment).commit();
     }
 
-    private void unlock() {
+    private void showLockedView() {
         guard_locked_layout.setVisibility(View.VISIBLE);
         guard_unlock_layout.setVisibility(View.GONE);
     }
 
-    private void lock() {
-
+    private void showUnlockedView() {
         guard_locked_layout.setVisibility(View.GONE);
         guard_unlock_layout.setVisibility(View.VISIBLE);
     }
 
+    public void requestCheckToUnlock(){
+        DataFlowFactory.getSwitchDataFlow()
+                .saveRobberyState(false);
+        RequestFactory.getRobberyRequest()
+                .closeAntiRobberyMode(new RobberyRequest.CloseRobberyModeCallback() {
+                    @Override
+                    public void closeSuccess(boolean success) {
+                        if(!success){
+                            requestCheckToUnlock();
+                        }
+                    }
+
+                    @Override
+                    public void requestError(String error) {
+                        logger.debug(error);
+                        requestCheckToUnlock();
+                    }
+                });
+    }
+
     public void syncAppRobberyFlow() {
+        DataFlowFactory.getSwitchDataFlow()
+                .getRobberyState()
+                .subscribe(locked ->{
+                    if(locked){
+                        showLockedView();
+                    }else{
+                        showUnlockedView();
+                    }
+                });
         ObservableFactory.syncAppRobberyFlow()
                 .subscribe(receiverData -> {
                     if (!receiverData.getSwitch0Value().equals("1")) {

@@ -24,7 +24,9 @@ public class RealmUserDataService implements UserDataService {
                 if(userList.size()>0) {
                     return userList.first();
                 }else{
-                    return null;
+                    RealmUser realmData = new RealmUser();
+                    realmData.setUserName("13800138000");
+                    return realmData;
                 }
             }
         }).map(new Func1<RealmUser, User>() {
