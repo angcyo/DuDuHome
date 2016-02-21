@@ -53,7 +53,8 @@ public class SpeedTest {
             Subscription sub1 = OBDStream.getInstance().engSpeedStream()
                     .map(aDouble -> aDouble > 3000)
                     .distinctUntilChanged()
-                    .take(5)
+                    .filter(aBoolean -> aBoolean)
+                    .take(3)
                     .timeout(60, TimeUnit.SECONDS)
                     .subscribeOn(Schedulers.newThread())
                     .subscribe(aBoolean -> Log.d("SerialPort", "test startTestGUN3 changed ")
@@ -74,13 +75,19 @@ public class SpeedTest {
                     .subscribe(aDouble -> {
                         Log.d("SerialPort", "test speed: " + aDouble);
                     });
-            Subscription sub2 = OBDStream.getInstance().speedStream()
+            Subscription sub2 = OBDStream.getInstance().engSpeedStream()
+                    .subscribeOn(Schedulers.newThread())
+                    .subscribe(aDouble -> {
+                        Log.d("SerialPort", "eng speed: " + aDouble);
+                    });
+            Subscription sub3 = OBDStream.getInstance().speedStream()
                     .subscribeOn(Schedulers.newThread())
                     .subscribe(aDouble -> {
                         Log.d("SerialPort", "speed: " + aDouble);
                     });
             subArr.add(sub1);
             subArr.add(sub2);
+            subArr.add(sub3);
             Log.d("SerialPort", "startTestSpeed call end");
         } catch (IOException e) {
             e.printStackTrace();
