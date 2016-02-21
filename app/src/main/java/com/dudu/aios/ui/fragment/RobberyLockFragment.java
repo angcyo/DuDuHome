@@ -95,6 +95,7 @@ public class RobberyLockFragment extends Fragment implements View.OnClickListene
     }
 
     public void requestCheckToUnlock(){
+        showUnlockedView();
         DataFlowFactory.getSwitchDataFlow()
                 .saveRobberyState(false);
         RequestFactory.getRobberyRequest()

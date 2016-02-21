@@ -110,6 +110,7 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
 
 
     private void lockGuard() {
+        lock();
         stopAnim = false;
         DataFlowFactory.getSwitchDataFlow()
                 .saveGuardSwitch(true);
