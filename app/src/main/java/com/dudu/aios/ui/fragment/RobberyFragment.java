@@ -17,8 +17,6 @@ import com.dudu.workflow.robbery.RobberyRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.concurrent.TimeoutException;
 import rx.Subscription;
 
 public class RobberyFragment extends Fragment implements View.OnClickListener {
@@ -149,13 +147,6 @@ public class RobberyFragment extends Fragment implements View.OnClickListener {
 
     public void syncAppRobberyFlow() {
         DataFlowFactory.getSwitchDataFlow()
-                .getRobberyState()
-                .subscribe(robbed -> {
-                    if (robbed) {
-                        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyLockFragment()).commit();
-                    }
-                });
-        DataFlowFactory.getSwitchDataFlow()
                 .getRobberySwitches()
                 .subscribe(robberySwitches -> {
                     checkHeadLightSwitch(robberySwitches.isHeadlight());
@@ -168,25 +159,6 @@ public class RobberyFragment extends Fragment implements View.OnClickListener {
                     checkHeadLightSwitch(receiverData.getSwitch1Value().equals("1"));
                     checkParkSwitch(receiverData.getSwitch2Value().equals("1"));
                     checkGunSwitch(receiverData.getSwitch3Value().equals("1"));
-                    if (receiverData.getSwitch0Value().equals("1")) {
-                        DataFlowFactory.getSwitchDataFlow().saveRobberyState(true);
-                        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyLockFragment()).commit();
-                    }
-                });
-        RequestFactory.getRobberyRequest()
-                .isCarRobbed(new RobberyRequest.CarRobberdCallback() {
-                    @Override
-                    public void hasRobbed(boolean robbed) {
-                        if (robbed) {
-                            DataFlowFactory.getSwitchDataFlow().saveRobberyState(true);
-                            getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyLockFragment()).commit();
-                        }
-                    }
-
-                    @Override
-                    public void requestError(String error) {
-                        logger.error(error);
-                    }
                 });
         RequestFactory.getRobberyRequest()
                 .getRobberyState(new RobberyRequest.RobberStateCallback() {

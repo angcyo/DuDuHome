@@ -71,7 +71,6 @@ public class RobberyLockFragment extends Fragment implements View.OnClickListene
 //                lock();
                 break;
             case R.id.vehicle_locked_layout:
-                showUnlockedView();
                 transferParameters();
                 break;
         }

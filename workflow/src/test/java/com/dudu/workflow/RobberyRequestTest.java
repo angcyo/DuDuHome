@@ -56,7 +56,7 @@ public class RobberyRequestTest {
 
         final CountDownLatch signal = new CountDownLatch(1);
         RequestFactory.getInstance().getRobberyRequest()
-                .settingAntiRobberyMode(0, 1, new RobberyRequest.SwitchCallback() {
+                .settingAntiRobberyMode(1, 1, new RobberyRequest.SwitchCallback() {
                     @Override
                     public void switchSuccess(boolean success) {
                         signal.countDown();

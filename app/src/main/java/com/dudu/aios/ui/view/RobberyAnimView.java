@@ -1,7 +1,6 @@
 package com.dudu.aios.ui.view;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -151,10 +150,13 @@ public class RobberyAnimView extends SurfaceView implements SurfaceHolder.Callba
         }
 
         private void doAnimation(Canvas c) {
-            c.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-            Bitmap bitmap = loadAnimationBitmap();
-            if (bitmap != null) {
-                c.drawBitmap(bitmap, 0, 0, mPaint);
+            if(c!=null) {
+                c.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+
+                Bitmap bitmap = loadAnimationBitmap();
+                if (bitmap != null) {
+                    c.drawBitmap(bitmap, 0, 0, mPaint);
+                }
             }
         }
 

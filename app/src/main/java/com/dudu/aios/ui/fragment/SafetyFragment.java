@@ -1,6 +1,5 @@
 package com.dudu.aios.ui.fragment;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +12,7 @@ import android.widget.TextView;
 import com.dudu.aios.ui.fragment.base.BaseFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.R;
+import com.dudu.workflow.common.DataFlowFactory;
 
 /**
  * Created by Administrator on 2016/2/21.
@@ -51,7 +51,8 @@ public class SafetyFragment extends BaseFragment implements View.OnClickListener
     @Override
     public void onStart() {
         super.onStart();
-        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyFragment()).commit();
+        actionRobbery();
+
     }
 
     @Override
@@ -71,7 +72,15 @@ public class SafetyFragment extends BaseFragment implements View.OnClickListener
 
     private void actionRobbery() {
         robbery();
-        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyFragment()).commit();
+        DataFlowFactory.getSwitchDataFlow().getRobberyState()
+                .subscribe(locked -> {
+                    if (locked) {
+                        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyLockFragment()).commit();
+                    } else {
+                        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyFragment()).commit();
+
+                    }
+                });
     }
 
     private void actionGuard() {

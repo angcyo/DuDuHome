@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.dudu.aios.ui.robbery.RobberyConstant;
 import com.dudu.aios.ui.view.RobberyAnimView;
 import com.dudu.android.launcher.R;
-import com.dudu.android.launcher.utils.LogUtils;
+import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.workflow.common.DataFlowFactory;
 import com.dudu.workflow.common.ObservableFactory;
 import com.dudu.workflow.common.RequestFactory;
@@ -22,7 +22,6 @@ import com.dudu.workflow.guard.GuardRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rx.Observable;
 import rx.functions.Action1;
 import rx.subjects.BehaviorSubject;
 
@@ -87,7 +86,6 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
     }
 
     private void actionUnlock() {
-        unlock();
         transferParameters();
     }
 
@@ -122,8 +120,8 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
                     public void hasLocked(boolean locked) {
                         if(!locked){
                             lockGuard();
-							stopAnim = true;
                         }
+                        stopAnim = true;
                     }
 
 
@@ -144,13 +142,20 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
                 .lockCar(new GuardRequest.LockStateCallBack() {
                     @Override
                     public void hasLocked(boolean locked) {
-
+                        if(!locked){
+                            unlockGuard();
+                            ToastUtils.showToast("解锁成功");
+                        }else{
+                            ToastUtils.showToast("解锁失败");
+                        }
                     }
 
 
                     @Override
                     public void requestError(String error) {
                         logger.error(error);
+                        ToastUtils.showToast("解锁失败");
+                        unlockGuard();
                     }
                 });
     }

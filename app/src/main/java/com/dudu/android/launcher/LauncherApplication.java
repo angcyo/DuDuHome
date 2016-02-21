@@ -69,11 +69,11 @@ public class LauncherApplication extends Application {
 
         CommonLib.getInstance().init();
         DataFlowFactory.getInstance().init();
-       /* try {
+        try {
             OBDStream.getInstance().init();
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
 //        CommonParams.getInstance().init();
         ObservableFactory.init();
         Request.getInstance().init();
