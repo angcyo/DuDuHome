@@ -6,6 +6,10 @@ package com.dudu.workflow.robbery;
 public class RobberyStateModel {
     private Boolean robberyState;
 
+    public RobberyStateModel(final Boolean robberyState) {
+        this.robberyState = robberyState;
+    }
+
     public Boolean getRobberyState() {
         return robberyState;
     }
