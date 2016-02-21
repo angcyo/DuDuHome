@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 
 import android.os.Bundle;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,22 +16,20 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.amap.api.maps.AMapUtils;
-import com.amap.api.maps.model.LatLng;
-import com.amap.api.services.poisearch.PoiResult;
 import com.dudu.aios.ui.base.BaseActivity;
 import com.dudu.aios.ui.utils.StringUtil;
 import com.dudu.aios.ui.vehicle.SearchAddress;
-import com.dudu.aios.ui.vehicle.Vehicle;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.LogUtils;
-import com.dudu.android.launcher.utils.cache.AsyncTask;
 import com.dudu.carChecking.VehicleCheckResultAnimation;
-import com.dudu.monitor.Monitor;
+import com.dudu.map.NavigationProxy;
+import com.dudu.navi.entity.Navigation;
 import com.dudu.navi.entity.PoiResultInfo;
-import com.dudu.navi.repo.ResourceManager;
-import com.dudu.navi.service.SearchProcess;
+import com.dudu.navi.entity.Point;
+import com.dudu.navi.vauleObject.NaviDriveMode;
+import com.dudu.navi.vauleObject.NavigationType;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,9 +45,11 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
 
     private VehicleAdapter adapter;
 
-    private ArrayList<com.dudu.aios.ui.vehicle.Vehicle> vehicleData;
+    private ArrayList<PoiResultInfo> vehicleData;
 
-    private TextView tvCategoryCh, tvCategoryEn;
+    private TextView tvCategoryCh, tvCategoryEn, tvMessage1, tvMessage2;
+
+    private SearchAddress address;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +70,8 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
         repairShopList = (ListView) findViewById(R.id.repair_shop_listView);
         tvCategoryCh = (TextView) findViewById(R.id.vehicle_category_text_ch);
         tvCategoryEn = (TextView) findViewById(R.id.vehicle_category_text_en);
+        tvMessage1 = (TextView) findViewById(R.id.text_message1);
+        tvMessage2 = (TextView) findViewById(R.id.text_message2);
     }
 
 
@@ -96,36 +96,55 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
         container.addView(vehicleCheckResultAnimation, params);
         tvCategoryCh.setText(getCategoryCh(category));
         tvCategoryEn.setText(StringUtil.changeUpper(category));
+
     }
 
     private void initListData() {
         vehicleData = new ArrayList<>();
         adapter = new VehicleAdapter(this, vehicleData);
         repairShopList.setAdapter(adapter);
-        new LoadVehicleTask().execute();
+        address = new SearchAddress(this);
+        address.search("汽车修理店");
+        address.setOnGestureLockViewListener(new SearchAddress.OnObtainAddressListener() {
+            @Override
+            public void onAddress(List<PoiResultInfo> poiResultList) {
+                LogUtils.v("kkk", "size:" + poiResultList.size());
+                if (poiResultList != null && poiResultList.size() != 0) {
+                    vehicleData.addAll(poiResultList);
+                    adapter.setData(vehicleData);
+                }
+            }
+        });
     }
 
     private String getCategoryCh(String category) {
         String categoryCh = "";
+        String message = "";
         switch (category) {
             case "engine":
                 categoryCh = "发动机";
+                message = "发动机检测到异常";
                 break;
             case "gearbox":
                 categoryCh = "变速箱";
+                message = "变速箱工作异常";
                 tvCategoryEn.setTextSize(24);
                 break;
             case "abs":
                 categoryCh = "防抱死";
+                message = "防抱死机制破损";
                 break;
             case "wsb":
                 categoryCh = "胎压";
+                message = "左前轮胎压异常";
                 break;
             case "srs":
                 categoryCh = "气囊";
+                message = "检测到气囊异常";
                 break;
         }
-
+        tvMessage1.setText(message);
+        tvMessage2.setText(message);
         return categoryCh;
     }
 
@@ -142,56 +161,21 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
 
     }
 
-    private class LoadVehicleTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... params) {
-            loadVehicles();
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            adapter.setData(vehicleData);
-        }
-    }
-
-    private void loadVehicles() {
-        SearchAddress address = new SearchAddress(this);
-        address.search("汽车修理店");
-        address.setOnGestureLockViewListener(new SearchAddress.OnObtainAddressListener() {
-            @Override
-            public void onAddress(PoiResult poiResult) {
-
-            }
-        });
-        List<Vehicle> list = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            Vehicle vehicle = new Vehicle();
-            vehicle.setName("米奇菱加米奇" + i);
-            vehicle.setDistance(Float.parseFloat("10." + i));
-            vehicle.setGrade(4);
-            list.add(vehicle);
-        }
-        if (list != null && !list.isEmpty()) {
-            vehicleData.addAll(list);
-        }
-    }
-
     private class VehicleAdapter extends BaseAdapter {
         private Context context;
 
-        private ArrayList<Vehicle> data;
+        private ArrayList<PoiResultInfo> data;
 
         private LayoutInflater inflater;
 
-        public VehicleAdapter(Context context, ArrayList<Vehicle> data) {
+        public VehicleAdapter(Context context, ArrayList<PoiResultInfo> data) {
             this.context = context;
             this.data = data;
             inflater = LayoutInflater.from(context);
         }
 
-        public void setData(ArrayList<Vehicle> data) {
-            this.data = (ArrayList<Vehicle>) data.clone();
+        public void setData(ArrayList<PoiResultInfo> data) {
+            this.data = (ArrayList<PoiResultInfo>) data.clone();
             notifyDataSetChanged();
         }
 
@@ -224,15 +208,22 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
-            Vehicle vehicle = data.get(position);
-            holder.tvName.setText(vehicle.getName());
-            holder.tvDistance.setText(getResources().getString(R.string.distance_ch) + String.valueOf(vehicle.getDistance()) + "KM");
+            PoiResultInfo vehicle = data.get(position);
+            holder.tvName.setText(vehicle.getAddressTitle());
+            DecimalFormat df = new java.text.DecimalFormat("#.##");
+            double distance = vehicle.getDistance();
+            String unit = "M";
+            if (distance >= 1000) {
+                distance = distance / 1000;
+                unit = "KM";
+            }
+            holder.tvDistance.setText(getResources().getString(R.string.distance_ch) + df.format(distance) + unit);
             for (int i = 1; i <= 5; i++) {
                 ImageView imageView = new ImageView(context);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 params.setMargins(5, 0, 5, 0);
                 imageView.setLayoutParams(params);
-                if (vehicle.getGrade() >= i) {
+                if (4 >= i) {
                     imageView.setImageResource(R.drawable.star_full);
                 } else {
                     imageView.setImageResource(R.drawable.star_null);
@@ -242,7 +233,10 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
             holder.btNavigate.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(context, "走了", Toast.LENGTH_SHORT).show();
+                    vehicleCheckResultAnimation.stopAnim();
+                    //导航
+                    Navigation navigation = new Navigation(new Point(vehicle.getLatitude(), vehicle.getLatitude()), NaviDriveMode.SPEEDFIRST, NavigationType.NAVIGATION);
+                    NavigationProxy.getInstance().startNavigation(navigation);
                 }
             });
             return convertView;
@@ -255,15 +249,4 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
             ImageButton btNavigate;
         }
     }
-
-    private void setPoiList() {
-        LatLng startPoints_gaode = null;
-        if (Monitor.getInstance(this).getCurrentLocation() != null) {
-            startPoints_gaode = new LatLng(Monitor.getInstance(this).getCurrentLocation().getLatitude(),
-                    Monitor.getInstance(this).getCurrentLocation().getLongitude());
-        }
-
-    }
-
-
 }

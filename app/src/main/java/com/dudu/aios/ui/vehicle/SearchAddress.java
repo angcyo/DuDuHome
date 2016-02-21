@@ -19,10 +19,6 @@ import com.dudu.navi.repo.ResourceManager;
 import java.util.ArrayList;
 import java.util.List;
 
-
-/**
- * Created by zha on 2016/2/20.
- */
 public class SearchAddress {
 
     private Context context;
@@ -61,10 +57,8 @@ public class SearchAddress {
 
     public void search(String keyword) {
         cur_location = Monitor.getInstance(context).getCurrentLocation();
-        Log.v("kkk", "cityCode:" + cityCode);
         if (cur_location != null) {
             latLonPoint = new LatLonPoint(cur_location.getLatitude(), cur_location.getLongitude());
-            Log.v("kkk", "location:" + cur_location.toString());
         }
         cityCode = LocationUtils.getInstance(context).getCurrentCity();
         doSearch(keyword);
@@ -96,9 +90,10 @@ public class SearchAddress {
                     // 取得第一页的poiitem数据，页数从数字0开始
                     if (poiItems != null && poiItems.size() > 0) {
                         if (onObtainAddressListener != null) {
-                            onObtainAddressListener.onAddress(poiResult);
+                            setPoiList();
+                            onObtainAddressListener.onAddress(poiResultList);
                         }
-                        setPoiList();
+
                     }
                 }
             }
@@ -106,7 +101,7 @@ public class SearchAddress {
     };
 
     public interface OnObtainAddressListener {
-        void onAddress(PoiResult poiResult);
+        void onAddress(List<PoiResultInfo> poiResultList);
     }
 
 
@@ -136,7 +131,6 @@ public class SearchAddress {
                 Log.v("kkk", "distance:" + AMapUtils.calculateLineDistance(startPoints_gaode, endPoints_gaode));
                 poiResultList.add(poiResultInfo);
             }
-
         }
     }
 

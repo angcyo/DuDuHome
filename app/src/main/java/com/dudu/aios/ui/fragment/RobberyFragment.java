@@ -1,10 +1,12 @@
 package com.dudu.aios.ui.fragment;
 
+import android.app.Fragment;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.dudu.aios.ui.fragment.base.BaseVehicleFragment;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.workflow.common.CommonParams;
@@ -18,10 +20,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
-
 import rx.Subscription;
 
-public class RobberyFragment extends BaseVehicleFragment implements View.OnClickListener {
+public class RobberyFragment extends Fragment implements View.OnClickListener {
+
 
     private View view;
 
@@ -30,13 +32,16 @@ public class RobberyFragment extends BaseVehicleFragment implements View.OnClick
     private Logger logger = LoggerFactory.getLogger("RobberyFragment");
 
     @Override
-    public View getVehicleChildView() {
-        view = LayoutInflater.from(getActivity()).inflate(R.layout.robbery_mode_layout, null);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        view = LayoutInflater.from(getActivity()).inflate(R.layout.robbery_mode_layout, container, false);
         initView();
         initListener();
+
         syncAppRobberyFlow();
         return view;
     }
+
+
 
     private void initView() {
         headlight_off_img = (ImageView) view.findViewById(R.id.headlight_vehicle_robbery_off);
@@ -124,7 +129,6 @@ public class RobberyFragment extends BaseVehicleFragment implements View.OnClick
     private void checkHeadLightSwitch(boolean on_off) {
         headlight_on_img.setVisibility(on_off ? View.VISIBLE : View.GONE);
         headlight_off_img.setVisibility(on_off ? View.GONE : View.VISIBLE);
-
     }
 
     private void checkParkSwitch(boolean on_off) {

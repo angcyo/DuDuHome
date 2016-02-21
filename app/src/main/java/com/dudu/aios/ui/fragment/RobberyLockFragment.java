@@ -1,11 +1,12 @@
 package com.dudu.aios.ui.fragment;
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.dudu.aios.ui.fragment.base.BaseVehicleFragment;
 import com.dudu.aios.ui.robbery.RobberyConstant;
 import com.dudu.android.launcher.R;
 import com.dudu.workflow.common.DataFlowFactory;
@@ -15,21 +16,32 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class RobberyLockFragment extends BaseVehicleFragment implements View.OnClickListener {
+public class RobberyLockFragment extends Fragment implements View.OnClickListener {
 
     private View guard_unlock_layout, guard_locked_layout;
 
     private TextView tvTitleCh, tvTitleEn;
 
+
     private Logger logger = LoggerFactory.getLogger("RobberyLockFragment");
 
     @Override
-    public View getVehicleChildView() {
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.vehicle_guard_layout, null);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.vehicle_guard_layout, container, false);
         initView(view);
         initListener();
+        initData();
         syncAppRobberyFlow();
         return view;
+    }
+
+    private void initData() {
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            String pass = bundle.getString("pass");
+            if (pass.equals("1")) {
+            }
+        }
     }
 
     private void initListener() {
@@ -44,19 +56,17 @@ public class RobberyLockFragment extends BaseVehicleFragment implements View.OnC
         tvTitleCh.setText(getResources().getString(R.string.vehicle_robbery_ch));
         tvTitleEn = (TextView) view.findViewById(R.id.text_title_en);
         tvTitleEn.setText(getResources().getString(R.string.vehicle_robbery_en));
-        lock();
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.vehicle_unlock_layout:
-                unlock();
-                transferParameters();
-
+                lock();
                 break;
             case R.id.vehicle_locked_layout:
-                lock();
+                unlock();
+                transferParameters();
                 break;
         }
     }
@@ -66,7 +76,7 @@ public class RobberyLockFragment extends BaseVehicleFragment implements View.OnC
         Bundle bundle = new Bundle();
         bundle.putString(RobberyConstant.CATEGORY_CONSTANT, RobberyConstant.ROBBERY_CONSTANT);
         vehiclePasswordSetFragment.setArguments(bundle);
-        getFragmentManager().beginTransaction().replace(R.id.container, vehiclePasswordSetFragment).commit();
+        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, vehiclePasswordSetFragment).commit();
     }
 
     private void unlock() {
@@ -75,6 +85,7 @@ public class RobberyLockFragment extends BaseVehicleFragment implements View.OnC
     }
 
     private void lock() {
+
         guard_locked_layout.setVisibility(View.GONE);
         guard_unlock_layout.setVisibility(View.VISIBLE);
     }
@@ -84,7 +95,7 @@ public class RobberyLockFragment extends BaseVehicleFragment implements View.OnC
                 .subscribe(receiverData -> {
                     if (!receiverData.getSwitch0Value().equals("1")) {
                         DataFlowFactory.getSwitchDataFlow().saveRobberyState(true);
-                        getFragmentManager().beginTransaction().replace(R.id.container, new RobberyFragment()).commit();
+                        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyFragment()).commit();
                     }
                 });
     }

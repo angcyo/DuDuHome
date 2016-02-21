@@ -22,7 +22,7 @@ public class FZLFontTextView extends TextView {
             AssetManager assetManager = context.getAssets();
             Typeface font = Typeface.createFromAsset(assetManager, "FZLTXHK.TTF");
             setTypeface(font);
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
     }
@@ -35,5 +35,10 @@ public class FZLFontTextView extends TextView {
     public FZLFontTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
+    }
+
+    @Override
+    public boolean isFocused() {
+        return true;
     }
 }

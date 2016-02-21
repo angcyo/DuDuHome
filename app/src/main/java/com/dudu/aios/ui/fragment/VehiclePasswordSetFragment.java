@@ -1,27 +1,27 @@
 package com.dudu.aios.ui.fragment;
 
 import android.app.ActionBar;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.dudu.aios.ui.dialog.VehiclePasswordSetDialog;
-import com.dudu.aios.ui.fragment.base.BaseVehicleFragment;
 import com.dudu.aios.ui.robbery.RobberyConstant;
 import com.dudu.android.launcher.R;
-import com.dudu.android.launcher.utils.LogUtils;
+
 
 /**
  * Created by Administrator on 2016/2/16.
  */
-public class VehiclePasswordSetFragment extends BaseVehicleFragment implements View.OnClickListener {
+public class VehiclePasswordSetFragment extends Fragment implements View.OnClickListener {
 
     private Button btnPasswordSet, btnGesture;
 
@@ -35,10 +35,12 @@ public class VehiclePasswordSetFragment extends BaseVehicleFragment implements V
 
     private Handler handler = new MyHandle();
 
+    private String category;
+
 
     @Override
-    public View getVehicleChildView() {
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.guard_password_set_layout, null);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.guard_password_set_layout, container, false);
         initView(view);
         initListener();
         initData();
@@ -49,12 +51,8 @@ public class VehiclePasswordSetFragment extends BaseVehicleFragment implements V
         stePassword(0);
         Bundle bundle = getArguments();
         if (bundle != null) {
-            String category = bundle.getString(RobberyConstant.CATEGORY_CONSTANT);
-            if (category.equals(RobberyConstant.GUARD_CONSTANT)) {
-                //防盗
-            } else if (category.equals(RobberyConstant.ROBBERY_CONSTANT)) {
-                //防劫
-            }
+            category = bundle.getString(RobberyConstant.CATEGORY_CONSTANT);
+
         }
     }
 
@@ -126,7 +124,7 @@ public class VehiclePasswordSetFragment extends BaseVehicleFragment implements V
                 actionPasswordSet();
                 return;
             case R.id.button_gesture_unlock:
-                getFragmentManager().beginTransaction().replace(R.id.container, new GestureFragment()).commit();
+                getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new GestureFragment()).commit();
                 return;
         }
         handleDialButtonClick(v);
@@ -146,12 +144,28 @@ public class VehiclePasswordSetFragment extends BaseVehicleFragment implements V
         passwordDigit++;
         stePassword(passwordDigit);
         if (passwordDigit == 4) {
-            handler.sendEmptyMessageDelayed(0, 1000);
+
             passwordDigit = 0;
+
             if (password.equals("1234")) {
+                Fragment fragment = null;
+                if (category.equals(RobberyConstant.GUARD_CONSTANT)) {
+                    fragment = new GuardFragment();
+                    //防盗
+                } else if (category.equals(RobberyConstant.ROBBERY_CONSTANT)) {
+                    //防劫
+                    fragment = new RobberyFragment();
+                }
                 //正确
+                Bundle bundle = new Bundle();
+                bundle.putString("pass", "1");
+                if (fragment != null) {
+                    fragment.setArguments(bundle);
+                    getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, fragment).commit();
+                }
             } else {
                 //错误
+                handler.sendEmptyMessageDelayed(0, 1000);
             }
             password = "";
         }

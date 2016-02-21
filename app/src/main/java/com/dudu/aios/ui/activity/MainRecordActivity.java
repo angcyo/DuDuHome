@@ -20,6 +20,7 @@ import com.dudu.aios.ui.fragment.MainFragment;
 import com.dudu.aios.ui.fragment.PhotoFragment;
 import com.dudu.aios.ui.fragment.PhotoListFragment;
 import com.dudu.aios.ui.fragment.RobberyFragment;
+import com.dudu.aios.ui.fragment.SafetyFragment;
 import com.dudu.aios.ui.fragment.VideoFragment;
 import com.dudu.aios.ui.fragment.VideoListFragment;
 import com.dudu.aios.ui.fragment.video.DrivingRecordFragment;
@@ -61,7 +62,7 @@ public class MainRecordActivity extends BaseActivity {
 
     private MainFragment mainFragment;
 
-    private RobberyFragment robberyFragment;
+    private SafetyFragment safetyFragment;
 
     private DrivingRecordFragment drivingRecordFragment;
 
@@ -118,7 +119,7 @@ public class MainRecordActivity extends BaseActivity {
     private void initFragment(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             mainFragment = new MainFragment();
-            robberyFragment = new RobberyFragment();
+            safetyFragment = new SafetyFragment();
             drivingRecordFragment = new DrivingRecordFragment();
             photoFragment = new PhotoFragment();
             photoListFragment = new PhotoListFragment();
@@ -146,7 +147,7 @@ public class MainRecordActivity extends BaseActivity {
                 break;
 
             case FragmentConstants.FRAGMENT_VEHICLE_INSPECTION:
-                ft.replace(R.id.container, robberyFragment);
+                ft.replace(R.id.container, safetyFragment);
                 break;
 
             case FragmentConstants.FRAGMENT_DRIVING_RECORD:

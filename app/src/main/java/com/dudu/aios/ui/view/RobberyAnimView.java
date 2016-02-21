@@ -1,4 +1,4 @@
-package com.dudu.carChecking;
+package com.dudu.aios.ui.view;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -15,26 +15,30 @@ import android.view.SurfaceView;
 import com.dudu.android.launcher.utils.FileUtils;
 import com.dudu.android.launcher.utils.LogUtils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceHolder.Callback {
+public class RobberyAnimView extends SurfaceView implements SurfaceHolder.Callback {
 
-    private static final String TAG = "CarCheckingView";
+    private static final String TAG = "RobberyAnimView";
 
     private CarCheckingThread mThread;
 
-    private String category;
+    private OnAnimPlayListener onAnimPlayListener;
 
-    public VehicleCheckResultAnimation(Context context, String category) {
+    Logger logger = LoggerFactory.getLogger(TAG);
+
+    public RobberyAnimView(Context context) {
         super(context);
-        this.category = category;
         initView(context);
     }
 
-    public VehicleCheckResultAnimation(Context context, AttributeSet attrs) {
+    public RobberyAnimView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView(context);
     }
@@ -70,11 +74,25 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
         }
     }
 
+    public void stopAnim() {
+        if (mThread != null) {
+            mThread.setRunning(false);
+            try {
+                mThread.join();
+            } catch (InterruptedException e) {
+                logger.debug("动画错误:", e.getMessage());
+            }
+            mThread = null;
+        }
+    }
+
     private class CarCheckingThread extends Thread {
 
-        private static final int MAXIMUM_FRAME_COUNT = 50;
+        private static final int MAXIMUM_FRAME_CYCLE_COUNT = 101;
 
-        private int maxCycleCount = 148;
+        private String PICTURE_PREFIX = "Anim_00";
+
+        private static final String VEHICLE_CATEGORY_DIR = "animation/robbery/";
 
         private Context mContext;
 
@@ -85,13 +103,6 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
         private Paint mPaint;
 
         private int mFrameCounter = 0;
-
-        private static final String VEHICLE_MALFUNCTION = "animation/vehicle/malfunction/";
-
-        private String path = "appear";
-
-        private static final String PICTURE_FRAME_PREFIX = "Anim_00";
-
 
         public CarCheckingThread(Context context, SurfaceHolder holder) {
             mContext = context;
@@ -107,51 +118,28 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
         @Override
         public void run() {
 
-            doAppearAnimation();
-
             doCycleAnimation();
 
         }
 
-        private void doAppearAnimation() {
-            while (mRunning && mFrameCounter < MAXIMUM_FRAME_COUNT) {
-                Canvas c = null;
-                try {
-                    synchronized (mHolder) {
-                        mFrameCounter++;
-
-                        LogUtils.v("CarCheckingView", "当前播放帧数: " + mFrameCounter);
-                        c = mHolder.lockCanvas();
-
-                        doAnimation(c);
-                    }
-                } finally {
-                    if (c != null) {
-                        mHolder.unlockCanvasAndPost(c);
-                    }
-                }
-            }
-        }
-
         private void doCycleAnimation() {
-            mFrameCounter = 0;
-            path = "cycle";
-            File file = new File(FileUtils.getStorageDir(), VEHICLE_MALFUNCTION + category + "/" + path);
-            if (file.isDirectory()) {
-                maxCycleCount = file.listFiles().length;
-            }
-            while (mRunning && mFrameCounter < maxCycleCount - 1) {
+            while (mRunning && mFrameCounter < MAXIMUM_FRAME_CYCLE_COUNT) {
+                mFrameCounter++;
                 Canvas c = null;
                 try {
                     synchronized (mHolder) {
-                        mFrameCounter++;
 
-                        LogUtils.v("CarCheckingView", "当前播放帧数: " + mFrameCounter);
+                        LogUtils.v("CarCheckingView1", "当前播放帧数: " + mFrameCounter);
                         c = mHolder.lockCanvas();
 
                         doAnimation(c);
-                        if (mFrameCounter == maxCycleCount - 1) {
-                            mFrameCounter = 0;
+
+                        if (mFrameCounter == MAXIMUM_FRAME_CYCLE_COUNT) {
+                            boolean play = onAnimPlayListener.play();
+                            if (!play) {
+                                mFrameCounter = 0;
+                            }
+
                         }
                     }
                 } finally {
@@ -163,33 +151,11 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
         }
 
         private void doAnimation(Canvas c) {
-
             c.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-
             Bitmap bitmap = loadAnimationBitmap();
             if (bitmap != null) {
                 c.drawBitmap(bitmap, 0, 0, mPaint);
-            } else {
-
-                Bitmap b = loadStaticBitmap();
-                if (b != null) {
-                    c.drawBitmap(b, 0, 0, mPaint);
-
-                }
             }
-
-        }
-
-        private Bitmap loadStaticBitmap() {
-            AssetManager am = mContext.getAssets();
-            InputStream is;
-            LogUtils.v("vehicle", "静态的");
-            try {
-                is = am.open("animation/" + category + "_NP1.png");
-            } catch (IOException e) {
-                return null;
-            }
-            return BitmapFactory.decodeStream(is);
         }
 
         private Bitmap loadAnimationBitmap() {
@@ -197,21 +163,20 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
             options.inMutable = true;
 
             // AssetManager am = mContext.getAssets();
-            String frameCount;
-
+            String stCount;
             if (mFrameCounter < 10) {
-                frameCount = "00" + mFrameCounter;
+                stCount = "00" + mFrameCounter;
             } else if (mFrameCounter < 100) {
-                frameCount = "0" + mFrameCounter;
+                stCount = "0" + mFrameCounter;
             } else {
-                frameCount = "" + mFrameCounter;
+                stCount = "" + mFrameCounter;
             }
 
-            LogUtils.v("vehicle", frameCount);
             InputStream is;
-            File file = new File(FileUtils.getStorageDir(), VEHICLE_MALFUNCTION + category + "/" + path + "/" + PICTURE_FRAME_PREFIX + frameCount + ".png");
+            File file = new File(FileUtils.getStorageDir(), VEHICLE_CATEGORY_DIR + PICTURE_PREFIX + stCount + ".png");
             // is = am.open("car_checking/" + PICTURE_PREFIX + mFrameCounter + ".png");
-            LogUtils.v("jj", VEHICLE_MALFUNCTION + category + "/" + path + "/" + PICTURE_FRAME_PREFIX + frameCount + ".png");
+            LogUtils.v("vehicle", "count:" + stCount);
+            LogUtils.v("path", "path:" + VEHICLE_CATEGORY_DIR + PICTURE_PREFIX + stCount + ".png..." + file.exists());
             if (file.exists()) {
                 try {
                     is = new FileInputStream(file);
@@ -226,15 +191,13 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
         }
     }
 
-    public void stopAnim() {
-        if (mThread != null) {
-            mThread.setRunning(false);
-            try {
-                mThread.join();
-            } catch (InterruptedException e) {
-                LogUtils.e("CarCheckingView", e.getMessage());
-            }
-            mThread = null;
-        }
+    public void setOnAnimPlayListener(OnAnimPlayListener listener) {
+        this.onAnimPlayListener = listener;
     }
+
+    public interface OnAnimPlayListener {
+        boolean play();
+    }
+
+
 }

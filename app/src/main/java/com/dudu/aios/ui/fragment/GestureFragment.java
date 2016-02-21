@@ -1,20 +1,22 @@
 package com.dudu.aios.ui.fragment;
 
+import android.app.Fragment;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.dudu.aios.ui.fragment.base.BaseVehicleFragment;
 import com.dudu.aios.ui.view.GestureLockViewGroup;
 import com.dudu.android.launcher.R;
 
 /**
  * Created by Administrator on 2016/2/19.
  */
-public class GestureFragment extends BaseVehicleFragment implements View.OnClickListener {
+public class GestureFragment extends Fragment implements View.OnClickListener {
 
     private TextView tvDrawPrompt;
 
@@ -25,8 +27,8 @@ public class GestureFragment extends BaseVehicleFragment implements View.OnClick
     private Handler handler = new MyHandle();
 
     @Override
-    public View getVehicleChildView() {
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_gesture, null);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_gesture, container, false);
         initView(view);
         initListener();
         initData();
@@ -78,7 +80,7 @@ public class GestureFragment extends BaseVehicleFragment implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_passwordSet:
-                getFragmentManager().beginTransaction().replace(R.id.container, new VehiclePasswordSetFragment()).commit();
+                getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new VehiclePasswordSetFragment()).commit();
                 break;
         }
     }

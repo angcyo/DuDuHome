@@ -1,13 +1,19 @@
 package com.dudu.aios.ui.fragment;
 
+import android.app.Fragment;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.dudu.aios.ui.fragment.base.BaseVehicleFragment;
 import com.dudu.aios.ui.robbery.RobberyConstant;
+import com.dudu.aios.ui.view.RobberyAnimView;
 import com.dudu.android.launcher.R;
+import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.workflow.common.DataFlowFactory;
 import com.dudu.workflow.common.ObservableFactory;
 import com.dudu.workflow.common.RequestFactory;
@@ -16,22 +22,31 @@ import com.dudu.workflow.guard.GuardRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Created by Administrator on 2016/2/17.
- */
-public class GuardFragment extends BaseVehicleFragment implements View.OnClickListener {
+import rx.Observable;
+import rx.functions.Action1;
+import rx.subjects.BehaviorSubject;
+
+public class GuardFragment extends Fragment implements View.OnClickListener {
 
     private View guard_unlock_layout, guard_locked_layout;
 
     private TextView tvTitleCh, tvTitleEn;
     private Logger logger = LoggerFactory.getLogger("GuardFragment");
 
+    private RelativeLayout animContainer;
+
+    private RobberyAnimView animView;
+
+    private boolean stopAnim = false;
+
+    private Handler handler = new AnimHandler();
+
     @Override
-    public View getVehicleChildView() {
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.vehicle_guard_layout, null);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.vehicle_guard_layout, container, false);
         initView(view);
         initListener();
-        reflashViews();
+        initData();
         return view;
     }
 
@@ -43,26 +58,49 @@ public class GuardFragment extends BaseVehicleFragment implements View.OnClickLi
     private void initView(View view) {
         guard_unlock_layout = view.findViewById(R.id.vehicle_unlock_layout);
         guard_locked_layout = view.findViewById(R.id.vehicle_locked_layout);
+        animContainer = (RelativeLayout) view.findViewById(R.id.anim_container);
         tvTitleCh = (TextView) view.findViewById(R.id.text_title_ch);
         tvTitleCh.setText(getResources().getString(R.string.vehicle_guard_ch));
         tvTitleEn = (TextView) view.findViewById(R.id.text_title_en);
         tvTitleEn.setText(getResources().getString(R.string.vehicle_guard_en));
-        guardLockViews();
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.vehicle_unlock_layout:
-                guardUnlockViews();                
-                VehiclePasswordSetFragment vehiclePasswordSetFragment = new VehiclePasswordSetFragment();
-                transferParameters();
+                //上锁
+                actionLock();
                 break;
             case R.id.vehicle_locked_layout:
-                guardLockViews();
-                lockGuard();
+                //解锁动作
+                actionUnlock();
                 break;
         }
+    }
+
+    private void actionLock() {
+        //播放动画
+        toggleAnim();
+        //请求网络
+        lockGuard();
+    }
+
+    private void actionUnlock() {
+        unlock();
+        transferParameters();
+    }
+
+    private void initData() {
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            String pass = bundle.getString("pass");
+            if (pass.equals("1")) {
+                unlockGuard();
+                return;
+            }
+        }
+        reflashViews();
     }
 
     private void transferParameters() {
@@ -70,10 +108,12 @@ public class GuardFragment extends BaseVehicleFragment implements View.OnClickLi
         Bundle bundle = new Bundle();
         bundle.putString(RobberyConstant.CATEGORY_CONSTANT, RobberyConstant.GUARD_CONSTANT);
         vehiclePasswordSetFragment.setArguments(bundle);
-        getFragmentManager().beginTransaction().replace(R.id.container, vehiclePasswordSetFragment).commit();
-	}
+        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, vehiclePasswordSetFragment).commit();
+    }
+
 
     private void lockGuard() {
+        stopAnim = false;
         DataFlowFactory.getSwitchDataFlow()
                 .saveGuardSwitch(true);
         RequestFactory.getGuardRequest()
@@ -82,32 +122,100 @@ public class GuardFragment extends BaseVehicleFragment implements View.OnClickLi
                     public void hasLocked(boolean locked) {
                         DataFlowFactory.getSwitchDataFlow()
                                 .saveGuardSwitch(locked);
+                        if (locked) {
+                            lock();
+                            stopAnim = true;
+                        }
                     }
+
 
                     @Override
                     public void requestError(String error) {
                         DataFlowFactory.getSwitchDataFlow()
                                 .saveGuardSwitch(false);
                         logger.error(error);
+                        stopAnim = true;
                     }
                 });
     }
 
-    private void guardUnlockViews() {
-        guard_locked_layout.setVisibility(View.VISIBLE);
-        guard_unlock_layout.setVisibility(View.GONE);
+    private void unlockGuard() {
+        unlock();
+        DataFlowFactory.getSwitchDataFlow()
+                .saveGuardSwitch(false);
+        RequestFactory.getGuardRequest()
+                .lockCar(new GuardRequest.LockStateCallBack() {
+                    @Override
+                    public void hasLocked(boolean locked) {
+
+                    }
+
+
+                    @Override
+                    public void requestError(String error) {
+                        logger.error(error);
+                    }
+                });
     }
 
-    private void guardLockViews() {
+    private void unlock() {
         guard_locked_layout.setVisibility(View.GONE);
         guard_unlock_layout.setVisibility(View.VISIBLE);
     }
 
+    private void lock() {
+        guard_locked_layout.setVisibility(View.VISIBLE);
+        guard_unlock_layout.setVisibility(View.GONE);
+    }
+
+    private void clearAnim() {
+        if (animContainer != null && animContainer.getChildCount() != 0) {
+            animContainer.removeAllViews();
+            if (animView != null) {
+                animView.stopAnim();
+            }
+        }
+    }
+
+    BehaviorSubject subject = BehaviorSubject.create();
+
+    private void toggleAnim() {
+        animView = new RobberyAnimView(getActivity());
+        animContainer.addView(animView);
+        animView.setOnAnimPlayListener(new RobberyAnimView.OnAnimPlayListener() {
+            @Override
+            public boolean play() {
+                logger.debug("stopAnim:" + stopAnim);
+                if (stopAnim) {
+                    subject.onNext(stopAnim);
+
+                }
+                return stopAnim;
+            }
+        });
+        subject.subscribe(new Action1<Boolean>() {
+            @Override
+            public void call(Boolean o) {
+                if (o) {
+                    handler.sendEmptyMessage(0);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (animView != null) {
+            animView.stopAnim();
+        }
+    }
+
     private void checkGuardSwitch(boolean locked) {
         if (locked) {
-            guardLockViews();
+            lock();
         } else {
-            guardUnlockViews();
+            unlock();
         }
     }
 
@@ -137,5 +245,14 @@ public class GuardFragment extends BaseVehicleFragment implements View.OnClickLi
                         logger.error(error);
                     }
                 });
+    }
+
+
+    private class AnimHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            clearAnim();
+        }
     }
 }

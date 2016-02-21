@@ -20,6 +20,7 @@
             android:focusableInTouchMode="true"
             android:maxWidth="150dp"
             android:minWidth="30dp"
+            android:scrollHorizontally="true"
             android:singleLine="true"
             android:text="米其林驰加店"
             android:textColor="@color/white"
