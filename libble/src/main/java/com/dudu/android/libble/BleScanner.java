@@ -27,14 +27,14 @@ public class BleScanner {
     private BluetoothAdapter.LeScanCallback mLeScanCallback;
 
     public BleScanner() {
-        this.mName = "AutoBot";
+        this.mName = "aio";
         log = LoggerFactory.getLogger("ble.scan");
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mScanCallback = new ScanCallback() {
                 @Override
                 public void onScanResult(final int callbackType, final ScanResult result) {
-                    EventBus.getDefault().post(new Event.BackScanResult(result.getDevice()));
+                    EventBus.getDefault().post(new Event.BackScanResult(result.getDevice(), Event.ConnectType.BLE));
                 }
 /*
                 @Override
@@ -50,12 +50,12 @@ public class BleScanner {
 
                 @Override
                 public void onLeScan(final BluetoothDevice device, final int rssi, byte[] scanRecord) {
-                    log.info("onLeScan {} ", device.toString());
+                    log.info("onLeScan {},{} ", device.toString(), device.getName());
                     if (mName != null && device.getName() != null && device.getName().contains(mName)) {
                         //noinspection deprecation
                         mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                        log.info("Find Device: {}.", mName);
-                        EventBus.getDefault().post(new Event.BackScanResult(device));
+                        log.info("Find BLE Device: {}.", mName);
+                        EventBus.getDefault().post(new Event.BackScanResult(device, Event.ConnectType.BLE));
                     }
                 }
             };
@@ -71,7 +71,7 @@ public class BleScanner {
     public void startScan() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //            List<ScanFilter> filters = new ArrayList<>();
-//            filters.add(new ScanFilter.Builder().setServiceUuid(new ParcelUuid(BleManager.UUIDS_ON_XFA[0])).build());
+//            filters.add(new ScanFilter.Builder().setServiceUuid(new ParcelUuid(BleManager.UUIDS_ON_JDQ[0])).build());
 //            filters.add(new ScanFilter.Builder().setServiceUuid(new ParcelUuid(BleManager.UUIDS_ON_THREAD[0])).build());
 //            ScanSettings scanSettings = new ScanSettings.Builder()
 //                    .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
@@ -79,7 +79,7 @@ public class BleScanner {
 //                    .build();
             mBluetoothAdapter.getBluetoothLeScanner().startScan(/*filters, scanSettings, */mScanCallback);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            final UUID[] serviceUuids = {BleManager.UUIDS_ON_XFA[0], BleManager.UUIDS_ON_THREAD[0]};
+            final UUID[] serviceUuids = {BleManager.UUIDS_ON_JDQ[0], BleManager.UUIDS_ON_THREAD[0]};
             //noinspection deprecation
             if (!mBluetoothAdapter.startLeScan(/*serviceUuids, */mLeScanCallback)) {
                 log.error("startLeScan fail!");

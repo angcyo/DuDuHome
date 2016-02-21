@@ -35,6 +35,7 @@ public class SppConnectMain {
 
     private Subscription mSubscription;
     public void onEvent(Event.StartScanner event) {
+        if (event.getType() != Event.ConnectType.SPP) return;
         log.debug("pod obd StartScanner");
         if (null == sppScanner) {
             sppScanner = new SppScanner(mContext);
@@ -81,6 +82,7 @@ public class SppConnectMain {
     }
 
     public void onEvent(Event.Connect event) {
+        if (event.getType() != Event.ConnectType.SPP) return;
         log.debug("pod obd connect");
         if (event.getType() == Event.ConnectType.SPP) {
             sppManager.connect(event.getMac(), false);
@@ -96,6 +98,7 @@ public class SppConnectMain {
 
     public void init(Context context) {
         mContext = context;
+        EventBus.getDefault().unregister(ourInstance);
         EventBus.getDefault().register(ourInstance);
         if (null == sppManager) {
             sppManager = new SppManager(mContext);

@@ -32,6 +32,15 @@ public class Event {
     }
 
     public static class StartScanner {
+        private ConnectType type;
+
+        public StartScanner(final ConnectType type) {
+            this.type = type;
+        }
+
+        public ConnectType getType() {
+            return type;
+        }
     }
 
     public static class StopScanner {
@@ -40,12 +49,19 @@ public class Event {
     public static class BackScanResult {
         private BluetoothDevice device;
 
-        public BackScanResult(BluetoothDevice device) {
+        private ConnectType type;
+
+        public BackScanResult(final BluetoothDevice device, final ConnectType type) {
             this.device = device;
+            this.type = type;
         }
 
         public BluetoothDevice getDevice() {
             return device;
+        }
+
+        public ConnectType getType() {
+            return type;
         }
     }
 
@@ -90,10 +106,12 @@ public class Event {
 
         private String devName; // 设备名称
         private String devAddr; // 设备地址
+        private ConnectType type;
 
-        public BTConnected(String devName, String devAddr) {
+        public BTConnected(final String devName, final String devAddr, final ConnectType type) {
             this.devName = devName;
             this.devAddr = devAddr;
+            this.type = type;
         }
 
         public String getDevAddr() {
@@ -102,6 +120,10 @@ public class Event {
 
         public String getDevName() {
             return devName;
+        }
+
+        public ConnectType getType() {
+            return type;
         }
     }
 

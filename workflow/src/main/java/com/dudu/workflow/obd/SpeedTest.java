@@ -30,6 +30,23 @@ public class SpeedTest {
         subArr.clear();
     }
 
+    public void startTestError() {
+        Log.d("SerialPort", "startTestError call start");
+        try {
+            Subscription sub1 = OBDStream.getInstance().obdErrorString()
+                    .doOnNext(s -> Log.d("SerialPort", s))
+                    .map(s -> s.split("|"))
+                    .subscribeOn(Schedulers.newThread())
+                    .subscribe(s -> {
+                        Log.d("SerialPort", "" + s);
+                    });
+            subArr.add(sub1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.d("SerialPort", "startTestError call end");
+    }
+
     public void startTestGUN3() {
         Log.d("SerialPort", "startTestGUN3 call start");
         try {

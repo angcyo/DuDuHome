@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 
 import org.scf4a.Event;
+import org.scf4a.EventWrite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +30,7 @@ public class BleConnectMain {
     }
 
     public void onEventMainThread(Event.StartScanner event) {
+        if (event.getType() != Event.ConnectType.BLE) return;
         if (null == mBleScanner) {
             mBleScanner = new BleScanner();
         }
@@ -80,4 +82,7 @@ public class BleConnectMain {
         EventBus.getDefault().unregister(ourInstance);
     }
 
+    public void onEvent(EventWrite.Data2Write event) {
+        bleManager.writeData(event.data);
+    }
 }

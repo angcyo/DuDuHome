@@ -78,7 +78,7 @@ public class SppManager {
             case STATE_CONNECTED:
                 log.debug("onReceive connected to device");
                 EventBus.getDefault().post(new Event.SPPInitOutStream(mmOutStream));
-                EventBus.getDefault().post(new Event.BTConnected(remoteDevice.getName(), remoteDevice.getAddress()));
+                EventBus.getDefault().post(new Event.BTConnected(remoteDevice.getName(), remoteDevice.getAddress(), Event.ConnectType.SPP));
                 isConnected = true;
                 break;
             default:

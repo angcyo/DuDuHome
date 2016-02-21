@@ -34,9 +34,9 @@ import static android.bluetooth.BluetoothGatt.GATT_SUCCESS;
 public class BleManager {
 
     //报文元素定义
-    public final static UUID[] UUIDS_ON_XFA = {
-            UUID.fromString("0000fee9-0000-1000-8000-00805f9b34fb"),  // server
-            UUID.fromString("d44bc439-abfd-45a2-b575-925416129600"),  // write
+    public final static UUID[] UUIDS_ON_JDQ = {
+            UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb"),  // server
+            UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb"),  //write
             UUID.fromString("d44bc439-abfd-45a2-b575-925416129601"),  // notify
             UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"),  // description
     };
@@ -51,7 +51,7 @@ public class BleManager {
     /**
      * XFA
      */
-    private static boolean XFA_connect = false;   // 连接的是否为XFA设备  默认为false
+    private static boolean JDQ_connect = false;   // 连接的是否为JDQ设备  默认为false
     /**
      * THREAD
      */
@@ -223,8 +223,10 @@ public class BleManager {
             log.error("write data is null !");
             return false;
         }
-        EventBus.getDefault().post(new EventWrite.Data2Write(data, EventWrite.TYPE.Data));
-        return true;
+//        EventBus.getDefault().post(new EventWrite.Data2Write(data, EventWrite.TYPE.Data));
+//        return true;
+        mWriteChara.setValue(data);
+        return mBluetoothGatt.writeCharacteristic(mWriteChara);
     }
 
     public int getConnectionState() {
@@ -248,8 +250,8 @@ public class BleManager {
         while (gattService == null && retry-- > 0) {
             for (BluetoothGattService service : mBluetoothGatt.getServices()) {
                 log.debug("getServices = {}.", service.getUuid());
-                if (service.getUuid().equals(UUIDS_ON_XFA[0])) {
-                    XFA_connect = true;
+                if (service.getUuid().equals(UUIDS_ON_JDQ[0])) {
+                    JDQ_connect = true;
                     gattService = service;
                     break;
                 }
@@ -273,13 +275,13 @@ public class BleManager {
 
         List<BluetoothGattCharacteristic> gattCharacteristics = gattService.getCharacteristics();
         BluetoothGattCharacteristic chara;
-        if (XFA_connect) {      // 连接的是K100设备
+        if (JDQ_connect) {      // 连接的是K100设备
             for (int i = 0; i < gattCharacteristics.size(); i++) {
                 chara = gattCharacteristics.get(i);
-                if (chara.getUuid().toString().equals(UUIDS_ON_XFA[1].toString())) {
+                if (chara.getUuid().toString().equals(UUIDS_ON_JDQ[1].toString())) {
                     mWriteChara = chara;
                     mWriteChara.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
-                } else if (chara.getUuid().toString().equals(UUIDS_ON_XFA[2].toString())) {
+                } else if (chara.getUuid().toString().equals(UUIDS_ON_JDQ[2].toString())) {
                     mNotifyChara = chara;
                     mNotifyCharaList.add(mNotifyChara);
                 }
@@ -297,9 +299,10 @@ public class BleManager {
             }
         }
         //enable notifications failed or init descriptor write operation failed
-        if (!setCharacteristicNotification(mNotifyCharaList.get(0), true)) return false;
-        mNotifyCharaListIndex++;
+//        if (!setCharacteristicNotification(mNotifyCharaList.get(0), true)) return false;
+//        mNotifyCharaListIndex++;
 
+        EventBus.getDefault().post(new Event.BTConnected(mBluetoothDevice.getName(), mBluetoothDevice.getAddress(), Event.ConnectType.BLE));
         return true;
     }
 
@@ -308,8 +311,8 @@ public class BleManager {
         mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
         try {
             BluetoothGattDescriptor descriptor = null;
-            if (XFA_connect) {
-                descriptor = characteristic.getDescriptor(UUIDS_ON_XFA[3]);
+            if (JDQ_connect) {
+                descriptor = characteristic.getDescriptor(UUIDS_ON_JDQ[3]);
             } else if (Thread_connect) {
                 descriptor = characteristic.getDescriptor(UUIDS_ON_THREAD[3]);
             }
@@ -336,7 +339,7 @@ public class BleManager {
             EventBus.getDefault().post(new Event.BLEInit(mBluetoothDevice, mBluetoothGatt, mWriteChara));
             //添加验证之后，需要验证通过后才发出Connected事件，否则直接发出Connected事件
             if (isAuth) {
-                EventBus.getDefault().post(new Event.BTConnected(mBluetoothDevice.getName(), mBluetoothDevice.getAddress()));
+                EventBus.getDefault().post(new Event.BTConnected(mBluetoothDevice.getName(), mBluetoothDevice.getAddress(), Event.ConnectType.BLE));
             }
             return true;
         }

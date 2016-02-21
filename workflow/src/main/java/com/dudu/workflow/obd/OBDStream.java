@@ -127,7 +127,9 @@ public class OBDStream {
 
     public static Observable<String> obdErrorString(Observable<String> input) {
         return input
-                .filter(s -> s.startsWith("$400="));
+                .filter(s -> s.startsWith("$400="))
+                .map(s -> s.split(","))
+                .map(strings -> strings[1]);
     }
 
     public static Observable<String> obdTSPMON(Observable<String> input) {

@@ -4,6 +4,7 @@ import com.dudu.commonlib.repo.ReceiverData;
 import com.dudu.commonlib.utils.RxBus;
 import com.dudu.workflow.driving.DrivingFlow;
 import com.dudu.workflow.guard.GuardFlow;
+import com.dudu.workflow.obd.CarCheckFlow;
 import com.dudu.workflow.robbery.RobberyFlow;
 
 import java.io.IOException;
@@ -17,8 +18,9 @@ public class ObservableFactory {
     private static GuardFlow guardFlow = new GuardFlow();
     private static RobberyFlow robberyFlow = new RobberyFlow();
     private static DrivingFlow drivingFlow = new DrivingFlow();
+    private static CarCheckFlow carCheckFlow = new CarCheckFlow();
 
-    public static void init(){
+    public static void init() {
         drivingFlow.testAccSpeedFlow(getReceiverObservable());
         guardFlow.saveGuardDataFlow(getGuardReceiveObservable());
         robberyFlow.saveRobberyDataFlow(syncAppRobberyFlow());
@@ -43,4 +45,25 @@ public class ObservableFactory {
     public static Observable<Boolean> gun3Toggle() throws IOException {
         return robberyFlow.gun3Toggle();
     }
+
+    public static Observable<String> engineFailed() throws IOException {
+        return carCheckFlow.engineFailed();
+    }
+
+    public static Observable<String> gearboxFailed() throws IOException {
+        return carCheckFlow.gearboxFailed();
+    }
+
+    public static Observable<String> ABSFailed() throws IOException {
+        return carCheckFlow.ABSFailed();
+    }
+
+    public static Observable<String> SRSFailed() throws IOException {
+        return carCheckFlow.SRSFailed();
+    }
+
+    public static Observable<String> WSBFailed() throws IOException {
+        return carCheckFlow.WSBFailed();
+    }
+
 }

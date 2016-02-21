@@ -44,7 +44,7 @@ public class PodOBD {
         EventBus.getDefault().register(this);
         EventBus.getDefault().unregister(readL1);
         EventBus.getDefault().register(readL1);
-        EventBus.getDefault().post(new Event.StartScanner());
+        EventBus.getDefault().post(new Event.StartScanner(Event.ConnectType.SPP));
     }
 
     public void uninit() {
@@ -110,7 +110,7 @@ public class PodOBD {
                                 .subscribe(new Action1<Long>() {
                                     @Override
                                     public void call(Long aLong) {
-                                        EventBus.getDefault().post(new Event.StartScanner());
+                                        EventBus.getDefault().post(new Event.StartScanner(Event.ConnectType.SPP));
                                     }
                                 });
                     }

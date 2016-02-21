@@ -77,7 +77,7 @@ public class BleOBD {
                     @Override
                     public void call(Long aLong) {
                         if (!isConnected)
-                            EventBus.getDefault().post(new Event.StartScanner());
+                            EventBus.getDefault().post(new Event.StartScanner(Event.ConnectType.BLE));
                     }
                 });
 
