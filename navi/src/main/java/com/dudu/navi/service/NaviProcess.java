@@ -142,7 +142,7 @@ public class NaviProcess {
     }
 
     private int calculateInside(Navigation navigation) {
-        log.debug("-----calculateInside");
+        log.debug("-----calculateInside  {},{}" + navigation.getDestination().latitude ,navigation.getDestination().longitude);
         cur_location = Monitor.getInstance(mContext).getCurrentLocation();
 
         int code = CALCULATEERROR;

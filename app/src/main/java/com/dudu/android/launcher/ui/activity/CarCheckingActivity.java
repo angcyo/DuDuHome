@@ -55,7 +55,7 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
 
     public void initView() {
         animContainer = (RelativeLayout) findViewById(R.id.anim_container);
-        mAnimationView = new CarCheckingView(this, "roadster", 3);
+        mAnimationView = new CarCheckingView(this, "suv", 3);
         animContainer.addView(mAnimationView);
         engineVehicleCheckResultView = (VehicleCheckResultView) findViewById(R.id.engine_vehicleCheckResult);
         gearboxVehicleCheckResultView = (VehicleCheckResultView) findViewById(R.id.gearbox_vehicleCheckResult);

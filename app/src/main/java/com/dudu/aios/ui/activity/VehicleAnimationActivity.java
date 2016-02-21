@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -235,7 +236,8 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
                 public void onClick(View v) {
                     vehicleCheckResultAnimation.stopAnim();
                     //导航
-                    Navigation navigation = new Navigation(new Point(vehicle.getLatitude(), vehicle.getLatitude()), NaviDriveMode.SPEEDFIRST, NavigationType.NAVIGATION);
+                    Log.d("----","---------------" + vehicle.getLatitude() + "   "+ vehicle.getLongitude());
+                    Navigation navigation = new Navigation(new Point(vehicle.getLatitude(), vehicle.getLongitude()), NaviDriveMode.FASTESTTIME, NavigationType.NAVIGATION);
                     NavigationProxy.getInstance().startNavigation(navigation);
                 }
             });
