@@ -8,7 +8,6 @@ import com.dudu.android.launcher.broadcast.ReceiverRegister;
 import com.dudu.android.launcher.exception.CrashHandler;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.NetworkUtils;
-import com.dudu.carChecking.CarCheckingProxy;
 import com.dudu.commonlib.CommonLib;
 import com.dudu.rest.common.Request;
 import com.dudu.workflow.common.CommonParams;
@@ -74,14 +73,12 @@ public class LauncherApplication extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        CommonParams.getInstance().init();
+        CommonParams.getInstance().init();
         ObservableFactory.init();
         Request.getInstance().init();
         RequestFactory.getInstance().init();
 
         ReceiverRegister.registPushManager(CommonParams.getInstance().getUserName());
-
-        CarCheckingProxy.getInstance().registerCarCheckingError();
     }
 
 }

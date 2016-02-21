@@ -1,6 +1,10 @@
 package org.scf4a;
 
+import java.util.concurrent.TimeUnit;
+
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.functions.Action1;
 
 public class ConnSession {
     private static ConnSession ourInstance = new ConnSession();
@@ -54,7 +58,7 @@ public class ConnSession {
     public void reConnect() {
         if (isSessionValid()) {
             if (!isConnected()) {
-                EventBus.getDefault().post(new Event.Connect(lastConnectedMAC, type, true));
+                EventBus.getDefault().post(new Event.Connect(lastConnectedMAC, type, false));
             }
         }
     }
@@ -73,6 +77,16 @@ public class ConnSession {
         lastConnectedMAC = event.getDevAddr();
         lastConnectedName = event.getDevName();
         isConnected = true;
+        type = event.getType();
+        EventBus.getDefault().post(new BleStateChange(BleStateChange.BLECONNECTED));
+        Observable.timer(1, TimeUnit.MINUTES)
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        if (!isConnected)
+                            EventBus.getDefault().post(new Event.StartScanner(type));
+                    }
+                });
     }
 
     public void onEvent(Event.SPIConnected event) {
@@ -82,5 +96,6 @@ public class ConnSession {
 
     public void onEvent(Event.Disconnected event) {
         isConnected = false;
+        EventBus.getDefault().post(new BleStateChange(BleStateChange.BLEDISCONNECTED));
     }
 }

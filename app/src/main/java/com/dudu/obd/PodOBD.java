@@ -3,16 +3,14 @@ package com.dudu.obd;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 
-import com.dudu.event.BleStateChange;
+import org.scf4a.BleStateChange;
 import com.duu.bluetooth.SppConnectMain;
 
 import org.scf4a.Event;
 import org.scf4a.EventRead;
-import org.scf4a.EventWrite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Closeable;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;

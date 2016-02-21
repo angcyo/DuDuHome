@@ -10,7 +10,7 @@ import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.DialogUtils;
 import com.dudu.android.launcher.utils.StatusBarManager;
-import com.dudu.event.BleStateChange;
+import org.scf4a.BleStateChange;
 import com.dudu.event.DeviceEvent;
 import com.dudu.monitor.Monitor;
 

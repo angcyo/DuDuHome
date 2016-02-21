@@ -6,7 +6,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Context;
 
 import com.dudu.android.libble.BleConnectMain;
-import com.dudu.event.BleStateChange;
+import org.scf4a.BleStateChange;
 
 import org.scf4a.ConnSession;
 import org.scf4a.Event;

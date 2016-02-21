@@ -18,7 +18,7 @@ import com.dudu.android.launcher.utils.NetworkUtils;
 import com.dudu.android.launcher.utils.StatusBarManager;
 import com.dudu.android.launcher.utils.WeatherUtils;
 
-import com.dudu.event.BleStateChange;
+import org.scf4a.BleStateChange;
 import com.dudu.event.DeviceEvent;
 import com.dudu.monitor.Monitor;
 
