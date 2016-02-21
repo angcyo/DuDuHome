@@ -13,6 +13,9 @@ import com.dudu.aios.ui.fragment.base.BaseFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.R;
 import com.dudu.workflow.common.DataFlowFactory;
+import com.dudu.workflow.common.ObservableFactory;
+
+import rx.functions.Action1;
 
 /**
  * Created by Administrator on 2016/2/21.
@@ -79,6 +82,16 @@ public class SafetyFragment extends BaseFragment implements View.OnClickListener
                     } else {
                         getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyFragment()).commit();
 
+                    }
+                });
+        ObservableFactory.getRobberyStateObservable()
+                .subscribe(new Action1<Boolean>() {
+                    @Override
+                    public void call(Boolean aBoolean) {
+                        if(aBoolean){
+                            DataFlowFactory.getSwitchDataFlow().saveRobberyState(aBoolean);
+                            getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyLockFragment()).commit();
+                        }
                     }
                 });
     }
