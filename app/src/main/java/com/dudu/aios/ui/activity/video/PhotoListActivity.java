@@ -14,10 +14,13 @@ import android.widget.TextView;
 
 import com.dudu.aios.ui.activity.video.adapter.PhotoListAdapter;
 import com.dudu.aios.ui.base.BaseActivity;
-import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.R;
+import com.dudu.commonlib.utils.afinal.FinalBitmap;
+import com.dudu.drivevideo.model.PhotoInfoEntity;
+import com.dudu.drivevideo.storage.VideoFileManage;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PhotoListActivity extends BaseActivity {
     private ImageButton mBackButton, mDeleteButton, mUploadButton;
@@ -34,15 +37,17 @@ public class PhotoListActivity extends BaseActivity {
 
     private PhotoListAdapter mPhotoListAdapter;
 
-    private ArrayList<Integer> mPhotoData;
+    private List<PhotoInfoEntity> photoInfoEntityList;
 
     private ArrayList<Integer> mChooseData = new ArrayList<>();
+
+    private FinalBitmap finalBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         observableFactory.getCommonObservable(baseBinding).hasTitle.set(false);
-
+        finalBitmap = new FinalBitmap(this);
         initFragment();
         initClickListener();
         initPhotoData();
@@ -64,16 +69,18 @@ public class PhotoListActivity extends BaseActivity {
     }
 
     private void initPhotoData() {
-        mPhotoData = new ArrayList<>();
-        mPhotoListAdapter = new PhotoListAdapter(this, mPhotoData);
+        photoInfoEntityList = new ArrayList<>();
+
+
+        mPhotoListAdapter = new PhotoListAdapter(this, photoInfoEntityList, finalBitmap);
         mPhotoGridView.setAdapter(mPhotoListAdapter);
         new LoadPhotoTask().execute();
     }
 
     private void loadVideos() {
-
-        for (int i = 0; i < 12; i++) {
-            mPhotoData.add(i);
+        List<PhotoInfoEntity> photoInfoEntityList = VideoFileManage.getInstance().generatePhotoInfoEntityList();
+        if (photoInfoEntityList != null){
+            this.photoInfoEntityList = photoInfoEntityList;
         }
 
     }
@@ -85,7 +92,7 @@ public class PhotoListActivity extends BaseActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (isSelectClick) {
                     mPhotoListAdapter.chooseState(position);
-                    mChooseData.add(mPhotoData.get(position));
+//                    mChooseData.add(photoInfoEntityList.get(position));
                 } else {
                     //调到单个图片图片的页面
 
@@ -94,7 +101,12 @@ public class PhotoListActivity extends BaseActivity {
         });
     }
 
+
+
     public void onButtonBack(View view){
+        if (photoInfoEntityList != null){
+            photoInfoEntityList.clear();
+        }
         finish();
     }
 
@@ -109,17 +121,36 @@ public class PhotoListActivity extends BaseActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            if (mPhotoData != null) {
-                tvSelect.setVisibility(View.VISIBLE);
-                photoEmptyContainer.setVisibility(View.GONE);
+            if (photoInfoEntityList != null ) {
+//                tvSelect.setVisibility(View.VISIBLE);
+                if (photoInfoEntityList.size()>0){
+                    photoEmptyContainer.setVisibility(View.GONE);
+                }else {
+                    photoEmptyContainer.setVisibility(View.VISIBLE);
+                }
+
                 mPhotoGridView.setVisibility(View.VISIBLE);
 
             } else {
-                tvSelect.setVisibility(View.GONE);
+//                tvSelect.setVisibility(View.GONE);
                 photoEmptyContainer.setVisibility(View.VISIBLE);
                 mPhotoGridView.setVisibility(View.GONE);
             }
-            mPhotoListAdapter.setData(mPhotoData);
+            if (photoInfoEntityList != null){
+                mPhotoListAdapter.setData(photoInfoEntityList);
+            }
+        }
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (finalBitmap!=null) {
+            finalBitmap.clearMemoryCache();
+            finalBitmap.exitTasksEarly(true);
+            finalBitmap = null;
         }
     }
 }

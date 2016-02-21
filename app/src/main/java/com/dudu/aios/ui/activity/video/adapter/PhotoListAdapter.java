@@ -13,8 +13,13 @@ import android.widget.LinearLayout;
 
 import com.dudu.aios.ui.activity.video.PhotoShowActivity;
 import com.dudu.android.launcher.R;
+import com.dudu.commonlib.utils.WindowUtils;
+import com.dudu.commonlib.utils.afinal.FinalBitmap;
+import com.dudu.commonlib.utils.image.ImageUtils;
+import com.dudu.drivevideo.model.PhotoInfoEntity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by dengjun on 2016/2/20.
@@ -23,27 +28,30 @@ import java.util.ArrayList;
 public class PhotoListAdapter extends BaseAdapter {
     private Context context;
 
-    private ArrayList<Integer> phontoList;
+    private List<PhotoInfoEntity> photoInfoEntityList;
 
     private boolean isChoose[];
     private boolean isDelete = true;
 
+    private FinalBitmap finalBitmap;
+
     private AnimationDrawable animationDrawable;
 
-    public PhotoListAdapter(Context context, ArrayList<Integer> phontoList) {
+    public PhotoListAdapter(Context context, List<PhotoInfoEntity> photoInfoEntityList, FinalBitmap finalBitmap) {
         this.context = context;
-        this.phontoList = phontoList;
+        this.photoInfoEntityList = photoInfoEntityList;
+        this.finalBitmap = finalBitmap;
         initChooseData();
     }
 
     @Override
     public int getCount() {
-        return phontoList.size();
+        return photoInfoEntityList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return phontoList.get(position);
+        return photoInfoEntityList.get(position);
     }
 
     @Override
@@ -95,26 +103,36 @@ public class PhotoListAdapter extends BaseAdapter {
             }
         });
 
+        final PhotoInfoEntity photoInfoEntity = photoInfoEntityList.get(position);
         holder.photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                context.startActivity(new Intent(context, PhotoShowActivity.class));
+                Intent intent = new Intent(context, PhotoShowActivity.class);
+                intent.setData(photoInfoEntity.getPhotoInfoUri());
+                context.startActivity(intent);
             }
         });
+
+        ViewGroup.LayoutParams layoutParams = holder.photo.getLayoutParams();
+        layoutParams.width = 330;
+        layoutParams.height = 214;
+        holder.photo.setLayoutParams(layoutParams);
+        finalBitmap.display(holder.photo, photoInfoEntity.getPhotoInfoUri().toString(),330,214,
+                ImageUtils.getDrawble(R.drawable.photo), ImageUtils.getDrawble(R.drawable.photo));
 
         return convertView;
     }
 
-    public void setData(ArrayList<Integer> phontoList) {
-        this.phontoList = (ArrayList<Integer>) phontoList.clone();
+    public void setData(List<PhotoInfoEntity> photoInfoEntityList) {
+        this.photoInfoEntityList = photoInfoEntityList;
         isDelete = true;
         initChooseData();
         notifyDataSetChanged();
     }
 
     private void initChooseData() {
-        isChoose = new boolean[phontoList.size()];
-        for (int i = 0; i < phontoList.size(); i++) {
+        isChoose = new boolean[photoInfoEntityList.size()];
+        for (int i = 0; i < photoInfoEntityList.size(); i++) {
             isChoose[i] = false;
         }
     }

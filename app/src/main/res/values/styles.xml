@@ -103,6 +103,12 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
+    <style name="NOTitlTheme" parent="android:Theme">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
     <style name="NearbyPoiActivityStyle" parent="@style/AppBaseTheme">
         <item name="android:windowBackground">@color/nearby_poi_activity_bg</item>
         <item name="android:windowNoTitle">false</item>

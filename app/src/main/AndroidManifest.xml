@@ -178,11 +178,17 @@
         <activity
             android:name="com.dudu.aios.ui.activity.VideoPlayActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="landscape" >
+            android:screenOrientation="landscape"
+            android:theme="@style/NOTitlTheme">
         </activity>
         <activity
             android:name="com.dudu.aios.ui.activity.video.PhotoListActivity"
-            android:screenOrientation="landscape" >
+            android:screenOrientation="landscape"
+            android:theme="@style/NOTitlTheme">
+        </activity>
+        <activity android:name="com.dudu.aios.ui.activity.video.PhotoShowActivity"
+                  android:screenOrientation="landscape"
+                  android:theme="@style/NOTitlTheme">
         </activity>
 
         <service android:name=".service.BluetoothService" />
@@ -284,8 +290,7 @@
             android:name="XG_V2_ACCESS_KEY"
             android:value="AAC42XZD787T" />
 
-        <activity android:name="com.dudu.aios.ui.activity.video.PhotoShowActivity" >
-        </activity>
+
     </application>
 
 </manifest>

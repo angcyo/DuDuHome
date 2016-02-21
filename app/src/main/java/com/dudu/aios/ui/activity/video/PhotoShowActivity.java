@@ -1,8 +1,9 @@
 package com.dudu.aios.ui.activity.video;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.AnimationDrawable;
-import android.support.v7.app.AppCompatActivity;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +21,7 @@ public class PhotoShowActivity extends BaseActivity implements View.OnClickListe
 
     private LinearLayout uploadingContainer, uploadSuccessContainer;
 
-    private ImageView uploadingIcon;
+    private ImageView uploadingIcon, imageShow;
 
     private AnimationDrawable animationDrawable;
 
@@ -28,8 +29,9 @@ public class PhotoShowActivity extends BaseActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         observableFactory.getCommonObservable(baseBinding).hasTitle.set(false);
-        initFragmentView();
+        initView();
         initClickListener();
+        showImage();
     }
 
     @Override
@@ -44,7 +46,7 @@ public class PhotoShowActivity extends BaseActivity implements View.OnClickListe
         btnCancelUpload.setOnClickListener(this);
     }
 
-    private void initFragmentView() {
+    private void initView() {
         btnBack = (ImageButton) findViewById(R.id.button_back);
         btnDelete = (ImageButton) findViewById(R.id.button_delete);
         btnUpload = (ImageButton) findViewById(R.id.button_upload);
@@ -52,6 +54,14 @@ public class PhotoShowActivity extends BaseActivity implements View.OnClickListe
         uploadingContainer = (LinearLayout) findViewById(R.id.uploading_container);
         uploadSuccessContainer = (LinearLayout) findViewById(R.id.upload_successful_container);
         uploadingIcon = (ImageView) findViewById(R.id.image_uploading);
+        imageShow = (ImageView)findViewById(R.id.image_show);
+    }
+
+    private void showImage(){
+        Uri uri = getIntent().getData();
+        if (uri != null){
+            imageShow.setImageURI(uri);
+        }
     }
 
     @Override
