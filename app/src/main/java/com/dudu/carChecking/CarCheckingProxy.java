@@ -8,6 +8,11 @@ import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.commonlib.CommonLib;
 import com.dudu.voice.VoiceManagerProxy;
 import com.dudu.voice.semantic.constant.TTSType;
+import com.dudu.workflow.common.ObservableFactory;
+import com.dudu.workflow.obd.CarCheckFlow;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import rx.Subscription;
 
@@ -18,7 +23,16 @@ public class CarCheckingProxy {
 
     private static CarCheckingProxy carCheckingProxy;
 
-    private Subscription carCheckingErrorSub = null;
+    private List<Subscription> subList;
+
+    private String lastFault = "";
+
+    public CarCheckingProxy() {
+
+        subList = new ArrayList<>();
+
+    }
+
 
     public static CarCheckingProxy getInstance() {
 
@@ -31,21 +45,83 @@ public class CarCheckingProxy {
 
     public void startCarChecking() {
 
+        try {
+            CarCheckFlow.startCarCheck();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-        if (!(ActivitiesManager.getInstance().getTopActivity() instanceof CarCheckingActivity)) {
-            Intent intent = new Intent(CommonLib.getInstance().getContext(), CarCheckingActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            CommonLib.getInstance().getContext().startActivity(intent);
+    public void registerCarCheckingError() {
+
+        try {
+            Subscription tcm = ObservableFactory.engineFailed().subscribe(s -> {
+
+                if (!lastFault.equals(s)) {
+                    showCheckingError(CarCheckType.TCM);
+                }
+                lastFault = s;
+            });
+
+            subList.add(tcm);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        getCarCheckingError();
+
+        try {
+
+            Subscription abs = ObservableFactory.ABSFailed().subscribe(s -> {
+                if (!lastFault.equals(s)) {
+                    showCheckingError(CarCheckType.ABS);
+                }
+                lastFault = s;
+            });
+
+            subList.add(abs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        try {
+            Subscription ecm = ObservableFactory.gearboxFailed().subscribe(s -> {
+                if (!lastFault.equals(s)) {
+                    showCheckingError(CarCheckType.ECM);
+                }
+                lastFault = s;
+            });
+            subList.add(ecm);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        try {
+            Subscription srs = ObservableFactory.SRSFailed().subscribe(s -> {
+                if (!lastFault.equals(s)) {
+                    showCheckingError(CarCheckType.SRS);
+                }
+                lastFault = s;
+            });
+            subList.add(srs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
 
-    private void getCarCheckingError() {
-    }
+    public void clearFault() {
 
+        try {
+            CarCheckFlow.clearCarCheckError();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 
     public void showCheckingError(CarCheckType type) {
 
@@ -64,23 +140,25 @@ public class CarCheckingProxy {
                 intent.putExtra("vehicle", "abs");
                 break;
             case TCM:
-                playText = "来自发动机控制模块/动力传动控制模块的数据无效,";
+                playText = "质量或体积空气流量传感器B电路发生故障,";
                 intent.putExtra("vehicle", "tcm");
                 break;
             case ECM:
-                playText = "质量或体积空气流量传感器B电路发生故障,";
+                playText = "来自发动机控制模块/动力传动控制模块的数据无效,";
                 intent.putExtra("vehicle", "ecm");
+
                 break;
         }
-        playText = "检测到您的车辆"+playText + "已经为您找到以下汽车修理店，选择第几个前往修理或退出";
+        playText = "检测到您的车辆" + playText + "已经为您找到以下汽车修理店，选择第几个前往修理或退出";
         CommonLib.getInstance().getContext().startActivity(intent);
         VoiceManagerProxy.getInstance().startSpeaking(playText, TTSType.TTS_START_UNDERSTANDING, false);
     }
 
-    public void stopCarChecking() {
-        if (carCheckingErrorSub != null && !carCheckingErrorSub.isUnsubscribed()) {
-            carCheckingErrorSub.unsubscribe();
+    public void checkend() {
+        for (Subscription sub : subList) {
+            if (!sub.isUnsubscribed()) sub.unsubscribe();
         }
+        subList.clear();
     }
 
 

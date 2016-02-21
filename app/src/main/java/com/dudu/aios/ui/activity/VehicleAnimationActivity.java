@@ -29,6 +29,8 @@ import com.dudu.navi.entity.PoiResultInfo;
 import com.dudu.navi.entity.Point;
 import com.dudu.navi.vauleObject.NaviDriveMode;
 import com.dudu.navi.vauleObject.NavigationType;
+import com.dudu.voice.semantic.constant.SceneType;
+import com.dudu.voice.semantic.engine.SemanticEngine;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -58,6 +60,8 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
         initView();
         initListener();
         initData();
+
+        SemanticEngine.getProcessor().switchSemanticType(SceneType.CAR_CHECKING);
     }
 
     @Override
@@ -231,15 +235,10 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
                 }
                 holder.gradeContainer.addView(imageView);
             }
-            holder.btNavigate.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    vehicleCheckResultAnimation.stopAnim();
-                    //导航
-                    Log.d("----","---------------" + vehicle.getLatitude() + "   "+ vehicle.getLongitude());
-                    Navigation navigation = new Navigation(new Point(vehicle.getLatitude(), vehicle.getLongitude()), NaviDriveMode.FASTESTTIME, NavigationType.NAVIGATION);
-                    NavigationProxy.getInstance().startNavigation(navigation);
-                }
+            holder.btNavigate.setOnClickListener(v -> {
+                vehicleCheckResultAnimation.stopAnim();
+                Navigation navigation = new Navigation(new Point(vehicle.getLatitude(), vehicle.getLongitude()), NaviDriveMode.FASTESTTIME, NavigationType.NAVIGATION);
+                NavigationProxy.getInstance().startNavigation(navigation);
             });
             return convertView;
         }
@@ -250,5 +249,11 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
             LinearLayout gradeContainer;
             ImageButton btNavigate;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SemanticEngine.getProcessor().switchSemanticType(SceneType.HOME);
     }
 }

@@ -313,6 +313,8 @@ public class BlueWindowManager extends BaseWindowManager {
             }
         });
 
+        mMessageData.clear();
+
     }
 
     private void visibleAnimView() {

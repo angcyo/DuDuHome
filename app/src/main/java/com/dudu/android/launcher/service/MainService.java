@@ -13,6 +13,7 @@ import com.dudu.android.launcher.utils.IPConfig;
 import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.calculation.Calculation;
+import com.dudu.carChecking.CarCheckingProxy;
 import com.dudu.conn.FlowManage;
 import com.dudu.conn.PortalUpdate;
 import com.dudu.conn.SendLogs;
@@ -21,12 +22,13 @@ import com.dudu.monitor.Monitor;
 import com.dudu.monitor.event.CarStatus;
 import com.dudu.monitor.event.PowerOffEvent;
 import com.dudu.network.NetworkManage;
-import com.dudu.obd.ObdInit;
 import com.dudu.storage.Storage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
@@ -52,6 +54,9 @@ public class MainService extends Service {
     private Storage storage;
     private PowerManager mPowerManager;
     private PowerManager.WakeLock mWakeLock;
+
+
+    private ScheduledExecutorService carCheckingExecutor;
 
 
     @Override
@@ -82,6 +87,8 @@ public class MainService extends Service {
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
         mPowerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+
+        startCarChecking();
     }
 
     private void initNetWork() {
@@ -116,6 +123,8 @@ public class MainService extends Service {
         releaseWakeLock();
 
         EventBus.getDefault().unregister(this);
+
+        stopCarChecking();
     }
 
     @Override
@@ -183,5 +192,27 @@ public class MainService extends Service {
             acquireLock();
         }
     }
+
+    private void startCarChecking() {
+        carCheckingExecutor = Executors.newScheduledThreadPool(1);
+        carCheckingExecutor.scheduleAtFixedRate(carCheckingThread, 5, 5, TimeUnit.SECONDS);
+
+    }
+
+    private void stopCarChecking() {
+        if (carCheckingExecutor != null) {
+            carCheckingExecutor.shutdown();
+            carCheckingExecutor = null;
+        }
+    }
+
+    Thread carCheckingThread = new Thread() {
+
+        @Override
+        public void run() {
+            super.run();
+            CarCheckingProxy.getInstance().startCarChecking();
+        }
+    };
 
 }

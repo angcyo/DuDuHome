@@ -10,6 +10,7 @@ import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.carChecking.CarCheckingProxy;
+import com.dudu.commonlib.CommonLib;
 import com.dudu.drivevideo.DriveVideo;
 import com.dudu.map.NavigationProxy;
 import com.dudu.voice.FloatWindowUtils;
@@ -163,7 +164,9 @@ public class CmdChain extends SemanticChain {
             case Constants.KAIQI:
                 FloatWindowUtils.removeFloatWindow();
 
-                CarCheckingProxy.getInstance().startCarChecking();
+                Intent intent = new Intent(CommonLib.getInstance().getContext(), CarCheckingActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                CommonLib.getInstance().getContext().startActivity(intent);
                 break;
             case Constants.CLOSE:
             case Constants.EXIT:

@@ -23,6 +23,7 @@ import com.dudu.android.launcher.utils.WeatherUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.carChecking.CarCheckType;
 import com.dudu.carChecking.CarCheckingProxy;
+import com.dudu.commonlib.CommonLib;
 import com.dudu.init.InitManager;
 import com.dudu.map.NavigationProxy;
 import com.dudu.obd.ObdInit;
@@ -166,7 +167,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
 
             case R.id.vehicle_inspection:
             case R.id.vehicle_inspection_icon:
-                CarCheckingProxy.getInstance().startCarChecking();
+               startActivity(new Intent(getActivity(), CarCheckingActivity.class));
                 break;
             case R.id.driving_record_button:
             case R.id.driving_record_icon:

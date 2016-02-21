@@ -17,6 +17,9 @@ import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.carChecking.CarCheckingProxy;
 import com.dudu.carChecking.CarCheckingView;
+import com.dudu.voice.VoiceManagerProxy;
+import com.dudu.voice.semantic.constant.SceneType;
+import com.dudu.voice.semantic.engine.SemanticEngine;
 
 import java.util.concurrent.TimeUnit;
 
@@ -51,9 +54,7 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
 
         initDatas();
 
-        Observable.timer(1, TimeUnit.SECONDS).subscribe(aLong -> {
-            CarCheckingProxy.getInstance().startCarChecking();
-        });
+        SemanticEngine.getProcessor().switchSemanticType(SceneType.CAR_CHECKING);
     }
 
     @Override
@@ -181,6 +182,6 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        CarCheckingProxy.getInstance().stopCarChecking();
+        SemanticEngine.getProcessor().switchSemanticType(SceneType.HOME);
     }
 }
