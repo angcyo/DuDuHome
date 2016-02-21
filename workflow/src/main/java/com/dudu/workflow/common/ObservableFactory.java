@@ -6,6 +6,7 @@ import com.dudu.workflow.driving.DrivingFlow;
 import com.dudu.workflow.guard.GuardFlow;
 import com.dudu.workflow.obd.CarCheckFlow;
 import com.dudu.workflow.robbery.RobberyFlow;
+import com.dudu.workflow.robbery.RobberyStateModel;
 
 import java.io.IOException;
 
@@ -32,6 +33,15 @@ public class ObservableFactory {
                         event instanceof ReceiverData)
                 .map(receiverdataEvent ->
                         (ReceiverData) receiverdataEvent);
+    }
+
+    public static Observable<Boolean> getRobberyStateObservable() {
+        return RxBus.getInstance().asObservable()
+                .filter(event->event instanceof RobberyStateModel)
+                .map(receivedData ->
+                        (RobberyStateModel)receivedData)
+                .map(robberyStateModel ->
+                        robberyStateModel.getRobberyState());
     }
 
     public static Observable<Boolean> getGuardReceiveObservable() {
