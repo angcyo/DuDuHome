@@ -50,11 +50,11 @@ public class SerialPort {
                 su.getOutputStream().write(cmd.getBytes());
                 if ((su.waitFor() != 0) || !device.canRead()
                         || !device.canWrite()) {
-                    throw new SecurityException();
+//                    throw new SecurityException();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                throw new SecurityException();
+//                throw new SecurityException();
             }
         }
 

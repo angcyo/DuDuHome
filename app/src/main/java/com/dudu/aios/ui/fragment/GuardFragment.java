@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.dudu.aios.ui.robbery.RobberyConstant;
 import com.dudu.aios.ui.view.RobberyAnimView;
 import com.dudu.android.launcher.R;
-import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.workflow.common.DataFlowFactory;
 import com.dudu.workflow.common.ObservableFactory;
 import com.dudu.workflow.common.RequestFactory;
@@ -144,9 +143,11 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
                     public void hasLocked(boolean locked) {
                         if(!locked){
                             unlockGuard();
-                            ToastUtils.showToast("解锁成功");
+                            //解锁成功
+                            logger.debug("解锁成功");
                         }else{
-                            ToastUtils.showToast("解锁失败");
+                            //解锁失败
+                            logger.debug("解锁失败");
                         }
                     }
 
@@ -154,7 +155,7 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void requestError(String error) {
                         logger.error(error);
-                        ToastUtils.showToast("解锁失败");
+                        logger.debug("解锁失败");
                         unlockGuard();
                     }
                 });

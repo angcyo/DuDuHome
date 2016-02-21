@@ -6,17 +6,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
 import com.dudu.android.launcher.R;
 import com.dudu.workflow.common.CommonParams;
 import com.dudu.workflow.common.DataFlowFactory;
 import com.dudu.workflow.common.ObservableFactory;
 import com.dudu.workflow.common.RequestFactory;
 import com.dudu.workflow.robbery.RobberyRequest;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 import rx.Subscription;
 
 public class RobberyFragment extends Fragment implements View.OnClickListener {
