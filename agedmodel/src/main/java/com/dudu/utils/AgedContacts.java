@@ -1,12 +1,5 @@
 package com.dudu.utils;
 
-import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
-
-
-
-import java.io.File;
 
 /**
  * Created by Administrator on 2015/12/5.

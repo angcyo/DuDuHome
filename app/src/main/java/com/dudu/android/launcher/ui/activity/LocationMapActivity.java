@@ -33,7 +33,7 @@ import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.ui.dialog.RouteSearchPoiDialog;
 import com.dudu.android.launcher.ui.dialog.StrategyChoiseDialog;
 import com.dudu.android.launcher.ui.view.CleanableCompletaTextView;
-import com.dudu.android.launcher.utils.ToastUtils;
+
 import com.dudu.android.launcher.utils.ViewAnimation;
 import com.dudu.event.MapResultShow;
 import com.dudu.map.NavigationProxy;
@@ -210,7 +210,8 @@ public class LocationMapActivity extends BaseNoTitlebarAcitivity implements Loca
         if (TextUtils.isEmpty(search_edit.getText().toString()))
             return;
         if (containsEmoji(search_edit.getText().toString())) {
-            ToastUtils.showToast("抱歉，您输入的关键字有误，请重新输入");
+            //抱歉，您输入的关键字有误，请重新输入
+
             return;
         }
         navigationManager.setKeyword(search_edit.getText().toString());

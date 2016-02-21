@@ -17,25 +17,25 @@
             <Button
                 android:id="@+id/number_button01"
                 style="@style/calling_button_style"
-                android:background="@drawable/blue_keyboard_one_selector"
+                android:background="@drawable/button_one_selector"
                 android:tag="1" />
 
             <Button
                 android:id="@+id/number_button02"
                 style="@style/calling_button_style"
-                android:background="@drawable/blue_keyboard_two_selector"
+                android:background="@drawable/button_two_selector"
                 android:tag="2" />
 
             <Button
                 android:id="@+id/number_button03"
                 style="@style/calling_button_style"
-                android:background="@drawable/blue_keyboard_three_selector"
+                android:background="@drawable/button_three_selector"
                 android:tag="3" />
 
             <Button
                 android:id="@+id/well_button"
                 style="@style/calling_button_style"
-                android:background="@drawable/blue_keyboard_well_selector"
+                android:background="@drawable/button_well_selector"
                 android:tag="#" />
         </TableRow>
 
@@ -44,25 +44,25 @@
             <Button
                 android:id="@+id/number_button04"
                 style="@style/calling_button_style"
-                android:background="@drawable/blue_keyboard_four_selector"
+                android:background="@drawable/button_four_selector"
                 android:tag="4" />
 
             <Button
                 android:id="@+id/number_button05"
                 style="@style/calling_button_style"
-                android:background="@drawable/blue_keyboard_five_selector"
+                android:background="@drawable/button_five_selector"
                 android:tag="5" />
 
             <Button
                 android:id="@+id/number_button06"
                 style="@style/calling_button_style"
-                android:background="@drawable/blue_keyboard_six_selector"
+                android:background="@drawable/button_six_selector"
                 android:tag="6" />
 
             <Button
                 android:id="@+id/number_button0"
                 style="@style/calling_button_style"
-                android:background="@drawable/blue_keyboard_zero_selector"
+                android:background="@drawable/button_zero_selector"
                 android:tag="0" />
         </TableRow>
 
@@ -71,25 +71,25 @@
             <Button
                 android:id="@+id/number_button07"
                 style="@style/calling_button_style"
-                android:background="@drawable/blue_keyboard_seven_selector"
+                android:background="@drawable/button_seven_selector"
                 android:tag="7" />
 
             <Button
                 android:id="@+id/number_button08"
                 style="@style/calling_button_style"
-                android:background="@drawable/blue_keyboard_eight_selector"
+                android:background="@drawable/button_eight_selector"
                 android:tag="8" />
 
             <Button
                 android:id="@+id/number_button09"
                 style="@style/calling_button_style"
-                android:background="@drawable/blue_keyboard_nine_selector"
+                android:background="@drawable/button_nine_selector"
                 android:tag="9" />
 
             <Button
                 android:id="@+id/rice_button"
                 style="@style/calling_button_style"
-                android:background="@drawable/blue_keyboard_rice_selector"
+                android:background="@drawable/button_rice_selector"
                 android:tag="*" />
         </TableRow>
     </TableLayout>

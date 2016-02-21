@@ -1,14 +1,5 @@
 package com.dudu.android.launcher.utils.cache;
 
-import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
-
-import com.dudu.android.launcher.utils.DialogUtils;
-import com.dudu.android.launcher.utils.FileUtils;
-
-import java.io.File;
-
 /**
  * Created by Administrator on 2015/12/5.
  */

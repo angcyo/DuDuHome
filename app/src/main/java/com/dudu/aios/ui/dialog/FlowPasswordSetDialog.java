@@ -11,8 +11,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
-
 import com.dudu.aios.ui.utils.KeyboardUtil;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.LogUtils;

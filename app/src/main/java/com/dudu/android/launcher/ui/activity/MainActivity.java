@@ -22,7 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.broadcast.TFlashCardReceiver;
@@ -316,8 +316,8 @@ public class MainActivity extends BaseTitlebarActivity implements
             mWeatherImage.setImageResource(WeatherUtils
                     .getWeatherIcon(WeatherUtils.getWeatherType(weather)));
         } else {
-            Toast.makeText(this, R.string.get_weather_info_failed,
-                    Toast.LENGTH_SHORT).show();
+            //获取天气失败
+
             lps.addRule(RelativeLayout.CENTER_HORIZONTAL);
             mWeatherView.setGravity(Gravity.CENTER);
             mWeatherView.setText(R.string.unkown_weather_info);

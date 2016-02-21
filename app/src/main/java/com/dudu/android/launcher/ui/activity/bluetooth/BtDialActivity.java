@@ -6,39 +6,48 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
+import com.dudu.aios.ui.base.BaseActivity;
 import com.dudu.android.launcher.R;
-import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.view.DigitsEditText;
+import com.dudu.android.launcher.utils.LogUtils;
 
-public class BtDialActivity extends BaseTitlebarActivity implements
+public class BtDialActivity extends BaseActivity implements
         View.OnClickListener, TextWatcher {
 
     private EditText mDigits;
 
     private Button mDialButton;
 
-    private Button mBackButton;
-
-    private Button mDeleteButton;
+    private ImageButton mBackButton, mDialKeyboardButton, mContactsButton, mDeleteButton;
 
     @Override
-    public int initContentView() {
-        return R.layout.activity_blue_tooth_dial;
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initView();
+        initListener();
     }
 
     @Override
-    public void initView(Bundle savedInstanceState) {
+    protected View getChildView() {
+        return LayoutInflater.from(this).inflate(R.layout.activity_blue_tooth_dial, null);
+    }
+
+    private void initView() {
         mDigits = (DigitsEditText) findViewById(R.id.dial_digits);
-        mDialButton = (Button) findViewById(R.id.dial_button);
-        mBackButton = (Button) findViewById(R.id.back_button);
-        mDeleteButton = (Button) findViewById(R.id.delete_button);
+        mDialButton = (Button) findViewById(R.id.button_dial);
+        mBackButton = (ImageButton) findViewById(R.id.back_button);
+        mDeleteButton = (ImageButton) findViewById(R.id.delete_button);
+        mDialKeyboardButton = (ImageButton) findViewById(R.id.button_dial_keyboard);
+        mContactsButton = (ImageButton) findViewById(R.id.button_contacts);
     }
 
-    @Override
+
     public void initListener() {
         mDigits.setOnClickListener(this);
         mDigits.addTextChangedListener(this);
@@ -46,62 +55,24 @@ public class BtDialActivity extends BaseTitlebarActivity implements
         mDialButton.setOnClickListener(this);
         mBackButton.setOnClickListener(this);
         mDeleteButton.setOnClickListener(this);
+        mDialKeyboardButton.setOnClickListener(this);
+        mContactsButton.setOnClickListener(this);
     }
 
-    @Override
-    public void initDatas() {
-
-    }
 
     public void onDialButtonClick(View view) {
         if (mDeleteButton.getVisibility() == View.INVISIBLE) {
             mDeleteButton.setVisibility(View.VISIBLE);
         }
+        handleDialButtonClick((String) view.getTag());
+        LogUtils.v("keyboard", "--" + view.getTag());
 
-        switch (view.getId()) {
-            case R.id.number_button01:
-                handleDialButtonClick("1");
-                break;
-            case R.id.number_button02:
-                handleDialButtonClick("2");
-                break;
-            case R.id.number_button03:
-                handleDialButtonClick("3");
-                break;
-            case R.id.well_button:
-                handleDialButtonClick("#");
-                break;
-            case R.id.number_button04:
-                handleDialButtonClick("4");
-                break;
-            case R.id.number_button05:
-                handleDialButtonClick("5");
-                break;
-            case R.id.number_button06:
-                handleDialButtonClick("6");
-                break;
-            case R.id.number_button0:
-                handleDialButtonClick("0");
-                break;
-            case R.id.number_button07:
-                handleDialButtonClick("7");
-                break;
-            case R.id.number_button08:
-                handleDialButtonClick("8");
-                break;
-            case R.id.number_button09:
-                handleDialButtonClick("9");
-                break;
-            case R.id.rice_button:
-                handleDialButtonClick("*");
-                break;
-        }
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.dial_button:
+            case R.id.button_dial:
                 doDial();
                 break;
             case R.id.back_button:
@@ -109,6 +80,10 @@ public class BtDialActivity extends BaseTitlebarActivity implements
                 break;
             case R.id.delete_button:
                 removeSelectedDigit();
+                break;
+            case R.id.button_dial_keyboard:
+                break;
+            case R.id.button_contacts:
                 break;
         }
     }
@@ -176,11 +151,39 @@ public class BtDialActivity extends BaseTitlebarActivity implements
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+        if (s == null || s.length() == 0) return;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            if (i != 3 && i != 8 && s.charAt(i) == ' ') {
+                continue;
+            } else {
+                sb.append(s.charAt(i));
+                if ((sb.length() == 4 || sb.length() == 9) && sb.charAt(sb.length() - 1) != ' ') {
+                    sb.insert(sb.length() - 1, ' ');
+                }
+            }
+        }
+        if (!sb.toString().equals(s.toString())) {
+            int index = start + 1;
+            if (sb.charAt(start) == ' ') {
+                if (before == 0) {
+                    index++;
+                } else {
+                    index--;
+                }
+            } else {
+                if (before == 1) {
+                    index--;
+                }
+            }
+            mDigits.setText(sb.toString());
+            mDigits.setSelection(index);
+        }
     }
 
     @Override
     public void afterTextChanged(Editable s) {
 
     }
+
 }

@@ -14,8 +14,7 @@ import com.dudu.aios.ui.activity.video.PhotoListActivity;
 import com.dudu.aios.ui.fragment.base.BaseFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.R;
-import com.dudu.commonlib.CommonLib;
-import com.dudu.commonlib.utils.uiutils.ToastUtils;
+
 import com.dudu.drivevideo.DriveVideo;
 import com.dudu.drivevideo.video.CameraPreview;
 
@@ -95,13 +94,14 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
     }
 
     private void startRearCamera(){
-        ToastUtils.showToastLong("后门开启后置摄像头");
+        //后门开启后置摄像头
         DriveVideo.getInstance().getRearCameraVideoService().setIsUsbVideoEnabled(true);
         DriveVideo.getInstance().getRearCameraVideoService().startDriveVideo();
     }
 
     private void stopRearCamera(){
-        ToastUtils.showToastLong("后门关闭后置摄像头");
+        //后门关闭后置摄像头
+
         DriveVideo.getInstance().getRearCameraVideoService().setIsUsbVideoEnabled(false);
         DriveVideo.getInstance().getRearCameraVideoService().stopDriveVideo();
     }

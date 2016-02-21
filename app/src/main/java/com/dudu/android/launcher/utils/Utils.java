@@ -48,7 +48,6 @@ public class Utils {
             context.startActivity(intent);
             return true;
         } else {
-            ToastUtils.showToast(stringId);
             return false;
         }
     }

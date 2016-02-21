@@ -17,8 +17,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.dudu.aios.ui.activity.MainRecordActivity;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.R;
@@ -127,7 +125,7 @@ public class PhotoListFragment extends Fragment implements View.OnClickListener 
 
     private void actionDelete() {
         if (mChooseData.size() == 0) {
-            Toast.makeText(getActivity(), getResources().getString(R.string.no_choose_photo), Toast.LENGTH_SHORT).show();
+           //你还没有选择图片
             return;
         }
         for (int i = 0; i < mPhotoData.size(); i++) {

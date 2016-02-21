@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-
 import de.greenrobot.event.EventBus;
 
 
@@ -67,7 +66,7 @@ public class FlowManage {
      */
     public void onEventBackgroundThread(FlowUploadResponse flowUploadResponse) {
         float remianFlow = flowUploadResponse.getRemainingFlow();
-        log.info("FlowUploadResponse剩余流量：{}",remianFlow);
+        log.info("FlowUploadResponse剩余流量：{}", remianFlow);
         SharedPreferencesUtils.putStringValue(mContext, Constants.KEY_REMAINING_FLOW, String.valueOf(remianFlow));
 
         log.info("流量开关：{}", flowUploadResponse.getTrafficControl());
@@ -169,11 +168,11 @@ public class FlowManage {
      * @return
      */
     public void onEventBackgroundThread(SwitchFlow switchFlow) {
-        log.info("流量开关：{}",switchFlow.getTrafficControl());
+        log.info("流量开关：{}", switchFlow.getTrafficControl());
         proSwitchFlow(switchFlow.getTrafficControl());
     }
 
-    private void proSwitchFlow(int switchState){
+    private void proSwitchFlow(int switchState) {
         switch (switchState) {
             case ConnectionConstants.RESULT_TRAFFIC_CONTROL_OPEN:
                 WifiApAdmin.initWifiApState(mContext);
@@ -217,7 +216,7 @@ public class FlowManage {
      * @return
      */
     public void onEventBackgroundThread(DataExceptionAlarm dataExceptionAlarm) {
-        log.info("流量异常报警值：{}",dataExceptionAlarm.getAlarmLevel());
+        log.info("流量异常报警值：{}", dataExceptionAlarm.getAlarmLevel());
         switch (dataExceptionAlarm.getAlarmLevel()) {
             case ConnectionConstants.FIELD_ALARM_LEVEL_OPEN:
                 //   0:正常
@@ -231,19 +230,20 @@ public class FlowManage {
     }
 
 
-
     /* 释放资源*/
     public void release() {
         EventBus.getDefault().unregister(this);
         instance = null;
     }
-    public void onEventMainThread(Port port){
-//        Toast.makeText(mContext, port.data, Toast.LENGTH_SHORT).show();//提示先去掉
+
+    public void onEventMainThread(Port port) {
+        //提示先去掉
     }
 
-    public class Port{
+    public class Port {
         String data;
-        public Port(String data){
+
+        public Port(String data) {
             this.data = data;
         }
     }

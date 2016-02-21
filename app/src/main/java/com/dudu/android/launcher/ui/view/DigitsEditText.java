@@ -1,7 +1,9 @@
 package com.dudu.android.launcher.ui.view;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -16,7 +18,14 @@ public class DigitsEditText extends EditText {
     public DigitsEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
         setInputType(getInputType() | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        init(context);
         setShowSoftInputOnFocus(false);
+    }
+
+    private void init(Context context) {
+        AssetManager assetManager = context.getAssets();
+        Typeface font = Typeface.createFromAsset(assetManager, "FZLTXHK.TTF");
+        setTypeface(font);
     }
 
     @Override

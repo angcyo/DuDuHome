@@ -11,7 +11,7 @@ import android.widget.ImageButton;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.utils.FileUtils;
-import com.dudu.android.launcher.utils.ToastUtils;
+
 import com.dudu.android.launcher.utils.ViewAnimation;
 import com.dudu.video.VideoManager;
 
@@ -101,7 +101,8 @@ public class VideoActivity extends BaseNoTitlebarAcitivity {
     @Override
     public void initDatas() {
         if (!FileUtils.isTFlashCardExists()) {
-            ToastUtils.showToast(R.string.video_sdcard_removed_alert);
+            //没有插入SD卡，不能存储行车录像!
+
 //            mVideoManager.startPreview();
         }
     }

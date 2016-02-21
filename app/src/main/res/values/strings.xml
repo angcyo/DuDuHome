@@ -200,4 +200,7 @@
     <string name="to_navigate">导航前往</string>
     <string name="distance_ch">距离</string>
 
+    <string name="dial_keyboard">拨号键盘</string>
+    <string name="contacts">通讯录</string>
+
 </resources>

@@ -30,7 +30,7 @@ import com.dudu.android.launcher.ui.activity.base.BaseNoTitlebarAcitivity;
 import com.dudu.android.launcher.ui.view.VideoView;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.FileUtils;
-import com.dudu.android.launcher.utils.ToastUtils;
+
 import com.dudu.android.launcher.utils.ViewAnimation;
 
 import java.io.File;
@@ -259,7 +259,7 @@ public class VideoPlayActivity extends BaseNoTitlebarAcitivity implements OnClic
                 position--;
                 mVideoView.setVideoURI(Uri.fromFile(mPlayList.get(position).getFile()));
             } else {
-                ToastUtils.showToast(R.string.video_start_alert);
+//已经是第一个视屏
             }
         } else if (v.getId() == R.id.next_button) {
             if (position < mPlayList.size() - 1) {
@@ -268,7 +268,7 @@ public class VideoPlayActivity extends BaseNoTitlebarAcitivity implements OnClic
                 mPaused = false;
                 mVideoView.setVideoURI(Uri.fromFile(mPlayList.get(position).getFile()));
             } else {
-                ToastUtils.showToast(R.string.video_end_alert);
+                //最后一个视屏
             }
         } else if (v.getId() == R.id.pause_button) {
             if (mPaused) {

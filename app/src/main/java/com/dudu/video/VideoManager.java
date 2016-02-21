@@ -22,10 +22,7 @@ import com.dudu.android.launcher.R;
 
 import com.dudu.android.launcher.db.DbHelper;
 import com.dudu.android.launcher.model.VideoEntity;
-
 import com.dudu.android.launcher.utils.FileUtils;
-import com.dudu.android.launcher.utils.StatusBarManager;
-import com.dudu.android.launcher.utils.ToastUtils;
 import com.dudu.event.DeviceEvent;
 
 
@@ -111,7 +108,8 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case VIDEO_CACHE_FULL:
-                    ToastUtils.showToast(R.string.video_cache_space_full_alert);
+                    //存储空间已满，请手动释放存储空间!
+
                     break;
                 case VIDEO_START_RETRY:
                     setUpCamera();
@@ -289,8 +287,7 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
 
     public void onTFlashCardInserted() {
         log.debug("TFlashCard插入...");
-
-        ToastUtils.showToast(R.string.video_sdcard_inserted_alert);
+        //已插入SD卡
 
         mVideoStoragePath = FileUtils.getVideoStorageDirWhenInsertSdcard();
 
@@ -304,7 +301,7 @@ public class VideoManager implements SurfaceHolder.Callback, MediaRecorder.OnErr
     public void onTFlashCardRemoved() {
         log.info("TFlashCard拔出...");
 
-        ToastUtils.showToast(R.string.video_sdcard_removed_alert);
+        //没有插入SD卡，不能存储行车录像!
 
         setUpCamera();
 

@@ -2,11 +2,6 @@ package com.dudu.utils;
 
 import android.content.Context;
 import android.os.Environment;
-import android.util.Log;
-import android.widget.Toast;
-
-
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

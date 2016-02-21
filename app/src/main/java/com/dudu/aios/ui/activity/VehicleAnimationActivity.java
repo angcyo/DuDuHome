@@ -15,7 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 import com.dudu.aios.ui.base.BaseActivity;
 import com.dudu.aios.ui.utils.StringUtil;

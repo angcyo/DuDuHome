@@ -12,7 +12,7 @@ import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.broadcast.ReceiverRegister;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.utils.IPConfig;
-import com.dudu.android.launcher.utils.ToastUtils;
+
 import com.dudu.network.NetworkManage;
 import com.dudu.workflow.common.CommonParams;
 import com.dudu.workflow.common.DataFlowFactory;
@@ -163,7 +163,8 @@ public class IpConfigActivity extends BaseTitlebarActivity {
         DataFlowFactory.getUserDataFlow().saveUserName(userName);
         ReceiverRegister.registPushManager(userName);
         if (ipConfig.changeConfig(ip, testIP, port, testPort, isTest)) {
-            ToastUtils.showToast("修改成功！");
+            //修改成功
+
             NetworkManage.getInstance().release();
             if (isTest) {
                 ip = testIP;

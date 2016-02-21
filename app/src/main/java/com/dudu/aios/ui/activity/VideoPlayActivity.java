@@ -18,7 +18,7 @@ import com.dudu.aios.ui.base.BaseActivity;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.view.VideoView;
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.android.launcher.utils.ToastUtils;
+
 import com.dudu.drivevideo.model.VideoEntity;
 import com.dudu.drivevideo.storage.VideoFileManage;
 
@@ -238,7 +238,7 @@ public class VideoPlayActivity extends BaseActivity  implements View.OnClickList
             mPaused = false;
             videoView.setVideoURI(Uri.fromFile(mPlayList.get(position).getFile()));
         } else {
-//            ToastUtils.showToast(R.string.video_end_alert);
+//
         }
     }
 
@@ -260,7 +260,7 @@ public class VideoPlayActivity extends BaseActivity  implements View.OnClickList
             position--;
             videoView.setVideoURI(Uri.fromFile(mPlayList.get(position).getFile()));
         } else {
-//            ToastUtils.showToast(R.string.video_start_alert);
+//
         }
     }
 }

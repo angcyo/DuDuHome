@@ -51,8 +51,8 @@
     <dimen name="sp_20">20sp</dimen>
     <dimen name="sp_40">40sp</dimen>
 
-    <dimen name="number_table_marginLeft">5dp</dimen>
-    <dimen name="tv_phone_number_textSize">23sp</dimen>
+    <dimen name="number_table_marginLeft">40dp</dimen>
+    <dimen name="tv_phone_number_textSize">40sp</dimen>
     <dimen name="message_listView_marginLeft">200dp</dimen>
     <dimen name="map_ListView_marginLeft">200dp</dimen>
 

@@ -32,10 +32,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
-
 import com.dudu.android.launcher.BuildConfig;
-import com.dudu.android.launcher.R;
 
 /**
  * A simple subclass of {@link ImageResizer} that fetches and resizes images fetched from a URL.
@@ -173,7 +170,8 @@ public class ImageFetcher extends ImageResizer {
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         final NetworkInfo networkInfo = cm.getActiveNetworkInfo();
         if (networkInfo == null || !networkInfo.isConnectedOrConnecting()) {
-            Toast.makeText(context, R.string.no_network_connection_toast, Toast.LENGTH_LONG).show();
+            //没有网络
+
             Log.e(TAG, "checkConnection - no connection found");
         }
     }

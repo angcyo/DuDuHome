@@ -11,7 +11,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 import com.dudu.aios.ui.fragment.base.BaseFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
@@ -214,8 +214,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
             mWeatherImage.setImageResource(WeatherUtils
                     .getWeatherIcon(WeatherUtils.getWeatherType(weather)));
         } else {
-            Toast.makeText(getActivity(), R.string.get_weather_info_failed,
-                    Toast.LENGTH_SHORT).show();
+           //获取天气失败
             mWeatherView.setGravity(Gravity.CENTER);
             mWeatherView.setText(R.string.unkown_weather_info);
             mTemperatureView.setText("");

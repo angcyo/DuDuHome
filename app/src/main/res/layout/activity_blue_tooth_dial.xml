@@ -2,160 +2,194 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_bg"
     android:orientation="horizontal">
 
-    <Button
+    <ImageButton
         android:id="@+id/back_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:background="@drawable/back_button_selector" />
+        android:layout_gravity="bottom"
+        android:background="@drawable/button_back_selector" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/button_dial_keyboard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_dial_keyboard_selector" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/dial_keyboard"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="23dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/button_contacts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_contacts_selector" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/contacts"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
 
     <TableLayout
         android:id="@+id/number_table"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="@dimen/number_table_marginLeft">
+        android:layout_marginLeft="@dimen/number_table_marginLeft"
+        android:layout_marginTop="4dp">
 
         <TableRow>
 
             <Button
-                android:id="@+id/number_button01"
+                android:id="@+id/button_one"
                 style="@style/dial_button_style"
-                android:background="@drawable/blue_keyboard_one_selector"
+                android:background="@drawable/button_one_selector"
                 android:tag="1" />
 
             <Button
-                android:id="@+id/number_button02"
+                android:id="@+id/button_two"
                 style="@style/dial_button_style"
-                android:background="@drawable/blue_keyboard_two_selector"
+                android:background="@drawable/button_two_selector"
                 android:tag="2" />
 
             <Button
-                android:id="@+id/number_button03"
+                android:id="@+id/button_three"
                 style="@style/dial_button_style"
-                android:background="@drawable/blue_keyboard_three_selector"
+                android:background="@drawable/button_three_selector"
                 android:tag="3" />
 
             <Button
-                android:id="@+id/well_button"
+                android:id="@+id/button_well"
                 style="@style/dial_button_style"
-                android:background="@drawable/blue_keyboard_well_selector"
+                android:background="@drawable/button_well_selector"
                 android:tag="#" />
         </TableRow>
 
         <TableRow>
 
             <Button
-                android:id="@+id/number_button04"
+                android:id="@+id/button_four"
                 style="@style/dial_button_style"
-                android:background="@drawable/blue_keyboard_four_selector"
+                android:background="@drawable/button_four_selector"
                 android:tag="4" />
 
             <Button
-                android:id="@+id/number_button05"
+                android:id="@+id/button_five"
                 style="@style/dial_button_style"
-                android:background="@drawable/blue_keyboard_five_selector"
+                android:background="@drawable/button_five_selector"
                 android:tag="5" />
 
             <Button
-                android:id="@+id/number_button06"
+                android:id="@+id/button_six"
                 style="@style/dial_button_style"
-                android:background="@drawable/blue_keyboard_six_selector"
+                android:background="@drawable/button_six_selector"
                 android:tag="6" />
 
             <Button
-                android:id="@+id/number_button0"
+                android:id="@+id/button_zero"
                 style="@style/dial_button_style"
-                android:background="@drawable/blue_keyboard_zero_selector"
+                android:background="@drawable/button_zero_selector"
                 android:tag="0" />
         </TableRow>
 
         <TableRow>
 
             <Button
-                android:id="@+id/number_button07"
+                android:id="@+id/button_seven"
                 style="@style/dial_button_style"
-                android:background="@drawable/blue_keyboard_seven_selector"
+                android:background="@drawable/button_seven_selector"
                 android:tag="7" />
 
             <Button
-                android:id="@+id/number_button08"
+                android:id="@+id/button_eight"
                 style="@style/dial_button_style"
-                android:background="@drawable/blue_keyboard_eight_selector"
+                android:background="@drawable/button_eight_selector"
                 android:tag="8" />
 
             <Button
-                android:id="@+id/number_button09"
+                android:id="@+id/button_nine"
                 style="@style/dial_button_style"
-                android:background="@drawable/blue_keyboard_nine_selector"
+                android:background="@drawable/button_nine_selector"
                 android:tag="9" />
 
             <Button
-                android:id="@+id/rice_button"
+                android:id="@+id/button_rice"
                 style="@style/dial_button_style"
-                android:background="@drawable/blue_keyboard_rice_selector"
+                android:background="@drawable/button_rice_selector"
                 android:tag="*" />
         </TableRow>
     </TableLayout>
 
-    <RelativeLayout
-        android:id="@+id/right_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="6dp"
-        android:layout_marginTop="30dp"
-        android:gravity="center_horizontal">
+    <Button
+        android:id="@+id/button_dial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="62dp"
+        android:background="@drawable/button_dial_selector" />
 
-        <LinearLayout
-            android:id="@+id/linear_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal">
 
-            <com.dudu.android.launcher.ui.view.DigitsEditText
-                android:id="@+id/dial_digits"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:scrollHorizontally="true"
-                android:singleLine="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:background="@android:color/transparent"
-                android:maxLines="1"
-                android:textSize="@dimen/tv_phone_number_textSize"
-                android:freezesText="true"
-                android:focusableInTouchMode="true"
-                android:editable="true"
-                android:textColor="@color/white"
-                android:cursorVisible="false"
-                android:fontFamily="sans-serif-light"
-                android:textStyle="normal" />
+    <com.dudu.android.launcher.ui.view.DigitsEditText
+        android:id="@+id/dial_digits"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="55dp"
+        android:background="@android:color/transparent"
+        android:cursorVisible="false"
+        android:editable="true"
+        android:focusableInTouchMode="true"
+        android:fontFamily="sans-serif-light"
+        android:freezesText="true"
+        android:maxLines="1"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/tv_phone_number_textSize"
+        android:textStyle="normal" />
 
-            <Button
-                android:id="@+id/delete_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="3dp"
-                android:layout_marginRight="3dp"
-                android:background="@drawable/blue_delete_button_selector"
-                android:visibility="invisible" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/dial_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/linear_container"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="40dp"
-            android:background="@drawable/blue_dial_button_selector" />
-
-    </RelativeLayout>
-
+    <ImageButton
+        android:id="@+id/delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="19dp"
+        android:background="@drawable/button_bt_delete_selector"
+        android:visibility="invisible" />
 
 </LinearLayout>
