@@ -27,6 +27,14 @@ public class ObservableFactory {
         robberyFlow.saveRobberyDataFlow(syncAppRobberyFlow());
     }
 
+    public static Observable<Boolean> getLightErrorObservable(){
+        return RxBus.getInstance().asObservable()
+                .filter(event ->
+                        event instanceof Boolean)
+                .map(receivedEvent ->
+                        (Boolean) receivedEvent);
+    }
+
     private static Observable<ReceiverData> getReceiverObservable() {
         return RxBus.getInstance().asObservable()
                 .filter(event ->

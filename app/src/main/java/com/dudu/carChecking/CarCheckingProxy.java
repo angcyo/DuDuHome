@@ -1,10 +1,9 @@
 package com.dudu.carChecking;
 
 import android.content.Intent;
+import android.util.Log;
 
-import com.dudu.aios.ui.activity.CarCheckingActivity;
 import com.dudu.aios.ui.activity.VehicleAnimationActivity;
-import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.commonlib.CommonLib;
 import com.dudu.voice.VoiceManagerProxy;
 import com.dudu.voice.semantic.constant.TTSType;
@@ -110,6 +109,19 @@ public class CarCheckingProxy {
             e.printStackTrace();
         }
 
+        ObservableFactory.syncAppRobberyFlow()
+                .map(receiverData -> {
+                    Log.d("lxh","---------receiverData " +receiverData.getSwitch1Value());
+                    return receiverData.getSwitch1Value().equals("1");
+                })
+                .subscribe(aBoolean -> {
+                    if (aBoolean) {
+                        Log.d("lxh","---------receiverData 22222");
+                    showCheckingError(CarCheckType.WSB);
+                    }
+
+                });
+
     }
 
 
@@ -141,15 +153,20 @@ public class CarCheckingProxy {
                 break;
             case TCM:
                 playText = "质量或体积空气流量传感器B电路发生故障,";
-                intent.putExtra("vehicle", "tcm");
+                intent.putExtra("vehicle", "gearbox");
                 break;
             case ECM:
-                playText = "来自发动机控制模块/动力传动控制模块的数据无效,";
-                intent.putExtra("vehicle", "ecm");
-
+                playText = "来自发动机控制模块或动力传动控制模块的数据无效,";
+                intent.putExtra("vehicle", "engine");
                 break;
+            case WSB:
+                playText = "左前轮胎压异常,";
+                intent.putExtra("vehicle", "wsb");
+                break;
+
         }
         playText = "检测到您的车辆" + playText + "已经为您找到以下汽车修理店，选择第几个前往修理或退出";
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         CommonLib.getInstance().getContext().startActivity(intent);
         VoiceManagerProxy.getInstance().startSpeaking(playText, TTSType.TTS_START_UNDERSTANDING, false);
     }

@@ -90,18 +90,9 @@
 
             <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                 android:id="@+id/text_message1"
-                android:layout_width="wrap_content"
+                android:layout_width="220dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25dp"
-                android:text="左前轮胎压异常"
-                android:textColor="@color/white"
-                android:textSize="20sp" />
-
-            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
-                android:id="@+id/text_message2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="17dp"
                 android:text="左前轮胎压异常"
                 android:textColor="@color/white"
                 android:textSize="20sp" />

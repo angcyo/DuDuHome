@@ -8,6 +8,7 @@ public enum CarCheckType {
     SRS,
     TCM,
     ECM,
-    ABS
+    ABS,
+    WSB
 
 }

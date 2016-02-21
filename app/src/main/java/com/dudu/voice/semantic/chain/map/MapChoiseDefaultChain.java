@@ -12,11 +12,11 @@ import com.dudu.voice.semantic.constant.TTSType;
  */
 public class MapChoiseDefaultChain extends DefaultChain {
 
-    private static final String NEXT_PAGE = "下一页";
-    private static final String SHORT_NEXT_PAGE = "下页";
+    public static final String NEXT_PAGE = "下一页";
+    public static final String SHORT_NEXT_PAGE = "下页";
 
-    private static final String PREVIOUS_PAGE = "上一页";
-    private static final String SHORT_PREVIOUS_PAGE = "上页";
+    public static final String PREVIOUS_PAGE = "上一页";
+    public static final String SHORT_PREVIOUS_PAGE = "上页";
 
     private NavigationProxy mProxy;
 

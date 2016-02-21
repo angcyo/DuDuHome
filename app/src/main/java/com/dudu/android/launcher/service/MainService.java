@@ -33,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
+import rx.Subscription;
 import rx.functions.Action1;
 
 
@@ -58,6 +59,7 @@ public class MainService extends Service {
 
     private ScheduledExecutorService carCheckingExecutor;
 
+    private Subscription registerSub = null;
 
     @Override
     public void onCreate() {
@@ -211,6 +213,13 @@ public class MainService extends Service {
         @Override
         public void run() {
             super.run();
+
+            if (registerSub == null) {
+                registerSub = Observable.just("").subscribe(s -> {
+
+                    CarCheckingProxy.getInstance().registerCarCheckingError();
+                });
+            }
             CarCheckingProxy.getInstance().startCarChecking();
         }
     };

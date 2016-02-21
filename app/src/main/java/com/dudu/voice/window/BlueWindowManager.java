@@ -15,7 +15,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import com.dudu.aios.ui.activity.CarCheckingActivity;
 import com.dudu.aios.ui.activity.MainRecordActivity;
+import com.dudu.aios.ui.activity.VehicleAnimationActivity;
 import com.dudu.aios.ui.base.VolBrightnessSetting;
 import com.dudu.aios.ui.utils.blur.RxBlurEffective;
 import com.dudu.aios.ui.voice.VoiceCircleAnimView;
@@ -233,7 +235,10 @@ public class BlueWindowManager extends BaseWindowManager {
 
         stopAnimWindow();
 
-        SemanticEngine.getProcessor().switchSemanticType(SceneType.HOME);
+        if (!(ActivitiesManager.getInstance().getTopActivity() instanceof VehicleAnimationActivity)
+                && !(ActivitiesManager.getInstance().getTopActivity() instanceof CarCheckingActivity)) {
+            SemanticEngine.getProcessor().switchSemanticType(SceneType.HOME);
+        }
 
 
         mMessageData.clear();
