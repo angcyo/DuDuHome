@@ -12,6 +12,7 @@ import com.dudu.workflow.common.ReceiverDataFlow;
 import com.dudu.workflow.obd.CarCheckFlow;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,12 @@ public class CarCheckingProxy {
     public CarCheckingProxy() {
 
         subList = new ArrayList<>();
+<<<<<<< HEAD
         EventBus.getDefault().register(this);
+=======
+        log = LoggerFactory.getLogger("carChecking");
+
+>>>>>>> 34ab05f... add carChecking log
     }
 
     public static CarCheckingProxy getInstance() {
@@ -51,15 +57,19 @@ public class CarCheckingProxy {
 
     public void startCarChecking() {
 
+        log.debug("carChecking startCarChecking");
+
         try {
             CarCheckFlow.startCarCheck();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("carChecking error ",e);
+
         }
     }
 
     public void registerCarCheckingError() {
 
+        log.debug("carChecking registerCarCheckingError");
         try {
             Subscription tcm = ObservableFactory.engineFailed().subscribe(s -> {
                 if (!isTCMbroadcasted || isClearedFault) {
@@ -72,7 +82,7 @@ public class CarCheckingProxy {
             subList.add(tcm);
 
         } catch (Exception e) {
-            e.printStackTrace();
+           log.error("carChecking error ",e);
         }
 
         try {
@@ -87,7 +97,7 @@ public class CarCheckingProxy {
 
             subList.add(abs);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("carChecking error ",e);
         }
 
 
@@ -105,7 +115,8 @@ public class CarCheckingProxy {
             });
             subList.add(ecm);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("carChecking error ",e);
+
         }
 
 
@@ -120,7 +131,8 @@ public class CarCheckingProxy {
             });
             subList.add(srs);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("carChecking error ", e);
+
         }
 
     }
@@ -141,16 +153,20 @@ public class CarCheckingProxy {
 
     public void clearFault() {
 
+        log.debug("carChecking clearFault");
+
         try {
             isClearedFault = true;
             CarCheckFlow.clearCarCheckError();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("carChecking error ",e);
         }
 
     }
 
     public void showCheckingError(CarCheckType type) {
+
+        log.debug("carChecking showCheckingError {}",type);
 
         String playText = "";
 

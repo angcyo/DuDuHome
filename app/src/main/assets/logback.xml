@@ -168,6 +168,19 @@
         </rollingPolicy>
     </appender>
 
+    <appender name="FILE_CARCHECKING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/log_phone.today.txt</file>
+        <encoder>
+            <pattern>%date [%thread] %-5level %logger{36} [%file:%line] - %msg%n</pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/log_phone.%d.txt</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+
     <logger name="init" level="DEBUG">
         <appender-ref ref="FILE_INIT"/>
     </logger>
@@ -214,6 +227,10 @@
 
     <logger name="phone" level="DEBUG">
         <appender-ref ref="FILE"/>
+    </logger>
+
+    <logger name="carChecking" level="DEBUG">
+        <appender-ref ref="FILE_CARCHECKING"/>
     </logger>
 
     <root level="DEBUG">
