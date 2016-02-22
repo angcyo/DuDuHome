@@ -6,23 +6,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
 import com.dudu.android.launcher.R;
-import com.dudu.commonlib.utils.RxBus;
+import com.dudu.commonlib.repo.ReceiverData;
 import com.dudu.workflow.common.CommonParams;
 import com.dudu.workflow.common.DataFlowFactory;
 import com.dudu.workflow.common.ObservableFactory;
+import com.dudu.workflow.common.ReceiverDataFlow;
 import com.dudu.workflow.common.RequestFactory;
 import com.dudu.workflow.robbery.RobberyRequest;
 import com.dudu.workflow.robbery.RobberyStateModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-import rx.Observable;
+import de.greenrobot.event.EventBus;
 import rx.Subscription;
-import rx.functions.Action1;
 
 public class RobberyFragment extends Fragment implements View.OnClickListener {
 
@@ -141,7 +143,8 @@ public class RobberyFragment extends Fragment implements View.OnClickListener {
                                     logger.debug("Gun toggle robbery, sync to app");
                                     requestCheckSwitch(CommonParams.ROBBERYSTATE, true);
                                     DataFlowFactory.getSwitchDataFlow().saveRobberyState(true);
-                                    RxBus.getInstance().send(new RobberyStateModel(true));
+//                                    RxBus.getInstance().send(new RobberyStateModel(true));
+                                    EventBus.getDefault().post(new RobberyStateModel(true));
                                 });
             } catch (IOException e) {
                 logger.error("gun3Toggle exception", e);
@@ -161,12 +164,6 @@ public class RobberyFragment extends Fragment implements View.OnClickListener {
                     checkGunSwitch(robberySwitches.isGun());
                 });
 
-        ObservableFactory.syncAppRobberyFlow()
-                .subscribe(receiverData -> {
-                    checkHeadLightSwitch(receiverData.getSwitch1Value().equals("1"));
-                    checkParkSwitch(receiverData.getSwitch2Value().equals("1"));
-                    checkGunSwitch(receiverData.getSwitch3Value().equals("1"));
-                });
         RequestFactory.getRobberyRequest()
                 .getRobberyState(new RobberyRequest.RobberStateCallback() {
                     @Override
@@ -181,5 +178,14 @@ public class RobberyFragment extends Fragment implements View.OnClickListener {
                         logger.equals(error);
                     }
                 });
+    }
+
+    public void onEventMainThread(ReceiverData receiverData) {
+        if(ReceiverDataFlow.getGuardReceiveData(receiverData)){
+            checkHeadLightSwitch(receiverData.getSwitch1Value().equals("1"));
+            checkParkSwitch(receiverData.getSwitch2Value().equals("1"));
+            checkGunSwitch(receiverData.getSwitch3Value().equals("1"));
+            ReceiverDataFlow.saveRobberyReceiveData(receiverData);
+        }
     }
 }

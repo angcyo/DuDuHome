@@ -13,9 +13,7 @@ import com.dudu.aios.ui.fragment.base.BaseFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.R;
 import com.dudu.workflow.common.DataFlowFactory;
-import com.dudu.workflow.common.ObservableFactory;
-
-import rx.functions.Action1;
+import com.dudu.workflow.robbery.RobberyStateModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,16 +90,14 @@ public class SafetyFragment extends BaseFragment implements View.OnClickListener
                 }),()->{
                     logger.debug("DataFlowFactory finish");
                 });
-        ObservableFactory.getRobberyStateObservable()
-                .subscribe(new Action1<Boolean>() {
-                    @Override
-                    public void call(Boolean aBoolean) {
-                        if(aBoolean){
-                            DataFlowFactory.getSwitchDataFlow().saveRobberyState(aBoolean);
-                            getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyLockFragment()).commit();
-                        }
-                    }
-                });
+
+    }
+
+    public void onEventMainThread(RobberyStateModel event) {
+        if(event.getRobberyState()){
+            DataFlowFactory.getSwitchDataFlow().saveRobberyState(true);
+            getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyLockFragment()).commit();
+        }
     }
 
     private void actionGuard() {
@@ -130,4 +126,6 @@ public class SafetyFragment extends BaseFragment implements View.OnClickListener
         ((TextView) view.findViewById(R.id.text_vehicle_robbery_en)).setTextColor(getResources().getColor(R.color.unchecked_textColor));
 
     }
+
+
 }

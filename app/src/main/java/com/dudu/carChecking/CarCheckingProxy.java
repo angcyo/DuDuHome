@@ -4,9 +4,11 @@ import android.content.Intent;
 
 import com.dudu.aios.ui.activity.VehicleAnimationActivity;
 import com.dudu.commonlib.CommonLib;
+import com.dudu.commonlib.repo.ReceiverData;
 import com.dudu.voice.VoiceManagerProxy;
 import com.dudu.voice.semantic.constant.TTSType;
 import com.dudu.workflow.common.ObservableFactory;
+import com.dudu.workflow.common.ReceiverDataFlow;
 import com.dudu.workflow.obd.CarCheckFlow;
 
 import org.slf4j.Logger;
@@ -14,6 +16,7 @@ import org.slf4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
 import rx.Subscription;
 
 /**
@@ -34,7 +37,7 @@ public class CarCheckingProxy {
     public CarCheckingProxy() {
 
         subList = new ArrayList<>();
-
+        EventBus.getDefault().register(this);
     }
 
     public static CarCheckingProxy getInstance() {
@@ -120,21 +123,19 @@ public class CarCheckingProxy {
             e.printStackTrace();
         }
 
-        ObservableFactory.syncAppRobberyFlow()
-                .map(receiverData -> {
-                    return receiverData.getSwitch1Value().equals("1");
-                })
-                .subscribe(aBoolean -> {
-                    if (aBoolean) {
-                        if (!isWSBbroadcasted || isClearedFault) {
+    }
+
+    public void onEventMainThread(ReceiverData receiverData) {
+        if(ReceiverDataFlow.getRobberyReceiveData(receiverData)){
+            if(receiverData.getSwitch1Value().equals("1")){
+                 if (!isWSBbroadcasted || isClearedFault) {
                             isWSBbroadcasted = true;
                             isClearedFault = false;
                             showCheckingError(CarCheckType.WSB);
                         }
-                    }
-
-                });
-
+            }
+            ReceiverDataFlow.saveRobberyReceiveData(receiverData);
+        }
     }
 
 

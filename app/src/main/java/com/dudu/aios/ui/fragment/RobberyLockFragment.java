@@ -9,8 +9,9 @@ import android.widget.TextView;
 
 import com.dudu.aios.ui.robbery.RobberyConstant;
 import com.dudu.android.launcher.R;
+import com.dudu.commonlib.repo.ReceiverData;
 import com.dudu.workflow.common.DataFlowFactory;
-import com.dudu.workflow.common.ObservableFactory;
+import com.dudu.workflow.common.ReceiverDataFlow;
 import com.dudu.workflow.common.RequestFactory;
 import com.dudu.workflow.robbery.RobberyRequest;
 
@@ -125,12 +126,12 @@ public class RobberyLockFragment extends Fragment implements View.OnClickListene
                         showUnlockedView();
                     }
                 });
-        ObservableFactory.syncAppRobberyFlow()
-                .subscribe(receiverData -> {
-                    if (!receiverData.getSwitch0Value().equals("1")) {
-                        DataFlowFactory.getSwitchDataFlow().saveRobberyState(true);
-                        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyFragment()).commit();
-                    }
-                });
+    }
+
+    public void onEventMainThread(ReceiverData event) {
+        if(ReceiverDataFlow.getRobberyReceiveData(event)){
+            getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyFragment()).commit();
+            ReceiverDataFlow.saveRobberyReceiveData(event);
+        }
     }
 }

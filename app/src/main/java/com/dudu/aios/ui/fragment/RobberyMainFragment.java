@@ -11,10 +11,12 @@ import android.widget.TextView;
 
 import com.dudu.aios.ui.robbery.RobberyConstant;
 import com.dudu.android.launcher.R;
+import com.dudu.commonlib.repo.ReceiverData;
 import com.dudu.commonlib.utils.RxBus;
 import com.dudu.workflow.common.CommonParams;
 import com.dudu.workflow.common.DataFlowFactory;
 import com.dudu.workflow.common.ObservableFactory;
+import com.dudu.workflow.common.ReceiverDataFlow;
 import com.dudu.workflow.common.RequestFactory;
 import com.dudu.workflow.robbery.RobberyRequest;
 import com.dudu.workflow.robbery.RobberyStateModel;
@@ -48,7 +50,7 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
         initView();
         initListener();
         //initData();
-       // syncAppRobberyFlow();
+        syncAppRobberyFlow();
         return view;
     }
 
@@ -200,6 +202,17 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
 
     public void syncAppRobberyFlow() {
         DataFlowFactory.getSwitchDataFlow()
+                .getRobberyState()
+                .subscribe(robbed ->{
+                    if(robbed) {
+                        showRobberLockLayout();
+                        showLockedView();
+                    }else {
+                        showUnlockedView();
+                        showRobberModeLayout();
+                    }
+                });
+        DataFlowFactory.getSwitchDataFlow()
                 .getRobberySwitches()
                 .subscribe(robberySwitches -> {
                     checkHeadLightSwitch(robberySwitches.isHeadlight());
@@ -207,11 +220,29 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
                     checkGunSwitch(robberySwitches.isGun());
                 });
 
-        ObservableFactory.syncAppRobberyFlow()
-                .subscribe(receiverData -> {
-                    checkHeadLightSwitch(receiverData.getSwitch1Value().equals("1"));
-                    checkParkSwitch(receiverData.getSwitch2Value().equals("1"));
-                    checkGunSwitch(receiverData.getSwitch3Value().equals("1"));
+//        ObservableFactory.syncAppRobberyFlow()
+//                .subscribe(receiverData -> {
+//                    checkHeadLightSwitch(receiverData.getSwitch1Value().equals("1"));
+//                    checkParkSwitch(receiverData.getSwitch2Value().equals("1"));
+//                    checkGunSwitch(receiverData.getSwitch3Value().equals("1"));
+//                });
+        RequestFactory.getRobberyRequest()
+                .isCarRobbed(new RobberyRequest.CarRobberdCallback() {
+                    @Override
+                    public void hasRobbed(boolean robbed) {
+                        if(robbed) {
+                            showRobberLockLayout();
+                            showLockedView();
+                        }else {
+                            showUnlockedView();
+                            showRobberModeLayout();
+                        }
+                    }
+
+                    @Override
+                    public void requestError(String error) {
+
+                    }
                 });
         RequestFactory.getRobberyRequest()
                 .getRobberyState(new RobberyRequest.RobberStateCallback() {
@@ -227,6 +258,21 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
                         logger.equals(error);
                     }
                 });
+    }
+
+    public void onEventMainThread(ReceiverData receiverData) {
+        if(ReceiverDataFlow.getRobberyReceiveData(receiverData)){
+            checkHeadLightSwitch(receiverData.getSwitch1Value().equals("1"));
+            checkParkSwitch(receiverData.getSwitch2Value().equals("1"));
+            checkGunSwitch(receiverData.getSwitch3Value().equals("1"));
+            if(receiverData.getSwitch0Value().equals("1")){
+                showRobberLockLayout();
+                showLockedView();
+            }else {
+                showUnlockedView();
+                showRobberModeLayout();
+            }
+        }
     }
 
     private void checkGunSwitch(boolean on_off) {

@@ -13,8 +13,9 @@ import android.widget.TextView;
 import com.dudu.aios.ui.robbery.RobberyConstant;
 import com.dudu.aios.ui.view.RobberyAnimView;
 import com.dudu.android.launcher.R;
+import com.dudu.commonlib.repo.ReceiverData;
 import com.dudu.workflow.common.DataFlowFactory;
-import com.dudu.workflow.common.ObservableFactory;
+import com.dudu.workflow.common.ReceiverDataFlow;
 import com.dudu.workflow.common.RequestFactory;
 import com.dudu.workflow.guard.GuardRequest;
 
@@ -229,12 +230,6 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
                 .subscribe(locked -> {
                     checkGuardSwitch(locked);
                 });
-        ObservableFactory.getGuardReceiveObservable()
-                .subscribe(locked -> {
-                    checkGuardSwitch(locked);
-                    DataFlowFactory.getSwitchDataFlow()
-                            .saveGuardSwitch(locked);
-                });
         RequestFactory.getGuardRequest()
                 .isAntiTheftOpened(new GuardRequest.LockStateCallBack() {
                     @Override
@@ -251,6 +246,12 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
                 });
     }
 
+    public void onEventMainThread(ReceiverData event) {
+        if(ReceiverDataFlow.getGuardReceiveData(event)){
+            checkGuardSwitch(event.getSwitchValue().equals("1"));
+            ReceiverDataFlow.saveGuardReceiveData(event);
+        }
+    }
 
     private class AnimHandler extends Handler {
         @Override

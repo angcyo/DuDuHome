@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/vehicle_robbery_mode_ch"
+        android:textSize="16sp" />
+
+    <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/vehicle_robbery_mode_en"
+        android:textSize="16sp" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="3">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="128dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/vehicle_robbery_bg"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:id="@+id/headlight_vehicle_robbery_off"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:src="@drawable/vehicle_robbery_off" />
+
+                <ImageView
+                    android:id="@+id/headlight_vehicle_robbery_on"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="3dp"
+                    android:src="@drawable/vehicle_robbery_on"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
+
+            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/vehicle_flash_rate_times_cn"
+                android:textSize="12sp" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="4dp"
+                android:text="@string/vehicle_flash_rate_times_en"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="80dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="128dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/vehicle_robbery_bg"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:id="@+id/park_vehicle_robbery_off"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:src="@drawable/vehicle_robbery_off" />
+
+                <ImageView
+                    android:id="@+id/park_vehicle_robbery_on"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="3dp"
+                    android:src="@drawable/vehicle_robbery_on"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
+
+            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/vehicle_emergency_cutoff_cn"
+                android:textSize="12sp" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="4dp"
+                android:text="@string/vehicle_emergency_cutoff_en"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="80dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="128dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/vehicle_robbery_bg"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:id="@+id/gun_vehicle_robbery_off"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:src="@drawable/vehicle_robbery_off" />
+
+                <ImageView
+                    android:id="@+id/gun_vehicle_robbery_on"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="3dp"
+                    android:src="@drawable/vehicle_robbery_on"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
+
+            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/vehicle_step_on_gas_cn"
+                android:textSize="12sp" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="4dp"
+                android:text="@string/vehicle_step_on_gas_en"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+</LinearLayout>
