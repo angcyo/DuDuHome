@@ -106,7 +106,7 @@ public class CarCheckingView extends SurfaceView implements SurfaceHolder.Callba
 
         private String path = "appear";
 
-        private static final String VEHICLE_CATEGORY_DIR = "animation/vehicle/category/";
+        private static final String VEHICLE_CATEGORY_DIR = "vehicle/category/";
 
         private Context mContext;
 
@@ -234,9 +234,10 @@ public class CarCheckingView extends SurfaceView implements SurfaceHolder.Callba
             }
 
             InputStream is;
-            File file = new File(FileUtils.getStorageDir(), VEHICLE_CATEGORY_DIR + category + "/" + path + "/" + picturePrefix + stCount + ".png");
+            File file = new File(FileUtils.getAnimDir(), VEHICLE_CATEGORY_DIR + category + "/" + path + "/" + picturePrefix + stCount + ".png");
+
             // is = am.open("car_checking/" + PICTURE_PREFIX + mFrameCounter + ".png");
-            LogUtils.v("vehicle", "count:" + stCount);
+            LogUtils.v("path", "path--" + file.getPath() + "--" + file.exists());
             if (file.exists()) {
                 try {
                     is = new FileInputStream(file);

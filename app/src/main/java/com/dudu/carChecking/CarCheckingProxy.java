@@ -38,7 +38,12 @@ public class CarCheckingProxy {
     public CarCheckingProxy() {
 
         subList = new ArrayList<>();
+
         EventBus.getDefault().register(this);
+        log = LoggerFactory.getLogger("carChecking");
+
+        EventBus.getDefault().register(this);
+
         log = LoggerFactory.getLogger("carChecking");
     }
 

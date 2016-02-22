@@ -86,7 +86,7 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
 
         private int mFrameCounter = 0;
 
-        private static final String VEHICLE_MALFUNCTION = "animation/vehicle/malfunction/";
+        private static final String VEHICLE_MALFUNCTION = "vehicle/malfunction/";
 
         private String path = "appear";
 
@@ -209,9 +209,9 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
 
             LogUtils.v("vehicle", frameCount);
             InputStream is;
-            File file = new File(FileUtils.getStorageDir(), VEHICLE_MALFUNCTION + category + "/" + path + "/" + PICTURE_FRAME_PREFIX + frameCount + ".png");
+            File file = new File(FileUtils.getAnimDir(), VEHICLE_MALFUNCTION + category + "/" + path + "/" + PICTURE_FRAME_PREFIX + frameCount + ".png");
             // is = am.open("car_checking/" + PICTURE_PREFIX + mFrameCounter + ".png");
-            LogUtils.v("jj", VEHICLE_MALFUNCTION + category + "/" + path + "/" + PICTURE_FRAME_PREFIX + frameCount + ".png");
+            LogUtils.v("path", "path" + file.getPath() + "---" + file.exists());
             if (file.exists()) {
                 try {
                     is = new FileInputStream(file);

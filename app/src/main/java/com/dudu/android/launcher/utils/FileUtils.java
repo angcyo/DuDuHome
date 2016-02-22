@@ -186,6 +186,32 @@ public class FileUtils {
         return dir;
     }
 
+    /**
+     * 获得动画的额根目录
+     */
+
+    public static File getAnimDir() {
+        File dir = null;
+        if (isTFlashCardExists()) {
+            dir = new File(T_FLASH_PATH, getAnimMainName());
+            if (!dir.exists()) {
+                dir = new File(Environment.getExternalStorageDirectory(), getAnimMainName());
+            }
+        } else {
+            dir = new File(Environment.getExternalStorageDirectory(), getAnimMainName());
+        }
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        log.debug("dir:{}, free:{}", dir.getAbsolutePath(), dir.getFreeSpace());
+
+        return dir;
+    }
+
+    private static String getAnimMainName() {
+        return "/dudu/animation";
+    }
+
     public static File getStorageDirWhenInsertSdcard() {
         File dir;
         try {
@@ -320,6 +346,7 @@ public class FileUtils {
         }
         return null;
     }
+
 
     public static String fileByte2Mb(double size) {
         double mbSize = size / 1024 / 1024;

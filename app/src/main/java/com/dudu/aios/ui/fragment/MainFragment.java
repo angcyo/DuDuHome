@@ -55,10 +55,12 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
 
     private ImageButton voice_imageBtn;
 
+    private ImageButton iconVehicleInspection, iconDrivingRecord, iconNavigation, iconBt, iconFlow, iconRob;
+
     @Override
     public View getView() {
 
-        View view =  LayoutInflater.from(getActivity()).inflate(R.layout.fragment_main_layout, null);
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_main_layout, null);
 
         initFragmentView(view);
 
@@ -122,6 +124,13 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
         flow.setOnClickListener(this);
         preventRob.setOnClickListener(this);
         voice_imageBtn.setOnClickListener(this);
+
+        iconVehicleInspection.setOnClickListener(this);
+        iconDrivingRecord.setOnClickListener(this);
+        iconNavigation.setOnClickListener(this);
+        iconBt.setOnClickListener(this);
+        iconFlow.setOnClickListener(this);
+        iconRob.setOnClickListener(this);
         bluetoothPhone.setOnLongClickListener(v -> {
 
             Intent intent = new Intent();
@@ -191,6 +200,13 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
         mWeatherView = (TextView) view.findViewById(R.id.text_weather);
         mWeatherImage = (ImageView) view.findViewById(R.id.weather_icon);
         voice_imageBtn = (ImageButton) view.findViewById(R.id.voice_imageBtn);
+
+        iconVehicleInspection = (ImageButton) view.findViewById(R.id.vehicle_inspection_icon);
+        iconDrivingRecord = (ImageButton) view.findViewById(R.id.driving_record_icon);
+        iconNavigation = (ImageButton) view.findViewById(R.id.navigation_icon);
+        iconBt = (ImageButton) view.findViewById(R.id.bluetooth_phone_icon);
+        iconFlow = (ImageButton) view.findViewById(R.id.flow_icon);
+        iconRob = (ImageButton) view.findViewById(R.id.prevent_rob_icon);
     }
 
     @Override
@@ -199,7 +215,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
 
             case R.id.vehicle_inspection:
             case R.id.vehicle_inspection_icon:
-               startActivity(new Intent(getActivity(), CarCheckingActivity.class));
+                startActivity(new Intent(getActivity(), CarCheckingActivity.class));
                 break;
             case R.id.driving_record_button:
             case R.id.driving_record_icon:
@@ -246,7 +262,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
             mWeatherImage.setImageResource(WeatherUtils
                     .getWeatherIcon(WeatherUtils.getWeatherType(weather)));
         } else {
-           //获取天气失败
+            //获取天气失败
             mWeatherView.setGravity(Gravity.CENTER);
             mWeatherView.setText(R.string.unkown_weather_info);
             mTemperatureView.setText("");

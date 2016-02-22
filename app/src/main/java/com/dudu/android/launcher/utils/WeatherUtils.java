@@ -75,15 +75,15 @@ public class WeatherUtils {
         if (isNight(System.currentTimeMillis()))
             switch (type) {
                 case Constants.SUNNY:
-                    return R.drawable.weather_night_sunny;
+                    return R.drawable.weather_sunny;
                 case Constants.CLOUDY:
-                    return R.drawable.weather_night_cloudy;
+                    return R.drawable.weather_cloudy;
                 case Constants.LIGHT_RAIN:
                 case Constants.MODERATE_RAIN:
                 case Constants.HEAVY_RAIN:
                 case Constants.SHOWER:
                 case Constants.STORM:
-                    return R.drawable.weather_night_rain;
+                    return R.drawable.weather_rain;
                 default:
                     break;
             }

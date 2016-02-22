@@ -93,7 +93,7 @@ public class RobberyAnimView extends SurfaceView implements SurfaceHolder.Callba
 
         private String PICTURE_PREFIX = "Anim_00";
 
-        private static final String VEHICLE_CATEGORY_DIR = "animation/robbery/";
+        private static final String VEHICLE_CATEGORY_DIR = "robbery/";
 
         private Context mContext;
 
@@ -177,9 +177,9 @@ public class RobberyAnimView extends SurfaceView implements SurfaceHolder.Callba
             }
 
             InputStream is;
-            File file = new File(FileUtils.getStorageDir(), VEHICLE_CATEGORY_DIR + PICTURE_PREFIX + stCount + ".png");
+            File file = new File(FileUtils.getAnimDir(), VEHICLE_CATEGORY_DIR + PICTURE_PREFIX + stCount + ".png");
             // is = am.open("car_checking/" + PICTURE_PREFIX + mFrameCounter + ".png");
-            LogUtils.v("RobberyAnimView", "动画播放的路径:" + VEHICLE_CATEGORY_DIR + PICTURE_PREFIX + stCount + ".png..." + file.exists());
+            LogUtils.v("RobberyAnimView", "动画播放的路径:" + file.getPath() + "--" + file.exists());
             if (file.exists()) {
                 try {
                     is = new FileInputStream(file);

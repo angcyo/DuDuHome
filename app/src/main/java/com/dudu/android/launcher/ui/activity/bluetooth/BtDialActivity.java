@@ -45,6 +45,8 @@ public class BtDialActivity extends BaseActivity implements
         mDeleteButton = (ImageButton) findViewById(R.id.delete_button);
         mDialKeyboardButton = (ImageButton) findViewById(R.id.button_dial_keyboard);
         mContactsButton = (ImageButton) findViewById(R.id.button_contacts);
+
+        mDialKeyboardButton.setEnabled(false);
     }
 
 
@@ -66,7 +68,6 @@ public class BtDialActivity extends BaseActivity implements
         }
         handleDialButtonClick((String) view.getTag());
         LogUtils.v("keyboard", "--" + view.getTag());
-
     }
 
     @Override

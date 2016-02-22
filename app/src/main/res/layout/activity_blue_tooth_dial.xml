@@ -166,7 +166,7 @@
 
     <com.dudu.android.launcher.ui.view.DigitsEditText
         android:id="@+id/dial_digits"
-        android:layout_width="350dp"
+        android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="55dp"

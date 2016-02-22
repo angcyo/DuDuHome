@@ -33,7 +33,7 @@ public abstract class VoiceAnimView extends SurfaceView implements SurfaceHolder
 
     private VoiceAnimThread voiceAnimThread;
 
-    private static final String PICTURE_DIR = "animation/voice/";
+    private static final String PICTURE_DIR = "voice/";
     private Context context;
 
 
@@ -196,7 +196,8 @@ public abstract class VoiceAnimView extends SurfaceView implements SurfaceHolder
 
             //AssetManager am = mContext.getAssets();
 
-            File file = new File(FileUtils.getStorageDir(), PICTURE_DIR + picPath + mFrameCounter + ".png");
+            File file = new File(FileUtils.getAnimDir(), PICTURE_DIR + picPath + mFrameCounter + ".png");
+            LogUtils.v("path", "path:" + file.getPath() + "---" + file.exists());
             if (file.exists()) {
                 InputStream is;
                 try {
