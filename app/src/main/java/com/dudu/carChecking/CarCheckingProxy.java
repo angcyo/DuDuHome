@@ -38,12 +38,8 @@ public class CarCheckingProxy {
     public CarCheckingProxy() {
 
         subList = new ArrayList<>();
-<<<<<<< HEAD
         EventBus.getDefault().register(this);
-=======
         log = LoggerFactory.getLogger("carChecking");
-
->>>>>>> 34ab05f... add carChecking log
     }
 
     public static CarCheckingProxy getInstance() {

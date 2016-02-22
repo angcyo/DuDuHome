@@ -23,6 +23,7 @@ import com.dudu.monitor.event.CarStatus;
 import com.dudu.monitor.event.PowerOffEvent;
 import com.dudu.network.NetworkManage;
 import com.dudu.storage.Storage;
+import com.dudu.workflow.obd.CarLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +72,7 @@ public class MainService extends Service {
         initNetWork();
 
 //        ObdInit.initOBD(this);
+        CarLock.getInstance().init(this);
 
         monitor = Monitor.getInstance(this);
         monitor.startWork();

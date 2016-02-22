@@ -28,7 +28,7 @@ public class RobberyFlow {
 
     public Observable<Boolean> gun3Toggle() throws IOException {
         return OBDStream.getInstance().engSpeedStream()
-                .map(aDouble -> aDouble > 3000)
+                .map(aDouble -> aDouble > 1000)
                 .distinctUntilChanged()
                 .filter(aBoolean -> aBoolean)
                 .take(3)

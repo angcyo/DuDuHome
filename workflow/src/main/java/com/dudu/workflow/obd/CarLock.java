@@ -17,6 +17,14 @@ import de.greenrobot.event.EventBus;
 
 public class CarLock {
     private static Logger log = LoggerFactory.getLogger("CarLock");
+    private static CarLock ourInstance = new CarLock();
+
+    public static CarLock getInstance() {
+        return ourInstance;
+    }
+
+    public CarLock() {
+    }
 
     private BluetoothGatt mBluetoothGatt;
     private BluetoothGattCharacteristic mWriteChara;

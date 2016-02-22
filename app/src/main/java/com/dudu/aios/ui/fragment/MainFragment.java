@@ -31,7 +31,11 @@ import com.dudu.voice.VoiceManagerProxy;
 import com.dudu.weather.WeatherFlow;
 import com.dudu.weather.WeatherInfo;
 import com.dudu.weather.WeatherStream;
+import com.dudu.workflow.obd.CarLock;
+import com.dudu.workflow.obd.OBDStream;
+import com.dudu.workflow.obd.SpeedTest;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -145,6 +149,33 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
         view.findViewById(R.id.prevent_rob_icon).setOnClickListener(this);
 
 
+        preventRob.setOnLongClickListener(v -> {
+            SpeedTest.getInstance().startTestGUN3();
+            return true;
+        });
+        navigation.setOnLongClickListener(v -> {
+            SpeedTest.getInstance().stopTest();
+            return true;
+        });
+        vehicleInspection.setOnLongClickListener(v -> {
+//            try {
+//                OBDStream.getInstance().exec("ATSETVEHICLE=1");
+//                OBDStream.getInstance().exec("ATTSPMON");
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+            CarLock.unlockCar();
+            return true;
+        });
+        drivingRecord.setOnLongClickListener(v -> {
+            SpeedTest.getInstance().startTestSpeed();
+//            try {
+//                OBDStream.getInstance().exec("ATTSPMOFF");
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+            return true;
+        });
     }
 
     private void initFragmentView(View view) {

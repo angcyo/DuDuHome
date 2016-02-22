@@ -51,7 +51,7 @@ public class SpeedTest {
         Log.d("SerialPort", "startTestGUN3 call start");
         try {
             Subscription sub1 = OBDStream.getInstance().engSpeedStream()
-                    .map(aDouble -> aDouble > 3000)
+                    .map(aDouble -> aDouble > 1000)
                     .distinctUntilChanged()
                     .filter(aBoolean -> aBoolean)
                     .take(3)
