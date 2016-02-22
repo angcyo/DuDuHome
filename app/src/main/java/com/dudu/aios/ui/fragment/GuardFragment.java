@@ -22,6 +22,7 @@ import com.dudu.workflow.guard.GuardRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.greenrobot.event.EventBus;
 import rx.functions.Action1;
 import rx.subjects.BehaviorSubject;
 
@@ -46,6 +47,8 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
         initView(view);
         initListener();
         initData();
+        EventBus.getDefault().unregister(this);
+        EventBus.getDefault().register(this);
         return view;
     }
 

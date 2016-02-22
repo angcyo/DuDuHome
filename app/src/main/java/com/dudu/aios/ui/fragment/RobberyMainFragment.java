@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
+import de.greenrobot.event.EventBus;
 import rx.Subscription;
 
 public class RobberyMainFragment extends Fragment implements View.OnClickListener {
@@ -51,6 +52,8 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
         initListener();
         initData();
         syncAppRobberyFlow();
+        EventBus.getDefault().unregister(this);
+        EventBus.getDefault().register(this);
         return view;
     }
 
