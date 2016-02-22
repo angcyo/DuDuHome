@@ -93,6 +93,7 @@ public class MainService extends Service {
         EventBus.getDefault().register(this);
         mPowerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
 
+        CarCheckingProxy.getInstance().init();
         startCarChecking();
     }
 

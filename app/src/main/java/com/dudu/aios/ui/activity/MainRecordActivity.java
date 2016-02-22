@@ -146,11 +146,18 @@ public class MainRecordActivity extends BaseActivity {
         switch (name) {
             case FragmentConstants.FRAGMENT_MAIN_PAGE:
 
+                if (mainFragment == null) {
+                    mainFragment = new MainFragment();
+                }
                 ft.replace(R.id.container, mainFragment);
 
                 break;
 
             case FragmentConstants.FRAGMENT_VEHICLE_INSPECTION:
+
+                if (safetyFragment == null) {
+                    safetyFragment = new SafetyMainFragment();
+                }
                 ft.replace(R.id.container, safetyFragment);
                 break;
 
@@ -161,6 +168,9 @@ public class MainRecordActivity extends BaseActivity {
                 break;
 
             case FragmentConstants.FRAGMENT_VIDEO_LIST:
+                if(videoListFragment==null){
+                    videoListFragment = new VideoListFragment();
+                }
                 ft.replace(R.id.container, videoListFragment);
                 break;
 

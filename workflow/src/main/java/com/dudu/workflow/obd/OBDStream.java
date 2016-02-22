@@ -25,6 +25,7 @@ public class OBDStream {
     private Observable<String> obdRTString = null;
     private Observable<String> obdTTString = null;
     private Observable<String> obdErrorString = null;
+    private Observable<String> obdClearFault = null;
     private Observable<String> obdTSPMON = null;
     private Observable<String> obdTSPMOFF = null;
     private Observable<String[]> OBDRTData = null;
@@ -83,6 +84,11 @@ public class OBDStream {
         return obdErrorString;
     }
 
+    public Observable<String> obdClearFault() throws IOException {
+        if (obdClearFault == null) obdClearFault = obdClearFault(obdRawData());
+        return obdClearFault;
+    }
+
     public Observable<String> obdTSPMON() throws IOException {
         if (obdTSPMON == null) obdTSPMON = obdTSPMON(obdRawData());
         return obdTSPMON;
@@ -131,6 +137,13 @@ public class OBDStream {
     public static Observable<String> obdErrorString(Observable<String> input) {
         return input
                 .filter(s -> s.startsWith("$400="))
+                .map(s -> s.split(","))
+                .map(strings -> strings[1]);
+    }
+
+    public static Observable<String> obdClearFault(Observable<String> input) {
+        return input
+                .filter(s -> s.startsWith("$401"))
                 .map(s -> s.split(","))
                 .map(strings -> strings[1]);
     }

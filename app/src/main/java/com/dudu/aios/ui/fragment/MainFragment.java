@@ -168,13 +168,13 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
             return true;
         });
         vehicleInspection.setOnLongClickListener(v -> {
-//            try {
-//                OBDStream.getInstance().exec("ATSETVEHICLE=1");
+            try {
+                OBDStream.getInstance().exec("ATSETVEHICLE=1");
 //                OBDStream.getInstance().exec("ATTSPMON");
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-            CarLock.unlockCar();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+//            CarLock.unlockCar();
             return true;
         });
         drivingRecord.setOnLongClickListener(v -> {

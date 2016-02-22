@@ -21,6 +21,8 @@ import de.greenrobot.event.EventBus;
 import rx.Subscription;
 import rx.schedulers.Schedulers;
 
+import static com.dudu.carChecking.CarCheckType.WSB;
+
 /**
  * Created by lxh on 2016/2/21.
  */
@@ -28,19 +30,29 @@ public class CarCheckingProxy {
 
     private static CarCheckingProxy carCheckingProxy;
 
-    private List<Subscription> subList;
-
     private boolean isABSbroadcasted, isWSBbroadcasted, isTCMbroadcasted, isECMbroadcasted, isSRSbroadcasted;
 
     private boolean isClearedFault;
 
     private Logger log;
 
-    public CarCheckingProxy() {
+    private List<Subscription> registerSubList;
+    private List<CarCheckType> unregisterSubList;
 
-        subList = new ArrayList<>();
+    private CarCheckingProxy() {
+    }
 
+    public void init() {
+        EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
+        registerSubList = new ArrayList<>();
+        unregisterSubList = new ArrayList<>();
+        unregisterSubList.add(CarCheckType.SRS);
+        unregisterSubList.add(CarCheckType.TCM);
+        unregisterSubList.add(CarCheckType.ECM);
+        unregisterSubList.add(CarCheckType.ABS);
+        unregisterSubList.add(WSB);
+
         log = LoggerFactory.getLogger("carChecking");
     }
 
@@ -65,9 +77,9 @@ public class CarCheckingProxy {
         }
     }
 
-    public void registerCarCheckingError() {
+    public void registerTCM() {
 
-        log.debug("carChecking registerCarCheckingError");
+        log.debug("carChecking registerTCM");
         try {
             log.debug("carChecking engineFailed start");
             Subscription tcm = ObservableFactory.engineFailed()
@@ -78,13 +90,11 @@ public class CarCheckingProxy {
                             isTCMbroadcasted = true;
                             isClearedFault = false;
                             showCheckingError(CarCheckType.TCM);
-
-                            registerABS();
                         }
 
                     });
             log.debug("carChecking engineFailed end");
-            subList.add(tcm);
+            registerSubList.add(tcm);
 
         } catch (Exception e) {
             log.error("carChecking error ", e);
@@ -92,10 +102,10 @@ public class CarCheckingProxy {
 
     }
 
-    private void registerABS (){
-
+    private void registerABS() {
+        log.debug("carChecking ABSFailed start");
         try {
-            log.debug("carChecking ABSFailed start");
+
 
             Subscription abs = ObservableFactory.ABSFailed()
                     .subscribeOn(Schedulers.newThread())
@@ -104,43 +114,47 @@ public class CarCheckingProxy {
                             isABSbroadcasted = true;
                             isClearedFault = false;
                             showCheckingError(CarCheckType.ABS);
-                            registerECM();
                         }
                     });
             log.debug("carChecking ABSFailed start");
 
-            subList.add(abs);
+            registerSubList.add(abs);
         } catch (Exception e) {
-            log.error("carChecking error ",e);
+            log.error("carChecking error ", e);
         }
     }
 
-    private void registerECM(){
+    private void registerECM() {
+        log.debug("carChecking ECMFailed start");
+
         try {
             Subscription ecm = ObservableFactory.gearboxFailed()
                     .subscribeOn(Schedulers.newThread())
                     .subscribe(s -> {
+                        log.debug("carChecking ECMFailed got it");
 
                         if (!isECMbroadcasted || isClearedFault) {
                             isECMbroadcasted = true;
                             isClearedFault = false;
 
                             showCheckingError(CarCheckType.ECM);
-                            registerSRS();
                         }
 
                     });
-            subList.add(ecm);
+            registerSubList.add(ecm);
         } catch (Exception e) {
-            log.error("carChecking error ",e);
+            log.error("carChecking error ", e);
         }
     }
 
-    private void registerSRS(){
+    private void registerSRS() {
+        log.debug("carChecking SRSFailed start");
         try {
             Subscription srs = ObservableFactory.SRSFailed()
                     .subscribeOn(Schedulers.newThread())
                     .subscribe(s -> {
+
+                        log.debug("carChecking SRSFailed got it");
                         if (!isSRSbroadcasted || isClearedFault) {
                             isSRSbroadcasted = true;
                             isClearedFault = false;
@@ -148,10 +162,9 @@ public class CarCheckingProxy {
                             showCheckingError(CarCheckType.SRS);
                         }
                     });
-            subList.add(srs);
+            registerSubList.add(srs);
         } catch (Exception e) {
             log.error("carChecking error ", e);
-
         }
     }
 
@@ -161,25 +174,50 @@ public class CarCheckingProxy {
                 if (!isWSBbroadcasted || isClearedFault) {
                     isWSBbroadcasted = true;
                     isClearedFault = false;
-                    showCheckingError(CarCheckType.WSB);
+                    showCheckingError(WSB);
                 }
             }
             ReceiverDataFlow.saveRobberyReceiveData(receiverData);
         }
     }
 
-
     public void clearFault() {
-
         log.debug("carChecking clearFault");
 
         try {
             isClearedFault = true;
+
             CarCheckFlow.clearCarCheckError();
+
+            regNext();
+            VoiceManagerProxy.getInstance().startSpeaking("清除故障码成功", TTSType.TTS_DO_NOTHING, false);
         } catch (Exception e) {
             log.error("carChecking error ", e);
         }
+    }
 
+    private void regNext() {
+        if (unregisterSubList.size() > 0) {
+            CarCheckType type = unregisterSubList.get(0);
+            unregisterSubList.remove(0);
+            log.debug("carChecking regNext type {}", type);
+            switch (type) {
+                case SRS:
+                    registerSRS();
+                    break;
+                case TCM:
+                    registerTCM();
+                    break;
+                case ECM:
+                    registerECM();
+                    break;
+                case ABS:
+                    registerABS();
+                    break;
+                case WSB:
+                    break;
+            }
+        }
     }
 
     public void showCheckingError(CarCheckType type) {
@@ -212,7 +250,6 @@ public class CarCheckingProxy {
                 playText = "左前轮胎压异常,";
                 intent.putExtra("vehicle", "wsb");
                 break;
-
         }
         playText = "检测到您的车辆" + playText + "已经为您找到以下汽车修理店，选择第几个前往修理或退出";
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -221,11 +258,13 @@ public class CarCheckingProxy {
     }
 
     public void checkend() {
-        for (Subscription sub : subList) {
+        for (Subscription sub : registerSubList) {
             if (!sub.isUnsubscribed()) sub.unsubscribe();
         }
-        subList.clear();
+        registerSubList.clear();
     }
 
-
+    public void registerCarCheckingError() {
+        regNext();
+    }
 }
