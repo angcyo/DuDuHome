@@ -93,12 +93,12 @@
             android:background="@drawable/menu_button_selector">
 
             <ImageButton
+                android:id="@+id/vehicle_inspection_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
                 android:background="@android:color/transparent"
-                android:src="@drawable/menu_vehicle_inspection"
-                android:id="@+id/vehicle_inspection_icon"/>
+                android:src="@drawable/menu_vehicle_inspection" />
 
             <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                 android:layout_width="wrap_content"
@@ -126,12 +126,12 @@
 
             <ImageButton
 
+                android:id="@+id/driving_record_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
                 android:background="@android:color/transparent"
-                android:src="@drawable/menu_driving_record"
-                android:id="@+id/driving_record_icon"/>
+                android:src="@drawable/menu_driving_record" />
 
             <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                 android:layout_width="wrap_content"
@@ -160,12 +160,12 @@
 
             <ImageButton
 
+                android:id="@+id/navigation_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
                 android:background="@android:color/transparent"
-                android:src="@drawable/menu_navigation"
-                android:id="@+id/navigation_icon"/>
+                android:src="@drawable/menu_navigation" />
 
             <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                 android:layout_width="wrap_content"
@@ -173,8 +173,7 @@
                 android:layout_marginTop="3dp"
                 android:text="@string/navigation_chinese"
                 android:textColor="@android:color/white"
-                android:textSize="11sp"
-               />
+                android:textSize="11sp" />
 
             <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
                 android:layout_width="wrap_content"
@@ -204,12 +203,12 @@
                     android:src="@drawable/menu_voice_circle" />
 
                 <ImageButton
+                    android:id="@+id/voice_imageBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/menu_voice_ring"
-                    android:id="@+id/voice_imageBtn"/>
+                    android:src="@drawable/menu_voice_ring" />
 
             </RelativeLayout>
 
@@ -222,12 +221,12 @@
 
             <ImageButton
 
+                android:id="@+id/bluetooth_phone_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
                 android:background="@android:color/transparent"
-                android:src="@drawable/menu_bluetooth_phone"
-                android:id="@+id/bluetooth_phone_icon"/>
+                android:src="@drawable/menu_bluetooth_phone" />
 
             <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                 android:layout_width="wrap_content"
@@ -255,12 +254,12 @@
 
             <ImageButton
 
+                android:id="@+id/flow_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
                 android:background="@android:color/transparent"
-                android:src="@drawable/menu_flow"
-                android:id="@+id/flow_icon"/>
+                android:src="@drawable/menu_flow" />
 
             <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                 android:layout_width="wrap_content"
@@ -268,8 +267,7 @@
                 android:layout_marginTop="3dp"
                 android:text="@string/flow_chinese"
                 android:textColor="@android:color/white"
-                android:textSize="11sp"
-                />
+                android:textSize="11sp" />
 
             <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
                 android:layout_width="wrap_content"
@@ -288,12 +286,12 @@
             android:background="@drawable/menu_button_selector">
 
             <ImageButton
+                android:id="@+id/prevent_rob_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
                 android:background="@android:color/transparent"
-                android:src="@drawable/menu_prevent_rob"
-                android:id="@+id/prevent_rob_icon"/>
+                android:src="@drawable/menu_prevent_rob" />
 
             <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                 android:layout_width="wrap_content"

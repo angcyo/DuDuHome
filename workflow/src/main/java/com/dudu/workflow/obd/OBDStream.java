@@ -62,7 +62,10 @@ public class OBDStream {
 
     public void exec(String cmd) throws IOException {
         String send = cmd + "\r\n";
-        outputStream.write(send.getBytes(StandardCharsets.US_ASCII));
+        if (outputStream != null) {
+            outputStream.write(send.getBytes(StandardCharsets.US_ASCII));
+        }
+
     }
 
     public Observable<String> obdRTString() throws IOException {

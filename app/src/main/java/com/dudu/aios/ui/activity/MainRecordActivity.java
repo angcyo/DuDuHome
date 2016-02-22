@@ -21,6 +21,7 @@ import com.dudu.aios.ui.fragment.PhotoFragment;
 import com.dudu.aios.ui.fragment.PhotoListFragment;
 import com.dudu.aios.ui.fragment.RobberyFragment;
 import com.dudu.aios.ui.fragment.SafetyFragment;
+import com.dudu.aios.ui.fragment.SafetyMainFragment;
 import com.dudu.aios.ui.fragment.VideoFragment;
 import com.dudu.aios.ui.fragment.VideoListFragment;
 import com.dudu.aios.ui.fragment.video.DrivingRecordFragment;
@@ -62,7 +63,7 @@ public class MainRecordActivity extends BaseActivity {
 
     private MainFragment mainFragment;
 
-    private SafetyFragment safetyFragment;
+    private SafetyMainFragment safetyFragment;
 
     private DrivingRecordFragment drivingRecordFragment;
 
@@ -119,7 +120,7 @@ public class MainRecordActivity extends BaseActivity {
     private void initFragment(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             mainFragment = new MainFragment();
-            safetyFragment = new SafetyFragment();
+            safetyFragment = new SafetyMainFragment();
             drivingRecordFragment = new DrivingRecordFragment();
             photoFragment = new PhotoFragment();
             photoListFragment = new PhotoListFragment();
