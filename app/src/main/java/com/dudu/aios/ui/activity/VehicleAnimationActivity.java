@@ -65,7 +65,6 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
         initView();
         initListener();
         initData();
-        SemanticEngine.getProcessor().switchSemanticType(SceneType.CAR_CHECKING);
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
     }
@@ -258,6 +257,7 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        vehicleCheckResultAnimation.stopAnim();
         SemanticEngine.getProcessor().switchSemanticType(SceneType.HOME);
         EventBus.getDefault().unregister(this);
 
@@ -322,5 +322,11 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
         }
         pageIndex--;
         repairShopList.setSelection(pageIndex * Constants.ADDRESS_VIEW_COUNT);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SemanticEngine.getProcessor().switchSemanticType(SceneType.CAR_CHECKING);
     }
 }

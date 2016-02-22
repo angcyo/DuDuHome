@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -20,8 +19,6 @@ import com.dudu.aios.ui.fragment.FlowFragment;
 import com.dudu.aios.ui.fragment.MainFragment;
 import com.dudu.aios.ui.fragment.PhotoFragment;
 import com.dudu.aios.ui.fragment.PhotoListFragment;
-import com.dudu.aios.ui.fragment.RobberyFragment;
-import com.dudu.aios.ui.fragment.SafetyFragment;
 import com.dudu.aios.ui.fragment.SafetyMainFragment;
 import com.dudu.aios.ui.fragment.VideoFragment;
 import com.dudu.aios.ui.fragment.VideoListFragment;
@@ -168,31 +165,49 @@ public class MainRecordActivity extends BaseActivity {
                 break;
 
             case FragmentConstants.FRAGMENT_VIDEO_LIST:
-                if(videoListFragment==null){
+                if (videoListFragment == null) {
                     videoListFragment = new VideoListFragment();
                 }
                 ft.replace(R.id.container, videoListFragment);
                 break;
 
             case FragmentConstants.FRAGMENT_VIDEO:
+                if (videoFragment == null) {
+                    videoFragment = new VideoFragment();
+                }
                 ft.replace(R.id.container, videoFragment);
                 break;
 
             case FragmentConstants.FRAGMENT_PHOTO_LIST:
+                if (photoListFragment == null) {
+                    photoListFragment = new PhotoListFragment();
+                }
                 ft.replace(R.id.container, photoListFragment);
                 break;
 
             case FragmentConstants.FRAGMENT_PHOTO:
+                if (photoFragment == null) {
+                    photoFragment = new PhotoFragment();
+                }
                 ft.replace(R.id.container, photoFragment);
                 break;
 
             case FragmentConstants.FRAGMENT_FLOW:
+                if (flowFragment == null) {
+                    flowFragment = new FlowFragment();
+                }
                 ft.replace(R.id.container, flowFragment);
                 break;
             case FragmentConstants.VOICE_FRAGMENT:
+                if (voiceFragment == null) {
+                    voiceFragment = new VoiceFragment();
+                }
                 ft.replace(R.id.container, voiceFragment);
                 break;
             default:
+                if (mainFragment == null) {
+                    mainFragment = new MainFragment();
+                }
                 ft.replace(R.id.container, mainFragment);
                 break;
 

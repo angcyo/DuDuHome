@@ -2,7 +2,9 @@ package com.dudu.carChecking;
 
 import android.content.Intent;
 
+import com.dudu.aios.ui.activity.CarCheckingActivity;
 import com.dudu.aios.ui.activity.VehicleAnimationActivity;
+import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.commonlib.CommonLib;
 import com.dudu.commonlib.repo.ReceiverData;
 import com.dudu.voice.VoiceManagerProxy;
@@ -47,8 +49,8 @@ public class CarCheckingProxy {
         EventBus.getDefault().register(this);
         registerSubList = new ArrayList<>();
         unregisterSubList = new ArrayList<>();
-        unregisterSubList.add(CarCheckType.SRS);
         unregisterSubList.add(CarCheckType.TCM);
+        unregisterSubList.add(CarCheckType.SRS);
         unregisterSubList.add(CarCheckType.ECM);
         unregisterSubList.add(CarCheckType.ABS);
         unregisterSubList.add(WSB);
@@ -86,9 +88,8 @@ public class CarCheckingProxy {
                     .subscribeOn(Schedulers.newThread())
                     .subscribe(s -> {
                         log.debug("carChecking engineFailed got it");
-                        if (!isTCMbroadcasted || isClearedFault) {
+                        if (!isTCMbroadcasted) {
                             isTCMbroadcasted = true;
-                            isClearedFault = false;
                             showCheckingError(CarCheckType.TCM);
                         }
 
@@ -155,9 +156,8 @@ public class CarCheckingProxy {
                     .subscribe(s -> {
 
                         log.debug("carChecking SRSFailed got it");
-                        if (!isSRSbroadcasted || isClearedFault) {
+                        if (!isSRSbroadcasted) {
                             isSRSbroadcasted = true;
-                            isClearedFault = false;
 
                             showCheckingError(CarCheckType.SRS);
                         }
@@ -191,12 +191,17 @@ public class CarCheckingProxy {
 
             regNext();
             VoiceManagerProxy.getInstance().startSpeaking("清除故障码成功", TTSType.TTS_DO_NOTHING, false);
+            ActivitiesManager.getInstance().closeTargetActivity(CarCheckingActivity.class);
+            ActivitiesManager.getInstance().closeTargetActivity(VehicleAnimationActivity.class);
+
         } catch (Exception e) {
             log.error("carChecking error ", e);
         }
     }
 
     private void regNext() {
+        unregisterAll();
+
         if (unregisterSubList.size() > 0) {
             CarCheckType type = unregisterSubList.get(0);
             unregisterSubList.remove(0);
@@ -257,7 +262,7 @@ public class CarCheckingProxy {
         VoiceManagerProxy.getInstance().startSpeaking(playText, TTSType.TTS_START_UNDERSTANDING, false);
     }
 
-    public void checkend() {
+    public void unregisterAll() {
         for (Subscription sub : registerSubList) {
             if (!sub.isUnsubscribed()) sub.unsubscribe();
         }

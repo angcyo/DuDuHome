@@ -74,12 +74,12 @@ public class LauncherApplication extends Application {
             e.printStackTrace();
         }
 
-//        CommonParams.getInstance().init();
-//        ObservableFactory.init();
-//        Request.getInstance().init();
-//        RequestFactory.getInstance().init();
-//
-//        ReceiverRegister.registPushManager(CommonParams.getInstance().getUserName());
+        CommonParams.getInstance().init();
+        ObservableFactory.init();
+        Request.getInstance().init();
+        RequestFactory.getInstance().init();
+
+        ReceiverRegister.registPushManager(CommonParams.getInstance().getUserName());
 
     }
 

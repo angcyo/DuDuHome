@@ -164,19 +164,24 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
 
         private void doAnimation(Canvas c) {
 
-            c.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+            try {
 
-            Bitmap bitmap = loadAnimationBitmap();
-            if (bitmap != null) {
-                c.drawBitmap(bitmap, 0, 0, mPaint);
-            } else {
+                c.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+                Bitmap bitmap = loadAnimationBitmap();
+                if (bitmap != null) {
+                    c.drawBitmap(bitmap, 0, 0, mPaint);
+                } else {
 
-                Bitmap b = loadStaticBitmap();
-                if (b != null) {
-                    c.drawBitmap(b, 0, 0, mPaint);
+                    Bitmap b = loadStaticBitmap();
+                    if (b != null) {
+                        c.drawBitmap(b, 0, 0, mPaint);
 
+                    }
                 }
+            }catch (Exception e){
+
             }
+
 
         }
 

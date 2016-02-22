@@ -102,6 +102,8 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
         wsbContainer.setOnClickListener(this);
         srsContainer.setOnClickListener(this);
 
+        findViewById(R.id.button_vehicle_clear).setOnClickListener(this);
+
     }
 
     @Override
@@ -187,5 +189,10 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
     protected void onDestroy() {
         super.onDestroy();
         SemanticEngine.getProcessor().switchSemanticType(SceneType.HOME);
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SemanticEngine.getProcessor().switchSemanticType(SceneType.CAR_CHECKING);
     }
 }

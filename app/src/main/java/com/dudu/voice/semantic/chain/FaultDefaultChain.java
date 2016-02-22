@@ -3,13 +3,15 @@ package com.dudu.voice.semantic.chain;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.dudu.aios.ui.activity.CarCheckingActivity;
+import com.dudu.aios.ui.activity.VehicleAnimationActivity;
+import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.ChoiseUtil;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.carChecking.CarCheckingProxy;
 import com.dudu.carChecking.CarNaviChoose;
 import com.dudu.voice.FloatWindowUtils;
 import com.dudu.voice.semantic.bean.SemanticBean;
-import com.dudu.voice.semantic.constant.TTSType;
 
 import de.greenrobot.event.EventBus;
 
@@ -40,12 +42,16 @@ public class FaultDefaultChain extends DefaultChain {
 
     private boolean fault(SemanticBean semantic) {
         Log.d("lxh", "voice fault");
-        if (!TextUtils.isEmpty(semantic.getText())) {
+        if (semantic != null && !TextUtils.isEmpty(semantic.getText())) {
 
             Log.d("lxh", "voice fault  " + semantic.getText());
             if (semantic.getText().contains(FAULT_CLEAR)) {
                 CarCheckingProxy.getInstance().clearFault();
                 FloatWindowUtils.removeFloatWindow();
+                return true;
+            } else if (semantic.getText().contains("退出")) {
+                ActivitiesManager.getInstance().closeTargetActivity(CarCheckingActivity.class);
+                ActivitiesManager.getInstance().closeTargetActivity(VehicleAnimationActivity.class);
                 return true;
             } else {
                 return handleMapChoise(semantic.getText());
