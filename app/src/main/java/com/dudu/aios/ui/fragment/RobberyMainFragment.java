@@ -2,7 +2,6 @@ package com.dudu.aios.ui.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,6 @@ import android.widget.TextView;
 import com.dudu.aios.ui.robbery.RobberyConstant;
 import com.dudu.android.launcher.R;
 import com.dudu.commonlib.repo.ReceiverData;
-import com.dudu.commonlib.utils.RxBus;
 import com.dudu.workflow.common.CommonParams;
 import com.dudu.workflow.common.DataFlowFactory;
 import com.dudu.workflow.common.ObservableFactory;
@@ -52,7 +50,7 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
         initView();
         initListener();
         initData();
-        syncAppRobberyFlow();
+
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
         return view;
@@ -76,11 +74,13 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
         if (bundle != null) {
             String pass = bundle.getString("pass");
             if (pass.equals("1")) {
+                showRobberModeLayout();
                 CarLock.unlockCar();
                 requestCheckToUnlock();
                 return;
             }
         }
+        syncAppRobberyFlow();
     }
 
     private void initView() {
@@ -139,7 +139,7 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
 //                lock();
                 break;
             case R.id.vehicle_locked_layout:
-                showRobberModeLayout();
+//                showRobberModeLayout();
                 transferParameters();
                 break;
 
@@ -154,11 +154,12 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
                 .closeAntiRobberyMode(new RobberyRequest.CloseRobberyModeCallback() {
                     @Override
                     public void closeSuccess(boolean success) {
-                        if(success) {
+                        if (success) {
                             logger.debug("关闭防劫模式成功");
-                        }else {
+                        } else {
                             logger.debug("关闭防劫模式失败");
                         }
+                        syncAppRobberyFlow();
                     }
 
                     @Override
@@ -205,11 +206,11 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
     public void syncAppRobberyFlow() {
         DataFlowFactory.getSwitchDataFlow()
                 .getRobberyState()
-                .subscribe(robbed ->{
-                    if(robbed) {
+                .subscribe(robbed -> {
+                    if (robbed) {
                         showRobberLockLayout();
                         showLockedView();
-                    }else {
+                    } else {
                         showUnlockedView();
                         showRobberModeLayout();
                     }
@@ -232,10 +233,10 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
                 .isCarRobbed(new RobberyRequest.CarRobberdCallback() {
                     @Override
                     public void hasRobbed(boolean robbed) {
-                        if(robbed) {
+                        if (robbed) {
                             showRobberLockLayout();
                             showLockedView();
-                        }else {
+                        } else {
                             showUnlockedView();
                             showRobberModeLayout();
                         }
@@ -263,17 +264,27 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
     }
 
     public void onEventMainThread(ReceiverData receiverData) {
-        if(ReceiverDataFlow.getRobberyReceiveData(receiverData)){
+        if (ReceiverDataFlow.getRobberyReceiveData(receiverData)) {
             checkHeadLightSwitch(receiverData.getSwitch1Value().equals("1"));
             checkParkSwitch(receiverData.getSwitch2Value().equals("1"));
             checkGunSwitch(receiverData.getSwitch3Value().equals("1"));
-            if(receiverData.getSwitch0Value().equals("1")){
+            if (receiverData.getSwitch0Value().equals("1")) {
                 showRobberLockLayout();
                 showLockedView();
-            }else {
+            } else {
                 showUnlockedView();
                 showRobberModeLayout();
             }
+        }
+    }
+
+    public void onEventMainThread(RobberyStateModel event) {
+        if (event.getRobberyState()) {
+            showRobberLockLayout();
+            showLockedView();
+        } else {
+            showUnlockedView();
+            showRobberModeLayout();
         }
     }
 
@@ -296,7 +307,7 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
                                     logger.debug("Gun toggle robbery, sync to app");
                                     requestCheckSwitch(CommonParams.ROBBERYSTATE, true);
                                     DataFlowFactory.getSwitchDataFlow().saveRobberyState(true);
-                                    RxBus.getInstance().send(new RobberyStateModel(true));
+                                    EventBus.getDefault().post(new RobberyStateModel(true));
                                 });
             } catch (IOException e) {
                 logger.error("gun3Toggle exception", e);

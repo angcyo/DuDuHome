@@ -223,6 +223,11 @@ public class BleManager {
             log.error("write data is null !");
             return false;
         }
+
+        if (mWriteChara == null) {
+            log.error("mWriteChara is null !");
+            return false;
+        }
 //        EventBus.getDefault().post(new EventWrite.Data2Write(data, EventWrite.TYPE.Data));
 //        return true;
         mWriteChara.setValue(data);

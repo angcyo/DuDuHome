@@ -42,10 +42,6 @@ public class CarCheckingProxy {
 
         EventBus.getDefault().register(this);
         log = LoggerFactory.getLogger("carChecking");
-
-        EventBus.getDefault().register(this);
-
-        log = LoggerFactory.getLogger("carChecking");
     }
 
     public static CarCheckingProxy getInstance() {

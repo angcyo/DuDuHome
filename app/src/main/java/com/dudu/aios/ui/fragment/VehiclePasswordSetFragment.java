@@ -151,7 +151,7 @@ public class VehiclePasswordSetFragment extends Fragment implements View.OnClick
                     //防盗
                 } else if (category.equals(RobberyConstant.ROBBERY_CONSTANT)) {
                     //防劫
-                    fragment = new RobberyFragment();
+                    fragment = new RobberyMainFragment();
                 }
                 //正确
                 Bundle bundle = new Bundle();
