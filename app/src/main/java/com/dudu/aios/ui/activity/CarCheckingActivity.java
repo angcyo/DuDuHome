@@ -146,6 +146,10 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
             case R.id.srs_container:
                 intent.putExtra("vehicle", "srs");
                 break;
+            case R.id.button_vehicle_clear:
+                intent = null;
+                CarCheckingProxy.getInstance().clearFault();
+                break;
         }
         if (intent != null) {
             mAnimationView.stopAnim();

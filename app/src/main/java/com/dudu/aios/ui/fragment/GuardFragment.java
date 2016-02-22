@@ -140,19 +140,19 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
         DataFlowFactory.getSwitchDataFlow()
                 .saveGuardSwitch(false);
         RequestFactory.getGuardRequest()
-                .lockCar(new GuardRequest.LockStateCallBack() {
+                .unlockCar(new GuardRequest.UnlockCallBack() {
+
                     @Override
-                    public void hasLocked(boolean locked) {
-                        if(!locked){
-                            unlockGuard();
+                    public void unlocked(boolean locked) {
+                        if (!locked) {
                             //解锁成功
                             logger.debug("解锁成功");
-                        }else{
+                        } else {
                             //解锁失败
+                            unlockGuard();
                             logger.debug("解锁失败");
                         }
                     }
-
 
                     @Override
                     public void requestError(String error) {

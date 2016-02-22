@@ -49,7 +49,7 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
         view = inflater.inflate(R.layout.fragment_robbery_main, container, false);
         initView();
         initListener();
-        //initData();
+        initData();
         syncAppRobberyFlow();
         return view;
     }
@@ -107,12 +107,12 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
                 requestCheckSwitch(CommonParams.HEADLIGHT, true);
                 break;
             case R.id.headlight_vehicle_robbery_on:
-                showRobberLockLayout();
+//                showRobberLockLayout();
                 checkHeadLightSwitch(false);
                 requestCheckSwitch(CommonParams.HEADLIGHT, false);
                 break;
             case R.id.park_vehicle_robbery_off:
-                showRobberLockLayout();
+//                showRobberLockLayout();
                 checkParkSwitch(true);
                 requestCheckSwitch(CommonParams.PARK, true);
                 break;
