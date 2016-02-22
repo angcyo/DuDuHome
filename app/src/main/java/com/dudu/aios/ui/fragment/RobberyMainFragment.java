@@ -108,7 +108,7 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.headlight_vehicle_robbery_off:
-               checkHeadLightSwitch(true);
+                checkHeadLightSwitch(true);
                 requestCheckSwitch(CommonParams.HEADLIGHT, true);
                 break;
             case R.id.headlight_vehicle_robbery_on:
@@ -154,15 +154,16 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
                 .closeAntiRobberyMode(new RobberyRequest.CloseRobberyModeCallback() {
                     @Override
                     public void closeSuccess(boolean success) {
-                        if (!success) {
-                            requestCheckToUnlock();
+                        if(success) {
+                            logger.debug("关闭防劫模式成功");
+                        }else {
+                            logger.debug("关闭防劫模式失败");
                         }
                     }
 
                     @Override
                     public void requestError(String error) {
                         logger.debug(error);
-                        requestCheckToUnlock();
                     }
                 });
     }
@@ -182,14 +183,10 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
                     @Override
                     public void switchSuccess(boolean success) {
                         logger.debug("打开开关" + type + (success ? "成功" : "失败"));
-                        if (!success) {
-                            requestCheckSwitch(type, on_off);
-                        }
                     }
 
                     @Override
                     public void requestError(String error) {
-                        requestCheckSwitch(type, on_off);
                         logger.debug("打开开关" + type + "失败" + error);
                     }
                 });
@@ -246,7 +243,7 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
 
                     @Override
                     public void requestError(String error) {
-
+                        logger.debug(error);
                     }
                 });
         RequestFactory.getRobberyRequest()
@@ -288,19 +285,19 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
             try {
                 sub1 = ObservableFactory.gun3Toggle()
                         .subscribe(aBoolean -> {
-                        }
+                                }
                                 , throwable -> {
-                            if (!(throwable instanceof TimeoutException)) {
-                                logger.debug("Gun toggle fail, try again");
-                                checkGunSwitch(true);
-                            }
-                        }
+                                    if (!(throwable instanceof TimeoutException)) {
+                                        logger.debug("Gun toggle fail, try again");
+                                        checkGunSwitch(true);
+                                    }
+                                }
                                 , () -> {
-                            logger.debug("Gun toggle robbery, sync to app");
-                            requestCheckSwitch(CommonParams.ROBBERYSTATE, true);
-                            DataFlowFactory.getSwitchDataFlow().saveRobberyState(true);
-                            RxBus.getInstance().send(new RobberyStateModel(true));
-                        });
+                                    logger.debug("Gun toggle robbery, sync to app");
+                                    requestCheckSwitch(CommonParams.ROBBERYSTATE, true);
+                                    DataFlowFactory.getSwitchDataFlow().saveRobberyState(true);
+                                    RxBus.getInstance().send(new RobberyStateModel(true));
+                                });
             } catch (IOException e) {
                 logger.error("gun3Toggle exception", e);
                 return;

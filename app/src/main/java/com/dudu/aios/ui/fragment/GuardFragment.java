@@ -82,6 +82,7 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
     }
 
     private void actionLock() {
+        logger.debug("actionLock");
         //播放动画
         toggleAnim();
         //请求网络
@@ -89,6 +90,7 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
     }
 
     private void actionUnlock() {
+        logger.debug("actionUnlock");
         transferParameters();
     }
 
@@ -97,6 +99,7 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
         if (bundle != null) {
             String pass = bundle.getString("pass");
             if (pass.equals("1")) {
+                logger.debug("initData");
                 unlockGuard();
                 return;
             }
@@ -114,6 +117,7 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
 
 
     private void lockGuard() {
+        logger.debug("lockGuard");
         lock();
         stopAnim = false;
         DataFlowFactory.getSwitchDataFlow()
@@ -122,8 +126,10 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
                 .lockCar(new GuardRequest.LockStateCallBack() {
                     @Override
                     public void hasLocked(boolean locked) {
-                        if(!locked){
-                            lockGuard();
+                        if (!locked) {
+                            logger.debug("加锁失败");
+                        } else {
+                            logger.debug("加锁成功");
                         }
                         stopAnim = true;
                     }
@@ -133,7 +139,6 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
                     public void requestError(String error) {
                         logger.error(error);
                         stopAnim = true;
-                        lockGuard();
                     }
                 });
     }
@@ -152,7 +157,6 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
                             logger.debug("解锁成功");
                         } else {
                             //解锁失败
-                            unlockGuard();
                             logger.debug("解锁失败");
                         }
                     }
@@ -161,17 +165,18 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
                     public void requestError(String error) {
                         logger.error(error);
                         logger.debug("解锁失败");
-                        unlockGuard();
                     }
                 });
     }
 
     private void unlock() {
+        logger.debug("unlock");
         guard_locked_layout.setVisibility(View.GONE);
         guard_unlock_layout.setVisibility(View.VISIBLE);
     }
 
     private void lock() {
+        logger.debug("lock");
         guard_locked_layout.setVisibility(View.VISIBLE);
         guard_unlock_layout.setVisibility(View.GONE);
     }
@@ -220,6 +225,7 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
     }
 
     private void checkGuardSwitch(boolean locked) {
+        logger.debug("checkGuardSwitch:locked:" + locked);
         if (locked) {
             lock();
         } else {
@@ -250,7 +256,8 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
     }
 
     public void onEventMainThread(ReceiverData event) {
-        if(ReceiverDataFlow.getGuardReceiveData(event)){
+        if (ReceiverDataFlow.getGuardReceiveData(event)) {
+            logger.debug("onEventMainThread:"+event.getSwitchValue());
             checkGuardSwitch(event.getSwitchValue().equals("1"));
             ReceiverDataFlow.saveGuardReceiveData(event);
         }
