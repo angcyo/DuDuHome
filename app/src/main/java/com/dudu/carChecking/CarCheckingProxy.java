@@ -1,7 +1,6 @@
 package com.dudu.carChecking;
 
 import android.content.Intent;
-import android.util.Log;
 
 import com.dudu.aios.ui.activity.VehicleAnimationActivity;
 import com.dudu.commonlib.CommonLib;
@@ -9,6 +8,8 @@ import com.dudu.voice.VoiceManagerProxy;
 import com.dudu.voice.semantic.constant.TTSType;
 import com.dudu.workflow.common.ObservableFactory;
 import com.dudu.workflow.obd.CarCheckFlow;
+
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,14 +25,17 @@ public class CarCheckingProxy {
 
     private List<Subscription> subList;
 
-    private String lastFault = "";
+    private boolean isABSbroadcasted, isWSBbroadcasted, isTCMbroadcasted, isECMbroadcasted, isSRSbroadcasted;
+
+    private boolean isClearedFault;
+
+    private Logger log;
 
     public CarCheckingProxy() {
 
         subList = new ArrayList<>();
 
     }
-
 
     public static CarCheckingProxy getInstance() {
 
@@ -55,27 +59,27 @@ public class CarCheckingProxy {
 
         try {
             Subscription tcm = ObservableFactory.engineFailed().subscribe(s -> {
-
-                if (!lastFault.equals(s)) {
+                if (!isTCMbroadcasted || isClearedFault) {
+                    isTCMbroadcasted = true;
+                    isClearedFault = false;
                     showCheckingError(CarCheckType.TCM);
                 }
-                lastFault = s;
-            });
 
+            });
             subList.add(tcm);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-
         try {
 
             Subscription abs = ObservableFactory.ABSFailed().subscribe(s -> {
-                if (!lastFault.equals(s)) {
+                if (!isABSbroadcasted || isClearedFault) {
+                    isABSbroadcasted = true;
+                    isClearedFault = false;
                     showCheckingError(CarCheckType.ABS);
                 }
-                lastFault = s;
             });
 
             subList.add(abs);
@@ -86,10 +90,15 @@ public class CarCheckingProxy {
 
         try {
             Subscription ecm = ObservableFactory.gearboxFailed().subscribe(s -> {
-                if (!lastFault.equals(s)) {
+
+                if (!isECMbroadcasted || isClearedFault) {
+                    isECMbroadcasted = true;
+                    isClearedFault = false;
+
                     showCheckingError(CarCheckType.ECM);
+
                 }
-                lastFault = s;
+
             });
             subList.add(ecm);
         } catch (Exception e) {
@@ -99,10 +108,12 @@ public class CarCheckingProxy {
 
         try {
             Subscription srs = ObservableFactory.SRSFailed().subscribe(s -> {
-                if (!lastFault.equals(s)) {
+                if (!isSRSbroadcasted || isClearedFault) {
+                    isSRSbroadcasted = true;
+                    isClearedFault = false;
+
                     showCheckingError(CarCheckType.SRS);
                 }
-                lastFault = s;
             });
             subList.add(srs);
         } catch (Exception e) {
@@ -111,13 +122,15 @@ public class CarCheckingProxy {
 
         ObservableFactory.syncAppRobberyFlow()
                 .map(receiverData -> {
-                    Log.d("lxh","---------receiverData " +receiverData.getSwitch1Value());
                     return receiverData.getSwitch1Value().equals("1");
                 })
                 .subscribe(aBoolean -> {
                     if (aBoolean) {
-                        Log.d("lxh","---------receiverData 22222");
-                    showCheckingError(CarCheckType.WSB);
+                        if (!isWSBbroadcasted || isClearedFault) {
+                            isWSBbroadcasted = true;
+                            isClearedFault = false;
+                            showCheckingError(CarCheckType.WSB);
+                        }
                     }
 
                 });
@@ -128,6 +141,7 @@ public class CarCheckingProxy {
     public void clearFault() {
 
         try {
+            isClearedFault = true;
             CarCheckFlow.clearCarCheckError();
         } catch (Exception e) {
             e.printStackTrace();
