@@ -17,6 +17,9 @@ import com.dudu.workflow.common.ObservableFactory;
 
 import rx.functions.Action1;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Created by Administrator on 2016/2/21.
  */
@@ -27,6 +30,7 @@ public class SafetyFragment extends BaseFragment implements View.OnClickListener
     private ImageButton buttonBack;
 
     private View view;
+    private Logger logger = LoggerFactory.getLogger("SafetyFragment");
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.prevent_rob_layout, container, false);
@@ -83,6 +87,10 @@ public class SafetyFragment extends BaseFragment implements View.OnClickListener
                         getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyFragment()).commit();
 
                     }
+                },(throwable -> {
+                    logger.error(throwable.getMessage());
+                }),()->{
+                    logger.debug("DataFlowFactory finish");
                 });
         ObservableFactory.getRobberyStateObservable()
                 .subscribe(new Action1<Boolean>() {

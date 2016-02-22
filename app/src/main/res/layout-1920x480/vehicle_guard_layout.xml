@@ -76,7 +76,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:singleLine="true"
-                            android:text="@string/vehicle_locked"
+                            android:text="@string/vehicle_unlock"
                             android:textSize="12sp" />
                     </LinearLayout>
 

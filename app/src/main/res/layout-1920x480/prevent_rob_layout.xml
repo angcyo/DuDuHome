@@ -17,7 +17,7 @@
 
         <LinearLayout
             android:id="@+id/vehicle_guard_btn"
-            android:layout_width="120dp"
+            android:layout_width="140dp"
             android:layout_height="0dip"
             android:layout_centerVertical="true"
             android:layout_marginLeft="40dp"
@@ -58,7 +58,7 @@
 
         <LinearLayout
             android:id="@+id/vehicle_robbery_btn"
-            android:layout_width="120dp"
+            android:layout_width="140dp"
             android:layout_height="0dip"
             android:layout_marginLeft="40dp"
             android:layout_marginRight="20dp"

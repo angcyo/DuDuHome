@@ -111,10 +111,10 @@
 
     <string name="vehicle_guard_mode_ch">防盗模式</string>
     <string name="vehicle_guard_ch">车辆防盗</string>
-    <string name="vehicle_guard_en">THEFT DEVICE</string>
+    <string name="vehicle_guard_en">ANTI-THEFT MODE</string>
 
     <string name="vehicle_robbery_ch">车辆防劫</string>
-    <string name="vehicle_robbery_en">FRONT CAMERA</string>
+    <string name="vehicle_robbery_en">ANTI-ROBBERY MODE</string>
 
     <string name="vehicle_robbery_mode_ch">防劫模式</string>
     <string name="vehicle_flash_rate_times_cn">闪大灯次数限制10次</string>

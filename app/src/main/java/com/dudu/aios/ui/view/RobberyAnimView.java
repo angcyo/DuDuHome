@@ -55,6 +55,8 @@ public class RobberyAnimView extends SurfaceView implements SurfaceHolder.Callba
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        stopAnim();
+        startAnim();
         LogUtils.e(TAG, "surfaceChanged");
     }
 
@@ -128,7 +130,7 @@ public class RobberyAnimView extends SurfaceView implements SurfaceHolder.Callba
                 try {
                     synchronized (mHolder) {
 
-                        LogUtils.v("CarCheckingView1", "当前播放帧数: " + mFrameCounter);
+                        LogUtils.v("RobberyAnimView", "当前播放帧数: " + mFrameCounter);
                         c = mHolder.lockCanvas();
 
                         doAnimation(c);
@@ -150,7 +152,7 @@ public class RobberyAnimView extends SurfaceView implements SurfaceHolder.Callba
         }
 
         private void doAnimation(Canvas c) {
-            if(c!=null) {
+            if (c != null) {
                 c.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
                 Bitmap bitmap = loadAnimationBitmap();
@@ -177,8 +179,7 @@ public class RobberyAnimView extends SurfaceView implements SurfaceHolder.Callba
             InputStream is;
             File file = new File(FileUtils.getStorageDir(), VEHICLE_CATEGORY_DIR + PICTURE_PREFIX + stCount + ".png");
             // is = am.open("car_checking/" + PICTURE_PREFIX + mFrameCounter + ".png");
-            LogUtils.v("vehicle", "count:" + stCount);
-            LogUtils.v("path", "path:" + VEHICLE_CATEGORY_DIR + PICTURE_PREFIX + stCount + ".png..." + file.exists());
+            LogUtils.v("RobberyAnimView", "动画播放的路径:" + VEHICLE_CATEGORY_DIR + PICTURE_PREFIX + stCount + ".png..." + file.exists());
             if (file.exists()) {
                 try {
                     is = new FileInputStream(file);

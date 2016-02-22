@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/vehicle_robbery_mode_en"
+        android:text="@string/vehicle_guard_en"
         android:textSize="16sp" />
 
 
