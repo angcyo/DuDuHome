@@ -65,8 +65,7 @@ public class FaultDefaultChain extends DefaultChain {
             mVoiceManager.startUnderstanding();
         } else {
             if (!handleChoosePageOrNumber(text)) {
-                mVoiceManager.startSpeaking(Constants.UNDERSTAND_CHOISE_INPUT_TIPS,
-                        TTSType.TTS_START_UNDERSTANDING, true);
+                mVoiceManager.startSpeaking(Constants.UNDERSTAND_MISUNDERSTAND);
                 return false;
             }
         }

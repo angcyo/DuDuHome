@@ -36,6 +36,7 @@ import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscription;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 
 /**
@@ -198,9 +199,16 @@ public class MainService extends Service {
     }
 
     private void startCarChecking() {
-        carCheckingExecutor = Executors.newScheduledThreadPool(1);
-        carCheckingExecutor.scheduleAtFixedRate(carCheckingThread, 5, 5, TimeUnit.SECONDS);
+//        carCheckingExecutor = Executors.newScheduledThreadPool(1);
+//        carCheckingExecutor.scheduleAtFixedRate(carCheckingThread, 5, 5, TimeUnit.SECONDS);
 
+        CarCheckingProxy.getInstance().registerCarCheckingError();
+        Observable.interval(5, 15, TimeUnit.SECONDS)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(Schedulers.newThread())
+                .subscribe(aLong -> {
+                    CarCheckingProxy.getInstance().startCarChecking();
+                });
     }
 
     private void stopCarChecking() {

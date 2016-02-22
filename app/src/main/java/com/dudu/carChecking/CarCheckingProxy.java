@@ -19,6 +19,7 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import rx.Subscription;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by lxh on 2016/2/21.
@@ -63,7 +64,7 @@ public class CarCheckingProxy {
         try {
             CarCheckFlow.startCarCheck();
         } catch (Exception e) {
-            log.error("carChecking error ",e);
+            log.error("carChecking error ", e);
 
         }
     }
@@ -72,80 +73,100 @@ public class CarCheckingProxy {
 
         log.debug("carChecking registerCarCheckingError");
         try {
-            Subscription tcm = ObservableFactory.engineFailed().subscribe(s -> {
-                if (!isTCMbroadcasted || isClearedFault) {
-                    isTCMbroadcasted = true;
-                    isClearedFault = false;
-                    showCheckingError(CarCheckType.TCM);
-                }
+            log.debug("carChecking engineFailed start");
+            Subscription tcm = ObservableFactory.engineFailed()
+                    .subscribeOn(Schedulers.newThread())
+                    .subscribe(s -> {
+                        log.debug("carChecking engineFailed got it");
+                        if (!isTCMbroadcasted || isClearedFault) {
+                            isTCMbroadcasted = true;
+                            isClearedFault = false;
+                            showCheckingError(CarCheckType.TCM);
 
-            });
+                            registerABS();
+                        }
+
+                    });
+            log.debug("carChecking engineFailed end");
             subList.add(tcm);
 
         } catch (Exception e) {
-           log.error("carChecking error ",e);
+            log.error("carChecking error ", e);
         }
 
-        try {
+    }
 
-            Subscription abs = ObservableFactory.ABSFailed().subscribe(s -> {
-                if (!isABSbroadcasted || isClearedFault) {
-                    isABSbroadcasted = true;
-                    isClearedFault = false;
-                    showCheckingError(CarCheckType.ABS);
-                }
-            });
+    private void registerABS (){
+
+        try {
+            log.debug("carChecking ABSFailed start");
+
+            Subscription abs = ObservableFactory.ABSFailed()
+                    .subscribeOn(Schedulers.newThread())
+                    .subscribe(s -> {
+                        if (!isABSbroadcasted || isClearedFault) {
+                            isABSbroadcasted = true;
+                            isClearedFault = false;
+                            showCheckingError(CarCheckType.ABS);
+                            registerECM();
+                        }
+                    });
+            log.debug("carChecking ABSFailed start");
 
             subList.add(abs);
         } catch (Exception e) {
             log.error("carChecking error ",e);
         }
+    }
 
-
+    private void registerECM(){
         try {
-            Subscription ecm = ObservableFactory.gearboxFailed().subscribe(s -> {
+            Subscription ecm = ObservableFactory.gearboxFailed()
+                    .subscribeOn(Schedulers.newThread())
+                    .subscribe(s -> {
 
-                if (!isECMbroadcasted || isClearedFault) {
-                    isECMbroadcasted = true;
-                    isClearedFault = false;
+                        if (!isECMbroadcasted || isClearedFault) {
+                            isECMbroadcasted = true;
+                            isClearedFault = false;
 
-                    showCheckingError(CarCheckType.ECM);
+                            showCheckingError(CarCheckType.ECM);
+                            registerSRS();
+                        }
 
-                }
-
-            });
+                    });
             subList.add(ecm);
         } catch (Exception e) {
             log.error("carChecking error ",e);
-
         }
+    }
 
-
+    private void registerSRS(){
         try {
-            Subscription srs = ObservableFactory.SRSFailed().subscribe(s -> {
-                if (!isSRSbroadcasted || isClearedFault) {
-                    isSRSbroadcasted = true;
-                    isClearedFault = false;
+            Subscription srs = ObservableFactory.SRSFailed()
+                    .subscribeOn(Schedulers.newThread())
+                    .subscribe(s -> {
+                        if (!isSRSbroadcasted || isClearedFault) {
+                            isSRSbroadcasted = true;
+                            isClearedFault = false;
 
-                    showCheckingError(CarCheckType.SRS);
-                }
-            });
+                            showCheckingError(CarCheckType.SRS);
+                        }
+                    });
             subList.add(srs);
         } catch (Exception e) {
             log.error("carChecking error ", e);
 
         }
-
     }
 
     public void onEventMainThread(ReceiverData receiverData) {
-        if(ReceiverDataFlow.getRobberyReceiveData(receiverData)){
-            if(receiverData.getSwitch1Value().equals("1")){
-                 if (!isWSBbroadcasted || isClearedFault) {
-                            isWSBbroadcasted = true;
-                            isClearedFault = false;
-                            showCheckingError(CarCheckType.WSB);
-                        }
+        if (ReceiverDataFlow.getRobberyReceiveData(receiverData)) {
+            if (receiverData.getSwitch1Value().equals("1")) {
+                if (!isWSBbroadcasted || isClearedFault) {
+                    isWSBbroadcasted = true;
+                    isClearedFault = false;
+                    showCheckingError(CarCheckType.WSB);
+                }
             }
             ReceiverDataFlow.saveRobberyReceiveData(receiverData);
         }
@@ -160,14 +181,14 @@ public class CarCheckingProxy {
             isClearedFault = true;
             CarCheckFlow.clearCarCheckError();
         } catch (Exception e) {
-            log.error("carChecking error ",e);
+            log.error("carChecking error ", e);
         }
 
     }
 
     public void showCheckingError(CarCheckType type) {
 
-        log.debug("carChecking showCheckingError {}",type);
+        log.debug("carChecking showCheckingError {}", type);
 
         String playText = "";
 
