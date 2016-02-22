@@ -35,6 +35,8 @@ public class CarLock {
         BleConnectMain.getInstance().init(context);
         EventBus.getDefault().register(this);
         EventBus.getDefault().post(new Event.StartScanner(Event.ConnectType.BLE));
+        EventBus.getDefault().post(new Event.Connect("84:DD:20:EB:B9:2C", Event.ConnectType.BLE, false));
+//        EventBus.getDefault().post(new Event.StartScanner(Event.ConnectType.BLE));
     }
 
     public void uninit(Context context) {

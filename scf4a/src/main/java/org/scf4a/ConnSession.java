@@ -1,5 +1,8 @@
 package org.scf4a;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
@@ -13,6 +16,7 @@ public class ConnSession {
         init();
     }
 
+    private Logger log;
     private String lastConnectedMAC;
     private String lastConnectedName;
     private boolean isConnected;
@@ -20,6 +24,7 @@ public class ConnSession {
     private Event.ConnectType type;
 
     private ConnSession() {
+        log = LoggerFactory.getLogger("ble.session");
         type = Event.ConnectType.UNKNOWN;
     }
 
@@ -79,14 +84,7 @@ public class ConnSession {
         isConnected = true;
         type = event.getType();
         EventBus.getDefault().post(new BleStateChange(BleStateChange.BLECONNECTED));
-        Observable.timer(1, TimeUnit.MINUTES)
-                .subscribe(new Action1<Long>() {
-                    @Override
-                    public void call(Long aLong) {
-                        if (!isConnected)
-                            EventBus.getDefault().post(new Event.StartScanner(type));
-                    }
-                });
+        log.debug("BLE Connected");
     }
 
     public void onEvent(Event.SPIConnected event) {
@@ -96,6 +94,17 @@ public class ConnSession {
 
     public void onEvent(Event.Disconnected event) {
         isConnected = false;
+        log.debug("BLE Disconnected");
         EventBus.getDefault().post(new BleStateChange(BleStateChange.BLEDISCONNECTED));
+
+        Observable.timer(1, TimeUnit.MINUTES)
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        log.debug("BLE timeout reScan, isConnected:{}", isConnected);
+                        if (!isConnected)
+                            EventBus.getDefault().post(new Event.StartScanner(type));
+                    }
+                });
     }
 }
