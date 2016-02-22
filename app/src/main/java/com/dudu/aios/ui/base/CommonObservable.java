@@ -17,12 +17,15 @@ public class CommonObservable {
 
     public final ObservableBoolean hasBack = new ObservableBoolean();
 
+    public final ObservableBoolean hasBackground = new ObservableBoolean();
+
     public ActivityLayoutCommonBinding activityLayoutCommonBinding;
 
     public CommonObservable(ActivityLayoutCommonBinding activityLayoutCommonBinding) {
         this.activityLayoutCommonBinding = activityLayoutCommonBinding;
         this.hasTitle.set(true);
         this.hasBack.set(true);
+        this.hasBackground.set(true);
 
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);

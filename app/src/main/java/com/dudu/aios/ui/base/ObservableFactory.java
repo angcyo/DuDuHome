@@ -43,4 +43,8 @@ public class ObservableFactory {
         }
         return commonObservable;
     }
+
+    public CommonObservable getCommonObservable(){
+        return commonObservable;
+    }
 }

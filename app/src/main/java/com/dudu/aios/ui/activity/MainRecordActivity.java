@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -37,6 +38,7 @@ import com.dudu.init.InitManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wysaid.camera.CameraInstance;
 
 import java.util.Calendar;
 
@@ -82,6 +84,7 @@ public class MainRecordActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initPreview();
 
         initFragment(savedInstanceState);
 
@@ -270,6 +273,20 @@ public class MainRecordActivity extends BaseActivity {
         super.onResume();
         replaceFragment(FragmentConstants.FRAGMENT_MAIN_PAGE);
         observableFactory.getCommonObservable(baseBinding).hasTitle.set(true);
+
+        cameraView.onResume();
+//        cameraView.resumePreview();
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        CameraInstance.getInstance().stopCamera();
+        cameraView.release(null);
+        cameraView.onPause();
+
+//        cameraView.stopPreview();
     }
 
 

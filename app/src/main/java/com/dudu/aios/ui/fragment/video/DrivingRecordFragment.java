@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import com.dudu.aios.ui.activity.MainRecordActivity;
 import com.dudu.aios.ui.activity.video.PhotoListActivity;
+import com.dudu.aios.ui.base.ObservableFactory;
 import com.dudu.aios.ui.fragment.base.BaseFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.R;
@@ -49,6 +50,7 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
+
         return view;
     }
 
@@ -111,7 +113,8 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
     @Override
     public void onResume() {
         super.onResume();
-
+        mainRecordActivity.setNoBlur();
+        ObservableFactory.getInstance().getCommonObservable().hasBackground.set(false);
     }
 
     @Override
@@ -139,6 +142,8 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
                 mainRecordActivity.startActivity(new Intent(mainRecordActivity, PhotoListActivity.class));
                 break;
             case R.id.button_back:
+                mainRecordActivity.setBlur();
+                ObservableFactory.getInstance().getCommonObservable().hasBackground.set(true);
                 replaceFragment(FragmentConstants.FRAGMENT_MAIN_PAGE);
                 break;
         }

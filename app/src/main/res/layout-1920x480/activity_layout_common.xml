@@ -29,6 +29,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <org.wysaid.view.CameraRecordGLSurfaceView
+                android:id="@+id/myGLSurfaceView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"/>
+
             <!--<ImageView
                 android:id="@+id/rear_camera_preview"
                 android:layout_width="match_parent"
@@ -45,8 +51,14 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/black_bg">
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/back_bg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/black_bg"
+                android:visibility="@{common.hasBackground ? View.VISIBLE : View.GONE}"/>
 
             <RelativeLayout
                 android:id="@+id/common_title_layout"
