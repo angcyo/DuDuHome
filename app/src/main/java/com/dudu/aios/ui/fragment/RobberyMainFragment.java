@@ -18,6 +18,7 @@ import com.dudu.workflow.common.DataFlowFactory;
 import com.dudu.workflow.common.ObservableFactory;
 import com.dudu.workflow.common.ReceiverDataFlow;
 import com.dudu.workflow.common.RequestFactory;
+import com.dudu.workflow.obd.CarLock;
 import com.dudu.workflow.robbery.RobberyRequest;
 import com.dudu.workflow.robbery.RobberyStateModel;
 
@@ -75,6 +76,7 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
         if (bundle != null) {
             String pass = bundle.getString("pass");
             if (pass.equals("1")) {
+                CarLock.unlockCar();
                 requestCheckToUnlock();
                 return;
             }

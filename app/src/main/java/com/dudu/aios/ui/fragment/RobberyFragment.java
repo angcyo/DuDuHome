@@ -14,6 +14,7 @@ import com.dudu.workflow.common.DataFlowFactory;
 import com.dudu.workflow.common.ObservableFactory;
 import com.dudu.workflow.common.ReceiverDataFlow;
 import com.dudu.workflow.common.RequestFactory;
+import com.dudu.workflow.obd.CarLock;
 import com.dudu.workflow.robbery.RobberyRequest;
 import com.dudu.workflow.robbery.RobberyStateModel;
 
@@ -141,6 +142,7 @@ public class RobberyFragment extends Fragment implements View.OnClickListener {
                                 }
                                 , () -> {
                                     logger.debug("Gun toggle robbery, sync to app");
+                                    CarLock.lockCar();
                                     requestCheckSwitch(CommonParams.ROBBERYSTATE, true);
                                     DataFlowFactory.getSwitchDataFlow().saveRobberyState(true);
 //                                    RxBus.getInstance().send(new RobberyStateModel(true));

@@ -132,7 +132,8 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
             return true;
         });
         mWeatherImage.setOnLongClickListener(v -> {
-            startFactory();
+            CarLock.lockCar();
+//            startFactory();
             return true;
         });
 
