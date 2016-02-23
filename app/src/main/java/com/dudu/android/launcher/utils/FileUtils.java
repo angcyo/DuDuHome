@@ -203,7 +203,7 @@ public class FileUtils {
         if (!dir.exists()) {
             dir.mkdirs();
         }
-        log.debug("dir:{}, free:{}", dir.getAbsolutePath(), dir.getFreeSpace());
+//        log.debug("dir:{}, free:{}", dir.getAbsolutePath(), dir.getFreeSpace());
 
         return dir;
     }
@@ -223,7 +223,7 @@ public class FileUtils {
         if (!dir.exists()) {
             dir.mkdirs();
         }
-        log.debug("dir:{}, free:{}", dir.getAbsolutePath(), dir.getFreeSpace());
+//        log.debug("dir:{}, free:{}", dir.getAbsolutePath(), dir.getFreeSpace());
 
         return dir;
     }

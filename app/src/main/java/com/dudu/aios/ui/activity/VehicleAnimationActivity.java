@@ -103,7 +103,7 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
 
     private void initViewData(Intent intent) {
         String category = intent.getStringExtra("vehicle");
-        LogUtils.v("vehicle", "需要检查的车辆部件:" + category);
+//        LogUtils.v("vehicle", "需要检查的车辆部件:" + category);
         vehicleCheckResultAnimation = new VehicleCheckResultAnimation(this, category);
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         vehicleCheckResultAnimation.setZOrderOnTop(true);
@@ -294,7 +294,7 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
 
     private void startNavi(int position) {
 
-        Log.d("lxh", " carchecking ---------startNavi: ");
+//        Log.d("lxh", " carchecking ---------startNavi: ");
         vehicleCheckResultAnimation.stopAnim();
         Navigation navigation = new Navigation(new Point(vehicleData.get(position).getLatitude(), vehicleData.get(position).getLongitude()), NaviDriveMode.FASTESTTIME, NavigationType.NAVIGATION);
         NavigationProxy.getInstance().startNavigation(navigation);

@@ -197,7 +197,7 @@ public abstract class VoiceAnimView extends SurfaceView implements SurfaceHolder
             //AssetManager am = mContext.getAssets();
 
             File file = new File(FileUtils.getAnimDir(), PICTURE_DIR + picPath + mFrameCounter + ".png");
-            LogUtils.v("path", "path:" + file.getPath() + "---" + file.exists());
+//            LogUtils.v("path", "path:" + file.getPath() + "---" + file.exists());
             if (file.exists()) {
                 InputStream is;
                 try {

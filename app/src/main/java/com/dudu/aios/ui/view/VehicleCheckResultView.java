@@ -38,7 +38,7 @@ public class VehicleCheckResultView extends View {
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.VehicleLine);
         colorBg = array.getColor(R.styleable.VehicleLine_VehicleLineColor, getResources().getColor(R.color.transparent));
         color = array.getColor(R.styleable.VehicleLine_VehicleLineColor, getResources().getColor(R.color.blue));
-        LogUtils.v("vehicle1","1");
+//        LogUtils.v("vehicle1","1");
         array.recycle();
         initView();
     }

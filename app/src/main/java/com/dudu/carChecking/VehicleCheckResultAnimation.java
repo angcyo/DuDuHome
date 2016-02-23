@@ -188,7 +188,7 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
         private Bitmap loadStaticBitmap() {
             AssetManager am = mContext.getAssets();
             InputStream is;
-            LogUtils.v("vehicle", "静态的");
+//            LogUtils.v("vehicle", "静态的");
             try {
                 is = am.open("animation/" + category + "_NP1.png");
             } catch (IOException e) {
@@ -212,7 +212,7 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
                 frameCount = "" + mFrameCounter;
             }
 
-            LogUtils.v("vehicle", frameCount);
+//            LogUtils.v("vehicle", frameCount);
             InputStream is;
             File file = new File(FileUtils.getAnimDir(), VEHICLE_MALFUNCTION + category + "/" + path + "/" + PICTURE_FRAME_PREFIX + frameCount + ".png");
             // is = am.open("car_checking/" + PICTURE_PREFIX + mFrameCounter + ".png");
