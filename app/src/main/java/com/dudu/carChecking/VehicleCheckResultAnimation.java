@@ -136,8 +136,8 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
         private void doCycleAnimation() {
             mFrameCounter = 0;
             path = "cycle";
-            File file = new File(FileUtils.getStorageDir(), VEHICLE_MALFUNCTION + category + "/" + path);
-            if (file.isDirectory()) {
+            File file = new File(FileUtils.getAnimDir(), VEHICLE_MALFUNCTION + category + "/" + path);
+            if (file.exists() && file.isDirectory()) {
                 maxCycleCount = file.listFiles().length;
             }
             while (mRunning && mFrameCounter < maxCycleCount - 1) {
@@ -178,7 +178,7 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
 
                     }
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
 
