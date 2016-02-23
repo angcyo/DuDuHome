@@ -120,7 +120,7 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
                     synchronized (mHolder) {
                         mFrameCounter++;
 
-                        LogUtils.v("CarCheckingView", "当前播放帧数: " + mFrameCounter);
+//                        LogUtils.v("CarCheckingView", "当前播放帧数: " + mFrameCounter);
                         c = mHolder.lockCanvas();
 
                         doAnimation(c);
@@ -146,7 +146,7 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
                     synchronized (mHolder) {
                         mFrameCounter++;
 
-                        LogUtils.v("CarCheckingView", "当前播放帧数: " + mFrameCounter);
+//                        LogUtils.v("CarCheckingView", "当前播放帧数: " + mFrameCounter);
                         c = mHolder.lockCanvas();
 
                         doAnimation(c);

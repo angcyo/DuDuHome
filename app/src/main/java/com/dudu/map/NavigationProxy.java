@@ -82,7 +82,7 @@ public class NavigationProxy {
 
     private String msg;
 
-    private Subscription naviSubscription = null;
+    public Subscription naviSubscription = null;
 
     public void setChooseStep(int chooseStep) {
         this.chooseStep = chooseStep;

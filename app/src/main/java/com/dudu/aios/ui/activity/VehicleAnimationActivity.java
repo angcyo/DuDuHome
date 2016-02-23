@@ -3,6 +3,7 @@ package com.dudu.aios.ui.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,6 +88,7 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
 
     private void initListener() {
         buttonBack.setOnClickListener(this);
+        repairShopList.setOnItemClickListener((parent, view, position, id) -> startNavi(position));
 
     }
 
@@ -240,9 +242,9 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
                 }
                 holder.gradeContainer.addView(imageView);
             }
-            holder.btNavigate.setOnClickListener(v -> {
-                startNavi(position);
-            });
+            holder.btNavigate.setOnClickListener(v -> startNavi(position));
+            holder.tvDistance.setOnClickListener(v -> startNavi(position));
+            holder.gradeContainer.setOnClickListener(v -> startNavi(position));
             return convertView;
         }
 
@@ -288,6 +290,8 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
     }
 
     private void startNavi(int position) {
+
+        Log.d("lxh", " carchecking ---------startNavi: ");
         vehicleCheckResultAnimation.stopAnim();
         Navigation navigation = new Navigation(new Point(vehicleData.get(position).getLatitude(), vehicleData.get(position).getLongitude()), NaviDriveMode.FASTESTTIME, NavigationType.NAVIGATION);
         NavigationProxy.getInstance().startNavigation(navigation);

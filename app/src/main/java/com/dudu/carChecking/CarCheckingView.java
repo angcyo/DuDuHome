@@ -149,7 +149,7 @@ public class CarCheckingView extends SurfaceView implements SurfaceHolder.Callba
                     try {
                         synchronized (mHolder) {
 
-                            LogUtils.v("CarCheckingView1", "当前播放帧数: " + mFrameCounter);
+//                            LogUtils.v("CarCheckingView1", "当前播放帧数: " + mFrameCounter);
                             c = mHolder.lockCanvas();
 
                             doAnimation(c);

@@ -393,6 +393,7 @@ public class MapObservable {
         navigationProxy.disMissProgressDialog();
         navigationProxy.removeCallback();
         navigationProxy.setShowList(false);
+        navigationProxy.naviSubscription = null;
 
         mapList.clear();
 
