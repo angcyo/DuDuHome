@@ -101,7 +101,7 @@ public class RearCameraVideoService {
                     if (rearCameraDriveVideo.updateImageView() >= 0){
                         if (isCanStartRecording){
                             isCanStartRecording = false;
-                            driveVideoThreadPool.execute(recordingThread);
+//                            driveVideoThreadPool.execute(recordingThread);
                         }
                     }else {
                         log.info("updateImageView失败");
@@ -178,7 +178,7 @@ public class RearCameraVideoService {
                 if (isDriveVideoIng){
                     isRecordingVideo = false;
                     waitStartNextRecordnotify();
-                    driveVideoThreadPool.execute(recordingThread);
+//                    driveVideoThreadPool.execute(recordingThread);
                 }else {
                     log.debug("后置摄像头重新初始化");
                     rearCameraDriveVideo.releaseCamera();

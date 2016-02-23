@@ -12,8 +12,8 @@ public class RearVideoConfigParam {
     public static final int DEFAULT_VIDEO_INTERVAL = 1*30*1000;
 
     public static final   int DEFAULT_VIDEOBITRATE = 2 * 1024 * 1024;//2M
-    public static  final  int DEFAULT_WIDTH = 320;
-    public static  final  int DEFAULT_HEIGHT = 240;
+    public static  final  int DEFAULT_WIDTH = 640;
+    public static  final  int DEFAULT_HEIGHT = 480;
     public static  final  int DEFAULT_RATE= 30;
     public static  final  int DEFAULT_QUALITY= CamcorderProfile.QUALITY_HIGH;
 

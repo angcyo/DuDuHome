@@ -20,12 +20,14 @@
         <FrameLayout
             android:id="@+id/camera_preview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
-            <ImageView
+          <!--  <ImageView
                 android:id="@+id/rear_camera_preview"
-                android:layout_width="640dp"
-                android:layout_height="320dp"/>
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"/>-->
 
             <!--<SurfaceView
                 android:id="@+id/front_camera_preview"

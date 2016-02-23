@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
 
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.databinding.ActivityLayoutCommonBinding;
@@ -37,6 +38,8 @@ public abstract class BaseActivity extends Activity {
 
     protected   CameraRecordGLSurfaceView cameraView;
 
+    protected ImageView rearCameraPreview;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +60,7 @@ public abstract class BaseActivity extends Activity {
 
         volBrightnessSetting = new VolBrightnessSetting(this, baseBinding.baseView);
 
+        rearCameraPreview = baseBinding.rearCameraPreview;
     }
 
     protected void initPreview(){

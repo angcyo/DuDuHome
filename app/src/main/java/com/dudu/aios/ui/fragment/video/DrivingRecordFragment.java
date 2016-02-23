@@ -28,10 +28,6 @@ import org.slf4j.LoggerFactory;
 public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHolder.Callback, */View.OnClickListener {
 
     private ImageButton mCheckVideoButton, mSwitchVideoButton, mTakePhotoButton, mCheckPhotoButton, mBackButton;
-    private ImageView mRearCameraPreviewView;
-    private FrameLayout previewFrameLayout;
-
-    private CameraPreview cameraPreview = null;
 
     private boolean isFrontCameraPreView = true;
 
@@ -72,10 +68,6 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
         mCheckPhotoButton = (ImageButton) view.findViewById(R.id.check_photo);
         mTakePhotoButton = (ImageButton) view.findViewById(R.id.take_photo);
         mBackButton = (ImageButton) view.findViewById(R.id.button_back);
-
-        previewFrameLayout = (FrameLayout)view.findViewById(R.id.camera_preview);
-
-        mRearCameraPreviewView = (ImageView)view.findViewById(R.id.rear_camera_preview);
     }
 
     private void initClickListener() {
@@ -121,7 +113,7 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
     public void onDestroy() {
         super.onDestroy();
 
-        DriveVideo.getInstance().getRearCameraDriveVideo().stopPreview();
+
     }
 
     @Override
@@ -143,6 +135,9 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
                 break;
             case R.id.button_back:
                 mainRecordActivity.setBlur();
+                if (isFrontCameraPreView == false){
+                    stopRearPreview();
+                }
                 ObservableFactory.getInstance().getCommonObservable().hasBackground.set(true);
                 replaceFragment(FragmentConstants.FRAGMENT_MAIN_PAGE);
                 break;
@@ -165,16 +160,11 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
     }
 
     private void stopRearPreview(){
-        DriveVideo.getInstance().getRearCameraDriveVideo().stopPreview();
-        mainRecordActivity.findViewById(R.id.rear_camera_preview).setVisibility(View.INVISIBLE);
+        ObservableFactory.getInstance().getCommonObservable().stopRearPreview();
     }
 
     private void startRearPreview(){
-//        mRearCameraPreviewView = findViewById(R.id.rear_camera_preview);
-        mRearCameraPreviewView.setVisibility(View.VISIBLE);
-//        mRearCameraPreviewView.bringToFront();
-        DriveVideo.getInstance().getRearCameraDriveVideo().setImageView(mRearCameraPreviewView);
-        DriveVideo.getInstance().getRearCameraDriveVideo().startPreview();
+        ObservableFactory.getInstance().getCommonObservable().startRearPreview();
     }
 
     private void changePreview(){
@@ -183,7 +173,7 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
             startRearPreview();
         }else {
             isFrontCameraPreView = true;
-            startRearPreview();
+            stopRearPreview();
         }
     }
 }
