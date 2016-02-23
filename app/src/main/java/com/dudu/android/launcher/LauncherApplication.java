@@ -15,11 +15,17 @@ import com.dudu.workflow.common.DataFlowFactory;
 import com.dudu.workflow.common.ObservableFactory;
 import com.dudu.workflow.common.RequestFactory;
 import com.dudu.workflow.obd.OBDStream;
+import com.dudu.workflow.robbery.RobberyStateModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
+import de.greenrobot.event.EventBus;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class LauncherApplication extends Application {
 
@@ -80,8 +86,30 @@ public class LauncherApplication extends Application {
         RequestFactory.getInstance().init();
 
         ReceiverRegister.registPushManager(CommonParams.getInstance().getUserName());
-
+        checkGunSwitch();
     }
 
+    private void checkGunSwitch() {
+        try {
+            ObservableFactory.gun3Toggle()
+                    .subscribeOn(Schedulers.newThread())
+//                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(aBoolean -> {
+                    }
+                            , throwable -> {
+                        if (!(throwable instanceof TimeoutException)) {
+                            logger.debug("Gun toggle fail, try again");
+                            checkGunSwitch();
+                        }
+                    }
+                            , () -> {
+                        logger.debug("Gun toggle robbery, sync to app");
+                        DataFlowFactory.getSwitchDataFlow().saveRobberyState(true);
+                        EventBus.getDefault().post(new RobberyStateModel(true));
+                    });
+        } catch (IOException e) {
+            logger.error("gun3Toggle exception", e);
+        }
+    }
 }
 

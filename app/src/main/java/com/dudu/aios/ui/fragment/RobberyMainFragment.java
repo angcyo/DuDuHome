@@ -28,6 +28,8 @@ import java.util.concurrent.TimeoutException;
 
 import de.greenrobot.event.EventBus;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class RobberyMainFragment extends Fragment implements View.OnClickListener {
 
@@ -150,6 +152,10 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
         showUnlockedView();
         DataFlowFactory.getSwitchDataFlow()
                 .saveRobberyState(false);
+        requestUnlock();
+    }
+
+    public void requestUnlock() {
         RequestFactory.getRobberyRequest()
                 .closeAntiRobberyMode(new RobberyRequest.CloseRobberyModeCallback() {
                     @Override
@@ -159,7 +165,7 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
                         } else {
                             logger.debug("关闭防劫模式失败");
                         }
-                        syncAppRobberyFlow();
+//                        syncAppRobberyFlow();
                     }
 
                     @Override
@@ -206,6 +212,8 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
     public void syncAppRobberyFlow() {
         DataFlowFactory.getSwitchDataFlow()
                 .getRobberyState()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(robbed -> {
                     if (robbed) {
                         showRobberLockLayout();
@@ -217,29 +225,30 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
                 });
         DataFlowFactory.getSwitchDataFlow()
                 .getRobberySwitches()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(robberySwitches -> {
                     checkHeadLightSwitch(robberySwitches.isHeadlight());
                     checkParkSwitch(robberySwitches.isPark());
                     checkGunSwitch(robberySwitches.isGun());
                 });
 
-//        ObservableFactory.syncAppRobberyFlow()
-//                .subscribe(receiverData -> {
-//                    checkHeadLightSwitch(receiverData.getSwitch1Value().equals("1"));
-//                    checkParkSwitch(receiverData.getSwitch2Value().equals("1"));
-//                    checkGunSwitch(receiverData.getSwitch3Value().equals("1"));
-//                });
         RequestFactory.getRobberyRequest()
                 .isCarRobbed(new RobberyRequest.CarRobberdCallback() {
                     @Override
                     public void hasRobbed(boolean robbed) {
-                        if (robbed) {
-                            showRobberLockLayout();
-                            showLockedView();
-                        } else {
-                            showUnlockedView();
-                            showRobberModeLayout();
-                        }
+                        DataFlowFactory.getSwitchDataFlow()
+                                .getRobberyState()
+                                .subscribe(hasRobbed -> {
+                                    if (hasRobbed != robbed) {
+                                        if(!hasRobbed) {
+                                            requestUnlock();
+                                        }else{
+                                            requestCheckSwitch(CommonParams.ROBBERYSTATE,true);
+                                        }
+                                    }
+                                });
+
                     }
 
                     @Override
@@ -251,9 +260,34 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
                 .getRobberyState(new RobberyRequest.RobberStateCallback() {
                     @Override
                     public void switchsState(boolean flashRateTimes, boolean emergencyCutoff, boolean stepOnTheGas) {
-                        checkHeadLightSwitch(flashRateTimes);
-                        checkParkSwitch(emergencyCutoff);
-                        checkGunSwitch(stepOnTheGas);
+                        DataFlowFactory.getSwitchDataFlow()
+                                .getRobberySwitch(CommonParams.HEADLIGHT)
+                                .subscribeOn(Schedulers.newThread())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(headlight_on -> {
+                                    if (headlight_on != flashRateTimes) {
+                                        requestCheckSwitch(CommonParams.HEADLIGHT, headlight_on);
+                                    }
+                                });
+                        DataFlowFactory.getSwitchDataFlow()
+                                .getRobberySwitch(CommonParams.PARK)
+                                .subscribeOn(Schedulers.newThread())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(park_on -> {
+                                    if (park_on != emergencyCutoff) {
+                                        requestCheckSwitch(CommonParams.PARK, park_on);
+                                    }
+                                });
+                        DataFlowFactory.getSwitchDataFlow()
+                                .getRobberySwitch(CommonParams.GUN)
+                                .subscribeOn(Schedulers.newThread())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(gun_on -> {
+                                    if (gun_on != stepOnTheGas) {
+                                        requestCheckSwitch(CommonParams.GUN, gun_on);
+                                    }
+                                });
+
                     }
 
                     @Override
@@ -279,43 +313,26 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
     }
 
     public void onEventMainThread(RobberyStateModel event) {
-        if (event.getRobberyState()) {
-            showRobberLockLayout();
-            showLockedView();
-        } else {
-            showUnlockedView();
-            showRobberModeLayout();
-        }
+        DataFlowFactory.getSwitchDataFlow().getRobberySwitch(CommonParams.GUN)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(switchIsOn -> {
+                    if (event.getRobberyState()) {
+                        showRobberLockLayout();
+                        showLockedView();
+                    } else {
+                        showUnlockedView();
+                        showRobberModeLayout();
+                    }
+                });
+
     }
 
     private void checkGunSwitch(boolean on_off) {
         gun_on_img.setVisibility(on_off ? View.VISIBLE : View.GONE);
         gun_off_img.setVisibility(on_off ? View.GONE : View.VISIBLE);
-        Subscription sub1 = null;
-        if (on_off) {
-            try {
-                sub1 = ObservableFactory.gun3Toggle()
-                        .subscribe(aBoolean -> {
-                        }
-                                , throwable -> {
-                            if (!(throwable instanceof TimeoutException)) {
-                                logger.debug("Gun toggle fail, try again");
-                                checkGunSwitch(true);
-                            }
-                        }
-                                , () -> {
-                            logger.debug("Gun toggle robbery, sync to app");
-                            requestCheckSwitch(CommonParams.ROBBERYSTATE, true);
-                            DataFlowFactory.getSwitchDataFlow().saveRobberyState(true);
-                            EventBus.getDefault().post(new RobberyStateModel(true));
-                        });
-            } catch (IOException e) {
-                logger.error("gun3Toggle exception", e);
-                return;
-            }
-        } else {
-            if (sub1 != null && sub1.isUnsubscribed()) sub1.unsubscribe();
-        }
+        DataFlowFactory.getSwitchDataFlow()
+                .saveRobberySwitch(CommonParams.GUN,on_off);
     }
 
     private void showLockedView() {
