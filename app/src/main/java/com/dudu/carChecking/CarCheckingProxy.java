@@ -243,13 +243,13 @@ public class CarCheckingProxy {
                 playText = "回油泵电路发生故障,";
                 intent.putExtra("vehicle", "abs");
                 break;
-            case TCM:
-                playText = "质量或体积空气流量传感器B电路发生故障,";
-                intent.putExtra("vehicle", "gearbox");
-                break;
             case ECM:
-                playText = "来自发动机控制模块或动力传动控制模块的数据无效,";
+                playText = "质量或体积空气流量传感器B电路发生故障,";
                 intent.putExtra("vehicle", "engine");
+                break;
+            case TCM:
+                playText = "来自发动机控制模块或动力传动控制模块的数据无效,";
+                intent.putExtra("vehicle", "gearbox");
                 break;
             case WSB:
                 playText = "左前轮胎压异常,";
