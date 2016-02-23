@@ -2,7 +2,6 @@ package com.dudu.carChecking;
 
 import android.content.Intent;
 
-import com.dudu.aios.ui.activity.CarCheckingActivity;
 import com.dudu.aios.ui.activity.VehicleAnimationActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.commonlib.CommonLib;
@@ -191,8 +190,10 @@ public class CarCheckingProxy {
 
             regNext();
             VoiceManagerProxy.getInstance().startSpeaking("清除故障码成功", TTSType.TTS_DO_NOTHING, false);
-            ActivitiesManager.getInstance().closeTargetActivity(CarCheckingActivity.class);
-            ActivitiesManager.getInstance().closeTargetActivity(VehicleAnimationActivity.class);
+
+            if (ActivitiesManager.getInstance().getTopActivity() instanceof VehicleAnimationActivity) {
+                ActivitiesManager.getInstance().closeTargetActivity(VehicleAnimationActivity.class);
+            }
 
         } catch (Exception e) {
             log.error("carChecking error ", e);

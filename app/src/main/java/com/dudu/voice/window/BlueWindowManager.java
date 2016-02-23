@@ -284,41 +284,48 @@ public class BlueWindowManager extends BaseWindowManager {
 
 
     public void removeWithBlur() {
-        Bitmap currentBitmap;
-        message_layout.setDrawingCacheEnabled(true);
-        Bitmap drawingCache = message_layout.getDrawingCache();
-        currentBitmap = Bitmap.createBitmap(drawingCache.getWidth(), drawingCache.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(currentBitmap);
-        Paint paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setFlags(Paint.FILTER_BITMAP_FLAG);
-        canvas.drawBitmap(drawingCache, 0, 0, paint);
+        if (message_layout == null) {
+            return;
+        }
+        try {
+            Bitmap currentBitmap;
+            message_layout.setDrawingCacheEnabled(true);
+            Bitmap drawingCache = message_layout.getDrawingCache();
+            currentBitmap = Bitmap.createBitmap(drawingCache.getWidth(), drawingCache.getHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(currentBitmap);
+            Paint paint = new Paint();
+            paint.setAntiAlias(true);
+            paint.setFlags(Paint.FILTER_BITMAP_FLAG);
+            canvas.drawBitmap(drawingCache, 0, 0, paint);
 
-        Bitmap blurBitmap_back = RxBlurEffective
-                .bestBlur(mContext, currentBitmap, 20, 0.1f)
-                .toBlocking()
-                .first();
+            Bitmap blurBitmap_back = RxBlurEffective
+                    .bestBlur(mContext, currentBitmap, 20, 0.1f)
+                    .toBlocking()
+                    .first();
 
-        visibleAnimView();
-        voice_animLayout.setBackground(new BitmapDrawable(mContext.getResources(), blurBitmap_back));
+            visibleAnimView();
+            voice_animLayout.setBackground(new BitmapDrawable(mContext.getResources(), blurBitmap_back));
 
-        message_layout.setVisibility(View.GONE);
-        mMessageListView.setVisibility(View.GONE);
+            message_layout.setVisibility(View.GONE);
+            mMessageListView.setVisibility(View.GONE);
 
-        voiceCircleAnimView.startAnim();
-        voiceRippleAnimView.startAnim();
+            voiceCircleAnimView.startAnim();
+            voiceRippleAnimView.startAnim();
 
-        Observable.timer(2, TimeUnit.SECONDS).subscribe(aLong -> {
+            Observable.timer(2, TimeUnit.SECONDS).subscribe(aLong -> {
 
-            try {
+                try {
 
-                removeFloatWindow();
-            } catch (Exception e) {
+                    removeFloatWindow();
+                } catch (Exception e2) {
 
-            }
-        });
+                }
+            });
 
-        mMessageData.clear();
+            mMessageData.clear();
+        } catch (Exception e) {
+
+        }
 
     }
 
