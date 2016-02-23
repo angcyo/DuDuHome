@@ -105,7 +105,11 @@ public class GestureFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_passwordSet:
-                getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new VehiclePasswordSetFragment()).commit();
+                VehiclePasswordSetFragment fragment = new VehiclePasswordSetFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(RobberyConstant.CATEGORY_CONSTANT, category);
+                fragment.setArguments(bundle);
+                getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, fragment).commit();
                 break;
         }
     }
