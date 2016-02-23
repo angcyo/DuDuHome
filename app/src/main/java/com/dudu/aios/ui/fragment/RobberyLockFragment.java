@@ -78,11 +78,11 @@ public class RobberyLockFragment extends Fragment implements View.OnClickListene
     }
 
     private void transferParameters() {
-        VehiclePasswordSetFragment vehiclePasswordSetFragment = new VehiclePasswordSetFragment();
+        GestureFragment gestureFragment = new GestureFragment();
         Bundle bundle = new Bundle();
         bundle.putString(RobberyConstant.CATEGORY_CONSTANT, RobberyConstant.ROBBERY_CONSTANT);
-        vehiclePasswordSetFragment.setArguments(bundle);
-        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, vehiclePasswordSetFragment).commit();
+        gestureFragment.setArguments(bundle);
+        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, gestureFragment).commit();
     }
 
     private void showLockedView() {
@@ -95,7 +95,7 @@ public class RobberyLockFragment extends Fragment implements View.OnClickListene
         guard_unlock_layout.setVisibility(View.VISIBLE);
     }
 
-    public void requestCheckToUnlock(){
+    public void requestCheckToUnlock() {
         showUnlockedView();
         DataFlowFactory.getSwitchDataFlow()
                 .saveRobberyState(false);
@@ -103,7 +103,7 @@ public class RobberyLockFragment extends Fragment implements View.OnClickListene
                 .closeAntiRobberyMode(new RobberyRequest.CloseRobberyModeCallback() {
                     @Override
                     public void closeSuccess(boolean success) {
-                        if(!success){
+                        if (!success) {
                             requestCheckToUnlock();
                         }
                     }
@@ -119,17 +119,17 @@ public class RobberyLockFragment extends Fragment implements View.OnClickListene
     public void syncAppRobberyFlow() {
         DataFlowFactory.getSwitchDataFlow()
                 .getRobberyState()
-                .subscribe(locked ->{
-                    if(locked){
+                .subscribe(locked -> {
+                    if (locked) {
                         showLockedView();
-                    }else{
+                    } else {
                         showUnlockedView();
                     }
                 });
     }
 
     public void onEventMainThread(ReceiverData event) {
-        if(ReceiverDataFlow.getRobberyReceiveData(event)){
+        if (ReceiverDataFlow.getRobberyReceiveData(event)) {
             getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyFragment()).commit();
             ReceiverDataFlow.saveRobberyReceiveData(event);
         }

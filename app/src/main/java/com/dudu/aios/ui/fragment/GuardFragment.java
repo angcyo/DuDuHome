@@ -108,11 +108,11 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
     }
 
     private void transferParameters() {
-        VehiclePasswordSetFragment vehiclePasswordSetFragment = new VehiclePasswordSetFragment();
+        GestureFragment gestureFragment = new GestureFragment();
         Bundle bundle = new Bundle();
         bundle.putString(RobberyConstant.CATEGORY_CONSTANT, RobberyConstant.GUARD_CONSTANT);
-        vehiclePasswordSetFragment.setArguments(bundle);
-        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, vehiclePasswordSetFragment).commit();
+        gestureFragment.setArguments(bundle);
+        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, gestureFragment).commit();
     }
 
 
@@ -257,7 +257,7 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
 
     public void onEventMainThread(ReceiverData event) {
         if (ReceiverDataFlow.getGuardReceiveData(event)) {
-            logger.debug("onEventMainThread:"+event.getSwitchValue());
+            logger.debug("onEventMainThread:" + event.getSwitchValue());
             checkGuardSwitch(event.getSwitchValue().equals("1"));
             ReceiverDataFlow.saveGuardReceiveData(event);
         }

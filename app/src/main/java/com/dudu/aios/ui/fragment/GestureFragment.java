@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.dudu.aios.ui.robbery.RobberyConstant;
 import com.dudu.aios.ui.view.GestureLockViewGroup;
 import com.dudu.android.launcher.R;
 
@@ -26,6 +27,8 @@ public class GestureFragment extends Fragment implements View.OnClickListener {
 
     private Handler handler = new MyHandle();
 
+    private String category;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_gesture, container, false);
@@ -36,8 +39,14 @@ public class GestureFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initData() {
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            category = bundle.getString(RobberyConstant.CATEGORY_CONSTANT);
+
+        }
         //设置的手势密码
-        gestureLockViewGroup.setAnswer(new int[]{1, 2, 3, 4, 5});
+        gestureLockViewGroup.setAnswer(new int[]{1, 2, 3});
         gestureLockViewGroup.setOnGestureLockViewListener(new GestureLockViewGroup.OnGestureLockViewListener() {
             @Override
             public void onBlockSelected(int cId) {
@@ -46,16 +55,32 @@ public class GestureFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onGestureEvent(boolean matched) {
-                if (matched) {
-                    //绘制成功
-                    tvDrawPrompt.setText(getResources().getString(R.string.draw_success));
-                    tvDrawPrompt.setTextColor(getResources().getColor(R.color.white));
-                } else {
+                // if (matched) {
+                //绘制成功
+                tvDrawPrompt.setText(getResources().getString(R.string.draw_success));
+                tvDrawPrompt.setTextColor(getResources().getColor(R.color.blue));
+                Fragment fragment = null;
+                if (category.equals(RobberyConstant.GUARD_CONSTANT)) {
+                    fragment = new GuardFragment();
+                    //防盗
+                } else if (category.equals(RobberyConstant.ROBBERY_CONSTANT)) {
+                    //防劫
+                    fragment = new RobberyMainFragment();
+                }
+                //正确
+                Bundle bundle = new Bundle();
+                bundle.putString("pass", "1");
+                if (fragment != null) {
+                    fragment.setArguments(bundle);
+                    getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, fragment).commit();
+                }
+              /*  } else {
                     //绘制失败
                     tvDrawPrompt.setText(getResources().getString(R.string.draw_fault));
                     tvDrawPrompt.setTextColor(getResources().getColor(R.color.red_mistake));
-                }
-                handler.sendEmptyMessageDelayed(0, 1000);
+                    handler.sendEmptyMessageDelayed(0, 1000);
+                }*/
+
             }
 
             @Override

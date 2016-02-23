@@ -193,6 +193,12 @@
             android:screenOrientation="landscape"
             android:theme="@style/NOTitlTheme"></activity>
 
+        <activity
+            android:name=".ui.activity.bluetooth.BtContactsActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="landscape"
+            android:theme="@style/AiosBaseTheme" />
+
         <service android:name=".service.BluetoothService" />
         <service android:name=".service.FloatBackButtonService" />
         <service android:name=".service.MonitorService" />

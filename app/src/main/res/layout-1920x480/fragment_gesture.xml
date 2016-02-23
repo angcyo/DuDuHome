@@ -43,7 +43,8 @@
             android:layout_height="30dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="4dp"
-            android:gravity="center_vertical" />
+            android:gravity="center_vertical"
+            android:textColor="@color/blue" />
 
         <Button
             android:id="@+id/button_passwordSet"

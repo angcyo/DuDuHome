@@ -138,7 +138,7 @@
     <string name="draw_fault">绘制错误，请重试...</string>
 
     <string name="vehicle_locked">LOCKED</string>
-    <string name="vehicle_unlock">UNLOCK</string>
+    <string name="vehicle_unlock">UNLOCKED</string>
     <string name="prepositive_video_chinese">前置录像</string>
     <string name="prepositive_video_english">FRONT CAMERA</string>
     <string name="postposition_video_chinese">后置录像</string>

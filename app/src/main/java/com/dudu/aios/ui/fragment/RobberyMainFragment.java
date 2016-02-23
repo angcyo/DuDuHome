@@ -170,11 +170,11 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
     }
 
     private void transferParameters() {
-        VehiclePasswordSetFragment vehiclePasswordSetFragment = new VehiclePasswordSetFragment();
+        GestureFragment gestureFragment = new GestureFragment();
         Bundle bundle = new Bundle();
         bundle.putString(RobberyConstant.CATEGORY_CONSTANT, RobberyConstant.ROBBERY_CONSTANT);
-        vehiclePasswordSetFragment.setArguments(bundle);
-        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, vehiclePasswordSetFragment).commit();
+        gestureFragment.setArguments(bundle);
+        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, gestureFragment).commit();
     }
 
     public void requestCheckSwitch(int type, boolean on_off) {
@@ -296,19 +296,19 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
             try {
                 sub1 = ObservableFactory.gun3Toggle()
                         .subscribe(aBoolean -> {
-                                }
+                        }
                                 , throwable -> {
-                                    if (!(throwable instanceof TimeoutException)) {
-                                        logger.debug("Gun toggle fail, try again");
-                                        checkGunSwitch(true);
-                                    }
-                                }
+                            if (!(throwable instanceof TimeoutException)) {
+                                logger.debug("Gun toggle fail, try again");
+                                checkGunSwitch(true);
+                            }
+                        }
                                 , () -> {
-                                    logger.debug("Gun toggle robbery, sync to app");
-                                    requestCheckSwitch(CommonParams.ROBBERYSTATE, true);
-                                    DataFlowFactory.getSwitchDataFlow().saveRobberyState(true);
-                                    EventBus.getDefault().post(new RobberyStateModel(true));
-                                });
+                            logger.debug("Gun toggle robbery, sync to app");
+                            requestCheckSwitch(CommonParams.ROBBERYSTATE, true);
+                            DataFlowFactory.getSwitchDataFlow().saveRobberyState(true);
+                            EventBus.getDefault().post(new RobberyStateModel(true));
+                        });
             } catch (IOException e) {
                 logger.error("gun3Toggle exception", e);
                 return;

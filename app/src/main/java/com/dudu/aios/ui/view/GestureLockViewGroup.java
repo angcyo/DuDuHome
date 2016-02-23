@@ -294,11 +294,12 @@ public class GestureLockViewGroup extends RelativeLayout {
                 if (mOnGestureLockViewListener != null && mChoose.size() > 0) {
 
                     mOnGestureLockViewListener.onGestureEvent(isOk);
-                    if (isOk) {
+                  /*  if (isOk) {
                         mPaint.setColor(mFingerOnColor);
                     } else {
                         mPaint.setColor(mFingerUpFaultColor);
-                    }
+                    }*/
+                    mPaint.setColor(mFingerOnColor);
                     if (this.mTryTimes == 0) {
                         mOnGestureLockViewListener.onUnmatchedExceedBoundary();
                     }
@@ -311,7 +312,9 @@ public class GestureLockViewGroup extends RelativeLayout {
                 mTmpTarget.y = mLastPathY;
 
                 // 改变子元素的状态为UP
-                changeItemMode(isOk);
+                //changeItemMode(isOk);
+                changeItemMode(true);
+
 
                 // 计算每个元素中箭头需要旋转的角度
                 for (int i = 0; i + 1 < mChoose.size(); i++) {
