@@ -1,12 +1,14 @@
 package com.dudu.aios.ui.fragment;
 
 import android.app.Fragment;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -41,6 +43,8 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
 
     private Handler handler = new AnimHandler();
 
+    private LinearLayout viewContainer;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.vehicle_guard_layout, container, false);
@@ -58,6 +62,7 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initView(View view) {
+        viewContainer = (LinearLayout) view.findViewById(R.id.view_container);
         guard_unlock_layout = view.findViewById(R.id.vehicle_unlock_layout);
         guard_locked_layout = view.findViewById(R.id.vehicle_locked_layout);
         animContainer = (RelativeLayout) view.findViewById(R.id.anim_container);
@@ -83,6 +88,7 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
 
     private void actionLock() {
         logger.debug("actionLock");
+        viewContainer.setVisibility(View.GONE);
         //播放动画
         toggleAnim();
         //请求网络
@@ -186,6 +192,7 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
             animContainer.removeAllViews();
             if (animView != null) {
                 animView.stopAnim();
+                viewContainer.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -194,6 +201,8 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
 
     private void toggleAnim() {
         animView = new RobberyAnimView(getActivity());
+        animView.setZOrderOnTop(true);
+        animView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
         animContainer.addView(animView);
         animView.setOnAnimPlayListener(new RobberyAnimView.OnAnimPlayListener() {
             @Override
@@ -221,6 +230,7 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
         super.onDestroy();
         if (animView != null) {
             animView.stopAnim();
+            viewContainer.setVisibility(View.VISIBLE);
         }
     }
 

@@ -2,6 +2,7 @@ package com.dudu.aios.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -105,6 +106,8 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
         LogUtils.v("vehicle", "需要检查的车辆部件:" + category);
         vehicleCheckResultAnimation = new VehicleCheckResultAnimation(this, category);
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        vehicleCheckResultAnimation.setZOrderOnTop(true);
+        vehicleCheckResultAnimation.getHolder().setFormat(PixelFormat.TRANSLUCENT);
         container.addView(vehicleCheckResultAnimation, params);
         tvCategoryCh.setText(getCategoryCh(category));
         tvCategoryEn.setText(StringUtil.changeUpper(category));

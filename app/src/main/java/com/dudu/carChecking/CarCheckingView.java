@@ -149,7 +149,6 @@ public class CarCheckingView extends SurfaceView implements SurfaceHolder.Callba
                     try {
                         synchronized (mHolder) {
 
-//                            LogUtils.v("CarCheckingView1", "当前播放帧数: " + mFrameCounter);
                             c = mHolder.lockCanvas();
 
                             doAnimation(c);
@@ -172,12 +171,12 @@ public class CarCheckingView extends SurfaceView implements SurfaceHolder.Callba
         private void doAppearAnimation() {
             while (mRunning && mFrameCounter < MAXIMUM_FRAME_COUNT) {
                 mFrameCounter++;
-                LogUtils.v("lll", "当前播放帧数: " + mFrameCounter);
+
                 if (mFrameCounter % model != 0) {
                     Canvas c = null;
                     try {
                         synchronized (mHolder) {
-                            LogUtils.v("CarCheckingView", "当前播放帧数: " + mFrameCounter);
+
                             c = mHolder.lockCanvas();
 
                             doAnimation(c);
@@ -237,7 +236,7 @@ public class CarCheckingView extends SurfaceView implements SurfaceHolder.Callba
             File file = new File(FileUtils.getAnimDir(), VEHICLE_CATEGORY_DIR + category + "/" + path + "/" + picturePrefix + stCount + ".png");
 
             // is = am.open("car_checking/" + PICTURE_PREFIX + mFrameCounter + ".png");
-            LogUtils.v("path", "path--" + file.getPath() + "--" + file.exists());
+
             if (file.exists()) {
                 try {
                     is = new FileInputStream(file);

@@ -216,7 +216,6 @@ public class VehicleCheckResultAnimation extends SurfaceView implements SurfaceH
             InputStream is;
             File file = new File(FileUtils.getAnimDir(), VEHICLE_MALFUNCTION + category + "/" + path + "/" + PICTURE_FRAME_PREFIX + frameCount + ".png");
             // is = am.open("car_checking/" + PICTURE_PREFIX + mFrameCounter + ".png");
-            LogUtils.v("path", "path" + file.getPath() + "---" + file.exists());
             if (file.exists()) {
                 try {
                     is = new FileInputStream(file);

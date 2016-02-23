@@ -1,6 +1,7 @@
 package com.dudu.aios.ui.activity;
 
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,6 +66,8 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
     public void initView() {
         animContainer = (RelativeLayout) findViewById(R.id.anim_container);
         mAnimationView = new CarCheckingView(this, "suv", 3);
+        mAnimationView.setZOrderOnTop(true);
+        mAnimationView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
         animContainer.addView(mAnimationView);
         engineVehicleCheckResultView = (VehicleCheckResultView) findViewById(R.id.engine_vehicleCheckResult);
         gearboxVehicleCheckResultView = (VehicleCheckResultView) findViewById(R.id.gearbox_vehicleCheckResult);
@@ -190,6 +193,7 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
         super.onDestroy();
         SemanticEngine.getProcessor().switchSemanticType(SceneType.HOME);
     }
+
     @Override
     protected void onResume() {
         super.onResume();

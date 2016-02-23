@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     android:orientation="horizontal"
     tools:context="com.dudu.aios.ui.activity.VehicleAnimationActivity">
 
@@ -125,7 +126,7 @@
 
         <ListView
             android:id="@+id/repair_shop_listView"
-            android:layout_width="600dp"
+            android:layout_width="680dp"
             android:layout_height="200dp"
             android:layout_marginTop="10dp" />
 
