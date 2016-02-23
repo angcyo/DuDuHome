@@ -2,6 +2,9 @@ package com.dudu.workflow.common;
 
 import com.dudu.persistence.user.User;
 
+import rx.Scheduler;
+import rx.schedulers.Schedulers;
+
 /**
  * Created by Administrator on 2016/2/16.
  */
@@ -20,6 +23,7 @@ public class CommonParams {
 
     public void init() {
         DataFlowFactory.getUserDataFlow().getUserInfo()
+                .subscribeOn(Schedulers.newThread())
                 .subscribe(user -> {
                     CommonParams.this.user.setId(user.getId());
                     CommonParams.this.user.setUserName(user.getUserName());
