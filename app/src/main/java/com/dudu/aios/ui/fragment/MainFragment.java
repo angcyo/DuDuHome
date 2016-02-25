@@ -21,7 +21,9 @@ import com.dudu.voice.VoiceManagerProxy;
 import com.dudu.weather.WeatherFlow;
 import com.dudu.weather.WeatherInfo;
 import com.dudu.weather.WeatherStream;
+import com.dudu.workflow.obd.OBDStream;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -125,6 +127,14 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
         view.findViewById(R.id.flow_icon).setOnClickListener(this);
         view.findViewById(R.id.prevent_rob_icon).setOnClickListener(this);
 
+        mWeatherImage.setOnLongClickListener(v -> {
+            try {
+                OBDStream.getInstance().exec("ATSETVEHICLE=1");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return true;
+        });
     }
 
     @Override

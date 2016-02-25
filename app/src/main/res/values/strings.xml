@@ -170,7 +170,7 @@
     <string name="searching">正在搜索...</string>
 
     <string name="maintain_remind">保养提醒</string>
-    <string name="fuel_oil_ratio">燃油比值</string>
+    <string name="fuel_oil_ratio">燃油效率</string>
     <string name="battery_voltage">电瓶电压</string>
     <string name="engine_chinese">发动机</string>
     <string name="engine_english">ENGINE</string>
