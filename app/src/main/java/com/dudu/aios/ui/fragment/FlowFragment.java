@@ -100,6 +100,7 @@ public class FlowFragment extends BaseFragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_back:
+                btnBack.setEnabled(false);
                 replaceFragment(FragmentConstants.FRAGMENT_MAIN_PAGE);
                 break;
             case R.id.close_flow_container:
@@ -109,6 +110,7 @@ public class FlowFragment extends BaseFragment implements View.OnClickListener {
                 actionOpenFlow();
                 break;
             case R.id.passwordSet_container:
+                passwordSetContainer.setEnabled(false);
                 actionPasswordSet();
                 break;
         }
@@ -133,5 +135,11 @@ public class FlowFragment extends BaseFragment implements View.OnClickListener {
     private void showPasswordSetDialog() {
         FlowPasswordSetDialog dialog = new FlowPasswordSetDialog(getActivity());
         dialog.show();
+        dialog.setOnCancelOnListener(new FlowPasswordSetDialog.OnCancelOnListener() {
+            @Override
+            public void actionCancel() {
+                passwordSetContainer.setEnabled(true);
+            }
+        });
     }
 }

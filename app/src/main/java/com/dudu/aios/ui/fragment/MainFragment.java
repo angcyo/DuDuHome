@@ -185,6 +185,24 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        vehicleInspection.setEnabled(true);
+        drivingRecord.setEnabled(true);
+        navigation.setEnabled(true);
+        bluetoothPhone.setEnabled(true);
+        flow.setEnabled(true);
+        preventRob.setEnabled(true);
+        iconVehicleInspection.setEnabled(true);
+        iconDrivingRecord.setEnabled(true);
+        iconNavigation.setEnabled(true);
+        iconBt.setEnabled(true);
+        iconFlow.setEnabled(true);
+        iconRob.setEnabled(true);
+        voice_imageBtn.setEnabled(true);
+    }
+
     private void initFragmentView(View view) {
         vehicleInspection = (LinearLayout) view.findViewById(R.id.vehicle_inspection);
         drivingRecord = (LinearLayout) view.findViewById(R.id.driving_record_button);
@@ -212,34 +230,56 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
 
             case R.id.vehicle_inspection:
             case R.id.vehicle_inspection_icon:
+                vehicleInspection.setEnabled(false);
+                iconVehicleInspection.setEnabled(false);
                 startActivity(new Intent(getActivity(), CarCheckingActivity.class));
+
                 break;
+
             case R.id.driving_record_button:
             case R.id.driving_record_icon:
+                drivingRecord.setEnabled(false);
+                iconDrivingRecord.setEnabled(false);
                 replaceFragment(FragmentConstants.FRAGMENT_DRIVING_RECORD);
+
                 break;
 
             case R.id.navigation_button:
             case R.id.navigation_icon:
+                navigation.setEnabled(false);
+                iconNavigation.setEnabled(false);
                 NavigationProxy.getInstance().openNavi(NavigationProxy.OPEN_MANUAL);
+
                 break;
 
             case R.id.bluetooth_phone_button:
             case R.id.bluetooth_phone_icon:
+                bluetoothPhone.setEnabled(false);
+                iconBt.setEnabled(false);
                 startActivity(new Intent(getActivity(), BtDialActivity.class));
+
                 break;
 
             case R.id.flow_button:
             case R.id.flow_icon:
+                flow.setEnabled(false);
+                iconFlow.setEnabled(false);
                 replaceFragment(FragmentConstants.FRAGMENT_FLOW);
+
                 break;
+
             case R.id.prevent_rob:
             case R.id.prevent_rob_icon:
+                preventRob.setEnabled(false);
+                iconRob.setEnabled(false);
                 replaceFragment(FragmentConstants.FRAGMENT_VEHICLE_INSPECTION);
+
                 break;
 
             case R.id.voice_imageBtn:
+                voice_imageBtn.setEnabled(false);
                 VoiceManagerProxy.getInstance().startVoiceService();
+
                 break;
         }
     }

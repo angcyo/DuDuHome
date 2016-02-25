@@ -91,6 +91,7 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
         buttonBack.setOnClickListener(this);
         repairShopList.setOnItemClickListener((parent, view, position, id) -> startNavi(position));
 
+        buttonBack.setEnabled(true);
     }
 
     private void initData() {
@@ -132,6 +133,9 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
         });
     }
 
+
+
+
     private String getCategoryCh(String category) {
         String categoryCh = "";
         String message = "";
@@ -167,6 +171,8 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_back:
+                buttonBack.setEnabled(false);
+
                 vehicleCheckResultAnimation.stopAnim();
                 Intent intent = new Intent();
                 setResult(0, intent);

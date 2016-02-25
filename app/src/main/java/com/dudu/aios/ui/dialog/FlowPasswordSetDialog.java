@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+
 import com.dudu.aios.ui.utils.KeyboardUtil;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.LogUtils;
@@ -29,9 +30,15 @@ public class FlowPasswordSetDialog extends Dialog implements View.OnClickListene
 
     private KeyboardView keyboardView;
 
+    private OnCancelOnListener listener;
+
     public FlowPasswordSetDialog(Activity context) {
         super(context, R.style.PasswordSetDialogStyle);
         act = context;
+    }
+
+    public void setOnCancelOnListener(OnCancelOnListener listener) {
+        this.listener = listener;
     }
 
     @Override
@@ -103,6 +110,7 @@ public class FlowPasswordSetDialog extends Dialog implements View.OnClickListene
                 actionOk();
                 break;
             case R.id.button_cancel:
+                listener.actionCancel();
                 dismiss();
                 break;
         }
@@ -121,5 +129,9 @@ public class FlowPasswordSetDialog extends Dialog implements View.OnClickListene
             LogUtils.v("flow", "name:" + name + ";  password:" + password);
         }
 
+    }
+
+    public interface OnCancelOnListener {
+        void actionCancel();
     }
 }

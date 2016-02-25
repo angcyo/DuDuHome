@@ -33,7 +33,7 @@ public class VehiclePasswordSetFragment extends Fragment implements View.OnClick
 
     private Handler handler = new MyHandle();
 
-    private String category;
+    private String category = "";
 
 
     @Override

@@ -105,6 +105,11 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
     @Override
     public void onResume() {
         super.onResume();
+        mCheckPhotoButton.setEnabled(true);
+        mBackButton.setEnabled(true);
+        mCheckVideoButton.setEnabled(true);
+
+
         mainRecordActivity.setNoBlur();
         ObservableFactory.getInstance().getCommonObservable().hasBackground.set(false);
     }
@@ -120,6 +125,7 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.check_video:
+                mCheckVideoButton.setEnabled(false);
                 stopRearPreview();
                 replaceFragment(FragmentConstants.FRAGMENT_VIDEO_LIST);
                 break;
@@ -132,9 +138,11 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
                 break;
             case R.id.check_photo:
 //                replaceFragment(FragmentConstants.FRAGMENT_PHOTO_LIST);
+                mCheckPhotoButton.setEnabled(false);
                 mainRecordActivity.startActivity(new Intent(mainRecordActivity, PhotoListActivity.class));
                 break;
             case R.id.button_back:
+                mBackButton.setEnabled(false);
                 mainRecordActivity.setBlur();
                 if (isFrontCameraPreView == false){
                     stopRearPreview();

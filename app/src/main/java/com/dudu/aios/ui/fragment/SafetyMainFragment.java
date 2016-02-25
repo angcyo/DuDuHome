@@ -63,12 +63,17 @@ public class SafetyMainFragment extends BaseFragment implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.vehicle_guard_btn:
+                vehicle_guard_btn.setEnabled(false);
+                vehicle_robbery_btn.setEnabled(true);
                 actionGuard();
                 break;
             case R.id.vehicle_robbery_btn:
+                vehicle_robbery_btn.setEnabled(false);
+                vehicle_guard_btn.setEnabled(true);
                 actionRobbery();
                 break;
             case R.id.vehicle_back_button:
+                buttonBack.setEnabled(false);
                 replaceFragment(FragmentConstants.FRAGMENT_MAIN_PAGE);
                 break;
         }

@@ -3,6 +3,8 @@ package com.dudu.aios.ui.activity;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
@@ -18,10 +20,13 @@ import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.carChecking.CarCheckingProxy;
 import com.dudu.carChecking.CarCheckingView;
+import com.dudu.monitor.valueobject.LocationInfo;
 import com.dudu.voice.VoiceManagerProxy;
 import com.dudu.voice.semantic.constant.SceneType;
 import com.dudu.voice.semantic.engine.SemanticEngine;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
@@ -41,9 +46,17 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
 
     private ImageButton buttonBack;
 
+    private ImageView buttonCarChecking;
+
     private RelativeLayout animContainer;
 
     private LinearLayout engineContainer, gearboxContainer, absContainer, wsbContainer, srsContainer;
+
+    private TextView mDataText;
+
+    private ProgressThread progressThread;
+
+    private Handler handler = new ProgressHandler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +77,8 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
     }
 
     public void initView() {
+        mDataText = (TextView) findViewById(R.id.text_date);
+
         animContainer = (RelativeLayout) findViewById(R.id.anim_container);
         mAnimationView = new CarCheckingView(this, "suv", 3);
         mAnimationView.setZOrderOnTop(true);
@@ -93,6 +108,8 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
         wsbContainer = (LinearLayout) findViewById(R.id.wsb_container);
         srsContainer = (LinearLayout) findViewById(R.id.srs_container);
 
+        buttonCarChecking = (ImageButton) findViewById(R.id.button_vehicle_clear);
+
         buttonBack = (ImageButton) findViewById(R.id.button_back);
     }
 
@@ -105,7 +122,7 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
         wsbContainer.setOnClickListener(this);
         srsContainer.setOnClickListener(this);
 
-        findViewById(R.id.button_vehicle_clear).setOnClickListener(this);
+        buttonCarChecking.setOnClickListener(this);
 
     }
 
@@ -117,15 +134,23 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
 
     public void initDatas() {
 
-        setVehicleCheckState(100, engineVehicleCheckResultView, tvEnginePrompt, iconEnginePrompt, engineContainer);
+        // setVehicleCheckState(30, engineVehicleCheckResultView, tvEnginePrompt, iconEnginePrompt, engineContainer);
+        progressThread = new ProgressThread(30);
+        progressThread.start();
+        // vehicleCheckResultView.setProgress(grade, 1);
+        tvEnginePrompt.setText(getString(R.string.check_details));
+        iconEnginePrompt.setImageResource(icons[1]);
+        engineContainer.setEnabled(true);
 
-        setVehicleCheckState(20, gearboxVehicleCheckResultView, tvGearboxPrompt, iconGearboxPrompt, gearboxContainer);
+        setVehicleCheckState(80, gearboxVehicleCheckResultView, tvGearboxPrompt, iconGearboxPrompt, gearboxContainer);
 
-        setVehicleCheckState(30, absVehicleCheckResultView, tvAbsPrompt, iconAbsPrompt, absContainer);
+        setVehicleCheckState(70, absVehicleCheckResultView, tvAbsPrompt, iconAbsPrompt, absContainer);
 
         setVehicleCheckState(60, wsbVehicleCheckResultView, tvWsbPrompt, iconWsbPrompt, wsbContainer);
 
-        setVehicleCheckState(90, rsrVehicleCheckResultView, tvSrsPrompt, iconSrsPrompt, srsContainer);
+        setVehicleCheckState(100, rsrVehicleCheckResultView, tvSrsPrompt, iconSrsPrompt, srsContainer);
+
+        obtainDate();
     }
 
     @Override
@@ -133,6 +158,7 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
         Intent intent = new Intent(this, VehicleAnimationActivity.class);
         switch (v.getId()) {
             case R.id.button_back:
+                buttonBack.setEnabled(false);
                 mAnimationView.stopAnim();
                 finish();
                 return;
@@ -192,6 +218,7 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
     protected void onDestroy() {
         super.onDestroy();
         SemanticEngine.getProcessor().switchSemanticType(SceneType.HOME);
+        handler.removeCallbacksAndMessages(null);
     }
 
     @Override
@@ -199,4 +226,46 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
         super.onResume();
         SemanticEngine.getProcessor().switchSemanticType(SceneType.CAR_CHECKING);
     }
+
+    class ProgressHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            engineVehicleCheckResultView.setProgress(msg.arg1, 1);
+        }
+    }
+
+    class ProgressThread extends Thread {
+
+        private int progress;
+
+        public ProgressThread(int progress) {
+            this.progress = progress;
+        }
+
+        @Override
+        public void run() {
+            int index = 0;
+            while (index <= progress) {
+                index++;
+                Message message = Message.obtain();
+                message.arg1 = index;
+                handler.sendMessageDelayed(message, 2000);
+                LogUtils.v("view", "index:" + index);
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+        }
+    }
+
+    private void obtainDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        Date date = new Date(System.currentTimeMillis());//获取当前时间
+        mDataText.setText(sdf.format(date));
+    }
+
 }
