@@ -31,17 +31,17 @@ public class DriveVideo {
 
     private DriveVideo() {
         rearCameraVideoService = new RearCameraVideoService();
-        frontDriveVideoService = new FrontDriveVideoService();
+//        frontDriveVideoService = new FrontDriveVideoService();
     }
 
     public void startDriveVideo(){
         rearCameraVideoService.startDriveVideo();
-        frontDriveVideoService.startDriveVideo();
+//        frontDriveVideoService.startDriveVideo();
     }
 
     public void stopDriveVideo(){
         rearCameraVideoService.stopDriveVideo();
-        frontDriveVideoService.stopDriveVideo();
+//        frontDriveVideoService.stopDriveVideo();
     }
 
     public void setImageView(ImageView imageView){

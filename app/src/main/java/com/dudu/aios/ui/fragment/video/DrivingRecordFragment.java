@@ -120,10 +120,11 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.check_video:
+                stopRearPreview();
                 replaceFragment(FragmentConstants.FRAGMENT_VIDEO_LIST);
                 break;
             case R.id.take_photo:
-                DriveVideo.getInstance().getFrontCameraDriveVideo().takePicture();
+//                DriveVideo.getInstance().getFrontCameraDriveVideo().takePicture();
                 break;
             case R.id.switch_video:
                 log.debug("切换显示");

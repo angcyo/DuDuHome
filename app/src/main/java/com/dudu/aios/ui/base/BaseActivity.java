@@ -38,7 +38,7 @@ public abstract class BaseActivity extends Activity {
 
     protected   CameraRecordGLSurfaceView cameraView;
 
-    protected ImageView rearCameraPreview;
+//    protected ImageView rearCameraPreview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +60,7 @@ public abstract class BaseActivity extends Activity {
 
         volBrightnessSetting = new VolBrightnessSetting(this, baseBinding.baseView);
 
-        rearCameraPreview = baseBinding.rearCameraPreview;
+//        rearCameraPreview = baseBinding.rearCameraPreview;
     }
 
     protected void initPreview(){

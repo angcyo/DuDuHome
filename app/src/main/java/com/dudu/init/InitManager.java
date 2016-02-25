@@ -174,7 +174,7 @@ public class InitManager {
         AgedUtils.uninstallAgedApk(mContext);
 
 
-//        DriveVideo.getInstance().startDriveVideo();
+        DriveVideo.getInstance().startDriveVideo();
 
         rx.Observable.timer(1, TimeUnit.SECONDS)
                 .subscribe(new Action1<Long>() {
