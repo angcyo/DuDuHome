@@ -27,7 +27,7 @@ public class GestureFragment extends Fragment implements View.OnClickListener {
 
     private Handler handler = new MyHandle();
 
-    private String category;
+    private String category = "";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -60,10 +60,10 @@ public class GestureFragment extends Fragment implements View.OnClickListener {
                 tvDrawPrompt.setText(getResources().getString(R.string.draw_success));
                 tvDrawPrompt.setTextColor(getResources().getColor(R.color.blue));
                 Fragment fragment = null;
-                if (category.equals(RobberyConstant.GUARD_CONSTANT)) {
+                if (RobberyConstant.GUARD_CONSTANT.equals(category)) {
                     fragment = new GuardFragment();
                     //防盗
-                } else if (category.equals(RobberyConstant.ROBBERY_CONSTANT)) {
+                } else if (RobberyConstant.ROBBERY_CONSTANT.equals(category)) {
                     //防劫
                     fragment = new RobberyMainFragment();
                 }
