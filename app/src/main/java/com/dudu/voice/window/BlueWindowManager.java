@@ -372,6 +372,8 @@ public class BlueWindowManager extends BaseWindowManager {
         } else {
             voice_animLayout.setVisibility(View.GONE);
             voice_animLayout_blur.setVisibility(View.GONE);
+            blur_Ripple.setVisibility(View.GONE);
+            blur_Circle.setVisibility(View.GONE);
             view.setBackgroundResource(R.drawable.black_bg);
         }
     }

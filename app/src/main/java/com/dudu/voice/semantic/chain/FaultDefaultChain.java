@@ -3,6 +3,8 @@ package com.dudu.voice.semantic.chain;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.dudu.aios.ui.activity.VehicleAnimationActivity;
+import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.ChoiseUtil;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.carChecking.CarCheckingProxy;
@@ -53,8 +55,9 @@ public class FaultDefaultChain extends DefaultChain {
                     || semantic.getText().equals("不清除")
                     ||semantic.getText().equals("不")
                     ||semantic.getText().equals("不清楚")) {
-                VoiceManagerProxy.getInstance().startSpeaking("为您找到以下汽车修理店,选择第几个前往修理或退出",
-                        TTSType.TTS_START_UNDERSTANDING, false);
+//                VoiceManagerProxy.getInstance().startSpeaking("为您找到以下汽车修理店,选择第几个前往修理或退出",
+//                        TTSType.TTS_START_UNDERSTANDING, false);
+                ActivitiesManager.getInstance().closeTargetActivity(VehicleAnimationActivity.class);
                 return true;
 
             } else {

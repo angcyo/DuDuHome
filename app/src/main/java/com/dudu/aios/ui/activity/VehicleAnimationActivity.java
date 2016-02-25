@@ -342,4 +342,11 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
         super.onResume();
         SemanticEngine.getProcessor().switchSemanticType(SceneType.CAR_CHECKING);
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        VoiceManagerProxy.getInstance().onStop();
+
+    }
 }

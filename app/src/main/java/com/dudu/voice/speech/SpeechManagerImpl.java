@@ -1,5 +1,7 @@
 package com.dudu.voice.speech;
 
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 
 import com.aispeech.AIError;
@@ -19,6 +21,7 @@ import com.aispeech.export.listeners.AITTSListener;
 import com.aispeech.speech.AIAuthEngine;
 import com.dudu.aios.ui.voice.VoiceEvent;
 import com.dudu.android.hideapi.SystemPropertiesProxy;
+import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.voice.BaseVoiceManager;
 import com.dudu.voice.FloatWindowUtils;
@@ -38,6 +41,7 @@ import java.util.concurrent.TimeUnit;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 
 /**
@@ -60,6 +64,8 @@ public class SpeechManagerImpl extends BaseVoiceManager {
     private volatile boolean mSpeaking = false;
 
     private BlockingQueue<TTSTask> mTTSQueue;
+
+    private BeepPlayer startBeep;
 
     public SpeechManagerImpl() {
         mTTSQueue = new ArrayBlockingQueue<>(500, true);
@@ -137,6 +143,22 @@ public class SpeechManagerImpl extends BaseVoiceManager {
         mGrammarEngine.setDeviceId(Util.getIMEI(mContext));
     }
 
+
+    private static final int MSG_START_ASR = 1;
+    Handler mHandler = new Handler() {
+        @Override
+        public void dispatchMessage(Message msg) {
+            super.dispatchMessage(msg);
+            switch (msg.what) {
+                case MSG_START_ASR:
+                    mAsrEngine.start();
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
     private void initAsrEngine() {
         if (mAsrEngine != null) {
             mAsrEngine.destroy();
@@ -151,7 +173,8 @@ public class SpeechManagerImpl extends BaseVoiceManager {
             mAsrEngine.setUploadEnable(true);
             mAsrEngine.setUploadInterval(1000);
         }
-        mAsrEngine.setServer("ws://s-test.api.aispeech.com:10000");
+//        mAsrEngine.setServer("ws://s-test.api.aispeech.com:10000");
+        mAsrEngine.setServer("ws://s.api.aispeech.com");
         mAsrEngine.setRes("aicar");
         mAsrEngine.setUseXbnfRec(true);
         mAsrEngine.setUsePinyin(true);
@@ -161,11 +184,14 @@ public class SpeechManagerImpl extends BaseVoiceManager {
         mAsrEngine.setLocalBetterDomains(new String[]{"phone", "music", "radio", "volume",
                 "brightness", "eq", "opt", "app"});
 
-        mAsrEngine.setWaitCloudTimeout(2000);
-        mAsrEngine.setPauseTime(1000);
+        mAsrEngine.setWaitCloudTimeout(5000);
+        mAsrEngine.setPauseTime(3000);
         mAsrEngine.setUseConf(true);
         mAsrEngine.setNoSpeechTimeOut(6000);
-        mAsrEngine.setDeviceId(Util.getIMEI(mContext));
+
+        startBeep = new BeepPlayer(mContext, R.raw.open);
+        startBeep.setOnCompletionTask(startBeep.new OnCompletionTask(mHandler, MSG_START_ASR));
+
         // 自行设置合并规则:
         // 1. 如果无云端结果,则直接返回本地结果
         // 2. 如果有云端结果,则直接返回云端结果
@@ -275,8 +301,13 @@ public class SpeechManagerImpl extends BaseVoiceManager {
             log.debug("开启语音听写前，停止语音唤醒...");
             stopWakeup();
 
+//            startBeep.playBeep();
             log.debug("开始语义理解...");
-            mAsrEngine.start();
+
+            Observable.timer(100, TimeUnit.MILLISECONDS).subscribeOn(AndroidSchedulers.mainThread()).subscribe(aLong -> {
+
+                mAsrEngine.start();
+            });
         }
     }
 
@@ -407,7 +438,11 @@ public class SpeechManagerImpl extends BaseVoiceManager {
             log.debug("唤醒成功...");
             mWakeupEngine.stop();
 
+            log.debug("wakeup stop,asr start !");
+
+//            startBeep.playBeep();
             startVoiceService();
+
         }
 
         @Override

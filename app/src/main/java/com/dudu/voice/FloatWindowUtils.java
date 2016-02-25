@@ -6,9 +6,10 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.AdapterView.OnItemClickListener;
 
+import com.dudu.aios.ui.activity.CarCheckingActivity;
 import com.dudu.aios.ui.activity.MainRecordActivity;
+import com.dudu.aios.ui.activity.VehicleAnimationActivity;
 import com.dudu.aios.ui.voice.VoiceEvent;
-import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.model.WindowMessageEntity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
@@ -84,6 +85,10 @@ public class FloatWindowUtils {
 
 
     public static void showMessage(String message, MessageType type) {
+        if (ActivitiesManager.getInstance().getTopActivity() instanceof VehicleAnimationActivity ||
+                ActivitiesManager.getInstance().getTopActivity() instanceof CarCheckingActivity) {
+            return;
+        }
         sHandler.sendMessage(sHandler.obtainMessage(FLOAT_SHOW_MESSAGE,
                 new WindowMessageEntity(message, type)));
     }
@@ -119,25 +124,25 @@ public class FloatWindowUtils {
     public static void showAnimWindow() {
 
         if (ActivitiesManager.getInstance().getTopActivity() instanceof MainRecordActivity) {
-            Log.d("voice","-----voice FLOAT_SHOW_ANIM MainRecordActivity" );
+            Log.d("voice", "-----voice FLOAT_SHOW_ANIM MainRecordActivity");
             sHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     EventBus.getDefault().post(VoiceEvent.SHOW_ANIM);
                     ((BlueWindowManager) sManager).showAnimWindow();
                 }
-            },500);
+            }, 500);
 
         } else {
-            Log.d("voice","-----voice FLOAT_SHOW_ANIM otherActivity" );
+            Log.d("voice", "-----voice FLOAT_SHOW_ANIM otherActivity");
             sManager.showMessage(new WindowMessageEntity(Constants.WAKEUP_WORDS, MessageType.MESSAGE_INPUT));
         }
 
     }
 
-    public static void removeWithBlur(){
+    public static void removeWithBlur() {
 
-        ((BlueWindowManager)sManager).removeWithBlur();
+        ((BlueWindowManager) sManager).removeWithBlur();
 
     }
 

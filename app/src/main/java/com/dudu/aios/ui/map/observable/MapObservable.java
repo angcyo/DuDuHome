@@ -183,6 +183,7 @@ public class MapObservable {
         chooseStrategyMethodSub = null;
 
         navigationProxy.setShowList(true);
+        SemanticEngine.getProcessor().switchSemanticType(SceneType.MAP_CHOISE);
 
         switch (event) {
             case ADDRESS:

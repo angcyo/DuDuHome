@@ -130,6 +130,7 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
     protected void onPause() {
         super.onPause();
         mAnimationView.stopAnim();
+        VoiceManagerProxy.getInstance().onStop();
     }
 
     public void initDatas() {
