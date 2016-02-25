@@ -2,7 +2,6 @@ package com.dudu.voice.semantic.chain;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
 
 import com.dudu.aios.ui.activity.CarCheckingActivity;
 import com.dudu.aios.ui.activity.MainRecordActivity;
@@ -104,7 +103,13 @@ public class CmdChain extends SemanticChain {
             case Constants.CLOSE:
             case Constants.EXIT:
             case Constants.GUANDIAO:
-                toMainRecord();
+//                toMainRecord();
+                try {
+                    ((MainRecordActivity) ActivitiesManager.getInstance().getTopActivity()).replaceFragment(FragmentConstants.FRAGMENT_MAIN_PAGE);
+
+                } catch (Exception e) {
+
+                }
                 DriveVideo.getInstance().stopDriveVideo();
                 mVoiceManager.startSpeaking("录像预览已关闭", TTSType.TTS_DO_NOTHING, false);
                 break;
