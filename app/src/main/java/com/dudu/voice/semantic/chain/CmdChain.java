@@ -106,7 +106,7 @@ public class CmdChain extends SemanticChain {
 //                toMainRecord();
                 try {
                     ((MainRecordActivity) ActivitiesManager.getInstance().getTopActivity()).replaceFragment(FragmentConstants.FRAGMENT_MAIN_PAGE);
-
+                    ((MainRecordActivity) ActivitiesManager.getInstance().getTopActivity()).setBlur();
                 } catch (Exception e) {
 
                 }
