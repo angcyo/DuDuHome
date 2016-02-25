@@ -3,38 +3,49 @@ package com.dudu.android.launcher.ui.activity.bluetooth;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.dudu.aios.ui.base.BaseActivity;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.utils.Constants;
 
-public class BtOutCallActivity extends BaseTitlebarActivity implements View.OnClickListener {
+public class BtOutCallActivity extends BaseActivity implements View.OnClickListener {
 
     private Button mTerminateButton;
 
     private TextView mContactNameView;
 
     @Override
-    public int initContentView() {
-        return R.layout.activity_blue_tooth_dialing;
+    protected View getChildView() {
+        return LayoutInflater.from(this).inflate(R.layout.activity_blue_tooth_dialing, null);
     }
 
     @Override
-    public void initView(Bundle savedInstanceState) {
-        mTerminateButton = (Button) findViewById(R.id.dialing_terminate_button);
-        mContactNameView = (TextView) findViewById(R.id.dialing_name_textView);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initView();
+        initListener();
+        initData();
+
     }
 
-    @Override
-    public void initListener() {
+
+    private void initView() {
+        mTerminateButton = (Button) findViewById(R.id.button_drop);
+        mContactNameView = (TextView) findViewById(R.id.call_name);
+    }
+
+
+    private void initListener() {
         mTerminateButton.setOnClickListener(this);
     }
 
-    @Override
-    public void initDatas() {
+
+    private void initData() {
         Intent intent = getIntent();
         if (intent != null) {
             String name = intent.getStringExtra(Constants.EXTRA_CONTACT_NAME);
@@ -50,11 +61,13 @@ public class BtOutCallActivity extends BaseTitlebarActivity implements View.OnCl
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.dialing_terminate_button:
+            case R.id.button_drop:
                 Intent intent = new Intent("wld.btphone.bluetooth.CALL_TERMINATION");
                 sendBroadcast(intent);
                 finish();
                 break;
         }
     }
+
+
 }

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/contact_detail_frame"
+    android:gravity="center"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="256dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="23dp"
+        android:orientation="horizontal">
+
+        <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/name"
+            android:textColor="@color/btCall_text_Color"
+            android:textSize="20sp" />
+
+        <com.dudu.aios.ui.utils.customFontUtils.FZLFontEditView
+            android:id="@+id/txt_name"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:singleLine="true"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="220dp"
+        android:layout_height="0.5dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="7dp"
+        android:background="@color/black" />
+
+    <LinearLayout
+        android:layout_width="256dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="23dp"
+        android:orientation="horizontal">
+
+        <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/phone"
+            android:textColor="@color/btCall_text_Color"
+            android:textSize="20sp" />
+
+        <com.dudu.aios.ui.utils.customFontUtils.FZLFontEditView
+            android:id="@+id/txt_number"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:singleLine="true"
+            android:textSize="22sp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="220dp"
+        android:layout_height="0.5dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="7dp"
+        android:background="@color/black" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="21dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_contact_selector"
+            android:text="@string/ok"
+            android:textColor="@color/btCall_text_Color" />
+
+        <Button
+            android:id="@+id/button_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/button_contact_selector"
+            android:text="@string/cancel"
+            android:textColor="@color/btCall_text_Color" />
+    </LinearLayout>
+</LinearLayout>

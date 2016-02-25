@@ -128,7 +128,8 @@
             android:id="@+id/repair_shop_listView"
             android:layout_width="680dp"
             android:layout_height="200dp"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="10dp"
+            android:divider="@null" />
 
     </LinearLayout>
 

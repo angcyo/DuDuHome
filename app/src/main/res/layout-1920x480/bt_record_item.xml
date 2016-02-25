@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="74dp"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
+                android:id="@+id/call_name"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:text="126 2333 3333(2)"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
+                android:id="@+id/call_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="9dp"
+                android:text="未接来电"
+                android:textColor="@color/btCall_text_Color"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="130dp"
+            android:orientation="vertical">
+
+            <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
+                android:id="@+id/call_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="12:54"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <com.dudu.aios.ui.utils.customFontUtils.DINLightFontTextView
+                android:id="@+id/call_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="9dp"
+                android:text="00:31"
+                android:textColor="@color/btCall_text_Color"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="36dp">
+
+            <ImageButton
+                android:id="@+id/button_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_add_contacts_selector" />
+
+            <ImageButton
+                android:id="@+id/button_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_bt_detail_selector" />
+        </FrameLayout>
+
+        <ImageButton
+            android:id="@+id/button_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="23dp"
+            android:background="@drawable/button_bt_delete_item_selector" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

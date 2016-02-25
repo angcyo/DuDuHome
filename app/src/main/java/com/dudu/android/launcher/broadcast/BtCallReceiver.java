@@ -48,6 +48,7 @@ public class BtCallReceiver extends BroadcastReceiver {
         Intent i = new Intent(context, clzz);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         i.putExtra(Constants.EXTRA_PHONE_NUMBER, intent.getStringExtra("HFP_NUMBER"));
+        i.putExtra(Constants.EXTRA_CONTACT_NAME,intent.getStringExtra("HFT_NAME"));
         context.startActivity(i);
     }
 }

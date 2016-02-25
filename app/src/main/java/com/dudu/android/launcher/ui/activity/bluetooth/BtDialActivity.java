@@ -45,8 +45,6 @@ public class BtDialActivity extends BaseActivity implements
         mDeleteButton = (ImageButton) findViewById(R.id.delete_button);
         mDialKeyboardButton = (ImageButton) findViewById(R.id.button_dial_keyboard);
         mContactsButton = (ImageButton) findViewById(R.id.button_contacts);
-
-        mDialKeyboardButton.setEnabled(false);
     }
 
 
@@ -83,9 +81,10 @@ public class BtDialActivity extends BaseActivity implements
                 removeSelectedDigit();
                 break;
             case R.id.button_dial_keyboard:
+                startActivity(new Intent(this, BtInCallActivity.class));
                 break;
             case R.id.button_contacts:
-                // startActivity(new Intent(this,BtContactsActivity.class));
+                startActivity(new Intent(this, BtContactsActivity.class));
                 break;
         }
     }
@@ -137,9 +136,11 @@ public class BtDialActivity extends BaseActivity implements
         }
 
         Intent intent = new Intent("wld.btphone.bluetooth.DIAL");
-        intent.putExtra("dial_number", "15602981135");
-//        intent.putExtra("dial_number", dialString);
+        // intent.putExtra("dial_number", "18665323029");
+        String number = dialString.replace(" ", "");
+        intent.putExtra("dial_number", number);
         sendBroadcast(intent);
+        startActivity(new Intent(this, BtCallingActivity.class).putExtra("number", dialString));
     }
 
     public boolean isDigitsEmpty() {

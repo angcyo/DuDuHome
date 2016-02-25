@@ -15,6 +15,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
 
+import com.dudu.aios.ui.bt.CallRecord;
+import com.dudu.aios.ui.bt.Contact;
 import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.model.VideoEntity;
 
@@ -39,6 +41,17 @@ public class DbHelper extends SQLiteOpenHelper {
     public final static String FLOW_COLUMN_TYPE = "type";
     public final static String FLOW_COLUMN_TIME = "time";
 
+    public final static String CONTACT_TABLE_NAME = "contact";
+    public final static String CONTACT_COLUMN_ID = "_id";
+    public final static String CONTACT_COLUMN_NAME = "name";
+    public final static String CONTACT_COLUMN_NUMBER = "number";
+
+    public final static String CALL_RECORD_TABLE_NAME = "callRecord";
+    public final static String CALL_RECORD_COLUMN_ID = "_id";
+    public final static String CALL_RECORD_COLUMN_NAME = "name";
+    public final static String CALL_RECORD_COLUMN_STATE = "state";
+    public final static String CALL_RECORD_COLUMN_TIME = "time";
+    public final static String CALL_RECORD_COLUMN_DURATION = "duration";
 
     private final static String CREATE_FLOW_TABLE_SQL = "create table if not exists "
             + FLOW_TABLE_NAME
@@ -67,6 +80,30 @@ public class DbHelper extends SQLiteOpenHelper {
             + VIDEO_COLUMN_PATH
             + " VARCHAR, " + VIDEO_COLUMN_SIZE + " VARCHAR)";
 
+    private static final String CREATE_CONTACT_TABLE_SQL = "create table if not exists "
+            + CONTACT_TABLE_NAME
+            + " ("
+            + CONTACT_COLUMN_ID
+            + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + CONTACT_COLUMN_NAME
+            + " TEXT, "
+            + CONTACT_COLUMN_NUMBER
+            + " TEXT)";
+
+    private static final String CREATE_CALL_RECORD_TABLE_SQL = "create table if not exists "
+            + CALL_RECORD_TABLE_NAME
+            + " ("
+            + CALL_RECORD_COLUMN_ID
+            + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + CALL_RECORD_COLUMN_NAME
+            + " TEXT, "
+            + CALL_RECORD_COLUMN_STATE
+            + " INTEGER, "
+            + CALL_RECORD_COLUMN_TIME
+            + " DATETIME, "
+            + CALL_RECORD_COLUMN_DURATION
+            + " DATETIME)";
+
     private SQLiteDatabase db;
 
     private static DbHelper mDbHelper;
@@ -86,6 +123,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sdb) {
         sdb.execSQL(CREATE_FLOW_TABLE_SQL);
         sdb.execSQL(CREATE_VIDEO_TABLE_SQL);
+        sdb.execSQL(CREATE_CONTACT_TABLE_SQL);
     }
 
     @Override
@@ -432,4 +470,89 @@ public class DbHelper extends SQLiteOpenHelper {
         return totalCount;
     }
 
+    public void insertContact(String name, String number) {
+        db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(CONTACT_COLUMN_NAME, name);
+        values.put(CONTACT_COLUMN_NUMBER, number);
+        db.insert(CONTACT_TABLE_NAME, null, values);
+    }
+
+    public List<Contact> getAllContacts() {
+        db = getWritableDatabase();
+        List<Contact> contacts = new ArrayList<>();
+        Cursor c = db.query(CONTACT_TABLE_NAME, null, null, null, null, null,
+                CONTACT_COLUMN_NAME + " desc");
+        if (c != null) {
+            while (c.moveToNext()) {
+                Contact contact = new Contact();
+                int id = c.getInt(c.getColumnIndexOrThrow(CONTACT_COLUMN_ID));
+                String name = c.getString(c.getColumnIndexOrThrow(CONTACT_COLUMN_NAME));
+                String number = c.getString(c.getColumnIndexOrThrow(CONTACT_COLUMN_NUMBER));
+                contact.setName(name);
+                contact.setNumber(number);
+                contacts.add(contact);
+            }
+            c.close();
+        }
+        return contacts;
+    }
+
+    public void deleteContact(Contact contact) {
+        db = getWritableDatabase();
+        db.delete(CONTACT_TABLE_NAME, CONTACT_COLUMN_NAME + "=? and " + CONTACT_COLUMN_NUMBER + "=?",
+                new String[]{contact.getName(), contact.getNumber()});
+    }
+
+    public void updateContact(Contact contact) {
+        db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(CONTACT_COLUMN_ID, contact.getId());
+        values.put(CONTACT_COLUMN_NAME, contact.getName());
+        values.put(CONTACT_COLUMN_NUMBER, contact.getNumber());
+        db.update(CONTACT_TABLE_NAME, values, CONTACT_COLUMN_ID + "=?", new String[]{String.valueOf(values.getAsInteger(CONTACT_COLUMN_ID))});
+    }
+
+    public List<CallRecord> getAllCallRecord() {
+        db = getWritableDatabase();
+        List<CallRecord> records = new ArrayList<>();
+        Cursor cursor = db.query(CALL_RECORD_TABLE_NAME, null, null, null, null, null, CALL_RECORD_COLUMN_TIME + "desc");
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                CallRecord record = new CallRecord();
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow(CALL_RECORD_COLUMN_ID));
+                String name = cursor.getString(cursor.getColumnIndexOrThrow(CALL_RECORD_COLUMN_NAME));
+                int state = cursor.getInt(cursor.getColumnIndexOrThrow(CALL_RECORD_COLUMN_STATE));
+                String time = cursor.getString(cursor.getColumnIndexOrThrow(CALL_RECORD_COLUMN_TIME));
+                String duration = cursor.getString(cursor.getColumnIndexOrThrow(CALL_RECORD_COLUMN_DURATION));
+                record.setId(id);
+                record.setName(name);
+                record.setState(state);
+               /* record.setTime(time);
+                record.setDuration(duration);*/
+                records.add(record);
+            }
+            cursor.close();
+        }
+        return records;
+    }
+
+    public void insertCallRecord(CallRecord record) {
+        db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(CALL_RECORD_COLUMN_NAME, record.getName());
+        values.put(CALL_RECORD_COLUMN_STATE, record.getState());
+        values.put(CALL_RECORD_COLUMN_TIME, record.getTime());
+        values.put(CALL_RECORD_COLUMN_DURATION, record.getDuration());
+        db.insert(CALL_RECORD_TABLE_NAME, null, values);
+    }
+
+    public void deleteCallRecord(CallRecord record) {
+        db = getWritableDatabase();
+        db.delete(CALL_RECORD_TABLE_NAME, CALL_RECORD_COLUMN_ID + "=?", new String[]{record.getId() + ""});
+    }
+
 }
+
+
+

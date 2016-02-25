@@ -73,9 +73,9 @@ public class SliderRelativeLayout extends RelativeLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        mSliderIcon = (ImageView) findViewById(R.id.slider_icon);
+    /*    mSliderIcon = (ImageView) findViewById(R.id.slider_icon);
         mLeftRingView = (ImageView) findViewById(R.id.answer_phone_icon);
-        mRightRingView = (ImageView) findViewById(R.id.reject_phone_icon);
+        mRightRingView = (ImageView) findViewById(R.id.reject_phone_icon);*/
     }
 
     private int mLastMoveX = 0;
