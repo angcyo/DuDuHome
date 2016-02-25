@@ -3,13 +3,13 @@ package com.dudu.voice.semantic.chain;
 import android.app.Activity;
 import android.content.Intent;
 
-import com.dudu.aios.ui.activity.MainRecordActivity;
-import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.aios.ui.activity.CarCheckingActivity;
+import com.dudu.aios.ui.activity.MainRecordActivity;
+import com.dudu.aios.ui.activity.VehicleAnimationActivity;
+import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.WifiApAdmin;
-import com.dudu.carChecking.CarCheckingProxy;
 import com.dudu.commonlib.CommonLib;
 import com.dudu.drivevideo.DriveVideo;
 import com.dudu.map.NavigationProxy;
@@ -135,6 +135,9 @@ public class CmdChain extends SemanticChain {
     private void handleExitCmd() {
         FloatWindowUtils.removeFloatWindow();
         SemanticEngine.getProcessor().clearSemanticStack();
+
+        ActivitiesManager.getInstance().closeTargetActivity(VehicleAnimationActivity.class);
+
         SemanticEngine.getProcessor().switchSemanticType(SceneType.HOME);
     }
 

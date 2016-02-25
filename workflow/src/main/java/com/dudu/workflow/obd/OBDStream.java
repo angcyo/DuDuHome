@@ -1,5 +1,7 @@
 package com.dudu.workflow.obd;
 
+import android.util.Log;
+
 import com.dudu.android.libserial.SerialManager;
 
 import java.io.IOException;
@@ -80,6 +82,7 @@ public class OBDStream {
     }
 
     public Observable<String> obdErrorString() throws IOException {
+        Log.d("lxh", "carChecking obdErrorString: "+obdErrorString);
         if (obdErrorString == null) obdErrorString = obdErrorString(obdRawData());
         return obdErrorString;
     }

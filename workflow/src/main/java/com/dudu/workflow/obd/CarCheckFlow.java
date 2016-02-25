@@ -21,17 +21,17 @@ public class CarCheckFlow {
 
     public Observable<String> gearboxFailed() throws IOException {
         return OBDStream.getInstance().obdErrorString()
-                .filter(s -> s.contains("U0401") | s.contains("U029F"));
+                .filter(s -> s.contains("U0401") /*| s.contains("U029F")*/);
     }
 
     public Observable<String> ABSFailed() throws IOException {
         return OBDStream.getInstance().obdErrorString()
-                .filter(s -> s.contains("C1B02") | s.contains("P0102"));
+                .filter(s -> s.contains("C1B02") /*| s.contains("P0102")*/);
     }
 
     public Observable<String> SRSFailed() throws IOException {
         return OBDStream.getInstance().obdErrorString()
-                .filter(s -> s.contains("B0052") | s.contains("P0304"));
+                .filter(s -> s.contains("B0052") /*| s.contains("P0304")|s.contains("C138F")*/);
     }
 
     public Observable<String> WSBFailed() throws IOException {

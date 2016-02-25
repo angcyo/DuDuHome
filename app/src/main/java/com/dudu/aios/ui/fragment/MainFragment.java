@@ -12,18 +12,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-
+import com.dudu.aios.ui.activity.CarCheckingActivity;
 import com.dudu.aios.ui.fragment.base.BaseFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.R;
-import com.dudu.aios.ui.activity.CarCheckingActivity;
 import com.dudu.android.launcher.ui.activity.bluetooth.BtDialActivity;
 import com.dudu.android.launcher.ui.dialog.IPConfigDialog;
 import com.dudu.android.launcher.utils.WeatherUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
-import com.dudu.carChecking.CarCheckType;
-import com.dudu.carChecking.CarCheckingProxy;
-import com.dudu.commonlib.CommonLib;
 import com.dudu.init.InitManager;
 import com.dudu.map.NavigationProxy;
 import com.dudu.obd.ObdInit;
@@ -186,6 +182,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
 //            }
             return true;
         });
+
     }
 
     private void initFragmentView(View view) {

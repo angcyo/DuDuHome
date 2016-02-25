@@ -6,6 +6,7 @@ import com.dudu.aios.ui.activity.VehicleAnimationActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.commonlib.CommonLib;
 import com.dudu.commonlib.repo.ReceiverData;
+import com.dudu.voice.FloatWindowUtils;
 import com.dudu.voice.VoiceManagerProxy;
 import com.dudu.voice.semantic.constant.TTSType;
 import com.dudu.workflow.common.ObservableFactory;
@@ -48,12 +49,6 @@ public class CarCheckingProxy {
         EventBus.getDefault().register(this);
         registerSubList = new ArrayList<>();
         unregisterSubList = new ArrayList<>();
-        unregisterSubList.add(CarCheckType.TCM);
-        unregisterSubList.add(CarCheckType.SRS);
-        unregisterSubList.add(CarCheckType.ECM);
-        unregisterSubList.add(CarCheckType.ABS);
-        unregisterSubList.add(WSB);
-
         log = LoggerFactory.getLogger("carChecking");
     }
 
@@ -83,11 +78,11 @@ public class CarCheckingProxy {
         log.debug("carChecking registerTCM");
         try {
             log.debug("carChecking engineFailed start");
-            Subscription tcm = ObservableFactory.engineFailed()
+            Subscription tcm = ObservableFactory.gearboxFailed()
                     .subscribeOn(Schedulers.newThread())
                     .subscribe(s -> {
                         log.debug("carChecking engineFailed got it");
-                        if (!isTCMbroadcasted) {
+                        if (!isTCMbroadcasted || isClearedFault) {
                             isTCMbroadcasted = true;
                             showCheckingError(CarCheckType.TCM);
                         }
@@ -128,7 +123,7 @@ public class CarCheckingProxy {
         log.debug("carChecking ECMFailed start");
 
         try {
-            Subscription ecm = ObservableFactory.gearboxFailed()
+            Subscription ecm = ObservableFactory.engineFailed()
                     .subscribeOn(Schedulers.newThread())
                     .subscribe(s -> {
                         log.debug("carChecking ECMFailed got it");
@@ -155,8 +150,9 @@ public class CarCheckingProxy {
                     .subscribe(s -> {
 
                         log.debug("carChecking SRSFailed got it");
-                        if (!isSRSbroadcasted) {
+                        if (!isSRSbroadcasted || isClearedFault) {
                             isSRSbroadcasted = true;
+                            isClearedFault = false;
 
                             showCheckingError(CarCheckType.SRS);
                         }
@@ -188,8 +184,9 @@ public class CarCheckingProxy {
 
             CarCheckFlow.clearCarCheckError();
 
-            regNext();
             VoiceManagerProxy.getInstance().startSpeaking("清除故障码成功", TTSType.TTS_DO_NOTHING, false);
+
+            FloatWindowUtils.removeFloatWindow();
 
             if (ActivitiesManager.getInstance().getTopActivity() instanceof VehicleAnimationActivity) {
                 ActivitiesManager.getInstance().closeTargetActivity(VehicleAnimationActivity.class);
@@ -237,29 +234,29 @@ public class CarCheckingProxy {
         switch (type) {
 
             case SRS:
-                playText = "乘客座椅安全带传感器故障,";
+                playText = "为您检测到乘客座椅安全带传感器故障，是否清除故障码?";
                 intent.putExtra("vehicle", "srs");
                 break;
             case ABS:
-                playText = "回油泵电路发生故障,";
+                playText = "检测到您的回油泵电路发生故障,是否清除故障码";
                 intent.putExtra("vehicle", "abs");
                 break;
             case ECM:
-                playText = "质量或体积空气流量传感器B电路发生故障,";
+                playText = "检测到您的发动机质量或体积空气流量传感器B电路发生故障，是否清除故障码？";
                 intent.putExtra("vehicle", "engine");
                 break;
             case TCM:
-                playText = "来自发动机控制模块或动力传动控制模块的数据无效,";
+                playText = "检测到因发动机控制模块或动力传动控制模块引发的变速箱故障，是否清除故障码？";
                 intent.putExtra("vehicle", "gearbox");
                 break;
             case WSB:
-                playText = "左前轮胎压异常,";
+                playText = "为您检测到右后轮胎压不足，是否清除故障码?";
                 intent.putExtra("vehicle", "wsb");
                 break;
         }
-        playText = "检测到您的车辆" + playText + "已经为您找到以下汽车修理店，选择第几个前往修理或退出";
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         CommonLib.getInstance().getContext().startActivity(intent);
+        VoiceManagerProxy.getInstance().clearMisUnderstandCount();
         VoiceManagerProxy.getInstance().startSpeaking(playText, TTSType.TTS_START_UNDERSTANDING, false);
     }
 
@@ -271,6 +268,26 @@ public class CarCheckingProxy {
     }
 
     public void registerCarCheckingError() {
-        regNext();
+
+        if (!unregisterSubList.isEmpty()) {
+            unregisterSubList.clear();
+        }
+
+        isABSbroadcasted = false;
+        isWSBbroadcasted = false;
+        isTCMbroadcasted = false;
+        isECMbroadcasted = false;
+        isSRSbroadcasted = false;
+
+        unregisterSubList.add(CarCheckType.ECM);
+        unregisterSubList.add(CarCheckType.TCM);
+        unregisterSubList.add(CarCheckType.SRS);
+        unregisterSubList.add(CarCheckType.ABS);
+
+        registerECM();
+        registerTCM();
+        registerSRS();
+        registerABS();
     }
+
 }

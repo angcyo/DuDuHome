@@ -150,10 +150,14 @@ public class BlueWindowManager extends BaseWindowManager {
             return;
         }
 
-
         addFloatView();
 
         stopAnimWindow();
+
+        if (ActivitiesManager.getInstance().getTopActivity() instanceof VehicleAnimationActivity) {
+            message_layout.setVisibility(View.GONE);
+            return;
+        }
 
         blur(message_layout);
 

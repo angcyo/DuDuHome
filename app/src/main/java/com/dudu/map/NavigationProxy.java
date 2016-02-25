@@ -48,6 +48,7 @@ import java.util.concurrent.TimeUnit;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by lxh on 2015/11/26.
@@ -182,7 +183,7 @@ public class NavigationProxy {
     }
 
     private boolean openActivity(int openType) {
-        
+
         if (navigationManager.isNavigatining()) {
             switch (navigationManager.getNavigationType()) {
                 case NAVIGATION:
@@ -336,41 +337,49 @@ public class NavigationProxy {
     }
 
     public void onEventMainThread(NavigationType event) {
-        disMissProgressDialog();
-        removeCallback();
-        naviSubscription = null;
 
-        switch (event) {
-            case NAVIGATION:
-                if (!needNotify)
+
+        try {
+            disMissProgressDialog();
+        } catch (Exception e) {
+
+        } finally {
+
+            removeCallback();
+            naviSubscription = null;
+
+            switch (event) {
+                case NAVIGATION:
+                    if (!needNotify)
+                        return;
+                    navigationManager.setNavigationType(NavigationType.NAVIGATION);
+                    intentActivity(NavigationActivity.class);
+                    if (isMapActivity()) {
+                        ActivitiesManager.getInstance().closeTargetActivity(GaodeMapActivity.class);
+                    }
+                    break;
+                case BACKNAVI:
+                    navigationManager.setNavigationType(NavigationType.BACKNAVI);
+                    intentActivity(NaviBackActivity.class);
+                    break;
+                case CALCULATEERROR:
+                    if (!needNotify)
+                        return;
+                    navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
+                    voiceManager.startSpeaking("路径规划出错，请稍后再试", TTSType.TTS_DO_NOTHING, true);
+                    removeWindow();
                     return;
-                navigationManager.setNavigationType(NavigationType.NAVIGATION);
-                intentActivity(NavigationActivity.class);
-                if (isMapActivity()) {
-                    ActivitiesManager.getInstance().closeTargetActivity(GaodeMapActivity.class);
-                }
-                break;
-            case BACKNAVI:
-                navigationManager.setNavigationType(NavigationType.BACKNAVI);
-                intentActivity(NaviBackActivity.class);
-                break;
-            case CALCULATEERROR:
-                if (!needNotify)
-                    return;
-                navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
-                voiceManager.startSpeaking("路径规划出错，请稍后再试", TTSType.TTS_DO_NOTHING, true);
-                removeWindow();
-                return;
-            case NAVIGATION_END:
-                navigationManager.setNavigationType(NavigationType.DEFAULT);
-                ActivitiesManager.getInstance().closeTargetActivity(NavigationActivity.class);
-                ActivitiesManager.getInstance().closeTargetActivity(NaviBackActivity.class);
-                ActivitiesManager.getInstance().closeTargetActivity(SimpleHudActivity.class);
-                intentActivity(GaodeMapActivity.class);
-                break;
+                case NAVIGATION_END:
+                    navigationManager.setNavigationType(NavigationType.DEFAULT);
+                    ActivitiesManager.getInstance().closeTargetActivity(NavigationActivity.class);
+                    ActivitiesManager.getInstance().closeTargetActivity(NaviBackActivity.class);
+                    ActivitiesManager.getInstance().closeTargetActivity(SimpleHudActivity.class);
+                    intentActivity(GaodeMapActivity.class);
+                    break;
+            }
+            navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
+
         }
-        navigationManager.setSearchType(SearchType.SEARCH_DEFAULT);
-
 
     }
 
@@ -444,6 +453,7 @@ public class NavigationProxy {
         if (waitingDialog != null && waitingDialog.isShowing()) {
             waitingDialog.dismiss();
             waitingDialog = null;
+
         }
     }
 
@@ -497,6 +507,7 @@ public class NavigationProxy {
             return;
         needNotify = true;
         naviSubscription = Observable.just(navigation)
+                .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe(navigation1 -> {
                     voiceManager.stopUnderstanding();
                     voiceManager.clearMisUnderstandCount();
@@ -506,11 +517,11 @@ public class NavigationProxy {
                         return;
                     }
                     openActivity(OPEN_MANUAL);
-                    showProgressDialog(context.getString(R.string.routePlanning));
                     isManual = false;
                     SemanticEngine.getProcessor().switchSemanticType(SceneType.HOME);
                     FloatWindowUtils.removeFloatWindow();
                     navigationManager.startCalculate(navigation1);
+                    showProgressDialog(context.getString(R.string.routePlanning));
                 });
 
     }

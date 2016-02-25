@@ -3,15 +3,14 @@ package com.dudu.voice.semantic.chain;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.dudu.aios.ui.activity.CarCheckingActivity;
-import com.dudu.aios.ui.activity.VehicleAnimationActivity;
-import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.ChoiseUtil;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.carChecking.CarCheckingProxy;
 import com.dudu.carChecking.CarNaviChoose;
 import com.dudu.voice.FloatWindowUtils;
+import com.dudu.voice.VoiceManagerProxy;
 import com.dudu.voice.semantic.bean.SemanticBean;
+import com.dudu.voice.semantic.constant.TTSType;
 
 import de.greenrobot.event.EventBus;
 
@@ -45,14 +44,19 @@ public class FaultDefaultChain extends DefaultChain {
         if (semantic != null && !TextUtils.isEmpty(semantic.getText())) {
 
             Log.d("lxh", "voice fault  " + semantic.getText());
-            if (semantic.getText().contains(FAULT_CLEAR)) {
+            if (semantic.getText().contains(FAULT_CLEAR)
+                    ||semantic.getText().equals("是")
+                    ||semantic.getText().contains("清除")) {
                 CarCheckingProxy.getInstance().clearFault();
-                FloatWindowUtils.removeFloatWindow();
                 return true;
-            } else if (semantic.getText().contains("退出")) {
-                ActivitiesManager.getInstance().closeTargetActivity(CarCheckingActivity.class);
-                ActivitiesManager.getInstance().closeTargetActivity(VehicleAnimationActivity.class);
+            } else if (semantic.getText().equals("否")
+                    || semantic.getText().equals("不清除")
+                    ||semantic.getText().equals("不")
+                    ||semantic.getText().equals("不清楚")) {
+                VoiceManagerProxy.getInstance().startSpeaking("为您找到以下汽车修理店,选择第几个前往修理或退出",
+                        TTSType.TTS_START_UNDERSTANDING, false);
                 return true;
+
             } else {
                 return handleMapChoise(semantic.getText());
             }
