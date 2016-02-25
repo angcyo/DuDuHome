@@ -12,6 +12,7 @@ import com.aispeech.export.engines.AILocalTTSEngine;
 import com.aispeech.export.engines.AILocalWakeupDnnEngine;
 import com.aispeech.export.engines.AIMixASREngine;
 import com.aispeech.export.listeners.AIASRListener;
+import com.aispeech.export.listeners.AIAuthListener;
 import com.aispeech.export.listeners.AILocalGrammarListener;
 import com.aispeech.export.listeners.AILocalWakeupDnnListener;
 import com.aispeech.export.listeners.AITTSListener;
@@ -19,8 +20,8 @@ import com.aispeech.speech.AIAuthEngine;
 import com.dudu.aios.ui.voice.VoiceEvent;
 import com.dudu.android.hideapi.SystemPropertiesProxy;
 import com.dudu.android.launcher.utils.Constants;
-import com.dudu.voice.FloatWindowUtils;
 import com.dudu.voice.BaseVoiceManager;
+import com.dudu.voice.FloatWindowUtils;
 import com.dudu.voice.semantic.constant.TTSType;
 import com.dudu.voice.semantic.engine.SemanticEngine;
 import com.dudu.voice.semantic.parser.SpeechJsonParser;
@@ -32,8 +33,12 @@ import org.json.JSONObject;
 import java.io.FileNotFoundException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.Subscription;
+import rx.functions.Action1;
 
 /**
  * Created by 赵圣琪 on 2015/10/27.
@@ -60,6 +65,9 @@ public class SpeechManagerImpl extends BaseVoiceManager {
         mTTSQueue = new ArrayBlockingQueue<>(500, true);
     }
 
+    public Subscription reAuthSub;
+
+
     private void initWakeupEngine() {
         mWakeupEngine = AILocalWakeupDnnEngine.createInstance();
         mWakeupEngine.setResBin(SpeechConstant.wakeup_dnn_res);
@@ -81,12 +89,33 @@ public class SpeechManagerImpl extends BaseVoiceManager {
         }
 
         if (!mAuthEngine.isAuthed()) {
-            final boolean authRet = mAuthEngine.doAuth();
-            if (authRet) {
-                log.debug("语音授权成功...");
-            } else {
-                log.error("语音授权失败...");
-            }
+            mAuthEngine.setOnAuthListener(new AIAuthListener() {
+                @Override
+                public void onAuthSuccess() {
+
+                }
+
+                @Override
+                public void onAuthFailed(String s) {
+
+                    reAuthSub = Observable.timer(10, TimeUnit.SECONDS).subscribe(new Action1<Long>() {
+                        @Override
+                        public void call(Long aLong) {
+                            doAuth();
+                        }
+                    });
+                }
+            });
+            doAuth();
+        }
+    }
+
+    private void doAuth() {
+        final boolean authRet = mAuthEngine.doAuth();
+        if (authRet) {
+            log.debug("语音授权成功...");
+        } else {
+            log.error("语音授权失败...");
         }
     }
 
