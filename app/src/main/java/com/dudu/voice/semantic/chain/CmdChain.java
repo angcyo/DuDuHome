@@ -6,7 +6,6 @@ import android.content.Intent;
 import com.dudu.aios.ui.activity.CarCheckingActivity;
 import com.dudu.aios.ui.activity.MainRecordActivity;
 import com.dudu.aios.ui.activity.VehicleAnimationActivity;
-import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.WifiApAdmin;
@@ -97,8 +96,7 @@ public class CmdChain extends SemanticChain {
 //                mContext.startActivity(intent);
 
                 toMainRecord();
-                MainRecordActivity activity = (MainRecordActivity) ActivitiesManager.getInstance().getTopActivity();
-                activity.replaceFragment(FragmentConstants.FRAGMENT_DRIVING_RECORD);
+
                 break;
             case Constants.CLOSE:
             case Constants.EXIT:
@@ -111,12 +109,18 @@ public class CmdChain extends SemanticChain {
     }
 
     private void toMainRecord() {
-        if (!(ActivitiesManager.getInstance().getTopActivity() instanceof MainRecordActivity)) {
+        try {
+
+            ActivitiesManager.getInstance().closeTargetActivity(ActivitiesManager.getInstance().getTopActivity().getClass());
             Intent intent = new Intent();
             intent.setClass(mContext, MainRecordActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra("startView", "record");
             mContext.startActivity(intent);
+        } catch (Exception e) {
+
         }
+
     }
 
     private void handleBackCmd() {

@@ -1,5 +1,8 @@
 package com.dudu.android.launcher.ui.activity;
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -11,14 +14,20 @@ import android.widget.RadioGroup;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.broadcast.ReceiverRegister;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
+import com.dudu.android.launcher.ui.dialog.IPConfigDialog;
 import com.dudu.android.launcher.utils.IPConfig;
-
+import com.dudu.android.launcher.utils.WifiApAdmin;
+import com.dudu.init.InitManager;
+import com.dudu.navi.event.NaviEvent;
 import com.dudu.network.NetworkManage;
+import com.dudu.obd.ObdInit;
+import com.dudu.voice.VoiceManagerProxy;
 import com.dudu.workflow.common.CommonParams;
 import com.dudu.workflow.common.DataFlowFactory;
 
 import java.util.concurrent.TimeUnit;
 
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.functions.Action1;
 
@@ -84,7 +93,7 @@ public class IpConfigActivity extends BaseTitlebarActivity {
 
         radioBtnTest = (RadioButton) findViewById(R.id.radioBtnTest);
 
-        btnBack = (Button)findViewById(R.id.back_button);
+        btnBack = (Button) findViewById(R.id.back_button);
 
         isTest = ipConfig.isTest_Server();
         if (isTest) {
@@ -99,7 +108,6 @@ public class IpConfigActivity extends BaseTitlebarActivity {
         editText_Testport.setText(ipConfig.getTestServerPort() + "");
         editText_UserName.setText(CommonParams.getInstance().getUserName() + "");
     }
-
 
 
     @Override
@@ -173,7 +181,7 @@ public class IpConfigActivity extends BaseTitlebarActivity {
             Observable.timer(5, TimeUnit.SECONDS).subscribe(new Action1<Long>() {
                 @Override
                 public void call(Long aLong) {
-                    NetworkManage.getInstance().init(ip,port);
+                    NetworkManage.getInstance().init(ip, port);
                 }
             });
         }
@@ -191,5 +199,38 @@ public class IpConfigActivity extends BaseTitlebarActivity {
         } else {
             radioBtnFormal.setChecked(true);
         }
+    }
+
+    public void enterSetting(View view) {
+        Intent intent = new Intent();
+        intent.setComponent(new ComponentName("com.android.settings", "com.android.settings.Settings"));
+        startActivity(intent);
+        EventBus.getDefault().post(NaviEvent.FloatButtonEvent.SHOW);
+    }
+
+    public void startFactory(View view) {
+
+        if (!InitManager.getInstance().isFinished()) {
+            return;
+        }
+
+        //关闭语音
+        VoiceManagerProxy.getInstance().stopUnderstanding();
+
+        //关闭Portal
+        com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(this, "persist.sys.nodog", "stop");
+
+        //关闭热点
+        WifiApAdmin.closeWifiAp(this);
+
+        //stop bluetooth
+        ObdInit.uninitOBD(this);
+
+        PackageManager packageManager = getPackageManager();
+        startActivity(new Intent(packageManager.getLaunchIntentForPackage("com.qualcomm.factory")));
+    }
+
+    public void setOBD2Simulator(View view) {
+        new IPConfigDialog().showDialog(this);
     }
 }

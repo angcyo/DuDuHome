@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
+import com.dudu.aios.ui.activity.MainRecordActivity;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.MainActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
@@ -79,7 +80,7 @@ public class FloatBackButtonService extends Service{
         floatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                Intent intent = new Intent(getBaseContext(), MainRecordActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }

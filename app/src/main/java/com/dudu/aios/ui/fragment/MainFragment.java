@@ -1,8 +1,6 @@
 package com.dudu.aios.ui.fragment;
 
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -17,21 +15,13 @@ import com.dudu.aios.ui.fragment.base.BaseFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.activity.bluetooth.BtDialActivity;
-import com.dudu.android.launcher.ui.dialog.IPConfigDialog;
 import com.dudu.android.launcher.utils.WeatherUtils;
-import com.dudu.android.launcher.utils.WifiApAdmin;
-import com.dudu.init.InitManager;
 import com.dudu.map.NavigationProxy;
-import com.dudu.obd.ObdInit;
 import com.dudu.voice.VoiceManagerProxy;
 import com.dudu.weather.WeatherFlow;
 import com.dudu.weather.WeatherInfo;
 import com.dudu.weather.WeatherStream;
-import com.dudu.workflow.obd.CarLock;
-import com.dudu.workflow.obd.OBDStream;
-import com.dudu.workflow.obd.SpeedTest;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -127,25 +117,6 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
         iconBt.setOnClickListener(this);
         iconFlow.setOnClickListener(this);
         iconRob.setOnClickListener(this);
-        bluetoothPhone.setOnLongClickListener(v -> {
-
-            Intent intent = new Intent();
-            intent.setComponent(new ComponentName("com.android.settings",
-                    "com.android.settings.Settings"));
-            startActivity(intent);
-            //显示返回的按钮
-            return true;
-        });
-        mWeatherImage.setOnLongClickListener(v -> {
-            CarLock.unlockCar();
-//            startFactory();
-            return true;
-        });
-
-        flow.setOnLongClickListener(v -> {
-            new IPConfigDialog().showDialog(getActivity());
-            return true;
-        });
 
         view.findViewById(R.id.vehicle_inspection_icon).setOnClickListener(this);
         view.findViewById(R.id.driving_record_icon).setOnClickListener(this);
@@ -153,35 +124,6 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
         view.findViewById(R.id.bluetooth_phone_icon).setOnClickListener(this);
         view.findViewById(R.id.flow_icon).setOnClickListener(this);
         view.findViewById(R.id.prevent_rob_icon).setOnClickListener(this);
-
-
-        preventRob.setOnLongClickListener(v -> {
-            SpeedTest.getInstance().startTestGUN3();
-            return true;
-        });
-        navigation.setOnLongClickListener(v -> {
-            SpeedTest.getInstance().stopTest();
-            return true;
-        });
-        vehicleInspection.setOnLongClickListener(v -> {
-            try {
-                OBDStream.getInstance().exec("ATSETVEHICLE=1");
-//                OBDStream.getInstance().exec("ATTSPMON");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-//            CarLock.unlockCar();
-            return true;
-        });
-        drivingRecord.setOnLongClickListener(v -> {
-            SpeedTest.getInstance().startTestSpeed();
-//            try {
-//                OBDStream.getInstance().exec("ATTSPMOFF");
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-            return true;
-        });
 
     }
 
@@ -306,34 +248,10 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
         }
     }
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(getActivity());
-    }
-
-
-    private void startFactory() {
-
-        if (!InitManager.getInstance().isFinished()) {
-            return;
-        }
-
-        //关闭语音
-        VoiceManagerProxy.getInstance().stopUnderstanding();
-
-        //关闭Portal
-        com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(getActivity(), "persist.sys.nodog", "stop");
-
-        //关闭热点
-        WifiApAdmin.closeWifiAp(getActivity());
-
-        //stop bluetooth
-        ObdInit.uninitOBD(getActivity());
-
-        PackageManager packageManager = getActivity().getPackageManager();
-        startActivity(new Intent(packageManager.getLaunchIntentForPackage("com.qualcomm.factory")));
     }
 
 }

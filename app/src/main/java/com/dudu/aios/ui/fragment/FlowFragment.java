@@ -11,6 +11,7 @@ import com.dudu.aios.ui.fragment.base.BaseFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.aios.ui.view.FlowCompletedView;
 import com.dudu.android.launcher.R;
+import com.dudu.android.launcher.ui.dialog.IPConfigDialog;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.SharedPreferencesUtils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
@@ -83,6 +84,10 @@ public class FlowFragment extends BaseFragment implements View.OnClickListener {
         closeFlowContainer.setOnClickListener(this);
         openFlowContainer.setOnClickListener(this);
         passwordSetContainer.setOnClickListener(this);
+        flowCompletedView.setOnLongClickListener(v -> {
+            new IPConfigDialog().showDialog(getActivity());
+            return true;
+        });
     }
 
     private void initFragmentView(View view) {

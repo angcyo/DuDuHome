@@ -98,7 +98,7 @@ public class SpeechManagerImpl extends BaseVoiceManager {
             mAuthEngine.setOnAuthListener(new AIAuthListener() {
                 @Override
                 public void onAuthSuccess() {
-
+//                    AIConstant.setEchoEnable(true);
                 }
 
                 @Override
