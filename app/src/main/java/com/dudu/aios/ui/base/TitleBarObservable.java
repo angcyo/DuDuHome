@@ -57,9 +57,9 @@ public class TitleBarObservable {
         this.bluetooth.set(false);
         this.gps.set(false);
         this.video.set(false);
-        this.showSingle.set(false);
-        this.single_drawable.set(LauncherApplication.getContext().getResources().getDrawable(R.drawable.signal_0));
-        this.single.set(LauncherApplication.getContext().getString(R.string.no_4g_signal));
+        this.showSingle.set(true);
+        this.single_drawable.set(LauncherApplication.getContext().getResources().getDrawable(R.drawable.signal_5));
+        this.single.set("4G");
     }
 
     public void init() {
