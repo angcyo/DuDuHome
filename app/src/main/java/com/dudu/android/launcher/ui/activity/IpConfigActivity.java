@@ -5,12 +5,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.dudu.aios.ui.base.BaseActivity;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.broadcast.ReceiverRegister;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
@@ -34,7 +36,7 @@ import rx.functions.Action1;
 /**
  * Created by lxh on 2016/1/2.
  */
-public class IpConfigActivity extends BaseTitlebarActivity {
+public class IpConfigActivity extends BaseActivity {
 
     private EditText editText_ip;
 
@@ -64,12 +66,13 @@ public class IpConfigActivity extends BaseTitlebarActivity {
     private int port, testPort;
 
     @Override
-    public int initContentView() {
-
-        return R.layout.ip_congfig_layout;
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initView(savedInstanceState);
+        initListener();
+        initDatas();
     }
 
-    @Override
     public void initView(Bundle savedInstanceState) {
         ipConfig = IPConfig.getInstance(this);
 
@@ -110,7 +113,6 @@ public class IpConfigActivity extends BaseTitlebarActivity {
     }
 
 
-    @Override
     public void initListener() {
 
         btn_save.setOnClickListener(new View.OnClickListener() {
@@ -147,7 +149,6 @@ public class IpConfigActivity extends BaseTitlebarActivity {
 
     }
 
-    @Override
     public void initDatas() {
 
     }
@@ -232,5 +233,10 @@ public class IpConfigActivity extends BaseTitlebarActivity {
 
     public void setOBD2Simulator(View view) {
         new IPConfigDialog().showDialog(this);
+    }
+
+    @Override
+    protected View getChildView() {
+        return LayoutInflater.from(this).inflate(R.layout.ip_congfig_layout,null);
     }
 }

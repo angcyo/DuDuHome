@@ -32,6 +32,7 @@ import com.dudu.android.launcher.broadcast.WeatherAlarmReceiver;
 import com.dudu.android.launcher.utils.AdminReceiver;
 import com.dudu.event.DeviceEvent;
 import com.dudu.init.InitManager;
+import com.dudu.navi.event.NaviEvent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -307,6 +308,8 @@ public class MainRecordActivity extends BaseActivity {
             replaceFragment(FragmentConstants.FRAGMENT_MAIN_PAGE);
         }
         LauncherApplication.startRecord = false;
+        EventBus.getDefault().post(NaviEvent.FloatButtonEvent.HIDE);
+
     }
 
 
