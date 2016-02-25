@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -301,15 +300,13 @@ public class MainRecordActivity extends BaseActivity {
 
         cameraView.onResume();
 //        cameraView.resumePreview();
-        if (getIntent() != null) {
-            if (!TextUtils.isEmpty(getIntent().getStringExtra("startView"))
-                    && getIntent().getStringExtra("startView").equals("record")) {
-                replaceFragment(FragmentConstants.FRAGMENT_DRIVING_RECORD);
-            }
+        if (LauncherApplication.startRecord) {
+            replaceFragment(FragmentConstants.FRAGMENT_DRIVING_RECORD);
 
         } else {
             replaceFragment(FragmentConstants.FRAGMENT_MAIN_PAGE);
         }
+        LauncherApplication.startRecord = false;
     }
 
 

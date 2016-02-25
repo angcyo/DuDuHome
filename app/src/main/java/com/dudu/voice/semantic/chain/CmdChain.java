@@ -2,10 +2,13 @@ package com.dudu.voice.semantic.chain;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 
 import com.dudu.aios.ui.activity.CarCheckingActivity;
 import com.dudu.aios.ui.activity.MainRecordActivity;
 import com.dudu.aios.ui.activity.VehicleAnimationActivity;
+import com.dudu.aios.ui.utils.contants.FragmentConstants;
+import com.dudu.android.launcher.LauncherApplication;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.WifiApAdmin;
@@ -110,13 +113,15 @@ public class CmdChain extends SemanticChain {
 
     private void toMainRecord() {
         try {
+            if (!(ActivitiesManager.getInstance().getTopActivity() instanceof MainRecordActivity)) {
 
-            ActivitiesManager.getInstance().closeTargetActivity(ActivitiesManager.getInstance().getTopActivity().getClass());
-            Intent intent = new Intent();
-            intent.setClass(mContext, MainRecordActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra("startView", "record");
-            mContext.startActivity(intent);
+                LauncherApplication.startRecord = true;
+                Intent intent = new Intent();
+                intent.setClass(mContext, MainRecordActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivity(intent);
+            }
+            ((MainRecordActivity) ActivitiesManager.getInstance().getTopActivity()).replaceFragment(FragmentConstants.FRAGMENT_DRIVING_RECORD);
         } catch (Exception e) {
 
         }

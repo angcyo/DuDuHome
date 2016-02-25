@@ -36,6 +36,7 @@ public class LauncherApplication extends Application {
 
     public static String lastFragment = "default";
 
+    public static boolean startRecord = false;
     public static LauncherApplication getContext() {
         return mApplication;
     }
