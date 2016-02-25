@@ -15,17 +15,21 @@ import android.widget.TextView;
 import com.dudu.aios.ui.robbery.RobberyConstant;
 import com.dudu.aios.ui.view.RobberyAnimView;
 import com.dudu.android.launcher.R;
+import com.dudu.android.libble.BleConnectMain;
 import com.dudu.commonlib.repo.ReceiverData;
 import com.dudu.workflow.common.DataFlowFactory;
 import com.dudu.workflow.common.ReceiverDataFlow;
 import com.dudu.workflow.common.RequestFactory;
 import com.dudu.workflow.guard.GuardRequest;
+import com.dudu.workflow.obd.CarLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.greenrobot.event.EventBus;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
 
 public class GuardFragment extends Fragment implements View.OnClickListener {
@@ -91,6 +95,10 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
         viewContainer.setVisibility(View.GONE);
         //播放动画
         toggleAnim();
+        checkCarlock(true);
+        showLockView();
+        DataFlowFactory.getSwitchDataFlow()
+                .saveGuardSwitch(true);
         //请求网络
         lockGuard();
     }
@@ -106,6 +114,10 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
             String pass = bundle.getString("pass");
             if (pass.equals("1")) {
                 logger.debug("initData");
+                checkCarlock(false);
+                showUnlockView();
+                DataFlowFactory.getSwitchDataFlow()
+                        .saveGuardSwitch(false);
                 unlockGuard();
                 return;
             }
@@ -124,10 +136,7 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
 
     private void lockGuard() {
         logger.debug("lockGuard");
-        lock();
         stopAnim = false;
-        DataFlowFactory.getSwitchDataFlow()
-                .saveGuardSwitch(true);
         RequestFactory.getGuardRequest()
                 .lockCar(new GuardRequest.LockStateCallBack() {
                     @Override
@@ -150,9 +159,7 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
     }
 
     private void unlockGuard() {
-        unlock();
-        DataFlowFactory.getSwitchDataFlow()
-                .saveGuardSwitch(false);
+        logger.debug("unlockGuard");
         RequestFactory.getGuardRequest()
                 .unlockCar(new GuardRequest.UnlockCallBack() {
 
@@ -175,13 +182,13 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
                 });
     }
 
-    private void unlock() {
+    private void showUnlockView() {
         logger.debug("unlock");
         guard_locked_layout.setVisibility(View.GONE);
         guard_unlock_layout.setVisibility(View.VISIBLE);
     }
 
-    private void lock() {
+    private void showLockView() {
         logger.debug("lock");
         guard_locked_layout.setVisibility(View.VISIBLE);
         guard_unlock_layout.setVisibility(View.GONE);
@@ -237,15 +244,17 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
     private void checkGuardSwitch(boolean locked) {
         logger.debug("checkGuardSwitch:locked:" + locked);
         if (locked) {
-            lock();
+            showLockView();
         } else {
-            unlock();
+            showUnlockView();
         }
     }
 
     public void reflashViews() {
         DataFlowFactory.getSwitchDataFlow()
                 .getGuardSwitch()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(locked -> {
                     checkGuardSwitch(locked);
                 });
@@ -253,9 +262,19 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
                 .isAntiTheftOpened(new GuardRequest.LockStateCallBack() {
                     @Override
                     public void hasLocked(boolean locked) {
-                        checkGuardSwitch(locked);
+//                        checkGuardSwitch(locked);
+//                        DataFlowFactory.getSwitchDataFlow()
+//                                .saveGuardSwitch(locked);
                         DataFlowFactory.getSwitchDataFlow()
-                                .saveGuardSwitch(locked);
+                                .getGuardSwitch()
+                                .subscribeOn(Schedulers.newThread())
+                                .subscribe(lock->{
+                                    if(lock){
+                                        lockGuard();
+                                    }else{
+                                        unlockGuard();
+                                    }
+                                });
                     }
 
                     @Override
@@ -268,8 +287,20 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
     public void onEventMainThread(ReceiverData event) {
         if (ReceiverDataFlow.getGuardReceiveData(event)) {
             logger.debug("onEventMainThread:" + event.getSwitchValue());
-            checkGuardSwitch(event.getSwitchValue().equals("1"));
+            boolean lock = event.getSwitchValue().equals("1");
+            checkGuardSwitch(lock);
             ReceiverDataFlow.saveGuardReceiveData(event);
+            checkCarlock(lock);
+        }
+    }
+
+    public void checkCarlock(boolean lock){
+        if(BleConnectMain.getInstance().isBleConnected()){
+            if(lock) {
+                CarLock.lockCar();
+            } else {
+                CarLock.unlockCar();
+            }
         }
     }
 

@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import rx.Observable;
 import rx.functions.Func3;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Administrator on 2016/2/20.
@@ -73,6 +74,7 @@ public class SwitchDataFlow {
     private void saveSwitchState(String key, boolean opened) {
         SwitchMessage switchMessage = new SwitchMessage(key, opened);
         switchMessageService.saveSwitch(switchMessage)
+                .subscribeOn(Schedulers.newThread())
                 .subscribe(message -> {
                     logger.debug(message.getSwitchKey() + "保存为" + message.isSwitchOpened() + "成功");
                 });

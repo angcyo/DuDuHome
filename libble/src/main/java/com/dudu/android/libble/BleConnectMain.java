@@ -51,6 +51,13 @@ public class BleConnectMain {
 
     }
 
+    public boolean isBleConnected(){
+        if(bleManager!=null) {
+            return bleManager.getConnectionState() == BluetoothProfile.STATE_CONNECTED;
+        }
+        return false;
+    }
+
     public void onEventMainThread(Event.StopScanner event) {
         mBleScanner.stopScan();
     }

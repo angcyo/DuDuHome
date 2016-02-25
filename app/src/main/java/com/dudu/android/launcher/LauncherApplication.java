@@ -104,7 +104,6 @@ public class LauncherApplication extends Application {
                     }
                             , () -> {
                         logger.debug("Gun toggle robbery, sync to app");
-                        DataFlowFactory.getSwitchDataFlow().saveRobberyState(true);
                         EventBus.getDefault().post(new RobberyStateModel(true));
                     });
         } catch (IOException e) {
