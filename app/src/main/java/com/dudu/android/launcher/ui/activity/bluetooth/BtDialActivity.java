@@ -85,7 +85,7 @@ public class BtDialActivity extends BaseActivity implements
             case R.id.button_dial_keyboard:
                 break;
             case R.id.button_contacts:
-                startActivity(new Intent(this,BtContactsActivity.class));
+                // startActivity(new Intent(this,BtContactsActivity.class));
                 break;
         }
     }

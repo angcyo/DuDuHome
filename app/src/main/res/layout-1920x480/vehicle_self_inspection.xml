@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/maintain_remind_container"
@@ -19,7 +19,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/maintain_remind_frame" />
+                android:src="@drawable/maintain_remind_frame"/>
 
             <com.dudu.aios.ui.utils.customFontUtils.DINRegularTextView
                 android:id="@+id/text_date"
@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="2017/01/01"
-                android:textSize="16sp" />
+                android:textSize="16sp"/>
 
         </FrameLayout>
 
@@ -41,14 +41,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/fuel_oil_ratio_icon" />
+                android:src="@drawable/fuel_oil_ratio_icon"/>
 
             <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="2dp"
                 android:text="@string/fuel_oil_ratio"
-                android:textSize="18sp" />
+                android:textSize="18sp"/>
 
             <com.dudu.aios.ui.utils.customFontUtils.DINRegularTextView
                 android:id="@+id/text_fuel_oil_ratio"
@@ -58,7 +58,7 @@
                 android:text="100"
                 android:textColor="@color/blue"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
         </LinearLayout>
 
@@ -73,24 +73,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/battery_voltage_icon" />
+                android:src="@drawable/battery_voltage_icon"/>
 
             <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="2dp"
                 android:text="@string/battery_voltage"
-                android:textSize="18sp" />
+                android:textSize="18sp"/>
 
             <com.dudu.aios.ui.utils.customFontUtils.DINRegularTextView
                 android:id="@+id/battery_voltage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
-                android:text="17V"
+                android:text="14V"
                 android:textColor="@color/blue"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
         </LinearLayout>
 
@@ -102,7 +102,7 @@
         android:layout_below="@+id/maintain_remind_container"
         android:layout_marginLeft="38dp"
         android:layout_marginTop="5dp"
-        android:text="@string/maintain_remind" />
+        android:text="@string/maintain_remind"/>
 
     <LinearLayout
         android:id="@+id/vehicle_maintain_container"
@@ -124,13 +124,13 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/vehicle_point" />
+                android:src="@drawable/vehicle_point"/>
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
-                android:src="@drawable/vehicle_engine_icon" />
+                android:src="@drawable/vehicle_engine_icon"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -142,13 +142,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/engine_chinese"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"/>
 
                 <com.dudu.aios.ui.utils.customFontUtils.DINRegularTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/engine_english"
-                    android:textSize="10sp" />
+                    android:textSize="10sp"/>
 
             </LinearLayout>
 
@@ -156,7 +156,7 @@
                 android:id="@+id/engine_vehicleCheckResult"
                 android:layout_width="400dp"
                 android:layout_height="20dp"
-                android:layout_marginLeft="10dp" />
+                android:layout_marginLeft="10dp"/>
 
             <FrameLayout
                 android:layout_width="wrap_content"
@@ -166,13 +166,13 @@
                 <ImageView
                     android:id="@+id/engine_prompt_icon"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"/>
 
                 <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                     android:id="@+id/engine_prompt_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp" />
+                    android:layout_marginLeft="10dp"/>
             </FrameLayout>
         </LinearLayout>
 
@@ -187,13 +187,13 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/vehicle_point" />
+                android:src="@drawable/vehicle_point"/>
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
-                android:src="@drawable/vehicle_gearbox_icon" />
+                android:src="@drawable/vehicle_gearbox_icon"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -205,13 +205,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/gearbox_chinese"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"/>
 
                 <com.dudu.aios.ui.utils.customFontUtils.DINRegularTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/gearbox_english"
-                    android:textSize="10sp" />
+                    android:textSize="10sp"/>
 
             </LinearLayout>
 
@@ -219,7 +219,7 @@
                 android:id="@+id/gearbox_vehicleCheckResult"
                 android:layout_width="400dp"
                 android:layout_height="20dp"
-                android:layout_marginLeft="10dp" />
+                android:layout_marginLeft="10dp"/>
 
             <FrameLayout
                 android:layout_width="wrap_content"
@@ -229,13 +229,13 @@
                 <ImageView
                     android:id="@+id/gearbox_prompt_icon"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"/>
 
                 <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                     android:id="@+id/gearbox_prompt_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp" />
+                    android:layout_marginLeft="10dp"/>
 
             </FrameLayout>
 
@@ -253,13 +253,13 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/vehicle_point" />
+                android:src="@drawable/vehicle_point"/>
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
-                android:src="@drawable/vehicle_abs_icon" />
+                android:src="@drawable/vehicle_abs_icon"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -271,13 +271,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/abs_chinese"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"/>
 
                 <com.dudu.aios.ui.utils.customFontUtils.DINRegularTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/abs_english"
-                    android:textSize="10sp" />
+                    android:textSize="10sp"/>
 
 
             </LinearLayout>
@@ -286,7 +286,7 @@
                 android:id="@+id/abs_vehicleCheckResult"
                 android:layout_width="400dp"
                 android:layout_height="20dp"
-                android:layout_marginLeft="10dp" />
+                android:layout_marginLeft="10dp"/>
 
             <FrameLayout
                 android:layout_width="wrap_content"
@@ -296,13 +296,13 @@
                 <ImageView
                     android:id="@+id/abs_prompt_icon"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"/>
 
                 <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                     android:id="@+id/abs_prompt_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp" />
+                    android:layout_marginLeft="10dp"/>
             </FrameLayout>
         </LinearLayout>
 
@@ -317,13 +317,13 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/vehicle_point" />
+                android:src="@drawable/vehicle_point"/>
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
-                android:src="@drawable/vehicle_wsb_icon" />
+                android:src="@drawable/vehicle_wsb_icon"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -335,13 +335,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/wsb_chinese"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"/>
 
                 <com.dudu.aios.ui.utils.customFontUtils.DINRegularTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/wsb_english"
-                    android:textSize="10sp" />
+                    android:textSize="10sp"/>
 
 
             </LinearLayout>
@@ -350,7 +350,7 @@
                 android:id="@+id/wsb_vehicleCheckResult"
                 android:layout_width="400dp"
                 android:layout_height="20dp"
-                android:layout_marginLeft="10dp" />
+                android:layout_marginLeft="10dp"/>
 
             <FrameLayout
                 android:layout_width="wrap_content"
@@ -360,13 +360,13 @@
                 <ImageView
                     android:id="@+id/wsb_prompt_icon"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"/>
 
                 <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                     android:id="@+id/wsb_prompt_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp" />
+                    android:layout_marginLeft="10dp"/>
             </FrameLayout>
         </LinearLayout>
 
@@ -380,13 +380,13 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/vehicle_point" />
+                android:src="@drawable/vehicle_point"/>
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
-                android:src="@drawable/vehicle_srs_icon" />
+                android:src="@drawable/vehicle_srs_icon"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -398,20 +398,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/srs_chinese"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"/>
 
                 <com.dudu.aios.ui.utils.customFontUtils.DINRegularTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/srs_english"
-                    android:textSize="10sp" />
+                    android:textSize="10sp"/>
             </LinearLayout>
 
             <com.dudu.aios.ui.view.VehicleCheckResultView
                 android:id="@+id/srs_vehicleCheckResult"
                 android:layout_width="400dp"
                 android:layout_height="20dp"
-                android:layout_marginLeft="10dp" />
+                android:layout_marginLeft="10dp"/>
 
             <FrameLayout
                 android:layout_width="wrap_content"
@@ -421,13 +421,13 @@
                 <ImageView
                     android:id="@+id/srs_prompt_icon"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"/>
 
                 <com.dudu.aios.ui.utils.customFontUtils.FZLFontTextView
                     android:id="@+id/srs_prompt_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp" />
+                    android:layout_marginLeft="10dp"/>
             </FrameLayout>
         </LinearLayout>
 
@@ -440,7 +440,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
         android:layout_toRightOf="@+id/vehicle_maintain_container"
-        android:background="@drawable/button_vehicle_replace_selector" />
+        android:background="@drawable/button_vehicle_replace_selector"/>
 
     <ImageButton
         android:id="@+id/button_vehicle_clear"
@@ -450,7 +450,7 @@
         android:layout_marginLeft="-10dp"
         android:layout_marginTop="70dp"
         android:layout_toRightOf="@+id/vehicle_maintain_container"
-        android:background="@drawable/button_vehicle_clear_selector" />
+        android:background="@drawable/button_vehicle_clear_selector"/>
 
 
     <ImageButton
@@ -458,6 +458,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/button_back_selector" />
+        android:background="@drawable/button_back_selector"/>
 
 </RelativeLayout>
