@@ -42,9 +42,10 @@ public class CarCheckingProxy {
     private List<CarCheckType> unregisterSubList;
 
     private CarCheckingProxy() {
+        init();
     }
 
-    public void init() {
+    private void init() {
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
         registerSubList = new ArrayList<>();
