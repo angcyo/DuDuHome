@@ -146,10 +146,10 @@ public class VehiclePasswordSetFragment extends Fragment implements View.OnClick
 
             if (password.equals("1234")) {
                 Fragment fragment = null;
-                if (category.equals(RobberyConstant.GUARD_CONSTANT)) {
+                if (RobberyConstant.GUARD_CONSTANT.equals(category)) {
                     fragment = new GuardFragment();
                     //防盗
-                } else if (category.equals(RobberyConstant.ROBBERY_CONSTANT)) {
+                } else if (RobberyConstant.ROBBERY_CONSTANT.equals(category)) {
                     //防劫
                     fragment = new RobberyMainFragment();
                 }
