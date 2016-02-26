@@ -31,6 +31,9 @@ import java.util.TimeZone;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 
 public class MainFragment extends BaseFragment implements View.OnClickListener {
@@ -98,10 +101,15 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
     }
 
     private void weatherSubscriber(Observable<WeatherInfo> observable) {
-        observable.subscribe(weatherInfo -> {
-            updateWeatherInfo(weatherInfo.getWeather(), weatherInfo.getTemperature());
-            initDate();
-        });
+        observable
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(weatherInfo -> {
+                            updateWeatherInfo(weatherInfo.getWeather(), weatherInfo.getTemperature());
+                            initDate();
+                        },
+                        throwable -> {
+                        });
     }
 
     private void initOnClickListener(View view) {

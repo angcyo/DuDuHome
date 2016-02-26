@@ -23,12 +23,10 @@ import com.dudu.monitor.event.CarStatus;
 import com.dudu.monitor.event.PowerOffEvent;
 import com.dudu.network.NetworkManage;
 import com.dudu.storage.Storage;
-import com.dudu.workflow.obd.CarLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -218,21 +216,5 @@ public class MainService extends Service {
             carCheckingExecutor = null;
         }
     }
-
-    Thread carCheckingThread = new Thread() {
-
-        @Override
-        public void run() {
-            super.run();
-
-            if (registerSub == null) {
-                registerSub = Observable.just("").subscribe(s -> {
-
-                    CarCheckingProxy.getInstance().registerCarCheckingError();
-                });
-            }
-            CarCheckingProxy.getInstance().startCarChecking();
-        }
-    };
 
 }
