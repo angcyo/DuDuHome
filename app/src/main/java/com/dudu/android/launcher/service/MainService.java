@@ -73,7 +73,7 @@ public class MainService extends Service {
         initNetWork();
 
 //        ObdInit.initOBD(this);
-        CarLock.getInstance().init(this);
+//        CarLock.getInstance().init(this);
 
         monitor = Monitor.getInstance(this);
         monitor.startWork();
