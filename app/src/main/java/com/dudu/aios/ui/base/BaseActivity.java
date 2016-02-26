@@ -14,6 +14,7 @@ import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.databinding.ActivityLayoutCommonBinding;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 
+import org.wysaid.camera.CameraInstance;
 import org.wysaid.view.CameraRecordGLSurfaceView;
 
 public abstract class BaseActivity extends Activity {
@@ -81,6 +82,9 @@ public abstract class BaseActivity extends Activity {
                     cameraView.setFilterWithConfig(effectConfigs[2]);
                 } else {
                     Log.e("drivevideo", "view 创建失败!");
+                    CameraInstance.getInstance().stopCamera();
+                    cameraView.tryOpenCameraAgain();
+                    cameraView.onResume();
                 }
             }
         });

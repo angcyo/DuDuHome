@@ -240,18 +240,7 @@ public class MainRecordActivity extends BaseActivity {
         registerReceiver(mTFlashCardReceiver, intentFilter);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
 
-        log_init.debug("MainRecordActivity 调用onDestroy释放资源...");
-
-        InitManager.getInstance().unInit();
-
-        cancelWeatherAlarm();
-
-        unregisterReceiver(mTFlashCardReceiver);
-    }
 
     private void cancelWeatherAlarm() {
         Intent intent = new Intent(this, WeatherAlarmReceiver.class);
@@ -316,12 +305,26 @@ public class MainRecordActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        CameraInstance.getInstance().stopCamera();
+//        CameraInstance.getInstance().stopCamera();
         cameraView.release(null);
         cameraView.onPause();
 
 //        cameraView.stopPreview();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        CameraInstance.getInstance().stopCamera();
+
+        log_init.debug("MainRecordActivity 调用onDestroy释放资源...");
+
+        InitManager.getInstance().unInit();
+
+        cancelWeatherAlarm();
+
+        unregisterReceiver(mTFlashCardReceiver);
+    }
 
 }

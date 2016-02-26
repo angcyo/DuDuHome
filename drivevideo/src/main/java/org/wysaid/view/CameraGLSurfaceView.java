@@ -19,6 +19,9 @@ import android.hardware.Camera;
 import android.media.ExifInterface;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -100,6 +103,27 @@ public class CameraGLSurfaceView extends GLSurfaceView implements GLSurfaceView.
 
     //是否使用后置摄像头
     protected boolean mIsCameraBackForward = true;
+
+    private static final int INIT_CAMERA = 0;
+    private DriveVideoHandler driveVideoHandler;
+
+    private class DriveVideoHandler extends Handler {
+
+        public DriveVideoHandler(/*Looper looper*/) {
+            super(Looper.getMainLooper());
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case INIT_CAMERA:
+                    if (!cameraInstance().isCameraOpened()){
+                        initCamera();
+                    }
+                    break;
+            }
+        }
+    }
 
     public boolean isCameraBackForward() {
         return mIsCameraBackForward;
@@ -512,6 +536,8 @@ public class CameraGLSurfaceView extends GLSurfaceView implements GLSurfaceView.
 
         clearColor = new ClearColor();
         mContext = context;
+
+        driveVideoHandler = new DriveVideoHandler();
     }
 
     @Override
@@ -554,6 +580,36 @@ public class CameraGLSurfaceView extends GLSurfaceView implements GLSurfaceView.
         if(mOnCreateCallback != null) {
             mOnCreateCallback.createOver(cameraInstance().getCameraDevice() != null);
         }
+    }
+
+    private void initCamera(){
+        int facing = mIsCameraBackForward ? Camera.CameraInfo.CAMERA_FACING_BACK : Camera.CameraInfo.CAMERA_FACING_FRONT;
+
+        boolean openCameraFlag = cameraInstance().tryOpenCamera(new CameraInstance.CameraOpenCallback() {
+            @Override
+            public void cameraReady() {
+                Log.i(LOG_TAG, "重新打开摄像头 OK...");
+
+                if (cameraInstance().isPreviewing()){
+                    cameraInstance().stopPreview();
+                }
+
+                if(!cameraInstance().isPreviewing()) {
+                    cameraInstance().startPreview(mSurfaceTexture);
+                }
+
+                onResume();
+            }
+        }, facing);
+
+        if(!openCameraFlag){
+            tryOpenCameraAgain();
+        }
+    }
+
+    public void tryOpenCameraAgain(){
+        Log.i(LOG_TAG, "尝试重新打开摄像头");
+        driveVideoHandler.sendEmptyMessageDelayed(INIT_CAMERA, 2*1000);
     }
 
     protected void calcViewport() {
@@ -647,6 +703,10 @@ public class CameraGLSurfaceView extends GLSurfaceView implements GLSurfaceView.
 
         calcViewport();
 
+        if (cameraInstance().isPreviewing()){
+            cameraInstance().stopPreview();
+        }
+
         if(!cameraInstance().isPreviewing()) {
             cameraInstance().startPreview(mSurfaceTexture);
             mFrameRecorder.srcResize(cameraInstance().previewWidth(), cameraInstance().previewHeight());
@@ -656,7 +716,8 @@ public class CameraGLSurfaceView extends GLSurfaceView implements GLSurfaceView.
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         super.surfaceDestroyed(holder);
-        cameraInstance().stopCamera();
+        Log.i(LOG_TAG, "surfaceDestroyed---------");
+//        cameraInstance().stopCamera();
     }
 
     public void stopPreview() {
@@ -682,12 +743,16 @@ public class CameraGLSurfaceView extends GLSurfaceView implements GLSurfaceView.
 
             int facing = mIsCameraBackForward ? Camera.CameraInfo.CAMERA_FACING_BACK : Camera.CameraInfo.CAMERA_FACING_FRONT;
 
-            cameraInstance().tryOpenCamera(new CameraInstance.CameraOpenCallback() {
+
+            boolean openCameraFlag =  cameraInstance().tryOpenCamera(new CameraInstance.CameraOpenCallback() {
                 @Override
                 public void cameraReady() {
                     Log.i(LOG_TAG, "tryOpenCamera OK...");
                 }
             }, facing);
+            if (openCameraFlag == false){
+
+            }
         }
 
         if(!cameraInstance().isPreviewing()) {
@@ -698,6 +763,8 @@ public class CameraGLSurfaceView extends GLSurfaceView implements GLSurfaceView.
 //        resumeDetectingFace();
         requestRender();
     }
+
+
 
     @Override
     public void onDrawFrame(GL10 gl) {
@@ -779,7 +846,7 @@ public class CameraGLSurfaceView extends GLSurfaceView implements GLSurfaceView.
     public void onPause() {
         Log.i(LOG_TAG, "glsurfaceview onPause in...");
 
-        cameraInstance().stopCamera();
+//        cameraInstance().stopCamera();
         super.onPause();
         Log.i(LOG_TAG, "glsurfaceview onPause out...");
     }
@@ -802,7 +869,7 @@ public class CameraGLSurfaceView extends GLSurfaceView implements GLSurfaceView.
         mTimeCount2 += currentTimestamp - mLastTimestamp2;
         mLastTimestamp2 = currentTimestamp;
         if(mTimeCount2 >= 1000) {
-            Log.i(LOG_TAG, String.format("相机每秒采样率: %d", mFramesCount2));
+//            Log.i(LOG_TAG, String.format("相机每秒采样率: %d", mFramesCount2));
             mTimeCount2 %= 1000;
             mFramesCount2 = 0;
         }

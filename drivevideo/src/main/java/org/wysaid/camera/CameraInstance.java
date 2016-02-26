@@ -143,6 +143,7 @@ public class CameraInstance {
 
     public synchronized void stopCamera() {
         if(mCameraDevice != null) {
+            Log.i(LOG_TAG, "释放摄像头");
             mIsPreviewing = false;
             mCameraDevice.stopPreview();
             mCameraDevice.setPreviewCallback(null);
@@ -245,7 +246,7 @@ public class CameraInstance {
         Collections.sort(picSizes, comparatorBigger);
 
         for(Camera.Size sz : picSizes) {
-            Log.i(LOG_TAG, String.format("Supported picture size: %d x %d", sz.width, sz.height));
+//            Log.i(LOG_TAG, String.format("Supported picture size: %d x %d", sz.width, sz.height));
             if(picSz == null || (sz.width >= mPictureWidth && sz.height >= mPictureHeight)) {
                 picSz = sz;
             }
@@ -257,7 +258,7 @@ public class CameraInstance {
         Collections.sort(prevSizes, comparatorBigger);
 
         for(Camera.Size sz : prevSizes) {
-            Log.i(LOG_TAG, String.format("Supported preview size: %d x %d", sz.width, sz.height));
+//            Log.i(LOG_TAG, String.format("Supported preview size: %d x %d", sz.width, sz.height));
             if(prevSz == null || (sz.width >= mPreferPreviewWidth && sz.height >= mPreferPreviewHeight)) {
                 prevSz = sz;
             }
@@ -268,7 +269,7 @@ public class CameraInstance {
         int fpsMax = 0;
 
         for(Integer n : frameRates) {
-            Log.i(LOG_TAG, "Supported frame rate: " + n);
+//            Log.i(LOG_TAG, "Supported frame rate: " + n);
             if(fpsMax < n) {
                 fpsMax = n;
             }
@@ -304,8 +305,8 @@ public class CameraInstance {
         mPictureWidth = szPic.width;
         mPictureHeight = szPic.height;
 
-        Log.i(LOG_TAG, String.format("Camera Picture Size: %d x %d", szPic.width, szPic.height));
-        Log.i(LOG_TAG, String.format("Camera Preview Size: %d x %d", szPrev.width, szPrev.height));
+//        Log.i(LOG_TAG, String.format("Camera Picture Size: %d x %d", szPic.width, szPic.height));
+//        Log.i(LOG_TAG, String.format("Camera Preview Size: %d x %d", szPrev.width, szPrev.height));
     }
 
     public synchronized void setFocusMode(String focusMode) {
