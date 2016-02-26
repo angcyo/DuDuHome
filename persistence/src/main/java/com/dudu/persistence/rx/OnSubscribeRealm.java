@@ -36,7 +36,7 @@ abstract class OnSubscribeRealm<T> implements Observable.OnSubscribe<T> {
     }
 
     @Override
-    public void call(final Subscriber<? super T> subscriber) {
+    public void call (final Subscriber<? super T> subscriber) {
         synchronized (lock) {
             boolean canceled = this.canceled.get();
             if (!canceled && !subscribers.isEmpty()) {
@@ -54,7 +54,14 @@ abstract class OnSubscribeRealm<T> implements Observable.OnSubscribe<T> {
         if (fileName != null) {
             builder.name(fileName);
         }
-        Realm realm = Realm.getInstance(builder.build());
+        Realm realm;
+        try {
+            realm = Realm.getInstance(
+                    builder.build());
+        }catch (Exception e){
+            sendOnError(e);
+            return;
+        }
         boolean withError = false;
 
         T object = null;

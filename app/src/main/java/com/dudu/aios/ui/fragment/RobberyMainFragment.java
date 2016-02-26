@@ -41,7 +41,6 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
 
     private Logger logger = LoggerFactory.getLogger("RobberyMainFragment");
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_robbery_main, container, false);
@@ -84,6 +83,8 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
                             checkHeadLightSwitch(robberySwitches.isHeadlight());
                             checkParkSwitch(robberySwitches.isPark());
                             checkGunSwitch(robberySwitches.isGun());
+                        }, error->{
+                            logger.error("initData", error);
                         });
                 return;
             }
@@ -232,6 +233,8 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
                         showUnlockedView();
                         showRobberModeLayout();
                     }
+                },(error)->{
+                    logger.error("syncAppRobberyFlow", error);
                 });
         DataFlowFactory.getSwitchDataFlow()
                 .getRobberySwitches()
@@ -241,6 +244,8 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
                     checkHeadLightSwitch(robberySwitches.isHeadlight());
                     checkParkSwitch(robberySwitches.isPark());
                     checkGunSwitch(robberySwitches.isGun());
+                }, error->{
+                    logger.error("syncAppRobberyFlow", error);
                 });
 
         RequestFactory.getRobberyRequest()
@@ -258,6 +263,8 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
                                             requestCheckSwitch(CommonParams.ROBBERYSTATE,true);
                                         }
                                     }
+                                }, (error)->{
+                                    logger.error("syncAppRobberyFlow", error);
                                 });
 
                     }
@@ -278,6 +285,9 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
                                     if (headlight_on != flashRateTimes) {
                                         requestCheckSwitch(CommonParams.HEADLIGHT, headlight_on);
                                     }
+                                },(error)->{
+                                    logger.error("获取开关" + CommonParams.HEADLIGHT +
+                                            "状态:", error);
                                 });
                         DataFlowFactory.getSwitchDataFlow()
                                 .getRobberySwitch(CommonParams.PARK)
@@ -286,6 +296,9 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
                                     if (park_on != emergencyCutoff) {
                                         requestCheckSwitch(CommonParams.PARK, park_on);
                                     }
+                                },(error)->{
+                                    logger.error("获取开关" + CommonParams.PARK +
+                                            "状态:", error);
                                 });
                         DataFlowFactory.getSwitchDataFlow()
                                 .getRobberySwitch(CommonParams.GUN)
@@ -294,6 +307,9 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
                                     if (gun_on != stepOnTheGas) {
                                         requestCheckSwitch(CommonParams.GUN, gun_on);
                                     }
+                                },(error)->{
+                                    logger.error("获取开关" + CommonParams.GUN +
+                                            "状态:", error);
                                 });
 
                     }
@@ -343,6 +359,8 @@ public class RobberyMainFragment extends Fragment implements View.OnClickListene
                             showRobberModeLayout();
                         }
                     }
+                },(error)->{
+                    logger.error("收到防劫模式触发事件:"+event.getRobberyState(), error);
                 });
     }
 

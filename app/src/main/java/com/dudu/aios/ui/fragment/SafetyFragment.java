@@ -86,7 +86,7 @@ public class SafetyFragment extends BaseFragment implements View.OnClickListener
 
                     }
                 },(throwable -> {
-                    logger.error(throwable.getMessage());
+                    logger.error("actionRobbery", throwable);
                 }),()->{
                     logger.debug("DataFlowFactory finish");
                 });

@@ -125,6 +125,8 @@ public class RobberyLockFragment extends Fragment implements View.OnClickListene
                     } else {
                         showUnlockedView();
                     }
+                },(error)->{
+                    logger.error("syncAppRobberyFlow", error);
                 });
     }
 

@@ -164,6 +164,8 @@ public class RobberyFragment extends Fragment implements View.OnClickListener {
                     checkHeadLightSwitch(robberySwitches.isHeadlight());
                     checkParkSwitch(robberySwitches.isPark());
                     checkGunSwitch(robberySwitches.isGun());
+                },error->{
+                    logger.error("syncAppRobberyFlow", error);
                 });
 
         RequestFactory.getRobberyRequest()

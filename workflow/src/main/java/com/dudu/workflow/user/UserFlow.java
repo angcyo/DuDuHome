@@ -35,6 +35,8 @@ public class UserFlow {
                     public void call(User user) {
                         logger.debug(user.getUserName()+"保存成功");
                     }
+                }, error->{
+                    logger.error("saveUserName", error);
                 });
     }
 

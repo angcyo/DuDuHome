@@ -12,13 +12,9 @@ import android.widget.TextView;
 import com.dudu.aios.ui.fragment.base.BaseFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.R;
-import com.dudu.workflow.common.DataFlowFactory;
-import com.dudu.workflow.common.ObservableFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import rx.functions.Action1;
 
 public class SafetyMainFragment extends BaseFragment implements View.OnClickListener {
 
@@ -82,29 +78,6 @@ public class SafetyMainFragment extends BaseFragment implements View.OnClickList
     private void actionRobbery() {
         robbery();
         getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyMainFragment()).commit();
-       /* DataFlowFactory.getSwitchDataFlow().getRobberyState()
-                .subscribe(locked -> {
-                    if (locked) {
-                        //getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyLockFragment()).commit();
-                    } else {
-                        //getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyFragment()).commit();
-
-                    }
-                }, (throwable -> {
-                    logger.error(throwable.getMessage());
-                }), () -> {
-                    logger.debug("DataFlowFactory finish");
-                });
-        ObservableFactory.getRobberyStateObservable()
-                .subscribe(new Action1<Boolean>() {
-                    @Override
-                    public void call(Boolean aBoolean) {
-                        if (aBoolean) {
-                            DataFlowFactory.getSwitchDataFlow().saveRobberyState(aBoolean);
-                            getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyLockFragment()).commit();
-                        }
-                    }
-                });*/
     }
 
     private void actionGuard() {

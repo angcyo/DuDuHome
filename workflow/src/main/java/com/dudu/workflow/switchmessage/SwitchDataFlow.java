@@ -77,6 +77,8 @@ public class SwitchDataFlow {
                 .subscribeOn(Schedulers.newThread())
                 .subscribe(message -> {
                     logger.debug(message.getSwitchKey() + "保存为" + message.isSwitchOpened() + "成功");
+                },(error)->{
+                    logger.error("saveSwitchState", error);
                 });
     }
 

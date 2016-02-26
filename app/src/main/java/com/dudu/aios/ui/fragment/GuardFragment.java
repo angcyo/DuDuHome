@@ -133,7 +133,6 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
         getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, gestureFragment).commit();
     }
 
-
     private void lockGuard() {
         logger.debug("lockGuard");
         stopAnim = false;
@@ -257,14 +256,13 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(locked -> {
                     checkGuardSwitch(locked);
+                },(error)->{
+                    logger.error("reflashViews", error);
                 });
         RequestFactory.getGuardRequest()
                 .isAntiTheftOpened(new GuardRequest.LockStateCallBack() {
                     @Override
                     public void hasLocked(boolean locked) {
-//                        checkGuardSwitch(locked);
-//                        DataFlowFactory.getSwitchDataFlow()
-//                                .saveGuardSwitch(locked);
                         DataFlowFactory.getSwitchDataFlow()
                                 .getGuardSwitch()
                                 .subscribeOn(Schedulers.newThread())
@@ -274,6 +272,8 @@ public class GuardFragment extends Fragment implements View.OnClickListener {
                                     }else{
                                         unlockGuard();
                                     }
+                                }, (error)->{
+                                    logger.error("reflashViews", error);
                                 });
                     }
 

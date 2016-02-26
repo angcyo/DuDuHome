@@ -2,7 +2,9 @@ package com.dudu.workflow.common;
 
 import com.dudu.persistence.user.User;
 
-import rx.Scheduler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import rx.schedulers.Schedulers;
 
 /**
@@ -14,6 +16,8 @@ public class CommonParams {
     public static final int PARK = 2;
     public static final int GUN = 3;
     private static CommonParams mInstance = new CommonParams();
+
+    private Logger logger = LoggerFactory.getLogger("CommonParams");
 
     private User user = new User();
 
@@ -27,6 +31,8 @@ public class CommonParams {
                 .subscribe(user -> {
                     CommonParams.this.user.setId(user.getId());
                     CommonParams.this.user.setUserName(user.getUserName());
+                }, error->{
+                    logger.error("init", error);
                 });
     }
 
