@@ -4,183 +4,250 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:scrollbars="vertical">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/back_button"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/button_vehicle_big_selector"
+            android:text="返回"
+            android:textColor="@color/white" />
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/button_vehicle_big_selector"
+            android:onClick="enterSetting"
+            android:text="设置"
+            android:textColor="@color/white" />
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/button_vehicle_big_selector"
+            android:onClick="startFactory"
+            android:text="工厂测试"
+            android:textColor="@color/white" />
+
+        <Button
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/button_vehicle_big_selector"
+            android:onClick="setOBD2Simulator"
+            android:text="OBD模拟器"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="128dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/white" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="128dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/openGps"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_vehicle_big_selector"
+            android:text="GPS"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/openRMap"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/button_vehicle_big_selector"
+            android:text="RMap"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="128dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/white" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="128dp"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/btn_ip_save"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:text="保存" />
+            android:background="@drawable/button_vehicle_big_selector"
+            android:text="保存"
+            android:textColor="@color/white" />
 
         <Button
             android:id="@+id/btn_ip_reset"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:text="重置" />
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/button_vehicle_big_selector"
+            android:text="重置"
+            android:textColor="@color/white" />
 
-        <Button
-            android:id="@+id/back_button"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_gravity="left|center_vertical"
-            android:text="取消" />
+
     </LinearLayout>
-    <LinearLayout
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
 
-        <Button
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:onClick="enterSetting"
-            android:text="设置" />
-
-        <Button
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:onClick="startFactory"
-            android:text="工厂测试" />
-
-        <Button
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:onClick="setOBD2Simulator"
-            android:text="OBD模拟器" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:layout_marginLeft="128dp"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:text="UserName:"
-                android:textColor="@color/white"
-                android:textSize="20sp" />
-
-            <EditText
-
-                android:id="@+id/edt_username"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp" />
-        </LinearLayout>
+                android:orientation="horizontal">
 
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <RadioGroup
-                android:id="@+id/ip_radioGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <RadioButton
-                    android:id="@+id/radioBtnFormal"
-                    android:layout_width="wrap_content"
+                <TextView
+                    android:layout_width="120dp"
                     android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="正式服务器" />
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="UserName:"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
 
-                <RadioButton
-                    android:id="@+id/radioBtnTest"
-                    android:layout_width="wrap_content"
+                <EditText
+
+                    android:id="@+id/edt_username"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="测试服务器" />
-            </RadioGroup>
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp" />
+            </LinearLayout>
 
-            <TextView
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:text="Ip:"
-                android:textColor="@color/white"
-                android:textSize="20sp" />
+                android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/ip_edt"
+                <RadioGroup
+                    android:id="@+id/ip_radioGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <RadioButton
+                        android:id="@+id/radioBtnFormal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="正式服务器" />
+
+                    <RadioButton
+                        android:id="@+id/radioBtnTest"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="测试服务器" />
+                </RadioGroup>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Ip:"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+                <EditText
+                    android:id="@+id/ip_edt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Port:"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+                <EditText
+                    android:id="@+id/port_edt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="TestIp:"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+                <EditText
+                    android:id="@+id/test_ip_edt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp" />
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="TestPort:"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+                <EditText
+
+                    android:id="@+id/edt_testPort"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp" />
+
+            </LinearLayout>
+
+
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:text="Port:"
-                android:textColor="@color/white"
-                android:textSize="20sp" />
-
-            <EditText
-                android:id="@+id/port_edt"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:text="TestIp:"
-                android:textColor="@color/white"
-                android:textSize="20sp" />
-
-            <EditText
-                android:id="@+id/test_ip_edt"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp" />
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:text="TestPort:"
-                android:textColor="@color/white"
-                android:textSize="20sp" />
-
-            <EditText
-
-                android:id="@+id/edt_testPort"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp" />
-
-        </LinearLayout>
-
-
-
-    </LinearLayout>
+    </ScrollView>
 </LinearLayout>

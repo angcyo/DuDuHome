@@ -12,12 +12,15 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.dudu.aios.ui.activity.MainRecordActivity;
 import com.dudu.aios.ui.base.BaseActivity;
+import com.dudu.aios.ui.utils.InstallerUtils;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.broadcast.ReceiverRegister;
 import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.dialog.IPConfigDialog;
 import com.dudu.android.launcher.utils.IPConfig;
+import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
 import com.dudu.init.InitManager;
 import com.dudu.navi.event.NaviEvent;
@@ -26,6 +29,8 @@ import com.dudu.obd.ObdInit;
 import com.dudu.voice.VoiceManagerProxy;
 import com.dudu.workflow.common.CommonParams;
 import com.dudu.workflow.common.DataFlowFactory;
+
+import org.scf4a.Event;
 
 import java.util.concurrent.TimeUnit;
 
@@ -53,6 +58,10 @@ public class IpConfigActivity extends BaseActivity {
     private Button btn_reset;
 
     private Button btnBack;
+
+    private Button btnOpenGsp;
+
+    private Button btnOpenMap;
 
     private RadioGroup radioGroup;
     private RadioButton radioBtnFormal, radioBtnTest;
@@ -89,6 +98,10 @@ public class IpConfigActivity extends BaseActivity {
         btn_save = (Button) findViewById(R.id.btn_ip_save);
 
         btn_reset = (Button) findViewById(R.id.btn_ip_reset);
+
+        btnOpenGsp = (Button) findViewById(R.id.openGps);
+
+        btnOpenMap = (Button) findViewById(R.id.openRMap);
 
         radioGroup = (RadioGroup) findViewById(R.id.ip_radioGroup);
 
@@ -143,14 +156,30 @@ public class IpConfigActivity extends BaseActivity {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                startActivity(new Intent(IpConfigActivity.this, MainRecordActivity.class));
                 finish();
+            }
+        });
+
+        btnOpenMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InstallerUtils.openApp(IpConfigActivity.this, "org.gyh.rmaps");
+                EventBus.getDefault().post(NaviEvent.FloatButtonEvent.SHOW);
+            }
+        });
+
+        btnOpenGsp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InstallerUtils.openApp(IpConfigActivity.this, "com.chartcross.gpstestplus");
+                EventBus.getDefault().post(NaviEvent.FloatButtonEvent.SHOW);
             }
         });
 
     }
 
     public void initDatas() {
-
     }
 
 
@@ -186,6 +215,7 @@ public class IpConfigActivity extends BaseActivity {
                 }
             });
         }
+        startActivity(new Intent(IpConfigActivity.this, MainRecordActivity.class));
         finish();
     }
 
@@ -229,6 +259,9 @@ public class IpConfigActivity extends BaseActivity {
 
         PackageManager packageManager = getPackageManager();
         startActivity(new Intent(packageManager.getLaunchIntentForPackage("com.qualcomm.factory")));
+        if (Utils.isDemoVersion(this)) {
+            EventBus.getDefault().post(NaviEvent.FloatButtonEvent.SHOW);
+        }
     }
 
     public void setOBD2Simulator(View view) {
@@ -237,6 +270,12 @@ public class IpConfigActivity extends BaseActivity {
 
     @Override
     protected View getChildView() {
-        return LayoutInflater.from(this).inflate(R.layout.ip_congfig_layout,null);
+        return LayoutInflater.from(this).inflate(R.layout.ip_congfig_layout, null);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EventBus.getDefault().post(NaviEvent.FloatButtonEvent.HIDE);
     }
 }

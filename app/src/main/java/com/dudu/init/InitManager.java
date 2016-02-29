@@ -176,16 +176,15 @@ public class InitManager {
 
         DriveVideo.getInstance().startDriveVideo();
 
-        if (Utils.isDemoVersion(mContext)) {
-            rx.Observable.timer(1, TimeUnit.SECONDS)
-                    .subscribe(new Action1<Long>() {
-                        @Override
-                        public void call(final Long aLong) {
-                            logger.debug("[init][{}]打开热点", log_step++);
-                            WifiApAdmin.initWifiApState(mContext);
-                        }
-                    });
-        }
+
+        rx.Observable.timer(1, TimeUnit.SECONDS)
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(final Long aLong) {
+                        logger.debug("[init][{}]打开热点", log_step++);
+                        // WifiApAdmin.initWifiApState(mContext);
+                    }
+                });
 
 
         rx.Observable.timer(10, TimeUnit.SECONDS)

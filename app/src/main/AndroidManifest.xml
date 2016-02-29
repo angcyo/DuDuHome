@@ -159,7 +159,7 @@
             android:theme="@style/AiosBaseTheme" />
         <activity
             android:name="com.dudu.aios.ui.activity.MainRecordActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape"
             android:theme="@style/AiosBaseTheme">
             <intent-filter>

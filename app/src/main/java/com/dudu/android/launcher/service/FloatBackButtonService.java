@@ -13,6 +13,7 @@ import android.widget.Button;
 
 import com.dudu.aios.ui.activity.MainRecordActivity;
 import com.dudu.android.launcher.R;
+import com.dudu.android.launcher.ui.activity.IpConfigActivity;
 import com.dudu.android.launcher.ui.activity.MainActivity;
 import com.dudu.android.launcher.utils.ActivitiesManager;
 import com.dudu.navi.event.NaviEvent;
@@ -25,7 +26,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by lxh on 2015/11/24.
  */
-public class FloatBackButtonService extends Service{
+public class FloatBackButtonService extends Service {
 
     // 悬浮窗View的参数
     private WindowManager.LayoutParams windowParams;
@@ -38,6 +39,7 @@ public class FloatBackButtonService extends Service{
     private boolean isShow = false;
 
     private Handler mHandler;
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -60,7 +62,7 @@ public class FloatBackButtonService extends Service{
         super.onDestroy();
     }
 
-    private void initButton(){
+    private void initButton() {
 
         floatButton = new Button(this);
         floatButton.setBackgroundResource(R.drawable.back_button_selector);
@@ -71,21 +73,22 @@ public class FloatBackButtonService extends Service{
             windowParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                     | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
             windowParams.width = 90;
-            windowParams.height = 73 ;
+            windowParams.height = 73;
 
-            windowParams.x = -getWmWidth()/2;
+            windowParams.x = -getWmWidth() / 2;
             windowParams.y = 0;
             windowParams.alpha = 1.0f;
         }
         floatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getBaseContext(), MainRecordActivity.class);
+                Intent intent = new Intent(getBaseContext(), IpConfigActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
         });
     }
+
     private int getWmWidth() {
         return getWindowManager().getDefaultDisplay().getWidth();// 屏幕宽度
     }
@@ -97,25 +100,25 @@ public class FloatBackButtonService extends Service{
         return windowManager;
     }
 
-    public void onEventMainThread(NaviEvent.FloatButtonEvent event){
+    public void onEventMainThread(NaviEvent.FloatButtonEvent event) {
 
-        switch (event){
+        switch (event) {
             case SHOW:
-                if(windowManager!=null&&floatButton!=null){
+                if (windowManager != null && floatButton != null) {
                     isShow = true;
-                    windowManager.addView(floatButton,windowParams);
+                    windowManager.addView(floatButton, windowParams);
                 }
 
                 break;
             case HIDE:
-                if(windowManager!=null&&floatButton!=null&&isShow){
+                if (windowManager != null && floatButton != null && isShow) {
                     isShow = false;
                     windowManager.removeView(floatButton);
                 }
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if(!ActivitiesManager.getInstance().isTopActivity(FloatBackButtonService.this, "com.dudu.android.launcher")){
+                        if (!ActivitiesManager.getInstance().isTopActivity(FloatBackButtonService.this, "com.dudu.android.launcher")) {
                             EventBus.getDefault().post(NaviEvent.FloatButtonEvent.SHOW);
                         }
                     }

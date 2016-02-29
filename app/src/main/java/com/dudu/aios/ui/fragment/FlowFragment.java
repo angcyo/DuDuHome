@@ -1,5 +1,9 @@
 package com.dudu.aios.ui.fragment;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
@@ -8,15 +12,25 @@ import android.widget.TextView;
 
 import com.dudu.aios.ui.dialog.FlowPasswordSetDialog;
 import com.dudu.aios.ui.fragment.base.BaseFragment;
+import com.dudu.aios.ui.utils.InstallerUtils;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.aios.ui.view.FlowCompletedView;
 import com.dudu.android.launcher.R;
+import com.dudu.android.launcher.ui.activity.IpConfigActivity;
 import com.dudu.android.launcher.ui.dialog.IPConfigDialog;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.android.launcher.utils.SharedPreferencesUtils;
+import com.dudu.android.launcher.utils.Utils;
 import com.dudu.android.launcher.utils.WifiApAdmin;
+import com.dudu.android.launcher.utils.cache.AgedContacts;
+import com.dudu.navi.event.NaviEvent;
 
+import java.io.File;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 public class FlowFragment extends BaseFragment implements View.OnClickListener {
 
@@ -85,10 +99,17 @@ public class FlowFragment extends BaseFragment implements View.OnClickListener {
         openFlowContainer.setOnClickListener(this);
         passwordSetContainer.setOnClickListener(this);
         flowCompletedView.setOnLongClickListener(v -> {
-            new IPConfigDialog().showDialog(getActivity());
+            if (Utils.isDemoVersion(getActivity())) {
+                startActivity(new Intent(getActivity(), IpConfigActivity.class));
+            } else {
+                new IPConfigDialog().showDialog(getActivity());
+            }
+
             return true;
         });
     }
+
+
 
     private void initFragmentView(View view) {
         btnBack = (ImageButton) view.findViewById(R.id.button_back);
