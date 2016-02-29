@@ -176,15 +176,18 @@ public class InitManager {
 
         DriveVideo.getInstance().startDriveVideo();
 
-        rx.Observable.timer(1, TimeUnit.SECONDS)
-                .subscribe(new Action1<Long>() {
-                    @Override
-                    public void call(final Long aLong) {
-                        logger.debug("[init][{}]打开热点", log_step++);
-//                        WifiApAdmin.initWifiApState(mContext);
+        if (Utils.isDemoVersion(mContext)) {
+            rx.Observable.timer(1, TimeUnit.SECONDS)
+                    .subscribe(new Action1<Long>() {
+                        @Override
+                        public void call(final Long aLong) {
+                            logger.debug("[init][{}]打开热点", log_step++);
+                            WifiApAdmin.initWifiApState(mContext);
+                        }
+                    });
+        }
 
-                    }
-                });
+
         rx.Observable.timer(10, TimeUnit.SECONDS)
                 .subscribe(aLong -> {
                     logger.debug("[init][{}]打开蓝牙", log_step++);
@@ -195,7 +198,7 @@ public class InitManager {
                     logger.debug("[init][{}]启动OBD服务", log_step++);
                     com.dudu.android.hideapi.SystemPropertiesProxy.getInstance().set(mContext,
                             "sys.gps", "start");
-                  startOBDService();
+                    startOBDService();
                     finished = true;
                 });
 
@@ -206,7 +209,7 @@ public class InitManager {
         startFloatButtonService();
 
         logger.debug("[init][{}]开启蓝牙电话服务", log_step++);
-       startBluetoothService();
+        startBluetoothService();
 
         logger.debug("[init][{}]打开用户激活状态检查", log_step++);
         startCheckUserService();
