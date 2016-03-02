@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.dudu.aios.ui.base.BaseActivity;
 import com.dudu.android.launcher.R;
-import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 
 public class BtCallingActivity extends BaseActivity implements OnClickListener {
 

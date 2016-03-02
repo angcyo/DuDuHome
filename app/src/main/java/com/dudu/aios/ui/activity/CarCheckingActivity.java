@@ -13,24 +13,18 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.dudu.aios.ui.activity.VehicleAnimationActivity;
 import com.dudu.aios.ui.base.BaseActivity;
 import com.dudu.aios.ui.view.VehicleCheckResultView;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.carChecking.CarCheckingProxy;
 import com.dudu.carChecking.CarCheckingView;
-import com.dudu.monitor.valueobject.LocationInfo;
 import com.dudu.voice.VoiceManagerProxy;
 import com.dudu.voice.semantic.constant.SceneType;
 import com.dudu.voice.semantic.engine.SemanticEngine;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
-
-import rx.Observable;
-import rx.functions.Action1;
 
 public class CarCheckingActivity extends BaseActivity implements View.OnClickListener {
 
@@ -159,7 +153,7 @@ public class CarCheckingActivity extends BaseActivity implements View.OnClickLis
         Intent intent = new Intent(this, VehicleAnimationActivity.class);
         switch (v.getId()) {
             case R.id.button_back:
-                buttonBack.setEnabled(false);
+//                buttonBack.setEnabled(false);
                 mAnimationView.stopAnim();
                 finish();
                 return;

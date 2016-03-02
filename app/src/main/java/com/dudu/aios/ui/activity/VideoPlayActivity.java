@@ -18,7 +18,6 @@ import com.dudu.aios.ui.base.BaseActivity;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.ui.view.VideoView;
 import com.dudu.android.launcher.utils.Constants;
-
 import com.dudu.drivevideo.model.VideoEntity;
 import com.dudu.drivevideo.storage.VideoFileManage;
 

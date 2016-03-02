@@ -1,11 +1,9 @@
 package com.dudu.aios.ui.fragment.video.adapter;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,14 +16,12 @@ import android.widget.TextView;
 
 import com.dudu.aios.ui.activity.MainRecordActivity;
 import com.dudu.aios.ui.activity.VideoPlayActivity;
-import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.utils.Constants;
 import com.dudu.drivevideo.model.VideoEntity;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by dengjun on 2016/2/18.

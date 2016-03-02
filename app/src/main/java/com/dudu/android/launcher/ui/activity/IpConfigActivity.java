@@ -17,7 +17,6 @@ import com.dudu.aios.ui.base.BaseActivity;
 import com.dudu.aios.ui.utils.InstallerUtils;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.broadcast.ReceiverRegister;
-import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.ui.dialog.IPConfigDialog;
 import com.dudu.android.launcher.utils.IPConfig;
 import com.dudu.android.launcher.utils.Utils;
@@ -29,8 +28,6 @@ import com.dudu.obd.ObdInit;
 import com.dudu.voice.VoiceManagerProxy;
 import com.dudu.workflow.common.CommonParams;
 import com.dudu.workflow.common.DataFlowFactory;
-
-import org.scf4a.Event;
 
 import java.util.concurrent.TimeUnit;
 

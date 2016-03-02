@@ -5,9 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 
 import com.dudu.aios.ui.activity.MainRecordActivity;
 import com.dudu.aios.ui.activity.video.PhotoListActivity;
@@ -15,9 +13,7 @@ import com.dudu.aios.ui.base.ObservableFactory;
 import com.dudu.aios.ui.fragment.base.BaseFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.R;
-
 import com.dudu.drivevideo.DriveVideo;
-import com.dudu.drivevideo.video.CameraPreview;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,7 +121,7 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.check_video:
-                mCheckVideoButton.setEnabled(false);
+//                mCheckVideoButton.setEnabled(false);
                 stopRearPreview();
                 replaceFragment(FragmentConstants.FRAGMENT_VIDEO_LIST);
                 break;
@@ -138,11 +134,11 @@ public class DrivingRecordFragment extends BaseFragment implements /*SurfaceHold
                 break;
             case R.id.check_photo:
 //                replaceFragment(FragmentConstants.FRAGMENT_PHOTO_LIST);
-                mCheckPhotoButton.setEnabled(false);
+//                mCheckPhotoButton.setEnabled(false);
                 mainRecordActivity.startActivity(new Intent(mainRecordActivity, PhotoListActivity.class));
                 break;
             case R.id.button_back:
-                mBackButton.setEnabled(false);
+//                mBackButton.setEnabled(false);
                 mainRecordActivity.setBlur();
                 if (isFrontCameraPreView == false){
                     stopRearPreview();

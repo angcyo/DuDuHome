@@ -69,7 +69,7 @@ public class SafetyMainFragment extends BaseFragment implements View.OnClickList
                 actionRobbery();
                 break;
             case R.id.vehicle_back_button:
-                buttonBack.setEnabled(false);
+//                buttonBack.setEnabled(false);
                 replaceFragment(FragmentConstants.FRAGMENT_MAIN_PAGE);
                 break;
         }
@@ -77,12 +77,12 @@ public class SafetyMainFragment extends BaseFragment implements View.OnClickList
 
     private void actionRobbery() {
         robbery();
-        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyMainFragment()).commit();
+//        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyMainFragment()).commit();
     }
 
     private void actionGuard() {
         guard();
-        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new GuardFragment()).commit();
+//        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new GuardFragment()).commit();
     }
 
     private void robbery() {

@@ -1,7 +1,6 @@
 package com.dudu.android.launcher.ui.activity.bluetooth;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -10,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
-import android.telecom.Call;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +27,6 @@ import com.dudu.aios.ui.dialog.DeleteContactDialog;
 import com.dudu.aios.ui.dialog.ShowContactDetailDialog;
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.db.DbHelper;
-
 import com.dudu.android.launcher.utils.LogUtils;
 import com.dudu.android.launcher.utils.cache.AsyncTask;
 

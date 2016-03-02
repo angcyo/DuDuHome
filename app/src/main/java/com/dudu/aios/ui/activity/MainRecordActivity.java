@@ -2,8 +2,6 @@ package com.dudu.aios.ui.activity;
 
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
@@ -14,7 +12,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import com.dudu.aios.ui.base.BaseActivity;
+import com.dudu.aios.ui.base.BaseFragmentManagerActivity;
 import com.dudu.aios.ui.fragment.FlowFragment;
 import com.dudu.aios.ui.fragment.MainFragment;
 import com.dudu.aios.ui.fragment.PhotoFragment;
@@ -22,7 +20,7 @@ import com.dudu.aios.ui.fragment.PhotoListFragment;
 import com.dudu.aios.ui.fragment.SafetyMainFragment;
 import com.dudu.aios.ui.fragment.VideoFragment;
 import com.dudu.aios.ui.fragment.VideoListFragment;
-import com.dudu.aios.ui.fragment.video.DrivingRecordFragment;
+import com.dudu.aios.ui.fragment.base.BaseManagerFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.aios.ui.voice.VoiceFragment;
 import com.dudu.android.launcher.LauncherApplication;
@@ -39,15 +37,14 @@ import org.slf4j.LoggerFactory;
 import org.wysaid.camera.CameraInstance;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.greenrobot.event.EventBus;
 
-public class MainRecordActivity extends BaseActivity {
+public class MainRecordActivity extends BaseFragmentManagerActivity {
     private static final int SET_PREVIEW = 0;
-
-    private FragmentTransaction ft;
-
-    private FragmentManager fm;
+    private static final int INIT_FRAGMENTS = 1;
 
     private AlarmManager mAlarmManager;
 
@@ -61,23 +58,35 @@ public class MainRecordActivity extends BaseActivity {
 
     private static final int MY_REQUEST_CODE = 9999;
 
-    private MainFragment mainFragment;
+    private static final String MAIN_FRAGMENT = "mainfragment";
+    private static final String SAFETY_FRAGMENT = "safetyFragment";
+    private static final String DRIVINGRECORD_FRAGMENT = "drivingRecordFragment";
+    private static final String PHOTO_FRAGMENT = "photoFragment";
+    private static final String PHOTOLIST_FRAGMENT = "photoListFragment";
+    private static final String VIDEO_FRAGMENT = "videoFragment";
+    private static final String FLOW_FRAGMENT = "flowFragment";
+    private static final String VOICE_FRAGMENT = "voiceFragment";
+    private static final String VIDEOLIST_FRAGMENT = "videoListFragment";
 
-    private SafetyMainFragment safetyFragment;
+    @Override
+    public int fragmentViewId() {
+        return R.id.container;
+    }
 
-    private DrivingRecordFragment drivingRecordFragment;
-
-    private PhotoFragment photoFragment;
-
-    private PhotoListFragment photoListFragment;
-
-    private VideoFragment videoFragment;
-
-    private FlowFragment flowFragment;
-
-    private VoiceFragment voiceFragment;
-
-    private VideoListFragment videoListFragment;
+    @Override
+    public Map<String, Class<? extends BaseManagerFragment>> baseFragmentWithTag() {
+        Map<String, Class<? extends BaseManagerFragment>> fragmentMap = new HashMap<>();
+        fragmentMap.put(MAIN_FRAGMENT,MainFragment.class);
+        fragmentMap.put(SAFETY_FRAGMENT,SafetyMainFragment.class);
+//        fragmentMap.put(DRIVINGRECORD_FRAGMENT,DrivingRecordFragment.class);
+        fragmentMap.put(PHOTO_FRAGMENT,PhotoFragment.class);
+        fragmentMap.put(PHOTOLIST_FRAGMENT,PhotoListFragment.class);
+        fragmentMap.put(VIDEO_FRAGMENT,VideoFragment.class);
+        fragmentMap.put(FLOW_FRAGMENT,FlowFragment.class);
+        fragmentMap.put(VOICE_FRAGMENT,VoiceFragment.class);
+        fragmentMap.put(VIDEOLIST_FRAGMENT,VideoListFragment.class);
+        return fragmentMap;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,101 +128,50 @@ public class MainRecordActivity extends BaseActivity {
 
 
     private void initFragment(Bundle savedInstanceState) {
-        if (savedInstanceState == null) {
-            mainFragment = new MainFragment();
-            safetyFragment = new SafetyMainFragment();
-            drivingRecordFragment = new DrivingRecordFragment();
-            photoFragment = new PhotoFragment();
-            photoListFragment = new PhotoListFragment();
-            videoFragment = new VideoFragment();
-            voiceFragment = new VoiceFragment();
-            flowFragment = new FlowFragment();
-            videoListFragment = new VideoListFragment();
-        }
-
-        fm = this.getFragmentManager();
-        ft = fm.beginTransaction();
-        ft.replace(R.id.container, new MainFragment());
-        ft.commit();
+        switchToStackByTag(MAIN_FRAGMENT);
     }
 
     public void replaceFragment(String name) {
-        ft = fm.beginTransaction();
-        //  ft.setCustomAnimations(R.anim.fragment_in, R.anim.fragment_out);
-
         switch (name) {
             case FragmentConstants.FRAGMENT_MAIN_PAGE:
-
-                if (mainFragment == null) {
-                    mainFragment = new MainFragment();
-                }
-                ft.replace(R.id.container, mainFragment);
-
+                switchToStackByTag(MAIN_FRAGMENT);
                 break;
 
             case FragmentConstants.FRAGMENT_VEHICLE_INSPECTION:
-
-                if (safetyFragment == null) {
-                    safetyFragment = new SafetyMainFragment();
-                }
-                ft.replace(R.id.container, safetyFragment);
+                switchToStackByTag(SAFETY_FRAGMENT);
                 break;
 
             case FragmentConstants.FRAGMENT_DRIVING_RECORD:
-                DrivingRecordFragment drivingRecordFragment = new DrivingRecordFragment();
-                drivingRecordFragment.setMainRecordActivity(this);
-                ft.replace(R.id.container, drivingRecordFragment);
+                switchToStackByTag(DRIVINGRECORD_FRAGMENT);
                 break;
 
             case FragmentConstants.FRAGMENT_VIDEO_LIST:
-                if (videoListFragment == null) {
-                    videoListFragment = new VideoListFragment();
-                }
-                ft.replace(R.id.container, videoListFragment);
+                switchToStackByTag(VIDEOLIST_FRAGMENT);
                 break;
 
             case FragmentConstants.FRAGMENT_VIDEO:
-                if (videoFragment == null) {
-                    videoFragment = new VideoFragment();
-                }
-                ft.replace(R.id.container, videoFragment);
+                switchToStackByTag(VIDEO_FRAGMENT);
                 break;
 
             case FragmentConstants.FRAGMENT_PHOTO_LIST:
-                if (photoListFragment == null) {
-                    photoListFragment = new PhotoListFragment();
-                }
-                ft.replace(R.id.container, photoListFragment);
+                switchToStackByTag(PHOTOLIST_FRAGMENT);
                 break;
 
             case FragmentConstants.FRAGMENT_PHOTO:
-                if (photoFragment == null) {
-                    photoFragment = new PhotoFragment();
-                }
-                ft.replace(R.id.container, photoFragment);
+                switchToStackByTag(PHOTO_FRAGMENT);
                 break;
 
             case FragmentConstants.FRAGMENT_FLOW:
-                if (flowFragment == null) {
-                    flowFragment = new FlowFragment();
-                }
-                ft.replace(R.id.container, flowFragment);
+                switchToStackByTag(FLOW_FRAGMENT);
                 break;
             case FragmentConstants.VOICE_FRAGMENT:
-                if (voiceFragment == null) {
-                    voiceFragment = new VoiceFragment();
-                }
-                ft.replace(R.id.container, voiceFragment);
+                switchToStackByTag(VOICE_FRAGMENT);
                 break;
             default:
-                if (mainFragment == null) {
-                    mainFragment = new MainFragment();
-                }
-                ft.replace(R.id.container, mainFragment);
+                switchToStackByTag(MAIN_FRAGMENT);
                 break;
 
         }
-        ft.commit();
 
         if (!name.equals(FragmentConstants.VOICE_FRAGMENT)) {
             LauncherApplication.lastFragment = name;

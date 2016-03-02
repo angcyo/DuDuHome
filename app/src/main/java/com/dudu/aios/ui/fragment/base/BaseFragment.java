@@ -1,7 +1,5 @@
 package com.dudu.aios.ui.fragment.base;
 
-
-import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +14,8 @@ import com.dudu.android.launcher.utils.ActivitiesManager;
 
 import de.greenrobot.event.EventBus;
 
-public abstract class BaseFragment extends Fragment {
+public abstract class BaseFragment extends BaseManagerFragment
+{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -38,6 +37,7 @@ public abstract class BaseFragment extends Fragment {
         switch (event) {
             case SHOW_ANIM:
                 replaceFragment(FragmentConstants.VOICE_FRAGMENT);
+
                 break;
             case DISMISS_WINDOW:
                 Log.d("lxh", "voice  DISMISS_WINDOW BaseFragment  " + LauncherApplication.lastFragment);

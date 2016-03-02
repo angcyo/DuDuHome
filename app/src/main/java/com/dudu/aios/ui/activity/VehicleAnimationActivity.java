@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -171,7 +170,7 @@ public class VehicleAnimationActivity extends BaseActivity implements View.OnCli
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_back:
-                buttonBack.setEnabled(false);
+//                buttonBack.setEnabled(false);
 
                 vehicleCheckResultAnimation.stopAnim();
                 Intent intent = new Intent();

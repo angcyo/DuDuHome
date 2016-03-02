@@ -1,14 +1,13 @@
 package com.dudu.aios.ui.base;
 
-import android.app.Activity;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.widget.ImageView;
 
 import com.dudu.android.launcher.R;
 import com.dudu.android.launcher.databinding.ActivityLayoutCommonBinding;
@@ -17,7 +16,7 @@ import com.dudu.android.launcher.utils.ActivitiesManager;
 import org.wysaid.camera.CameraInstance;
 import org.wysaid.view.CameraRecordGLSurfaceView;
 
-public abstract class BaseActivity extends Activity {
+public abstract class BaseActivity extends FragmentActivity {
     public static final String effectConfigs[] = {
             "",
             "@beautify bilateral 10 4 1 @style haze -0.5 -0.5 1 1 1 @curve RGB(0, 0)(94, 20)(160, 168)(255, 255) @curve R(0, 0)(129, 119)(255, 255)B(0, 0)(135, 151)(255, 255)RGB(0, 0)(146, 116)(255, 255)",

@@ -1,6 +1,5 @@
 package com.dudu.aios.ui.fragment;
 
-import android.app.Fragment;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,12 +9,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-
 import com.dudu.aios.ui.activity.MainRecordActivity;
+import com.dudu.aios.ui.fragment.base.BaseFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.R;
 
-public class PhotoFragment extends Fragment implements View.OnClickListener {
+public class PhotoFragment extends BaseFragment implements View.OnClickListener {
 
     private ImageButton btnBack, btnDelete, btnUpload, btnCancelUpload;
 
@@ -69,7 +68,7 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void replaceFragment(String name) {
+    public void replaceFragment(String name) {
         MainRecordActivity activity = (MainRecordActivity) getActivity();
         activity.replaceFragment(name);
     }

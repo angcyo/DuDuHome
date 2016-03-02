@@ -1,6 +1,5 @@
 package com.dudu.aios.ui.fragment;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.AsyncTask;
@@ -17,12 +16,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import com.dudu.aios.ui.activity.MainRecordActivity;
+import com.dudu.aios.ui.fragment.base.BaseFragment;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.R;
+
 import java.util.ArrayList;
 
-public class PhotoListFragment extends Fragment implements View.OnClickListener {
+public class PhotoListFragment extends BaseFragment implements View.OnClickListener {
 
     private ImageButton mBackButton, mDeleteButton, mUploadButton;
 
@@ -86,7 +88,7 @@ public class PhotoListFragment extends Fragment implements View.OnClickListener 
         });
     }
 
-    private void replaceFragment(String name) {
+    public void replaceFragment(String name) {
         MainRecordActivity activity = (MainRecordActivity) getActivity();
         activity.replaceFragment(name);
     }

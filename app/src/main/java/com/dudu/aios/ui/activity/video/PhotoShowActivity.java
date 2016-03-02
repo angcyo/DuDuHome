@@ -1,7 +1,6 @@
 package com.dudu.aios.ui.activity.video;
 
 import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Bundle;

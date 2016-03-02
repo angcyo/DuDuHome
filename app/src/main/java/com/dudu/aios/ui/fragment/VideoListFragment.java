@@ -1,29 +1,21 @@
 package com.dudu.aios.ui.fragment;
 
-import android.app.Fragment;
-import android.content.Context;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dudu.aios.ui.activity.MainRecordActivity;
+import com.dudu.aios.ui.fragment.base.BaseFragment;
 import com.dudu.aios.ui.fragment.video.adapter.VideoListViewAdapter;
 import com.dudu.aios.ui.fragment.video.view.CusomSwipeView;
 import com.dudu.aios.ui.utils.contants.FragmentConstants;
 import com.dudu.android.launcher.R;
-
 import com.dudu.drivevideo.model.VideoEntity;
 import com.dudu.drivevideo.storage.VideoFileManage;
 
@@ -31,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class VideoListFragment extends Fragment implements View.OnClickListener {
+public class VideoListFragment extends BaseFragment implements View.OnClickListener {
 
 
     private CusomSwipeView videoListView;
@@ -109,7 +101,7 @@ public class VideoListFragment extends Fragment implements View.OnClickListener 
         }
     }
 
-    private void replaceFragment(String name) {
+    public void replaceFragment(String name) {
         MainRecordActivity activity = (MainRecordActivity) getActivity();
         activity.replaceFragment(name);
     }

@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.dudu.aios.ui.base.BaseActivity;
 import com.dudu.android.launcher.R;
-import com.dudu.android.launcher.ui.activity.base.BaseTitlebarActivity;
 import com.dudu.android.launcher.utils.Constants;
 
 public class BtOutCallActivity extends BaseActivity implements View.OnClickListener {

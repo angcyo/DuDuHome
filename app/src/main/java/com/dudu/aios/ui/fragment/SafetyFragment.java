@@ -80,9 +80,9 @@ public class SafetyFragment extends BaseFragment implements View.OnClickListener
         DataFlowFactory.getSwitchDataFlow().getRobberyState()
                 .subscribe(locked -> {
                     if (locked) {
-                        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyLockFragment()).commit();
+//                        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyLockFragment()).commit();
                     } else {
-                        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyFragment()).commit();
+//                        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyFragment()).commit();
 
                     }
                 },(throwable -> {
@@ -96,13 +96,13 @@ public class SafetyFragment extends BaseFragment implements View.OnClickListener
     public void onEventMainThread(RobberyStateModel event) {
         if(event.getRobberyState()){
             DataFlowFactory.getSwitchDataFlow().saveRobberyState(true);
-            getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyLockFragment()).commit();
+//            getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new RobberyLockFragment()).commit();
         }
     }
 
     private void actionGuard() {
         guard();
-        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new GuardFragment()).commit();
+//        getFragmentManager().beginTransaction().replace(R.id.vehicle_right_layout, new GuardFragment()).commit();
     }
 
     private void robbery() {
